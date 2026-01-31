@@ -1,21 +1,27 @@
 {
-  "name": "myairtable-tests",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/danielrbaughman/myairtable-tests.git",
-  "author": "Daniel Baughman <danielrbaughman@icloud.com>",
-  "license": "MIT",
-  "scripts": {
-    "build": "npx tsc",
-    "start": "node -r dotenv/config dist/playground.js",
-    "ts": "yarn install && yarn build && yarn start",
-    "test": "vitest run"
-  },
-  "dependencies": {
-    "airtable": "^0.12.2",
-    "dotenv": "^17.2.3",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.18",
-    "zod": "^4.3.6"
-  }
+	"name": "myairtable-tests",
+	"version": "1.0.0",
+	"license": "MIT",
+	"author": "Daniel Baughman <danielrbaughman@icloud.com>",
+	"repository": "https://github.com/danielrbaughman/myairtable-tests.git",
+	"main": "index.js",
+	"scripts": {
+		"reinstall": "rm -rf node_modules && yarn install",
+		"format": "oxfmt",
+		"lint": "oxlint",
+		"build": "npx tsc",
+		"start": "node -r dotenv/config dist/playground.js",
+		"ts": "yarn install && yarn build && yarn start",
+		"test": "vitest run"
+	},
+	"dependencies": {
+		"airtable": "^0.12.2",
+		"dotenv": "^17.2.3",
+		"oxfmt": "^0.24.0",
+		"oxlint": "^1.39.0",
+		"oxlint-tsgolint": "^0.11.0",
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.18",
+		"zod": "^4.3.6"
+	}
 }

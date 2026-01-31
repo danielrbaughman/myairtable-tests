@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { Airtable } from "./typescript/output"
+import { Airtable } from "./typescript/output";
 
 async function main() {
 	console.log("Hello World (TypeScript)");
