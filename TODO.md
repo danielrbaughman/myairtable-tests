@@ -4,9 +4,11 @@ Meta
 
 TypeScript
 
+- [ ] ORM Tests
+  - [ ] Save
+  - [ ] Delete
+  - [ ] Linked records
 - [ ] CRUD Tests
-  - [ ] Save via Model
-  - [ ] Delete via Model
   - [ ] CRUD via Record
   - [ ] CRUD via Interface
 - [ ] Column Tests
@@ -17,5 +19,8 @@ TypeScript
   - [ ] 429
   - [ ] Get >100 records
   - [ ] Set >10 records
+- [ ] Error Cases
+  - [ ] Check zod validation for every field type
+  - [ ] No API Key or Base ID
 - [ ] Edge Cases
   - [ ] Editing links while both records are in memory

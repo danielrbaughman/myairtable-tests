@@ -2,12 +2,10 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
-// #region IMPORTS
 import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "airtable";
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
 import { RecordId, AirtableButton } from "../../static/special-types";
 import { LinkedRecord, LinkedRecords } from "../../static/linked-record";
-import { getOptions, getBaseId } from "../../static/helpers";
 import {
     PrimaryFieldSet,
     PrimaryField,
@@ -23,17 +21,14 @@ import {
 } from "../models";
 import { PrimaryTable } from '../tables/primary';
 import { PrimarySchema, IPrimary } from '../zod/primary';
-// #endregion
 
-
-// #region PRIMARY
 /** Model for `Primary` (tblmb3iqgpNS1ysV2) */
 export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, PrimaryField> {
     protected static schema = PrimarySchema;
     public static f = PrimaryFormulas
-    protected nameToIdMap = PrimaryFieldNameIdMapping;
-    protected idToNameMap = PrimaryFieldIdNameMapping;
-    protected nameToPropertyMap = PrimaryFieldNamePropertyMapping;
+    protected static nameToIdMap = PrimaryFieldNameIdMapping;
+    protected static idToNameMap = PrimaryFieldIdNameMapping;
+    protected static nameToPropertyMap = PrimaryFieldNamePropertyMapping;
 
     /** Table name (Primary) */
     public static tableName: string = 'Primary';
@@ -65,8 +60,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
         { propertyName: "formulaSimple", fieldId: "fldy1axxaoUToLVC6", fieldName: "Formula (Simple)", isComputed: true, fieldType: "generic" },
         { propertyName: "lastModifiedBy", fieldId: "fldF8iDttqP0AgzWC", fieldName: "Last Modified By", isComputed: true, fieldType: "generic" },
         { propertyName: "lastModifiedTime", fieldId: "fldMinKh4pa3YX86g", fieldName: "Last Modified Time", isComputed: true, fieldType: "generic" },
-        { propertyName: "linkMultiple", fieldId: "fldFyFheQWczd8oux", fieldName: "Link (multiple)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, baseId, options) => SecondaryModel.fromId(id, baseId, options) },
-        { propertyName: "linkSingle", fieldId: "fld7F5onkDo6mkmbN", fieldName: "Link (single)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, baseId, options) => SecondaryModel.fromId(id, baseId, options) },
+        { propertyName: "linkMultiple", fieldId: "fldFyFheQWczd8oux", fieldName: "Link (multiple)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config) },
+        { propertyName: "linkSingle", fieldId: "fld7F5onkDo6mkmbN", fieldName: "Link (single)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config) },
         { propertyName: "longText", fieldId: "fld8ulc6J0W29M6La", fieldName: "Long Text", isComputed: false, fieldType: "generic" },
         { propertyName: "longTextWithRichText", fieldId: "fldHJkxCMC0xo343u", fieldName: "Long Text with Rich Text", isComputed: false, fieldType: "generic" },
         { propertyName: "lookup", fieldId: "fldbmFmrzYKBktJvE", fieldName: "Lookup", isComputed: true, fieldType: "generic" },
@@ -478,5 +473,3 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     }
 
 }
-// #endregion
-

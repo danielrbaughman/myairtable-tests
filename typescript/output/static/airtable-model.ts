@@ -14,7 +14,7 @@ export interface FieldDescriptor {
 	fieldName: string;
 	isComputed: boolean;
 	fieldType: FieldType;
-	linkedModelFromId?: (id: any, baseId?: string, options?: any) => any;
+	linkedModelFromId?: (id: any, config?: AirtableOptions & { baseId: string }) => any;
 }
 
 export abstract class AirtableModel<FldSt extends FieldSet, MdlInterface, Fld> {
@@ -24,9 +24,9 @@ export abstract class AirtableModel<FldSt extends FieldSet, MdlInterface, Fld> {
 	[key: string]: unknown;
 
 	// Mappings - must be defined by subclasses
-	protected nameToIdMap: Record<string, string> = {};
-	protected idToNameMap: Record<string, string> = {};
-	protected nameToPropertyMap: Record<string, string> = {};
+	protected static nameToIdMap: Record<string, string> = {};
+	protected static idToNameMap: Record<string, string> = {};
+	protected static nameToPropertyMap: Record<string, string> = {};
 
 	/** Zod schema for validation - must be defined by subclasses */
 	protected static schema: z.ZodTypeAny;
@@ -57,15 +57,17 @@ export abstract class AirtableModel<FldSt extends FieldSet, MdlInterface, Fld> {
 	/** Get a value by Airtable field name */
 	public get(key: Fld): any | undefined {
 		if (!this.record) throw new Error("_record is undefined. This means the object was not properly initialized.");
-		if (!this.nameToPropertyMap[key as string]) throw new Error(`Field name "${key}" does not exist on this model.`);
-		return this[this.nameToPropertyMap[key as string]];
+		if (!(this.constructor as typeof AirtableModel).nameToPropertyMap[key as string])
+			throw new Error(`Field name "${key}" does not exist on this model.`);
+		return this[(this.constructor as typeof AirtableModel).nameToPropertyMap[key as string]];
 	}
 
 	/** Set a value by Airtable field name */
 	public set(key: Fld, value: any): void {
 		if (!this.record) throw new Error("_record is undefined. This means the object was not properly initialized.");
-		if (!this.nameToPropertyMap[key as string]) throw new Error(`Field name "${key}" does not exist on this model.`);
-		this[this.nameToPropertyMap[key as string]] = value;
+		if (!(this.constructor as typeof AirtableModel).nameToPropertyMap[key as string])
+			throw new Error(`Field name "${key}" does not exist on this model.`);
+		this[(this.constructor as typeof AirtableModel).nameToPropertyMap[key as string]] = value;
 	}
 
 	/** Returns true if any fields have been modified */
@@ -125,7 +127,7 @@ export abstract class AirtableModel<FldSt extends FieldSet, MdlInterface, Fld> {
 		if (!useFieldIds) {
 			r.fields = Object.fromEntries(
 				Object.entries(r.fields).map(([key, value]) => {
-					const name = this.idToNameMap[key] || key;
+					const name = (this.constructor as typeof AirtableModel).idToNameMap[key] || key;
 					return [name, value];
 				}),
 			) as FldSt;
@@ -202,26 +204,47 @@ export abstract class AirtableModel<FldSt extends FieldSet, MdlInterface, Fld> {
 		this.id = "";
 	}
 
+	/**
+	 * Initializes a model instance from an Airtable.js `Record<FieldSet>`.
+	 * @param record - The Airtable record to initialize from.
+	 * @param config - Optional config object. By default, config values (e.g. BaseID and APIKey)
+	 * are picked up from environment variables. But if you are passing those values directly
+	 * into the main class, you need to pass them here as well if you want to use functions
+	 * like save() or fetch().
+	 */
 	public static fromRecord<T extends AirtableModel<any, any, any>>(
 		this: new (...args: any[]) => T,
 		record: ATRecord<any>,
-		table?: { baseId: string; _options: AirtableOptions },
+		config?: AirtableOptions & { baseId: string },
 	): T {
 		const instance = new this({ id: record.id });
-		if (table) instance.setConfig(table.baseId, table._options);
+		if (config) {
+			const { baseId, ...options } = config;
+			instance.setConfig(baseId, options);
+		}
 		instance.updateModel(record);
 		instance.clearDirtyFlags();
 		return instance;
 	}
 
+	/**
+	 * Creates a model instance from a record ID without fetching data.
+	 * @param id - The Airtable record ID.
+	 * @param config - Optional config object. By default, config values (e.g. BaseID and APIKey)
+	 * are picked up from environment variables. But if you are passing those values directly
+	 * into the main class, you need to pass them here as well if you want to use functions
+	 * like save() or fetch().
+	 */
 	public static fromId<T extends AirtableModel<any, any, any>>(
 		this: new (...args: any[]) => T,
 		id: RecordId,
-		baseId?: string,
-		options?: AirtableOptions,
+		config?: AirtableOptions & { baseId: string },
 	): T {
 		const instance = new this({ id });
-		if (baseId && options) instance.setConfig(baseId, options);
+		if (config) {
+			const { baseId, ...options } = config;
+			instance.setConfig(baseId, options);
+		}
 		return instance;
 	}
 
