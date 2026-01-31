@@ -1,5 +1,5 @@
 {
 	"permissions": {
-		"allow": ["Bash(tree:*)", "Bash(npx vitest run)", "Bash(yarn test:*)"]
+		"allow": ["Bash(tree:*)", "Bash(npx vitest run)", "Bash(yarn test:*)", "Bash(node -e:*)"]
 	}
 }

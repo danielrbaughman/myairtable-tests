@@ -6,6 +6,7 @@ import { ExtendedAirtableOptions } from "../static/special-types";
 import { getApiKey, getBaseId, setAirtableConfig } from "../static/helpers";
 import {
     PrimaryTable,
+    SecondaryTable,
     TableNameToTableType,
 } from "./tables";
 import { TableName, TableNamePropertyMapping } from "./types";
@@ -14,6 +15,8 @@ import { TableName, TableNamePropertyMapping } from "./types";
 export class Airtable {
     /** `Primary` (tblmb3iqgpNS1ysV2) */
     public primary: PrimaryTable;
+    /** `Secondary` (tblPPScS3XMuFkDYN) */
+    public secondary: SecondaryTable;
 
     constructor(options?: ExtendedAirtableOptions) {
         const _baseId = options?.baseId || getBaseId();
@@ -27,6 +30,7 @@ export class Airtable {
         };
         setAirtableConfig(_baseId, _options);
         this.primary = new PrimaryTable(_baseId, _options);
+        this.secondary = new SecondaryTable(_baseId, _options);
     }
 
 

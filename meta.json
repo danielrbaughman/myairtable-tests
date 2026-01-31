@@ -6,19 +6,471 @@
 			"primaryFieldId": "fldol5Q4wmQJQvPRy",
 			"fields": [
 				{
+					"type": "multipleAttachments",
+					"options": {
+						"isReversed": false
+					},
+					"id": "fldhF2AEuSC1haCZd",
+					"name": "Attachment"
+				},
+				{
+					"type": "autoNumber",
+					"id": "fldizvTkxgIn0mC3L",
+					"name": "Auto Number"
+				},
+				{
+					"type": "barcode",
+					"id": "fldHuvOCzOaJaPfSi",
+					"name": "Barcode"
+				},
+				{
+					"type": "button",
+					"id": "fldY48yKPG16AajtU",
+					"name": "Button"
+				},
+				{
+					"type": "checkbox",
+					"options": {
+						"icon": "check",
+						"color": "greenBright"
+					},
+					"id": "fldjQIaAZVegb1FUa",
+					"name": "Checkbox"
+				},
+				{
+					"type": "createdBy",
+					"id": "fldGLQhDz2UjjiHG6",
+					"name": "Created By"
+				},
+				{
+					"type": "createdTime",
+					"options": {
+						"result": {
+							"type": "dateTime",
+							"options": {
+								"dateFormat": {
+									"name": "local",
+									"format": "l"
+								},
+								"timeFormat": {
+									"name": "12hour",
+									"format": "h:mma"
+								},
+								"timeZone": "client"
+							}
+						}
+					},
+					"id": "fld2YgW382Kt9xltA",
+					"name": "Created Time"
+				},
+				{
+					"type": "currency",
+					"options": {
+						"precision": 2,
+						"symbol": "$"
+					},
+					"id": "fldyh8pzDXiy5abEr",
+					"name": "Currency (float)"
+				},
+				{
+					"type": "currency",
+					"options": {
+						"precision": 0,
+						"symbol": "$"
+					},
+					"id": "fldBfo74z9hD78hP8",
+					"name": "Currency (int)"
+				},
+				{
+					"type": "date",
+					"options": {
+						"dateFormat": {
+							"name": "local",
+							"format": "l"
+						}
+					},
+					"id": "fldC6LfNVvVIxKyQH",
+					"name": "Date"
+				},
+				{
+					"type": "dateTime",
+					"options": {
+						"dateFormat": {
+							"name": "local",
+							"format": "l"
+						},
+						"timeFormat": {
+							"name": "12hour",
+							"format": "h:mma"
+						},
+						"timeZone": "client"
+					},
+					"id": "fldizYmjpXABGDLTG",
+					"name": "Date (with time)"
+				},
+				{
+					"type": "duration",
+					"options": {
+						"durationFormat": "h:mm"
+					},
+					"id": "fldLTyf6ljS0rhur8",
+					"name": "Duration"
+				},
+				{
+					"type": "email",
+					"id": "fldHCJoYBiFVsNvP4",
+					"name": "Email"
+				},
+				{
+					"type": "formula",
+					"options": {
+						"isValid": true,
+						"formula": "CONCATENATE(\n\"Primary Key: \", {fldol5Q4wmQJQvPRy}, \"\\n\",\n\"Single Line Text: \", {fld0BL2lFo9fqcKv3}, \"\\n\",\n\"Long Text: \", {fld8ulc6J0W29M6La}, \"\\n\",\n\"Long Text with Rich Text: \", {fldHJkxCMC0xo343u}, \"\\n\",\n\"Attachment: \", IF({fldhF2AEuSC1haCZd}, {fldhF2AEuSC1haCZd}, \"None\"), \"\\n\",\n\"Checkbox: \", IF({fldjQIaAZVegb1FUa}, \"Checked\", \"Unchecked\"), \"\\n\",\n\"Multiple Select: \", IF({fld6GTabFmu1xKPvZ}, {fld6GTabFmu1xKPvZ}, \"None\"), \"\\n\",\n\"Single Select: \", IF({fldn0GFFtMFpCXUNU}, {fldn0GFFtMFpCXUNU}, \"None\"), \"\\n\",\n\"User: \", IF({fldU6SbLp8CSkLcA4}, {fldU6SbLp8CSkLcA4}, \"None\"), \"\\n\",\n\"User (allow multiple): \", IF({fldBwCDbAVxRj9yg7}, {fldBwCDbAVxRj9yg7}, \"None\"), \"\\n\",\n\"Date: \", IF({fldC6LfNVvVIxKyQH}, DATETIME_FORMAT({fldC6LfNVvVIxKyQH}, 'YYYY-MM-DD'), \"None\"), \"\\n\",\n\"Date (with time): \", IF({fldizYmjpXABGDLTG}, DATETIME_FORMAT({fldizYmjpXABGDLTG}, 'YYYY-MM-DD HH:mm'), \"None\"), \"\\n\",\n\"Phone Number: \", IF({fld38tnNpHmoks8C8}, {fld38tnNpHmoks8C8}, \"None\"), \"\\n\",\n\"Email: \", IF({fldHCJoYBiFVsNvP4}, {fldHCJoYBiFVsNvP4}, \"None\"), \"\\n\",\n\"URL: \", IF({fldLYloz2oP4ymf3B}, {fldLYloz2oP4ymf3B}, \"None\"), \"\\n\",\n\"Number (int): \", IF({fldOfPKGmnRPv94QH}, {fldOfPKGmnRPv94QH} & \"\", \"None\"), \"\\n\",\n\"Number (float): \", IF({fldmU0X2l4RWd21dd}, {fldmU0X2l4RWd21dd} & \"\", \"None\"), \"\\n\",\n\"Currency (int): \", IF({fldBfo74z9hD78hP8}, {fldBfo74z9hD78hP8} & \"\", \"None\"), \"\\n\",\n\"Currency (float): \", IF({fldyh8pzDXiy5abEr}, {fldyh8pzDXiy5abEr} & \"\", \"None\"), \"\\n\",\n\"Percent (int): \", IF({fldbAAyWboGulpb4s}, {fldbAAyWboGulpb4s} & \"\", \"None\"), \"\\n\",\n\"Percent (float): \", IF({fldiGui9ll69N7WOj}, {fldiGui9ll69N7WOj} & \"\", \"None\"), \"\\n\",\n\"Duration: \", IF({fldLTyf6ljS0rhur8}, {fldLTyf6ljS0rhur8} & \"\", \"None\"), \"\\n\",\n\"Rating: \", IF({fldRsmwFwQNZkKLp4}, {fldRsmwFwQNZkKLp4} & \"\", \"None\"), \"\\n\",\n\"Created Time: \", IF({fld2YgW382Kt9xltA}, DATETIME_FORMAT({fld2YgW382Kt9xltA}, 'YYYY-MM-DD HH:mm'), \"None\"), \"\\n\",\n\"Last Modified Time: \", IF({fldMinKh4pa3YX86g}, DATETIME_FORMAT({fldMinKh4pa3YX86g}, 'YYYY-MM-DD HH:mm'), \"None\"), \"\\n\",\n\"Created By: \", IF({fldGLQhDz2UjjiHG6}, {fldGLQhDz2UjjiHG6}, \"None\"), \"\\n\",\n\"Last Modified By: \", IF({fldF8iDttqP0AgzWC}, {fldF8iDttqP0AgzWC}, \"None\"), \"\\n\",\n\"Auto Number: \", IF({fldizvTkxgIn0mC3L}, {fldizvTkxgIn0mC3L} & \"\", \"None\"), \"\\n\",\n\"Barcode: \", IF({fldHuvOCzOaJaPfSi}, {fldHuvOCzOaJaPfSi}, \"None\"), \"\\n\",\n\"Button: \", IF({fldY48yKPG16AajtU}, {fldY48yKPG16AajtU}, \"None\"), \"\\n\",\n\"Link (single): \", IF({fld7F5onkDo6mkmbN}, {fld7F5onkDo6mkmbN}, \"None\"), \"\\n\",\n\"Link (multiple): \", IF({fldFyFheQWczd8oux}, {fldFyFheQWczd8oux}, \"None\"), \"\\n\",\n\"Lookup: \", IF({fldbmFmrzYKBktJvE}, {fldbmFmrzYKBktJvE}, \"None\"), \"\\n\",\n\"Rollup: \", IF({fldGaFgBsDC3IBUdV}, {fldGaFgBsDC3IBUdV}, \"None\"), \"\\n\",\n\"Formula (ID): \", IF({fldcf62YFeIIDHElt}, {fldcf62YFeIIDHElt}, \"None\"), \"\\n\",\n\"Formula (Simple): \", IF({fldy1axxaoUToLVC6}, {fldy1axxaoUToLVC6}, \"None\")\n)",
+						"referencedFieldIds": [
+							"fldol5Q4wmQJQvPRy",
+							"fld0BL2lFo9fqcKv3",
+							"fld8ulc6J0W29M6La",
+							"fldHJkxCMC0xo343u",
+							"fldhF2AEuSC1haCZd",
+							"fldjQIaAZVegb1FUa",
+							"fld6GTabFmu1xKPvZ",
+							"fldn0GFFtMFpCXUNU",
+							"fldU6SbLp8CSkLcA4",
+							"fldBwCDbAVxRj9yg7",
+							"fldC6LfNVvVIxKyQH",
+							"fldizYmjpXABGDLTG",
+							"fld38tnNpHmoks8C8",
+							"fldHCJoYBiFVsNvP4",
+							"fldLYloz2oP4ymf3B",
+							"fldOfPKGmnRPv94QH",
+							"fldmU0X2l4RWd21dd",
+							"fldBfo74z9hD78hP8",
+							"fldyh8pzDXiy5abEr",
+							"fldbAAyWboGulpb4s",
+							"fldiGui9ll69N7WOj",
+							"fldLTyf6ljS0rhur8",
+							"fldRsmwFwQNZkKLp4",
+							"fld2YgW382Kt9xltA",
+							"fldMinKh4pa3YX86g",
+							"fldGLQhDz2UjjiHG6",
+							"fldF8iDttqP0AgzWC",
+							"fldizvTkxgIn0mC3L",
+							"fldHuvOCzOaJaPfSi",
+							"fldY48yKPG16AajtU",
+							"fld7F5onkDo6mkmbN",
+							"fldFyFheQWczd8oux",
+							"fldbmFmrzYKBktJvE",
+							"fldGaFgBsDC3IBUdV",
+							"fldcf62YFeIIDHElt",
+							"fldy1axxaoUToLVC6"
+						],
+						"result": {
+							"type": "singleLineText"
+						}
+					},
+					"id": "fld2vnFc0Bl5IOFUQ",
+					"name": "Formula (Complex)",
+					"description": "Concatenates all field values into a readable summary, using correct field references."
+				},
+				{
+					"type": "formula",
+					"options": {
+						"isValid": true,
+						"formula": "RECORD_ID()",
+						"referencedFieldIds": [],
+						"result": {
+							"type": "singleLineText"
+						}
+					},
+					"id": "fldcf62YFeIIDHElt",
+					"name": "Formula (ID)"
+				},
+				{
+					"type": "formula",
+					"options": {
+						"isValid": true,
+						"formula": "{fldcf62YFeIIDHElt} & {fldy1axxaoUToLVC6} & {fld2vnFc0Bl5IOFUQ}",
+						"referencedFieldIds": ["fldcf62YFeIIDHElt", "fldy1axxaoUToLVC6", "fld2vnFc0Bl5IOFUQ"],
+						"result": {
+							"type": "singleLineText"
+						}
+					},
+					"id": "fldXFeHRPBLz6AiWh",
+					"name": "Formula (Nested)"
+				},
+				{
+					"type": "formula",
+					"options": {
+						"isValid": true,
+						"formula": "{fldOfPKGmnRPv94QH} + {fldmU0X2l4RWd21dd}",
+						"referencedFieldIds": ["fldOfPKGmnRPv94QH", "fldmU0X2l4RWd21dd"],
+						"result": {
+							"type": "number",
+							"options": {
+								"precision": 0
+							}
+						}
+					},
+					"id": "fldy1axxaoUToLVC6",
+					"name": "Formula (Simple)"
+				},
+				{
+					"type": "lastModifiedBy",
+					"id": "fldF8iDttqP0AgzWC",
+					"name": "Last Modified By"
+				},
+				{
+					"type": "lastModifiedTime",
+					"options": {
+						"isValid": true,
+						"referencedFieldIds": [],
+						"result": {
+							"type": "dateTime",
+							"options": {
+								"dateFormat": {
+									"name": "local",
+									"format": "l"
+								},
+								"timeFormat": {
+									"name": "12hour",
+									"format": "h:mma"
+								},
+								"timeZone": "client"
+							}
+						}
+					},
+					"id": "fldMinKh4pa3YX86g",
+					"name": "Last Modified Time"
+				},
+				{
+					"type": "multipleRecordLinks",
+					"options": {
+						"linkedTableId": "tblPPScS3XMuFkDYN",
+						"isReversed": false,
+						"prefersSingleRecordLink": false,
+						"inverseLinkFieldId": "fldgoE2oZmXmKkQca"
+					},
+					"id": "fldFyFheQWczd8oux",
+					"name": "Link (multiple)"
+				},
+				{
+					"type": "multipleRecordLinks",
+					"options": {
+						"linkedTableId": "tblPPScS3XMuFkDYN",
+						"isReversed": false,
+						"prefersSingleRecordLink": true,
+						"inverseLinkFieldId": "fldl0nB9WRFSdqlii"
+					},
+					"id": "fld7F5onkDo6mkmbN",
+					"name": "Link (single)"
+				},
+				{
+					"type": "multilineText",
+					"id": "fld8ulc6J0W29M6La",
+					"name": "Long Text"
+				},
+				{
+					"type": "multilineText",
+					"id": "fldHJkxCMC0xo343u",
+					"name": "Long Text with Rich Text"
+				},
+				{
+					"type": "multipleLookupValues",
+					"options": {
+						"isValid": true,
+						"recordLinkFieldId": "fld7F5onkDo6mkmbN",
+						"fieldIdInLinkedTable": "fldi6Mxh5H1gPGxFX",
+						"result": {
+							"type": "singleLineText"
+						}
+					},
+					"id": "fldbmFmrzYKBktJvE",
+					"name": "Lookup"
+				},
+				{
+					"type": "multipleSelects",
+					"options": {
+						"choices": [
+							{
+								"id": "selKcXTyNnNHd3nSK",
+								"name": "Option 1",
+								"color": "blueLight2"
+							},
+							{
+								"id": "selBUFMeKPuDUvn0a",
+								"name": "Option 2",
+								"color": "cyanLight2"
+							},
+							{
+								"id": "selmD0luyDWhS6AyO",
+								"name": "Option 3",
+								"color": "tealLight2"
+							}
+						]
+					},
+					"id": "fld6GTabFmu1xKPvZ",
+					"name": "Multiple Select"
+				},
+				{
+					"type": "number",
+					"options": {
+						"precision": 2
+					},
+					"id": "fldmU0X2l4RWd21dd",
+					"name": "Number (float)"
+				},
+				{
+					"type": "number",
+					"options": {
+						"precision": 0
+					},
+					"id": "fldOfPKGmnRPv94QH",
+					"name": "Number (int)"
+				},
+				{
+					"type": "percent",
+					"options": {
+						"precision": 2
+					},
+					"id": "fldiGui9ll69N7WOj",
+					"name": "Percent (float)"
+				},
+				{
+					"type": "percent",
+					"options": {
+						"precision": 0
+					},
+					"id": "fldbAAyWboGulpb4s",
+					"name": "Percent (int)"
+				},
+				{
+					"type": "phoneNumber",
+					"id": "fld38tnNpHmoks8C8",
+					"name": "Phone Number"
+				},
+				{
 					"type": "singleLineText",
 					"id": "fldol5Q4wmQJQvPRy",
 					"name": "Primary Key"
 				},
 				{
+					"type": "rating",
+					"options": {
+						"icon": "star",
+						"max": 5,
+						"color": "yellowBright"
+					},
+					"id": "fldRsmwFwQNZkKLp4",
+					"name": "Rating"
+				},
+				{
+					"type": "rollup",
+					"options": {
+						"isValid": true,
+						"recordLinkFieldId": "fld7F5onkDo6mkmbN",
+						"fieldIdInLinkedTable": "fldi6Mxh5H1gPGxFX",
+						"referencedFieldIds": [],
+						"result": {
+							"type": "singleLineText"
+						}
+					},
+					"id": "fldGaFgBsDC3IBUdV",
+					"name": "Rollup"
+				},
+				{
 					"type": "singleLineText",
 					"id": "fld0BL2lFo9fqcKv3",
 					"name": "Single Line Text"
+				},
+				{
+					"type": "singleSelect",
+					"options": {
+						"choices": [
+							{
+								"id": "sellmCNG85TCgc7Pu",
+								"name": "Choice 1",
+								"color": "blueLight2"
+							},
+							{
+								"id": "sel4oPckj6NHWKn2u",
+								"name": "Choice 2",
+								"color": "cyanLight2"
+							},
+							{
+								"id": "selYfbfAsr7X75S2V",
+								"name": "Choice 3",
+								"color": "tealLight2"
+							}
+						]
+					},
+					"id": "fldn0GFFtMFpCXUNU",
+					"name": "Single Select"
+				},
+				{
+					"type": "url",
+					"id": "fldLYloz2oP4ymf3B",
+					"name": "URL"
+				},
+				{
+					"type": "singleCollaborator",
+					"id": "fldU6SbLp8CSkLcA4",
+					"name": "User"
+				},
+				{
+					"type": "multipleCollaborators",
+					"id": "fldBwCDbAVxRj9yg7",
+					"name": "User (allow multiple)"
 				}
 			],
 			"views": [
 				{
 					"id": "viwvPRDMaHyldUpmd",
+					"name": "Grid view",
+					"type": "grid"
+				}
+			]
+		},
+		{
+			"id": "tblPPScS3XMuFkDYN",
+			"name": "Secondary",
+			"primaryFieldId": "fld1RagdJ09mpWhzM",
+			"fields": [
+				{
+					"type": "singleLineText",
+					"id": "fld1RagdJ09mpWhzM",
+					"name": "Name"
+				},
+				{
+					"type": "multipleRecordLinks",
+					"options": {
+						"linkedTableId": "tblmb3iqgpNS1ysV2",
+						"isReversed": false,
+						"prefersSingleRecordLink": false,
+						"inverseLinkFieldId": "fld7F5onkDo6mkmbN"
+					},
+					"id": "fldl0nB9WRFSdqlii",
+					"name": "Primary"
+				},
+				{
+					"type": "multipleRecordLinks",
+					"options": {
+						"linkedTableId": "tblmb3iqgpNS1ysV2",
+						"isReversed": false,
+						"prefersSingleRecordLink": false,
+						"inverseLinkFieldId": "fldFyFheQWczd8oux"
+					},
+					"id": "fldgoE2oZmXmKkQca",
+					"name": "Primary 2"
+				},
+				{
+					"type": "singleLineText",
+					"id": "fldi6Mxh5H1gPGxFX",
+					"name": "Value"
+				}
+			],
+			"views": [
+				{
+					"id": "viwTml4ZHkNi8kJbD",
 					"name": "Grid view",
 					"type": "grid"
 				}

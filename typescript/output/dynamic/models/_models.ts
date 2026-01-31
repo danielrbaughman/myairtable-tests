@@ -4,7 +4,8 @@
 
 import {
     PrimaryModel,
+    SecondaryModel,
 } from ".";
 
-export type ModelUnion = PrimaryModel;
+export type ModelUnion = PrimaryModel | SecondaryModel;
 
