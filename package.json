@@ -5,8 +5,16 @@
   "repository": "https://github.com/danielrbaughman/myairtable-tests.git",
   "author": "Daniel Baughman <danielrbaughman@icloud.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node -r dotenv/config dist/playground.js",
+    "ts": "yarn install && yarn build && yarn start",
+    "test": "vitest run"
+  },
   "dependencies": {
     "airtable": "^0.12.2",
+    "dotenv": "^17.2.3",
+    "typescript": "^5.9.3",
     "vitest": "^4.0.18",
     "zod": "^4.3.6"
   }

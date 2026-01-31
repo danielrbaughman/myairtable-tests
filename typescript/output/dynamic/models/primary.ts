@@ -54,14 +54,9 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     public get singlelinetext(): string | undefined { return this._fields["singlelinetext"] as string; }
     public set singlelinetext(value: string | undefined) { this._fields["singlelinetext"] = value; this.markDirty('singlelinetext'); }
 
-    constructor({
-        id,
-        primarykey,
-        singlelinetext,
-    }: IPrimary = {}) {
-        super(id ?? '');
-        this._fields["primarykey"] = primarykey;
-        this._fields["singlelinetext"] = singlelinetext;
+    constructor(data: IPrimary = {}) {
+        super(data.id ?? '');
+        this.initializeFields(data);
         this.record = new Record<PrimaryFieldSet>(new PrimaryTable(this.getInstanceBaseId(), this.getInstanceOptions())._table, this.id, {});
         this.updateRecord();
     }

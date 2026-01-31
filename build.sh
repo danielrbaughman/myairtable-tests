@@ -14,6 +14,6 @@ uv run main.py \
     --api-key "$AIRTABLE_API_KEY" \
     all \
     --meta-folder "$AIRTABLE_DIR" \
-    --ts-folder "$AIRTABLE_DIR/typescript"
-    # --js-folder "$AIRTABLE_DIR/javascript"
-    # --py-folder "$AIRTABLE_DIR/python"
+    --ts-folder "$AIRTABLE_DIR/typescript/output"
+    # --js-folder "$AIRTABLE_DIR/javascript/output"
+    # --py-folder "$AIRTABLE_DIR/python/output"

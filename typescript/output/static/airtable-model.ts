@@ -306,6 +306,33 @@ export abstract class AirtableModel<FldSt extends FieldSet, MdlInterface, Fld> {
 		return writableAttachments;
 	}
 
+	protected initializeFields(data: Record<string, unknown>): void {
+		for (const desc of this.getFieldDescriptors()) {
+			const value = (data as any)[desc.propertyName];
+			if ((desc.fieldType === "linkedRecord" || desc.fieldType === "linkedRecords") && !desc.isComputed) {
+				if (desc.fieldType === "linkedRecord") {
+					this._fields[desc.propertyName] = new LinkedRecord(
+						value as RecordId,
+						desc.linkedModelFromId!,
+						() => this.markDirty(desc.propertyName),
+						this.__configBaseId,
+						this.__configOptions,
+					);
+				} else {
+					this._fields[desc.propertyName] = new LinkedRecords(
+						value as RecordId[],
+						desc.linkedModelFromId!,
+						() => this.markDirty(desc.propertyName),
+						this.__configBaseId,
+						this.__configOptions,
+					);
+				}
+			} else {
+				this._fields[desc.propertyName] = value;
+			}
+		}
+	}
+
 	protected updateModel(record: ATRecord<FldSt>): void {
 		this.record = record;
 		for (const desc of this.getFieldDescriptors()) {
