@@ -25,3 +25,4 @@ TypeScript
 - [ ] Edge Cases
   - [ ] Editing links while both records are in memory
   - [ ] Field names vs IDs
+  - [ ] Barcode fields
