@@ -11,7 +11,8 @@
 			"Bash(npx tsc:*)",
 			"Bash(ls:*)",
 			"Bash(uv run python:*)",
-			"Bash(grep:*)"
+			"Bash(grep:*)",
+			"Bash(xxd:*)"
 		]
 	}
 }

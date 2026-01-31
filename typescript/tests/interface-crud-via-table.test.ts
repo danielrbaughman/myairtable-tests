@@ -1,20 +1,19 @@
 import { describe, it, expect } from "vitest";
-import { Record as ATRecord } from "airtable";
+import { IRecord } from "../output/static/special-types";
 import { Airtable, PrimaryFieldSet, SecondaryFieldSet } from "../output";
 
 const airtable = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY, baseId: process.env.AIRTABLE_BASE_ID });
 
-function newPrimaryRecord(): ATRecord<PrimaryFieldSet> {
-	return new ATRecord<PrimaryFieldSet>(airtable.primary._table, "", {});
+function newPrimaryIRecord(fields: PrimaryFieldSet = {}): IRecord<PrimaryFieldSet> {
+	return { fields } as IRecord<PrimaryFieldSet>;
 }
 
-function newSecondaryRecord(): ATRecord<SecondaryFieldSet> {
-	return new ATRecord<SecondaryFieldSet>(airtable.secondary._table, "", {});
+function newSecondaryIRecord(fields: SecondaryFieldSet = {}): IRecord<SecondaryFieldSet> {
+	return { fields } as IRecord<SecondaryFieldSet>;
 }
 
 describe("Primary Key Only", async () => {
-	const newRecord = newPrimaryRecord();
-	newRecord.set("Primary Key", "New Primary Key");
+	const newRecord = newPrimaryIRecord({ "Primary Key": "New Primary Key" });
 	let id: string;
 
 	describe("Create", async () => {
@@ -31,7 +30,7 @@ describe("Primary Key Only", async () => {
 	});
 
 	describe("Read", async () => {
-		const readRecord = await airtable.primary.get(id, { returnAs: "record" });
+		const readRecord = await airtable.primary.get(id, { returnAs: "interface" });
 
 		it("should have the expected values", async () => {
 			expect(readRecord.id).toBe(id);
@@ -40,8 +39,8 @@ describe("Primary Key Only", async () => {
 	});
 
 	describe("Update", async () => {
-		const r = await airtable.primary.get(id, { returnAs: "record" });
-		r.set("Primary Key", "Updated Primary Key");
+		const r = await airtable.primary.get(id, { returnAs: "interface" });
+		r.fields["Primary Key"] = "Updated Primary Key";
 		const updatedRecord = await airtable.primary.update(r);
 
 		it("should have the updated values", async () => {
@@ -54,7 +53,7 @@ describe("Primary Key Only", async () => {
 		await airtable.primary.delete(id);
 		let deleted = false;
 		try {
-			await airtable.primary.get(id, { returnAs: "record" });
+			await airtable.primary.get(id, { returnAs: "interface" });
 		} catch {
 			deleted = true;
 		}
@@ -66,27 +65,28 @@ describe("Primary Key Only", async () => {
 });
 
 describe("All Simple Properties", async () => {
-	const newRecord = newPrimaryRecord();
-	newRecord.set("Primary Key", "All Props Key");
-	newRecord.set("Single Line Text", "Hello World");
-	newRecord.set("Long Text", "Long text content");
-	newRecord.set("Long Text with Rich Text", "Rich text content");
-	newRecord.set("Email", "test@example.com");
-	newRecord.set("URL", "https://example.com");
-	newRecord.set("Phone Number", "555-1234");
-	newRecord.set("Checkbox", true);
-	newRecord.set("Number (int)", 42);
-	newRecord.set("Number (float)", 3.14);
-	newRecord.set("Currency (int)", 10);
-	newRecord.set("Currency (float)", 9.99);
-	newRecord.set("Percent (int)", 0.5);
-	newRecord.set("Percent (float)", 0.333);
-	newRecord.set("Duration", 3600);
-	newRecord.set("Rating", 3);
-	newRecord.set("Date", "2025-01-15");
-	newRecord.set("Date (with time)", "2025-01-15T10:00:00.000Z");
-	newRecord.set("Single Select", "Choice 1");
-	newRecord.set("Multiple Select", ["Option 1", "Option 2"]);
+	const newRecord = newPrimaryIRecord({
+		"Primary Key": "All Props Key",
+		"Single Line Text": "Hello World",
+		"Long Text": "Long text content",
+		"Long Text with Rich Text": "Rich text content",
+		Email: "test@example.com",
+		URL: "https://example.com",
+		"Phone Number": "555-1234",
+		Checkbox: true,
+		"Number (int)": 42,
+		"Number (float)": 3.14,
+		"Currency (int)": 10,
+		"Currency (float)": 9.99,
+		"Percent (int)": 0.5,
+		"Percent (float)": 0.333,
+		Duration: 3600,
+		Rating: 3,
+		Date: "2025-01-15",
+		"Date (with time)": "2025-01-15T10:00:00.000Z",
+		"Single Select": "Choice 1",
+		"Multiple Select": ["Option 1", "Option 2"],
+	});
 	let id: string;
 
 	describe("Create", async () => {
@@ -122,7 +122,7 @@ describe("All Simple Properties", async () => {
 	});
 
 	describe("Read", async () => {
-		const readRecord = await airtable.primary.get(id, { returnAs: "record" });
+		const readRecord = await airtable.primary.get(id, { returnAs: "interface" });
 
 		it("should have the expected values", async () => {
 			expect(readRecord.id).toBe(id);
@@ -150,27 +150,27 @@ describe("All Simple Properties", async () => {
 	});
 
 	describe("Update", async () => {
-		const r = await airtable.primary.get(id, { returnAs: "record" });
-		r.set("Primary Key", "Updated All Props Key");
-		r.set("Single Line Text", "Updated Hello");
-		r.set("Long Text", "Updated long text");
-		r.set("Long Text with Rich Text", "Updated rich text");
-		r.set("Email", "updated@example.com");
-		r.set("URL", "https://updated.com");
-		r.set("Phone Number", "555-5678");
-		r.set("Checkbox", false);
-		r.set("Number (int)", 100);
-		r.set("Number (float)", 2.72);
-		r.set("Currency (int)", 20);
-		r.set("Currency (float)", 19.99);
-		r.set("Percent (int)", 0.75);
-		r.set("Percent (float)", 0.667);
-		r.set("Duration", 7200);
-		r.set("Rating", 5);
-		r.set("Date", "2025-06-15");
-		r.set("Date (with time)", "2025-06-15T14:00:00.000Z");
-		r.set("Single Select", "Choice 2");
-		r.set("Multiple Select", ["Option 2", "Option 3"]);
+		const r = await airtable.primary.get(id, { returnAs: "interface" });
+		r.fields["Primary Key"] = "Updated All Props Key";
+		r.fields["Single Line Text"] = "Updated Hello";
+		r.fields["Long Text"] = "Updated long text";
+		r.fields["Long Text with Rich Text"] = "Updated rich text";
+		r.fields["Email"] = "updated@example.com";
+		r.fields["URL"] = "https://updated.com";
+		r.fields["Phone Number"] = "555-5678";
+		r.fields["Checkbox"] = false;
+		r.fields["Number (int)"] = 100;
+		r.fields["Number (float)"] = 2.72;
+		r.fields["Currency (int)"] = 20;
+		r.fields["Currency (float)"] = 19.99;
+		r.fields["Percent (int)"] = 0.75;
+		r.fields["Percent (float)"] = 0.667;
+		r.fields["Duration"] = 7200;
+		r.fields["Rating"] = 5;
+		r.fields["Date"] = "2025-06-15";
+		r.fields["Date (with time)"] = "2025-06-15T14:00:00.000Z";
+		r.fields["Single Select"] = "Choice 2";
+		r.fields["Multiple Select"] = ["Option 2", "Option 3"];
 		const updatedRecord = await airtable.primary.update(r);
 
 		it("should have the updated values", async () => {
@@ -202,7 +202,7 @@ describe("All Simple Properties", async () => {
 		await airtable.primary.delete(id);
 		let deleted = false;
 		try {
-			await airtable.primary.get(id, { returnAs: "record" });
+			await airtable.primary.get(id, { returnAs: "interface" });
 		} catch {
 			deleted = true;
 		}
@@ -215,22 +215,16 @@ describe("All Simple Properties", async () => {
 
 describe("Complex Properties", async () => {
 	describe("Linked Records", async () => {
-		const secRecord1 = newSecondaryRecord();
-		secRecord1.set("Name", "Link Target 1");
-		secRecord1.set("Value", "val1");
-		const sec1 = await airtable.secondary.create(secRecord1);
-
-		const secRecord2 = newSecondaryRecord();
-		secRecord2.set("Name", "Link Target 2");
-		secRecord2.set("Value", "val2");
-		const sec2 = await airtable.secondary.create(secRecord2);
+		const sec1 = await airtable.secondary.create(newSecondaryIRecord({ Name: "Link Target 1", Value: "val1" }));
+		const sec2 = await airtable.secondary.create(newSecondaryIRecord({ Name: "Link Target 2", Value: "val2" }));
 		let id: string;
 
 		describe("Create", async () => {
-			const newRecord = newPrimaryRecord();
-			newRecord.set("Primary Key", "Link Test");
-			newRecord.set("Link (single)", [sec1.id]);
-			newRecord.set("Link (multiple)", [sec1.id, sec2.id]);
+			const newRecord = newPrimaryIRecord({
+				"Primary Key": "Link Test",
+				"Link (single)": [sec1.id],
+				"Link (multiple)": [sec1.id, sec2.id],
+			});
 			const createdRecord = await airtable.primary.create(newRecord);
 			id = createdRecord.id;
 
@@ -245,7 +239,7 @@ describe("Complex Properties", async () => {
 		});
 
 		describe("Read", async () => {
-			const readRecord = await airtable.primary.get(id, { returnAs: "record" });
+			const readRecord = await airtable.primary.get(id, { returnAs: "interface" });
 
 			it("should have the expected link values", async () => {
 				expect(readRecord.fields["Link (single)"]).toEqual([sec1.id]);
@@ -254,9 +248,9 @@ describe("Complex Properties", async () => {
 		});
 
 		describe("Update", async () => {
-			const r = await airtable.primary.get(id, { returnAs: "record" });
-			r.set("Link (single)", [sec2.id]);
-			r.set("Link (multiple)", [sec1.id]);
+			const r = await airtable.primary.get(id, { returnAs: "interface" });
+			r.fields["Link (single)"] = [sec2.id];
+			r.fields["Link (multiple)"] = [sec1.id];
 			const updatedRecord = await airtable.primary.update(r);
 
 			it("should have the updated link values", async () => {
@@ -269,7 +263,7 @@ describe("Complex Properties", async () => {
 			await airtable.primary.delete(id);
 			let deleted = false;
 			try {
-				await airtable.primary.get(id, { returnAs: "record" });
+				await airtable.primary.get(id, { returnAs: "interface" });
 			} catch {
 				deleted = true;
 			}
@@ -293,11 +287,12 @@ describe("Complex Properties", async () => {
 		let id: string;
 
 		describe("Create", async () => {
-			const newRecord = newPrimaryRecord();
-			newRecord.set("Primary Key", "Attachment Test");
-			newRecord.set("Attachment", [
-				{ url: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" },
-			]);
+			const newRecord = newPrimaryIRecord({
+				"Primary Key": "Attachment Test",
+				Attachment: [
+					{ url: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" },
+				] as any,
+			});
 			const createdRecord = await airtable.primary.create(newRecord);
 			id = createdRecord.id;
 
@@ -312,10 +307,10 @@ describe("Complex Properties", async () => {
 		});
 
 		describe("Read", async () => {
-			let readRecord!: ATRecord<PrimaryFieldSet>;
+			let readRecord!: IRecord<PrimaryFieldSet>;
 			for (let i = 0; i < 10; i++) {
 				await new Promise((resolve) => setTimeout(resolve, 5000));
-				readRecord = await airtable.primary.get(id, { returnAs: "record" });
+				readRecord = await airtable.primary.get(id, { returnAs: "interface" });
 				if (readRecord.fields["Attachment"]) break;
 			}
 
@@ -329,7 +324,7 @@ describe("Complex Properties", async () => {
 			await airtable.primary.delete(id);
 			let deleted = false;
 			try {
-				await airtable.primary.get(id, { returnAs: "record" });
+				await airtable.primary.get(id, { returnAs: "interface" });
 			} catch {
 				deleted = true;
 			}
@@ -344,16 +339,17 @@ describe("Complex Properties", async () => {
 		let id: string;
 
 		describe("Create", async () => {
-			const newRecord = newPrimaryRecord();
-			newRecord.set("Primary Key", "User Test");
-			newRecord.set("User", {
-				id: "usrnZ4k98m0Ipji4e",
-				email: "9vymqckyxq@privaterelay.appleid.com",
-				name: "Daniel Baughman",
+			const newRecord = newPrimaryIRecord({
+				"Primary Key": "User Test",
+				User: {
+					id: "usrnZ4k98m0Ipji4e",
+					email: "9vymqckyxq@privaterelay.appleid.com",
+					name: "Daniel Baughman",
+				},
+				"User (allow multiple)": [
+					{ id: "usrnZ4k98m0Ipji4e", email: "9vymqckyxq@privaterelay.appleid.com", name: "Daniel Baughman" },
+				],
 			});
-			newRecord.set("User (allow multiple)", [
-				{ id: "usrnZ4k98m0Ipji4e", email: "9vymqckyxq@privaterelay.appleid.com", name: "Daniel Baughman" },
-			]);
 			const createdRecord = await airtable.primary.create(newRecord);
 			id = createdRecord.id;
 
@@ -370,7 +366,7 @@ describe("Complex Properties", async () => {
 		});
 
 		describe("Read", async () => {
-			const readRecord = await airtable.primary.get(id, { returnAs: "record" });
+			const readRecord = await airtable.primary.get(id, { returnAs: "interface" });
 
 			it("should have the expected user values", async () => {
 				expect(readRecord.fields["User"]).toBeTruthy();
@@ -384,7 +380,7 @@ describe("Complex Properties", async () => {
 			await airtable.primary.delete(id);
 			let deleted = false;
 			try {
-				await airtable.primary.get(id, { returnAs: "record" });
+				await airtable.primary.get(id, { returnAs: "interface" });
 			} catch {
 				deleted = true;
 			}
@@ -399,10 +395,11 @@ describe("Complex Properties", async () => {
 		let id: string;
 
 		describe("Create", async () => {
-			const newRecord = newPrimaryRecord();
-			newRecord.set("Primary Key", "Computed Test");
-			newRecord.set("Number (int)", 10);
-			newRecord.set("Number (float)", 5);
+			const newRecord = newPrimaryIRecord({
+				"Primary Key": "Computed Test",
+				"Number (int)": 10,
+				"Number (float)": 5,
+			});
 			const createdRecord = await airtable.primary.create(newRecord);
 			id = createdRecord.id;
 
@@ -419,7 +416,7 @@ describe("Complex Properties", async () => {
 		});
 
 		describe("Read", async () => {
-			const readRecord = await airtable.primary.get(id, { returnAs: "record" });
+			const readRecord = await airtable.primary.get(id, { returnAs: "interface" });
 
 			it("should have the expected computed values", async () => {
 				expect(readRecord.fields["Auto Number"]).toEqual(expect.any(Number));
@@ -433,7 +430,7 @@ describe("Complex Properties", async () => {
 			await airtable.primary.delete(id);
 			let deleted = false;
 			try {
-				await airtable.primary.get(id, { returnAs: "record" });
+				await airtable.primary.get(id, { returnAs: "interface" });
 			} catch {
 				deleted = true;
 			}

@@ -282,7 +282,9 @@ describe("Complex Properties", async () => {
 			const createdRecord = await airtable.primary.create(
 				new PrimaryModel({
 					primaryKey: "Attachment Test",
-					attachment: [{ url: "https://www.example.com/image.png" }] as any,
+					attachment: [
+						{ url: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" },
+					] as any,
 				}),
 			);
 			id = createdRecord.id!;
@@ -298,7 +300,12 @@ describe("Complex Properties", async () => {
 		});
 
 		describe("Read", async () => {
-			const readRecord = await airtable.primary.get(id);
+			let readRecord!: PrimaryModel;
+			for (let i = 0; i < 10; i++) {
+				await new Promise((resolve) => setTimeout(resolve, 5000));
+				readRecord = await airtable.primary.get(id);
+				if (readRecord.attachment) break;
+			}
 
 			it("should have the expected attachment", async () => {
 				expect(readRecord.attachment).toHaveLength(1);
