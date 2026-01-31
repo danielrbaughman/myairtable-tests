@@ -40,7 +40,6 @@ export const PrimarySingleSelectOptions: PrimarySingleSelectOption[] = [
 export type PrimaryField = 
     "Attachment" |
     "Auto Number" |
-    "Barcode" |
     "Button" |
     "Checkbox" |
     "Created By" |
@@ -80,7 +79,6 @@ export type PrimaryField =
 export const PrimaryFields: PrimaryField[] = [
     "Attachment",
     "Auto Number",
-    "Barcode",
     "Button",
     "Checkbox",
     "Created By",
@@ -122,7 +120,6 @@ export const PrimaryFields: PrimaryField[] = [
 export type PrimaryFieldId = 
     "fldhF2AEuSC1haCZd" |
     "fldizvTkxgIn0mC3L" |
-    "fldHuvOCzOaJaPfSi" |
     "fldY48yKPG16AajtU" |
     "fldjQIaAZVegb1FUa" |
     "fldGLQhDz2UjjiHG6" |
@@ -162,7 +159,6 @@ export type PrimaryFieldId =
 export const PrimaryFieldIds: PrimaryFieldId[] = [
     "fldhF2AEuSC1haCZd",
     "fldizvTkxgIn0mC3L",
-    "fldHuvOCzOaJaPfSi",
     "fldY48yKPG16AajtU",
     "fldjQIaAZVegb1FUa",
     "fldGLQhDz2UjjiHG6",
@@ -204,7 +200,6 @@ export const PrimaryFieldIds: PrimaryFieldId[] = [
 export type PrimaryFieldProperty = 
     "attachment" |
     "autoNumber" |
-    "barcode" |
     "button" |
     "checkbox" |
     "createdBy" |
@@ -244,7 +239,6 @@ export type PrimaryFieldProperty =
 export const PrimaryFieldPropertys: PrimaryFieldProperty[] = [
     "attachment",
     "autoNumber",
-    "barcode",
     "button",
     "checkbox",
     "createdBy",
@@ -315,7 +309,6 @@ export const PrimaryCalculatedFieldIds: string[] = [
 export const PrimaryWritableFields: string[] = [
     "Attachment",
     "Auto Number",
-    "Barcode",
     "Checkbox",
     "Currency (float)",
     "Currency (int)",
@@ -345,7 +338,6 @@ export const PrimaryWritableFields: string[] = [
 export const PrimaryWritableFieldIds: string[] = [
     "fldhF2AEuSC1haCZd",
     "fldizvTkxgIn0mC3L",
-    "fldHuvOCzOaJaPfSi",
     "fldjQIaAZVegb1FUa",
     "fldyh8pzDXiy5abEr",
     "fldBfo74z9hD78hP8",
@@ -374,7 +366,6 @@ export const PrimaryWritableFieldIds: string[] = [
 export const PrimaryFieldNameIdMapping: Record<PrimaryField, PrimaryFieldId> = {
     "Attachment": "fldhF2AEuSC1haCZd",
     "Auto Number": "fldizvTkxgIn0mC3L",
-    "Barcode": "fldHuvOCzOaJaPfSi",
     "Button": "fldY48yKPG16AajtU",
     "Checkbox": "fldjQIaAZVegb1FUa",
     "Created By": "fldGLQhDz2UjjiHG6",
@@ -415,7 +406,6 @@ export const PrimaryFieldNameIdMapping: Record<PrimaryField, PrimaryFieldId> = {
 export const PrimaryFieldIdNameMapping: Record<PrimaryFieldId, PrimaryField> = {
     "fldhF2AEuSC1haCZd": "Attachment",
     "fldizvTkxgIn0mC3L": "Auto Number",
-    "fldHuvOCzOaJaPfSi": "Barcode",
     "fldY48yKPG16AajtU": "Button",
     "fldjQIaAZVegb1FUa": "Checkbox",
     "fldGLQhDz2UjjiHG6": "Created By",
@@ -456,7 +446,6 @@ export const PrimaryFieldIdNameMapping: Record<PrimaryFieldId, PrimaryField> = {
 export const PrimaryFieldIdPropertyMapping: Record<PrimaryFieldId, PrimaryFieldProperty> = {
     "fldhF2AEuSC1haCZd": "attachment",
     "fldizvTkxgIn0mC3L": "autoNumber",
-    "fldHuvOCzOaJaPfSi": "barcode",
     "fldY48yKPG16AajtU": "button",
     "fldjQIaAZVegb1FUa": "checkbox",
     "fldGLQhDz2UjjiHG6": "createdBy",
@@ -497,7 +486,6 @@ export const PrimaryFieldIdPropertyMapping: Record<PrimaryFieldId, PrimaryFieldP
 export const PrimaryFieldPropertyIdMapping: Record<PrimaryFieldProperty, PrimaryFieldId> = {
     "attachment": "fldhF2AEuSC1haCZd",
     "autoNumber": "fldizvTkxgIn0mC3L",
-    "barcode": "fldHuvOCzOaJaPfSi",
     "button": "fldY48yKPG16AajtU",
     "checkbox": "fldjQIaAZVegb1FUa",
     "createdBy": "fldGLQhDz2UjjiHG6",
@@ -538,7 +526,6 @@ export const PrimaryFieldPropertyIdMapping: Record<PrimaryFieldProperty, Primary
 export const PrimaryFieldNamePropertyMapping: Record<PrimaryField, PrimaryFieldProperty> = {
     "Attachment": "attachment",
     "Auto Number": "autoNumber",
-    "Barcode": "barcode",
     "Button": "button",
     "Checkbox": "checkbox",
     "Created By": "createdBy",
@@ -579,7 +566,6 @@ export const PrimaryFieldNamePropertyMapping: Record<PrimaryField, PrimaryFieldP
 export const PrimaryFieldPropertyNameMapping: Record<PrimaryFieldProperty, PrimaryField> = {
     "attachment": "Attachment",
     "autoNumber": "Auto Number",
-    "barcode": "Barcode",
     "button": "Button",
     "checkbox": "Checkbox",
     "createdBy": "Created By",
@@ -623,8 +609,6 @@ export interface PrimaryFieldSetIds extends FieldSet {
     //@ts-ignore
     fldizvTkxgIn0mC3L?: number
     //@ts-ignore
-    fldHuvOCzOaJaPfSi?: string
-    //@ts-ignore
     fldY48yKPG16AajtU?: AirtableButton
     //@ts-ignore
     fldjQIaAZVegb1FUa?: boolean
@@ -659,7 +643,7 @@ export interface PrimaryFieldSetIds extends FieldSet {
     //@ts-ignore
     fldFyFheQWczd8oux?: RecordId[]
     //@ts-ignore
-    fld7F5onkDo6mkmbN?: RecordId[]
+    fld7F5onkDo6mkmbN?: RecordId
     //@ts-ignore
     fld8ulc6J0W29M6La?: string
     //@ts-ignore
@@ -702,8 +686,6 @@ export interface PrimaryFieldSet extends FieldSet {
     //@ts-ignore
     "Auto Number"?: number,
     //@ts-ignore
-    "Barcode"?: string,
-    //@ts-ignore
     "Button"?: AirtableButton,
     //@ts-ignore
     "Checkbox"?: boolean,
@@ -738,7 +720,7 @@ export interface PrimaryFieldSet extends FieldSet {
     //@ts-ignore
     "Link (multiple)"?: RecordId[],
     //@ts-ignore
-    "Link (single)"?: RecordId[],
+    "Link (single)"?: RecordId,
     //@ts-ignore
     "Long Text"?: string,
     //@ts-ignore

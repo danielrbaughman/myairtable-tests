@@ -43,7 +43,6 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     protected static fieldDescriptors: FieldDescriptor[] = [
         { propertyName: "attachment", fieldId: "fldhF2AEuSC1haCZd", fieldName: "Attachment", isComputed: false, fieldType: "attachment" },
         { propertyName: "autoNumber", fieldId: "fldizvTkxgIn0mC3L", fieldName: "Auto Number", isComputed: false, fieldType: "generic" },
-        { propertyName: "barcode", fieldId: "fldHuvOCzOaJaPfSi", fieldName: "Barcode", isComputed: false, fieldType: "generic" },
         { propertyName: "button", fieldId: "fldY48yKPG16AajtU", fieldName: "Button", isComputed: true, fieldType: "generic" },
         { propertyName: "checkbox", fieldId: "fldjQIaAZVegb1FUa", fieldName: "Checkbox", isComputed: false, fieldType: "generic" },
         { propertyName: "createdBy", fieldId: "fldGLQhDz2UjjiHG6", fieldName: "Created By", isComputed: true, fieldType: "generic" },
@@ -61,7 +60,7 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
         { propertyName: "lastModifiedBy", fieldId: "fldF8iDttqP0AgzWC", fieldName: "Last Modified By", isComputed: true, fieldType: "generic" },
         { propertyName: "lastModifiedTime", fieldId: "fldMinKh4pa3YX86g", fieldName: "Last Modified Time", isComputed: true, fieldType: "generic" },
         { propertyName: "linkMultiple", fieldId: "fldFyFheQWczd8oux", fieldName: "Link (multiple)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config) },
-        { propertyName: "linkSingle", fieldId: "fld7F5onkDo6mkmbN", fieldName: "Link (single)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config) },
+        { propertyName: "linkSingle", fieldId: "fld7F5onkDo6mkmbN", fieldName: "Link (single)", isComputed: false, fieldType: "linkedRecord", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config) },
         { propertyName: "longText", fieldId: "fld8ulc6J0W29M6La", fieldName: "Long Text", isComputed: false, fieldType: "generic" },
         { propertyName: "longTextWithRichText", fieldId: "fldHJkxCMC0xo343u", fieldName: "Long Text with Rich Text", isComputed: false, fieldType: "generic" },
         { propertyName: "lookup", fieldId: "fldbmFmrzYKBktJvE", fieldName: "Lookup", isComputed: true, fieldType: "generic" },
@@ -87,9 +86,6 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     /** `Auto Number` (fldizvTkxgIn0mC3L) */
     public get autoNumber(): number | undefined { return this._fields["autoNumber"] as number; }
     public set autoNumber(value: number | undefined) { this._fields["autoNumber"] = value; this.markDirty('autoNumber'); }
-    /** `Barcode` (fldHuvOCzOaJaPfSi) */
-    public get barcode(): string | undefined { return this._fields["barcode"] as string; }
-    public set barcode(value: string | undefined) { this._fields["barcode"] = value; this.markDirty('barcode'); }
     /** `Button` (fldY48yKPG16AajtU) */
     public get button(): AirtableButton | undefined { return this._fields["button"] as AirtableButton; }
     public set button(value: AirtableButton | undefined) { this._fields["button"] = value; this.markDirty('button'); }
@@ -314,13 +310,6 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
      *     "None"
      *   ),
      *   "\n",
-     *   "Barcode: ",
-     *   IF(
-     *     {Barcode},
-     *     {Barcode},
-     *     "None"
-     *   ),
-     *   "\n",
      *   "Button: ",
      *   IF(
      *     {Button},
@@ -411,8 +400,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     public get linkMultiple(): LinkedRecords<SecondaryModel> { return this._fields["linkMultiple"] as LinkedRecords<SecondaryModel>; }
     public set linkMultiple(value: LinkedRecords<SecondaryModel> | undefined) { this._fields["linkMultiple"] = value!; this.markDirty('linkMultiple'); }
     /** `Link (single)` (fld7F5onkDo6mkmbN) */
-    public get linkSingle(): LinkedRecords<SecondaryModel> { return this._fields["linkSingle"] as LinkedRecords<SecondaryModel>; }
-    public set linkSingle(value: LinkedRecords<SecondaryModel> | undefined) { this._fields["linkSingle"] = value!; this.markDirty('linkSingle'); }
+    public get linkSingle(): LinkedRecord<SecondaryModel> { return this._fields["linkSingle"] as LinkedRecord<SecondaryModel>; }
+    public set linkSingle(value: LinkedRecord<SecondaryModel> | undefined) { this._fields["linkSingle"] = value!; this.markDirty('linkSingle'); }
     /** `Long Text` (fld8ulc6J0W29M6La) */
     public get longText(): string | undefined { return this._fields["longText"] as string; }
     public set longText(value: string | undefined) { this._fields["longText"] = value; this.markDirty('longText'); }

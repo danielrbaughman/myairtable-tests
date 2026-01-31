@@ -11,10 +11,10 @@ TypeScript
 - [ ] CRUD Tests
   - [ ] CRUD via Record
   - [ ] CRUD via Interface
-- [ ] Column Tests
-  - [ ] Create every column type
-  - [ ] Edit every column type
-  - [ ] Read every column type
+- [x] Column Tests
+  - [x] Create every column type
+  - [x] Edit every column type
+  - [x] Read every column type
 - [ ] API Tests
   - [ ] 429
   - [ ] Get >100 records

@@ -12,7 +12,6 @@ export namespace PrimaryFormulas {
     export const id: ID = new ID();
     export const attachment: AttachmentsField = new AttachmentsField('fldhF2AEuSC1haCZd');
     export const autoNumber: NumberField = new NumberField('fldizvTkxgIn0mC3L');
-    export const barcode: TextField = new TextField('fldHuvOCzOaJaPfSi');
     export const button: TextField = new TextField('fldY48yKPG16AajtU');
     export const checkbox: BooleanField = new BooleanField('fldjQIaAZVegb1FUa');
     export const createdBy: TextField = new TextField('fldGLQhDz2UjjiHG6');
