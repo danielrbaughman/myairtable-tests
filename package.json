@@ -1,0 +1,8 @@
+{
+  "name": "myairtable-tests",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/danielrbaughman/myairtable-tests.git",
+  "author": "Daniel Baughman <danielrbaughman@icloud.com>",
+  "license": "MIT"
+}
