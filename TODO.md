@@ -8,9 +8,9 @@ TypeScript
   - [ ] Save
   - [ ] Delete
   - [ ] Linked records
-- [ ] CRUD Tests
-  - [ ] CRUD via Record
-  - [ ] CRUD via Interface
+- [x] CRUD Tests
+  - [x] CRUD via Record
+  - [x] CRUD via Interface
 - [x] Column Tests
   - [x] Create every column type
   - [x] Edit every column type
@@ -24,3 +24,4 @@ TypeScript
   - [ ] No API Key or Base ID
 - [ ] Edge Cases
   - [ ] Editing links while both records are in memory
+  - [ ] Field names vs IDs
