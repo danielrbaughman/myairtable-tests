@@ -605,7 +605,7 @@ export const PrimaryFieldPropertyNameMapping: Record<PrimaryFieldProperty, Prima
 
 export interface PrimaryFieldSetIds extends FieldSet {
     //@ts-ignore
-    fldhF2AEuSC1haCZd?: Attachment[]
+    fldhF2AEuSC1haCZd?: Partial<Attachment>[]
     //@ts-ignore
     fldizvTkxgIn0mC3L?: number
     //@ts-ignore
@@ -682,7 +682,7 @@ export interface PrimaryFieldSetIds extends FieldSet {
 
 export interface PrimaryFieldSet extends FieldSet {
     //@ts-ignore
-    "Attachment"?: Attachment[],
+    "Attachment"?: Partial<Attachment>[],
     //@ts-ignore
     "Auto Number"?: number,
     //@ts-ignore

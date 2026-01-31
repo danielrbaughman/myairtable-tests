@@ -10,7 +10,8 @@
 			"Bash(uv run pytest:*)",
 			"Bash(npx tsc:*)",
 			"Bash(ls:*)",
-			"Bash(uv run python:*)"
+			"Bash(uv run python:*)",
+			"Bash(grep:*)"
 		]
 	}
 }
