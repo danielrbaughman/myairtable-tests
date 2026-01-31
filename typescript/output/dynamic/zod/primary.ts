@@ -8,8 +8,8 @@ import { recordIdSchema, AirtableAttachmentSchema, AirtableCollaboratorSchema, A
 // #region PRIMARY
 export const PrimarySchema = z.object({
     id: recordIdSchema.optional(),
-    primarykey: z.string().optional(),
-    singlelinetext: z.string().optional(),
+    primaryKey: z.string().optional(),
+    singleLineText: z.string().optional(),
 });
 
 export type IPrimary = z.infer<typeof PrimarySchema>;

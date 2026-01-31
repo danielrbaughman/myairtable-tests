@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+./build.sh
+
 # uv sync
 # uv run ruff check
 # uv run ty check

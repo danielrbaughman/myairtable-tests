@@ -8,12 +8,12 @@
 				{
 					"type": "singleLineText",
 					"id": "fldol5Q4wmQJQvPRy",
-					"name": "PrimaryKey"
+					"name": "Primary Key"
 				},
 				{
 					"type": "singleLineText",
 					"id": "fld0BL2lFo9fqcKv3",
-					"name": "SingleLineText"
+					"name": "Single Line Text"
 				}
 			],
 			"views": [

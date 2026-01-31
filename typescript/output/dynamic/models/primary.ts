@@ -43,16 +43,16 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     public get tableId(): string { return PrimaryModel.tableId; }
 
     protected static fieldDescriptors: FieldDescriptor[] = [
-        { propertyName: "primarykey", fieldId: "fldol5Q4wmQJQvPRy", fieldName: "PrimaryKey", isComputed: false, fieldType: "generic" },
-        { propertyName: "singlelinetext", fieldId: "fld0BL2lFo9fqcKv3", fieldName: "SingleLineText", isComputed: false, fieldType: "generic" },
+        { propertyName: "primaryKey", fieldId: "fldol5Q4wmQJQvPRy", fieldName: "Primary Key", isComputed: false, fieldType: "generic" },
+        { propertyName: "singleLineText", fieldId: "fld0BL2lFo9fqcKv3", fieldName: "Single Line Text", isComputed: false, fieldType: "generic" },
     ];
 
-    /** `PrimaryKey` (fldol5Q4wmQJQvPRy) */
-    public get primarykey(): string | undefined { return this._fields["primarykey"] as string; }
-    public set primarykey(value: string | undefined) { this._fields["primarykey"] = value; this.markDirty('primarykey'); }
-    /** `SingleLineText` (fld0BL2lFo9fqcKv3) */
-    public get singlelinetext(): string | undefined { return this._fields["singlelinetext"] as string; }
-    public set singlelinetext(value: string | undefined) { this._fields["singlelinetext"] = value; this.markDirty('singlelinetext'); }
+    /** `Primary Key` (fldol5Q4wmQJQvPRy) */
+    public get primaryKey(): string | undefined { return this._fields["primaryKey"] as string; }
+    public set primaryKey(value: string | undefined) { this._fields["primaryKey"] = value; this.markDirty('primaryKey'); }
+    /** `Single Line Text` (fld0BL2lFo9fqcKv3) */
+    public get singleLineText(): string | undefined { return this._fields["singleLineText"] as string; }
+    public set singleLineText(value: string | undefined) { this._fields["singleLineText"] = value; this.markDirty('singleLineText'); }
 
     constructor(data: IPrimary = {}) {
         super(data.id ?? '');

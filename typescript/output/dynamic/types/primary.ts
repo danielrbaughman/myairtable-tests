@@ -14,12 +14,12 @@ import { RecordId } from "../../static/special-types";
 // #region PRIMARY
     /** Field names for `Primary` */
 export type PrimaryField = 
-    "PrimaryKey" |
-    "SingleLineText"
+    "Primary Key" |
+    "Single Line Text"
     /** Field names for `Primary` */
 export const PrimaryFields: PrimaryField[] = [
-    "PrimaryKey",
-    "SingleLineText",
+    "Primary Key",
+    "Single Line Text",
 ]
 
     /** Field IDs for `Primary` */
@@ -34,12 +34,12 @@ export const PrimaryFieldIds: PrimaryFieldId[] = [
 
     /** Property names for `Primary` */
 export type PrimaryFieldProperty = 
-    "primarykey" |
-    "singlelinetext"
+    "primaryKey" |
+    "singleLineText"
     /** Property names for `Primary` */
 export const PrimaryFieldPropertys: PrimaryFieldProperty[] = [
-    "primarykey",
-    "singlelinetext",
+    "primaryKey",
+    "singleLineText",
 ]
 
     /** Calculated fields for `Primary` */
@@ -51,8 +51,8 @@ export const PrimaryCalculatedFieldIds: string[] = [
 
     /** Writable fields for `Primary` */
 export const PrimaryWritableFields: string[] = [
-    "PrimaryKey",
-    "SingleLineText",
+    "Primary Key",
+    "Single Line Text",
 ]
     /** Writable fields for `Primary` */
 export const PrimaryWritableFieldIds: string[] = [
@@ -60,33 +60,33 @@ export const PrimaryWritableFieldIds: string[] = [
     "fld0BL2lFo9fqcKv3",
 ]
 export const PrimaryFieldNameIdMapping: Record<PrimaryField, PrimaryFieldId> = {
-    "PrimaryKey": "fldol5Q4wmQJQvPRy",
-    "SingleLineText": "fld0BL2lFo9fqcKv3",
+    "Primary Key": "fldol5Q4wmQJQvPRy",
+    "Single Line Text": "fld0BL2lFo9fqcKv3",
 }
 
 export const PrimaryFieldIdNameMapping: Record<PrimaryFieldId, PrimaryField> = {
-    "fldol5Q4wmQJQvPRy": "PrimaryKey",
-    "fld0BL2lFo9fqcKv3": "SingleLineText",
+    "fldol5Q4wmQJQvPRy": "Primary Key",
+    "fld0BL2lFo9fqcKv3": "Single Line Text",
 }
 
 export const PrimaryFieldIdPropertyMapping: Record<PrimaryFieldId, PrimaryFieldProperty> = {
-    "fldol5Q4wmQJQvPRy": "primarykey",
-    "fld0BL2lFo9fqcKv3": "singlelinetext",
+    "fldol5Q4wmQJQvPRy": "primaryKey",
+    "fld0BL2lFo9fqcKv3": "singleLineText",
 }
 
 export const PrimaryFieldPropertyIdMapping: Record<PrimaryFieldProperty, PrimaryFieldId> = {
-    "primarykey": "fldol5Q4wmQJQvPRy",
-    "singlelinetext": "fld0BL2lFo9fqcKv3",
+    "primaryKey": "fldol5Q4wmQJQvPRy",
+    "singleLineText": "fld0BL2lFo9fqcKv3",
 }
 
 export const PrimaryFieldNamePropertyMapping: Record<PrimaryField, PrimaryFieldProperty> = {
-    "PrimaryKey": "primarykey",
-    "SingleLineText": "singlelinetext",
+    "Primary Key": "primaryKey",
+    "Single Line Text": "singleLineText",
 }
 
 export const PrimaryFieldPropertyNameMapping: Record<PrimaryFieldProperty, PrimaryField> = {
-    "primarykey": "PrimaryKey",
-    "singlelinetext": "SingleLineText",
+    "primaryKey": "Primary Key",
+    "singleLineText": "Single Line Text",
 }
 
 export interface PrimaryFieldSetIds extends FieldSet {
@@ -98,9 +98,9 @@ export interface PrimaryFieldSetIds extends FieldSet {
 
 export interface PrimaryFieldSet extends FieldSet {
     //@ts-ignore
-    "PrimaryKey"?: string,
+    "Primary Key"?: string,
     //@ts-ignore
-    "SingleLineText"?: string,
+    "Single Line Text"?: string,
 }
 
     /** View names for `Primary` */
