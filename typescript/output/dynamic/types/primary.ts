@@ -278,6 +278,7 @@ export const PrimaryFieldPropertys: PrimaryFieldProperty[] = [
 
     /** Calculated fields for `Primary` */
 export const PrimaryCalculatedFields: string[] = [
+    "Auto Number",
     "Button",
     "Created By",
     "Created Time",
@@ -292,6 +293,7 @@ export const PrimaryCalculatedFields: string[] = [
 ]
     /** Calculated fields for `Primary` */
 export const PrimaryCalculatedFieldIds: string[] = [
+    "fldizvTkxgIn0mC3L",
     "fldY48yKPG16AajtU",
     "fldGLQhDz2UjjiHG6",
     "fld2YgW382Kt9xltA",
@@ -308,7 +310,6 @@ export const PrimaryCalculatedFieldIds: string[] = [
     /** Writable fields for `Primary` */
 export const PrimaryWritableFields: string[] = [
     "Attachment",
-    "Auto Number",
     "Checkbox",
     "Currency (float)",
     "Currency (int)",
@@ -337,7 +338,6 @@ export const PrimaryWritableFields: string[] = [
     /** Writable fields for `Primary` */
 export const PrimaryWritableFieldIds: string[] = [
     "fldhF2AEuSC1haCZd",
-    "fldizvTkxgIn0mC3L",
     "fldjQIaAZVegb1FUa",
     "fldyh8pzDXiy5abEr",
     "fldBfo74z9hD78hP8",
@@ -643,7 +643,7 @@ export interface PrimaryFieldSetIds extends FieldSet {
     //@ts-ignore
     fldFyFheQWczd8oux?: RecordId[]
     //@ts-ignore
-    fld7F5onkDo6mkmbN?: RecordId
+    fld7F5onkDo6mkmbN?: RecordId[]
     //@ts-ignore
     fld8ulc6J0W29M6La?: string
     //@ts-ignore
@@ -720,7 +720,7 @@ export interface PrimaryFieldSet extends FieldSet {
     //@ts-ignore
     "Link (multiple)"?: RecordId[],
     //@ts-ignore
-    "Link (single)"?: RecordId,
+    "Link (single)"?: RecordId[],
     //@ts-ignore
     "Long Text"?: string,
     //@ts-ignore

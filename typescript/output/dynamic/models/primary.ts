@@ -42,7 +42,7 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
 
     protected static fieldDescriptors: FieldDescriptor[] = [
         { propertyName: "attachment", fieldId: "fldhF2AEuSC1haCZd", fieldName: "Attachment", isComputed: false, fieldType: "attachment" },
-        { propertyName: "autoNumber", fieldId: "fldizvTkxgIn0mC3L", fieldName: "Auto Number", isComputed: false, fieldType: "generic" },
+        { propertyName: "autoNumber", fieldId: "fldizvTkxgIn0mC3L", fieldName: "Auto Number", isComputed: true, fieldType: "generic" },
         { propertyName: "button", fieldId: "fldY48yKPG16AajtU", fieldName: "Button", isComputed: true, fieldType: "generic" },
         { propertyName: "checkbox", fieldId: "fldjQIaAZVegb1FUa", fieldName: "Checkbox", isComputed: false, fieldType: "generic" },
         { propertyName: "createdBy", fieldId: "fldGLQhDz2UjjiHG6", fieldName: "Created By", isComputed: true, fieldType: "generic" },

@@ -13,7 +13,7 @@ import {
 export const PrimarySchema = z.object({
     id: recordIdSchema.optional(),
     attachment: z.array(AirtableAttachmentSchema).optional(),
-    autoNumber: z.number().optional(),
+    autoNumber: z.union([z.number(), SpecialNumberSchema, ErrorValueSchema]).optional(),
     button: z.union([AirtableButtonSchema, ErrorValueSchema]).optional(),
     checkbox: z.boolean().optional(),
     createdBy: z.union([AirtableCollaboratorSchema, ErrorValueSchema]).optional(),
