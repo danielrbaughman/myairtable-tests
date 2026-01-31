@@ -11,8 +11,9 @@ source "$AIRTABLE_DIR/.env"
 cd "$MYAIRTABLE_DIR"
 uv run main.py \
     --base-id "$AIRTABLE_BASE_ID" \
-    --api-key "$AIRTABLE_API_KEY" "$@" \
+    --api-key "$AIRTABLE_API_KEY" \
+    all \
     --meta-folder "$AIRTABLE_DIR" \
-    # --py-folder "$AIRTABLE_DIR/python" \
-    # --js-folder "$AIRTABLE_DIR/javascript" \
     --ts-folder "$AIRTABLE_DIR/typescript"
+    # --js-folder "$AIRTABLE_DIR/javascript"
+    # --py-folder "$AIRTABLE_DIR/python"

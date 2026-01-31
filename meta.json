@@ -1,0 +1,28 @@
+{
+    "tables": [
+        {
+            "id": "tblmb3iqgpNS1ysV2",
+            "name": "Primary",
+            "primaryFieldId": "fldol5Q4wmQJQvPRy",
+            "fields": [
+                {
+                    "type": "singleLineText",
+                    "id": "fldol5Q4wmQJQvPRy",
+                    "name": "PrimaryKey"
+                },
+                {
+                    "type": "singleLineText",
+                    "id": "fld0BL2lFo9fqcKv3",
+                    "name": "SingleLineText"
+                }
+            ],
+            "views": [
+                {
+                    "id": "viwvPRDMaHyldUpmd",
+                    "name": "Grid view",
+                    "type": "grid"
+                }
+            ]
+        }
+    ]
+}

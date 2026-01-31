@@ -4,5 +4,10 @@
   "main": "index.js",
   "repository": "https://github.com/danielrbaughman/myairtable-tests.git",
   "author": "Daniel Baughman <danielrbaughman@icloud.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "airtable": "^0.12.2",
+    "vitest": "^4.0.18",
+    "zod": "^4.3.6"
+  }
 }
