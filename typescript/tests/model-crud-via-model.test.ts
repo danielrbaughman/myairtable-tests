@@ -239,10 +239,25 @@ describe("Complex Properties", async () => {
 		describe("Read", async () => {
 			const readRecord = PrimaryModel.fromId(newRecord.id);
 			await readRecord.fetch();
+			const linkedSingle = await readRecord.linkSingle.get();
+			const linkedMultiple = await readRecord.linkMultiple.get();
 
 			it("should have the expected link values", async () => {
 				expect(readRecord.linkSingle.id).toEqual(sec1Id);
 				expect(readRecord.linkMultiple.ids).toEqual([sec1Id, sec2Id]);
+			});
+
+			it("should fetch linked single record via get()", async () => {
+				expect(linkedSingle).toBeTruthy();
+				expect(linkedSingle!.id).toEqual(sec1Id);
+				expect(linkedSingle!.name).toBe("Link Target 1");
+			});
+
+			it("should fetch linked multiple records via get()", async () => {
+				expect(linkedMultiple).toHaveLength(2);
+				expect(linkedMultiple.map((r) => r.id)).toEqual([sec1Id, sec2Id]);
+				expect(linkedMultiple[0].name).toBe("Link Target 1");
+				expect(linkedMultiple[1].name).toBe("Link Target 2");
 			});
 		});
 

@@ -4,10 +4,10 @@ Meta
 
 TypeScript
 
-- [ ] ORM Tests
-  - [ ] Save
-  - [ ] Delete
-  - [ ] Linked records
+- [x] ORM Tests
+  - [x] Save
+  - [x] Delete
+  - [x] Linked records
 - [x] CRUD Tests
   - [x] CRUD via Record
   - [x] CRUD via Interface
@@ -22,6 +22,7 @@ TypeScript
 - [ ] Error Cases
   - [ ] Check zod validation for every field type
   - [ ] No API Key or Base ID
+  - [ ] Creating empty records
 - [ ] Edge Cases
   - [ ] Editing links while both records are in memory
   - [ ] Field names vs IDs
