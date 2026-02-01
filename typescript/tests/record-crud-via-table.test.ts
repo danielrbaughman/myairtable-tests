@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { Record as ATRecord } from "airtable";
 import { Airtable, PrimaryFieldSet, SecondaryFieldSet } from "../output";
 
-const airtable = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY, baseId: process.env.AIRTABLE_BASE_ID });
+const airtable = new Airtable();
 
 function newPrimaryRecord(): ATRecord<PrimaryFieldSet> {
 	return new ATRecord<PrimaryFieldSet>(airtable.primary._table, "", {});

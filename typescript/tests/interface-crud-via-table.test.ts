@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { IRecord } from "../output/static/special-types";
 import { Airtable, PrimaryFieldSet, SecondaryFieldSet } from "../output";
 
-const airtable = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY, baseId: process.env.AIRTABLE_BASE_ID });
+const airtable = new Airtable();
 
 function newPrimaryIRecord(fields: PrimaryFieldSet = {}): IRecord<PrimaryFieldSet> {
 	return { fields } as IRecord<PrimaryFieldSet>;

@@ -1,50 +1,51 @@
 import { describe, it, expect } from "vitest";
-import { Airtable, PrimaryModel, SecondaryModel } from "../output";
-
-const airtable = new Airtable();
+import { PrimaryModel, SecondaryModel } from "../output";
 
 describe("Primary Key Only", async () => {
 	const newRecord = new PrimaryModel({ primaryKey: "New Primary Key" });
-	let id: string;
 
 	describe("Create", async () => {
-		const createdRecord = await airtable.primary.create(newRecord);
-		id = createdRecord.id!;
+		await newRecord.save();
 
 		it("should have a valid id", async () => {
-			expect(createdRecord.id).toBeTruthy();
+			expect(newRecord.id).toBeTruthy();
 		});
 
 		it("should have valid values", async () => {
-			expect(createdRecord.primaryKey).toBe("New Primary Key");
+			expect(newRecord.primaryKey).toBe("New Primary Key");
 		});
 	});
 
 	describe("Read", async () => {
-		const readRecord = await airtable.primary.get(id);
+		const readRecord = PrimaryModel.fromId(newRecord.id);
+		await readRecord.fetch();
 
 		it("should have the expected values", async () => {
-			expect(readRecord.id).toBe(id);
+			expect(readRecord.id).toBe(newRecord.id);
 			expect(readRecord.primaryKey).toBe("New Primary Key");
 		});
 	});
 
 	describe("Update", async () => {
-		const r = await airtable.primary.get(id);
+		const r = PrimaryModel.fromId(newRecord.id);
+		await r.fetch();
 		r.primaryKey = "Updated Primary Key";
-		const updatedRecord = await airtable.primary.update(r);
+		await r.save();
 
 		it("should have the updated values", async () => {
-			expect(updatedRecord.id).toBe(id);
-			expect(updatedRecord.primaryKey).toBe("Updated Primary Key");
+			expect(r.id).toBe(newRecord.id);
+			expect(r.primaryKey).toBe("Updated Primary Key");
 		});
 	});
 
 	describe("Delete", async () => {
-		await airtable.primary.delete(id);
+		const r = PrimaryModel.fromId(newRecord.id);
+		await r.fetch();
+		await r.delete();
 		let deleted = false;
 		try {
-			await airtable.primary.get(id);
+			const check = PrimaryModel.fromId(newRecord.id);
+			await check.fetch();
 		} catch {
 			deleted = true;
 		}
@@ -78,45 +79,44 @@ describe("All Simple Properties", async () => {
 		singleSelect: "Choice 1",
 		multipleSelect: ["Option 1", "Option 2"],
 	});
-	let id: string;
 
 	describe("Create", async () => {
-		const createdRecord = await airtable.primary.create(newRecord);
-		id = createdRecord.id!;
+		await newRecord.save();
 
 		it("should have a valid id", async () => {
-			expect(createdRecord.id).toBeTruthy();
+			expect(newRecord.id).toBeTruthy();
 		});
 
 		it("should have valid values", async () => {
-			expect(createdRecord.primaryKey).toBe("All Props Key");
-			expect(createdRecord.singleLineText).toBe("Hello World");
-			expect(createdRecord.longText).toBe("Long text content");
-			expect(createdRecord.longTextWithRichText).toBe("Rich text content");
-			expect(createdRecord.email).toBe("test@example.com");
-			expect(createdRecord.url).toBe("https://example.com");
-			expect(createdRecord.phoneNumber).toBe("555-1234");
-			expect(createdRecord.checkbox).toBe(true);
-			expect(createdRecord.numberInt).toBe(42);
-			expect(createdRecord.numberFloat).toBe(3.14);
-			expect(createdRecord.currencyInt).toBe(10);
-			expect(createdRecord.currencyFloat).toBe(9.99);
-			expect(createdRecord.percentInt).toBe(0.5);
-			expect(createdRecord.percentFloat).toBe(0.333);
-			expect(createdRecord.duration).toBe(3600);
-			expect(createdRecord.rating).toBe(3);
-			expect(createdRecord.date).toBe("2025-01-15");
-			expect(createdRecord.dateWithTime).toBe("2025-01-15T10:00:00.000Z");
-			expect(createdRecord.singleSelect).toBe("Choice 1");
-			expect(createdRecord.multipleSelect).toEqual(["Option 1", "Option 2"]);
+			expect(newRecord.primaryKey).toBe("All Props Key");
+			expect(newRecord.singleLineText).toBe("Hello World");
+			expect(newRecord.longText).toBe("Long text content");
+			expect(newRecord.longTextWithRichText).toBe("Rich text content");
+			expect(newRecord.email).toBe("test@example.com");
+			expect(newRecord.url).toBe("https://example.com");
+			expect(newRecord.phoneNumber).toBe("555-1234");
+			expect(newRecord.checkbox).toBe(true);
+			expect(newRecord.numberInt).toBe(42);
+			expect(newRecord.numberFloat).toBe(3.14);
+			expect(newRecord.currencyInt).toBe(10);
+			expect(newRecord.currencyFloat).toBe(9.99);
+			expect(newRecord.percentInt).toBe(0.5);
+			expect(newRecord.percentFloat).toBe(0.333);
+			expect(newRecord.duration).toBe(3600);
+			expect(newRecord.rating).toBe(3);
+			expect(newRecord.date).toBe("2025-01-15");
+			expect(newRecord.dateWithTime).toBe("2025-01-15T10:00:00.000Z");
+			expect(newRecord.singleSelect).toBe("Choice 1");
+			expect(newRecord.multipleSelect).toEqual(["Option 1", "Option 2"]);
 		});
 	});
 
 	describe("Read", async () => {
-		const readRecord = await airtable.primary.get(id);
+		const readRecord = PrimaryModel.fromId(newRecord.id);
+		await readRecord.fetch();
 
 		it("should have the expected values", async () => {
-			expect(readRecord.id).toBe(id);
+			expect(readRecord.id).toBe(newRecord.id);
 			expect(readRecord.primaryKey).toBe("All Props Key");
 			expect(readRecord.singleLineText).toBe("Hello World");
 			expect(readRecord.longText).toBe("Long text content");
@@ -141,7 +141,8 @@ describe("All Simple Properties", async () => {
 	});
 
 	describe("Update", async () => {
-		const r = await airtable.primary.get(id);
+		const r = PrimaryModel.fromId(newRecord.id);
+		await r.fetch();
 		r.primaryKey = "Updated All Props Key";
 		r.singleLineText = "Updated Hello";
 		r.longText = "Updated long text";
@@ -162,38 +163,41 @@ describe("All Simple Properties", async () => {
 		r.dateWithTime = "2025-06-15T14:00:00.000Z";
 		r.singleSelect = "Choice 2";
 		r.multipleSelect = ["Option 2", "Option 3"];
-		const updatedRecord = await airtable.primary.update(r);
+		await r.save();
 
 		it("should have the updated values", async () => {
-			expect(updatedRecord.id).toBe(id);
-			expect(updatedRecord.primaryKey).toBe("Updated All Props Key");
-			expect(updatedRecord.singleLineText).toBe("Updated Hello");
-			expect(updatedRecord.longText).toBe("Updated long text");
-			expect(updatedRecord.longTextWithRichText).toBe("Updated rich text");
-			expect(updatedRecord.email).toBe("updated@example.com");
-			expect(updatedRecord.url).toBe("https://updated.com");
-			expect(updatedRecord.phoneNumber).toBe("555-5678");
-			expect(updatedRecord.checkbox).toBeFalsy();
-			expect(updatedRecord.numberInt).toBe(100);
-			expect(updatedRecord.numberFloat).toBe(2.72);
-			expect(updatedRecord.currencyInt).toBe(20);
-			expect(updatedRecord.currencyFloat).toBe(19.99);
-			expect(updatedRecord.percentInt).toBe(0.75);
-			expect(updatedRecord.percentFloat).toBe(0.667);
-			expect(updatedRecord.duration).toBe(7200);
-			expect(updatedRecord.rating).toBe(5);
-			expect(updatedRecord.date).toBe("2025-06-15");
-			expect(updatedRecord.dateWithTime).toBe("2025-06-15T14:00:00.000Z");
-			expect(updatedRecord.singleSelect).toBe("Choice 2");
-			expect(updatedRecord.multipleSelect).toEqual(["Option 2", "Option 3"]);
+			expect(r.id).toBe(newRecord.id);
+			expect(r.primaryKey).toBe("Updated All Props Key");
+			expect(r.singleLineText).toBe("Updated Hello");
+			expect(r.longText).toBe("Updated long text");
+			expect(r.longTextWithRichText).toBe("Updated rich text");
+			expect(r.email).toBe("updated@example.com");
+			expect(r.url).toBe("https://updated.com");
+			expect(r.phoneNumber).toBe("555-5678");
+			expect(r.checkbox).toBeFalsy();
+			expect(r.numberInt).toBe(100);
+			expect(r.numberFloat).toBe(2.72);
+			expect(r.currencyInt).toBe(20);
+			expect(r.currencyFloat).toBe(19.99);
+			expect(r.percentInt).toBe(0.75);
+			expect(r.percentFloat).toBe(0.667);
+			expect(r.duration).toBe(7200);
+			expect(r.rating).toBe(5);
+			expect(r.date).toBe("2025-06-15");
+			expect(r.dateWithTime).toBe("2025-06-15T14:00:00.000Z");
+			expect(r.singleSelect).toBe("Choice 2");
+			expect(r.multipleSelect).toEqual(["Option 2", "Option 3"]);
 		});
 	});
 
 	describe("Delete", async () => {
-		await airtable.primary.delete(id);
+		const r = PrimaryModel.fromId(newRecord.id);
+		await r.fetch();
+		await r.delete();
 		let deleted = false;
 		try {
-			await airtable.primary.get(id);
+			const check = PrimaryModel.fromId(newRecord.id);
+			await check.fetch();
 		} catch {
 			deleted = true;
 		}
@@ -206,56 +210,63 @@ describe("All Simple Properties", async () => {
 
 describe("Complex Properties", async () => {
 	describe("Linked Records", async () => {
-		const sec1 = await airtable.secondary.create(new SecondaryModel({ name: "Link Target 1", value: "val1" }));
-		const sec2 = await airtable.secondary.create(new SecondaryModel({ name: "Link Target 2", value: "val2" }));
-		let id: string;
+		const sec1 = new SecondaryModel({ name: "Link Target 1", value: "val1" });
+		await sec1.save();
+		const sec2 = new SecondaryModel({ name: "Link Target 2", value: "val2" });
+		await sec2.save();
+		const sec1Id = sec1.id!;
+		const sec2Id = sec2.id!;
+
+		const newRecord = new PrimaryModel({
+			primaryKey: "Link Test",
+			linkSingle: sec1Id,
+			linkMultiple: [sec1Id, sec2Id],
+		});
 
 		describe("Create", async () => {
-			const createdRecord = await airtable.primary.create(
-				new PrimaryModel({
-					primaryKey: "Link Test",
-					linkSingle: sec1.id!,
-					linkMultiple: [sec1.id!, sec2.id!],
-				}),
-			);
-			id = createdRecord.id!;
+			await newRecord.save();
 
 			it("should have a valid id", async () => {
-				expect(createdRecord.id).toBeTruthy();
+				expect(newRecord.id).toBeTruthy();
 			});
 
 			it("should have valid link values", async () => {
-				expect(createdRecord.linkSingle.id).toEqual(sec1.id);
-				expect(createdRecord.linkMultiple.ids).toEqual([sec1.id, sec2.id]);
+				expect(newRecord.linkSingle.id).toEqual(sec1Id);
+				expect(newRecord.linkMultiple.ids).toEqual([sec1Id, sec2Id]);
 			});
 		});
 
 		describe("Read", async () => {
-			const readRecord = await airtable.primary.get(id);
+			const readRecord = PrimaryModel.fromId(newRecord.id);
+			await readRecord.fetch();
 
 			it("should have the expected link values", async () => {
-				expect(readRecord.linkSingle.id).toEqual(sec1.id);
-				expect(readRecord.linkMultiple.ids).toEqual([sec1.id, sec2.id]);
+				expect(readRecord.linkSingle.id).toEqual(sec1Id);
+				expect(readRecord.linkMultiple.ids).toEqual([sec1Id, sec2Id]);
 			});
 		});
 
 		describe("Update", async () => {
-			const r = await airtable.primary.get(id);
+			const r = PrimaryModel.fromId(newRecord.id);
+			await r.fetch();
 			r.linkSingle.set(sec2);
 			r.linkMultiple.set([sec1]);
-			const updatedRecord = await airtable.primary.update(r);
+			await r.save();
 
 			it("should have the updated link values", async () => {
-				expect(updatedRecord.linkSingle.id).toEqual(sec2.id);
-				expect(updatedRecord.linkMultiple.ids).toEqual([sec1.id]);
+				expect(r.linkSingle.id).toEqual(sec2Id);
+				expect(r.linkMultiple.ids).toEqual([sec1Id]);
 			});
 		});
 
 		describe("Delete", async () => {
-			await airtable.primary.delete(id);
+			const r = PrimaryModel.fromId(newRecord.id);
+			await r.fetch();
+			await r.delete();
 			let deleted = false;
 			try {
-				await airtable.primary.get(id);
+				const check = PrimaryModel.fromId(newRecord.id);
+				await check.fetch();
 			} catch {
 				deleted = true;
 			}
@@ -266,8 +277,8 @@ describe("Complex Properties", async () => {
 		});
 
 		describe("Cleanup", async () => {
-			await airtable.secondary.delete(sec1.id!);
-			await airtable.secondary.delete(sec2.id!);
+			await sec1.delete();
+			await sec2.delete();
 
 			it("should clean up secondary records", async () => {
 				expect(true).toBe(true);
@@ -276,26 +287,23 @@ describe("Complex Properties", async () => {
 	});
 
 	describe("Attachments", async () => {
-		let id: string;
+		const newRecord = new PrimaryModel({
+			primaryKey: "Attachment Test",
+			attachment: [
+				{ url: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" },
+			] as any,
+		});
 
 		describe("Create", async () => {
-			const createdRecord = await airtable.primary.create(
-				new PrimaryModel({
-					primaryKey: "Attachment Test",
-					attachment: [
-						{ url: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" },
-					] as any,
-				}),
-			);
-			id = createdRecord.id!;
+			await newRecord.save();
 
 			it("should have a valid id", async () => {
-				expect(createdRecord.id).toBeTruthy();
+				expect(newRecord.id).toBeTruthy();
 			});
 
 			it("should have an attachment", async () => {
-				expect(createdRecord.attachment).toHaveLength(1);
-				expect(createdRecord.attachment![0].url).toBeTruthy();
+				expect(newRecord.attachment).toHaveLength(1);
+				expect(newRecord.attachment![0].url).toBeTruthy();
 			});
 		});
 
@@ -303,7 +311,8 @@ describe("Complex Properties", async () => {
 			let readRecord!: PrimaryModel;
 			for (let i = 0; i < 10; i++) {
 				await new Promise((resolve) => setTimeout(resolve, 5000));
-				readRecord = await airtable.primary.get(id);
+				readRecord = PrimaryModel.fromId(newRecord.id);
+				await readRecord.fetch();
 				if (readRecord.attachment) break;
 			}
 
@@ -314,10 +323,13 @@ describe("Complex Properties", async () => {
 		});
 
 		describe("Delete", async () => {
-			await airtable.primary.delete(id);
+			const r = PrimaryModel.fromId(newRecord.id);
+			await r.fetch();
+			await r.delete();
 			let deleted = false;
 			try {
-				await airtable.primary.get(id);
+				const check = PrimaryModel.fromId(newRecord.id);
+				await check.fetch();
 			} catch {
 				deleted = true;
 			}
@@ -329,34 +341,32 @@ describe("Complex Properties", async () => {
 	});
 
 	describe("User", async () => {
-		let id: string;
+		const newRecord = new PrimaryModel({
+			primaryKey: "User Test",
+			user: { id: "usrnZ4k98m0Ipji4e", email: "9vymqckyxq@privaterelay.appleid.com", name: "Daniel Baughman" },
+			userAllowMultiple: [
+				{ id: "usrnZ4k98m0Ipji4e", email: "9vymqckyxq@privaterelay.appleid.com", name: "Daniel Baughman" },
+			],
+		});
 
 		describe("Create", async () => {
-			const createdRecord = await airtable.primary.create(
-				new PrimaryModel({
-					primaryKey: "User Test",
-					user: { id: "usrnZ4k98m0Ipji4e", email: "9vymqckyxq@privaterelay.appleid.com", name: "Daniel Baughman" },
-					userAllowMultiple: [
-						{ id: "usrnZ4k98m0Ipji4e", email: "9vymqckyxq@privaterelay.appleid.com", name: "Daniel Baughman" },
-					],
-				}),
-			);
-			id = createdRecord.id!;
+			await newRecord.save();
 
 			it("should have a valid id", async () => {
-				expect(createdRecord.id).toBeTruthy();
+				expect(newRecord.id).toBeTruthy();
 			});
 
 			it("should have user values", async () => {
-				expect(createdRecord.user).toBeTruthy();
-				expect(createdRecord.user!.id).toBe("usrnZ4k98m0Ipji4e");
-				expect(createdRecord.userAllowMultiple).toHaveLength(1);
-				expect(createdRecord.userAllowMultiple![0].id).toBe("usrnZ4k98m0Ipji4e");
+				expect(newRecord.user).toBeTruthy();
+				expect(newRecord.user!.id).toBe("usrnZ4k98m0Ipji4e");
+				expect(newRecord.userAllowMultiple).toHaveLength(1);
+				expect(newRecord.userAllowMultiple![0].id).toBe("usrnZ4k98m0Ipji4e");
 			});
 		});
 
 		describe("Read", async () => {
-			const readRecord = await airtable.primary.get(id);
+			const readRecord = PrimaryModel.fromId(newRecord.id);
+			await readRecord.fetch();
 
 			it("should have the expected user values", async () => {
 				expect(readRecord.user).toBeTruthy();
@@ -367,10 +377,13 @@ describe("Complex Properties", async () => {
 		});
 
 		describe("Delete", async () => {
-			await airtable.primary.delete(id);
+			const r = PrimaryModel.fromId(newRecord.id);
+			await r.fetch();
+			await r.delete();
 			let deleted = false;
 			try {
-				await airtable.primary.get(id);
+				const check = PrimaryModel.fromId(newRecord.id);
+				await check.fetch();
 			} catch {
 				deleted = true;
 			}
@@ -382,46 +395,47 @@ describe("Complex Properties", async () => {
 	});
 
 	describe("Computed Fields", async () => {
-		let id: string;
+		const newRecord = new PrimaryModel({
+			primaryKey: "Computed Test",
+			numberInt: 10,
+			numberFloat: 5,
+		});
 
 		describe("Create", async () => {
-			const createdRecord = await airtable.primary.create(
-				new PrimaryModel({
-					primaryKey: "Computed Test",
-					numberInt: 10,
-					numberFloat: 5,
-				}),
-			);
-			id = createdRecord.id!;
+			await newRecord.save();
 
 			it("should have a valid id", async () => {
-				expect(createdRecord.id).toBeTruthy();
+				expect(newRecord.id).toBeTruthy();
 			});
 
 			it("should have computed field values", async () => {
-				expect(createdRecord.autoNumber).toEqual(expect.any(Number));
-				expect(createdRecord.createdAtTime).toBeTruthy();
-				expect(createdRecord.formulaId).toBeTruthy();
-				expect(createdRecord.formulaSimple).toBe(15);
+				expect(newRecord.autoNumber).toEqual(expect.any(Number));
+				expect(newRecord.createdAtTime).toBeTruthy();
+				expect(newRecord.formulaId).toBeTruthy();
+				expect(newRecord.formulaSimple).toBe(15);
 			});
 		});
 
 		describe("Read", async () => {
-			const readRecord = await airtable.primary.get(id);
+			const readRecord = PrimaryModel.fromId(newRecord.id);
+			await readRecord.fetch();
 
 			it("should have the expected computed values", async () => {
 				expect(readRecord.autoNumber).toEqual(expect.any(Number));
 				expect(readRecord.createdAtTime).toBeTruthy();
-				expect(readRecord.formulaId).toBe(id);
+				expect(readRecord.formulaId).toBe(newRecord.id);
 				expect(readRecord.formulaSimple).toBe(15);
 			});
 		});
 
 		describe("Delete", async () => {
-			await airtable.primary.delete(id);
+			const r = PrimaryModel.fromId(newRecord.id);
+			await r.fetch();
+			await r.delete();
 			let deleted = false;
 			try {
-				await airtable.primary.get(id);
+				const check = PrimaryModel.fromId(newRecord.id);
+				await check.fetch();
 			} catch {
 				deleted = true;
 			}
