@@ -444,3 +444,75 @@ describe("Complex Properties", async () => {
 		});
 	});
 });
+
+describe("Batch Operations", async () => {
+	const count = 111;
+	const newRecords = Array.from({ length: count }, (_, i) => {
+		const r = newPrimaryRecord();
+		r.set("Primary Key", `Batch Record ${i + 1}`);
+		return r;
+	});
+	let ids: string[];
+
+	describe("Create", async () => {
+		const createdRecords = await airtable.primary.create(newRecords);
+		ids = createdRecords.map((r) => r.id);
+
+		it("should return the correct number of records", async () => {
+			expect(createdRecords.length).toBe(count);
+		});
+
+		it("should all have valid ids", async () => {
+			for (const r of createdRecords) {
+				expect(r.id).toBeTruthy();
+			}
+		});
+
+		it("should have the correct primary keys", async () => {
+			for (let i = 0; i < count; i++) {
+				expect(createdRecords[i].fields["Primary Key"]).toBe(`Batch Record ${i + 1}`);
+			}
+		});
+	});
+
+	describe("Read", async () => {
+		const readRecords = await airtable.primary.get(ids, { returnAs: "record" });
+
+		it("should return the correct number of records", async () => {
+			expect(readRecords.length).toBe(count);
+		});
+
+		it("should have the expected primary keys", async () => {
+			for (const r of readRecords) {
+				expect(r.fields["Primary Key"]).toMatch(/^Batch Record \d+$/);
+			}
+		});
+	});
+
+	describe("Update", async () => {
+		const fetched = await airtable.primary.get(ids, { returnAs: "record" });
+		for (let i = 0; i < fetched.length; i++) {
+			fetched[i].set("Primary Key", `Updated Batch Record ${i + 1}`);
+		}
+		const updatedRecords = await airtable.primary.update(fetched);
+
+		it("should return the correct number of records", async () => {
+			expect(updatedRecords.length).toBe(count);
+		});
+
+		it("should have the updated primary keys", async () => {
+			for (let i = 0; i < count; i++) {
+				expect(updatedRecords[i].fields["Primary Key"]).toBe(`Updated Batch Record ${i + 1}`);
+			}
+		});
+	});
+
+	describe("Delete", async () => {
+		await airtable.primary.delete(ids);
+		const remaining = await airtable.primary.get(ids, { returnAs: "record" });
+
+		it("should be deleted", async () => {
+			expect(remaining.length).toBe(0);
+		});
+	});
+});
