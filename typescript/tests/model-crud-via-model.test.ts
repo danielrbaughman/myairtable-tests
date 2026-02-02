@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { PrimaryModel, SecondaryModel } from "../output";
+import { Airtable, PrimaryModel, SecondaryModel } from "../output";
+
+const airtable = new Airtable();
 
 describe("Primary Key Only", async () => {
 	const newRecord = new PrimaryModel({ primaryKey: "New Primary Key" });
@@ -488,6 +490,61 @@ describe("Invalid Record ID", async () => {
 
 		it("should throw an error", async () => {
 			expect(threw).toBe(true);
+		});
+	});
+});
+
+describe("Upsert", async () => {
+	const newRecord = new PrimaryModel({ primaryKey: "Upsert Create" });
+	let id: string;
+
+	describe("Upsert as Create", async () => {
+		const createdRecord = await airtable.primary.upsert(newRecord);
+		id = createdRecord.id!;
+
+		it("should have a valid id", async () => {
+			expect(createdRecord.id).toBeTruthy();
+		});
+
+		it("should have valid values", async () => {
+			expect(createdRecord.primaryKey).toBe("Upsert Create");
+		});
+	});
+
+	describe("Upsert as Update", async () => {
+		const r = await airtable.primary.get(id);
+		r.primaryKey = "Upsert Update";
+		const updatedRecord = await airtable.primary.upsert(r);
+
+		it("should have the same id", async () => {
+			expect(updatedRecord.id).toBe(id);
+		});
+
+		it("should have the updated values", async () => {
+			expect(updatedRecord.primaryKey).toBe("Upsert Update");
+		});
+	});
+
+	describe("Read", async () => {
+		const readRecord = await airtable.primary.get(id);
+
+		it("should have the expected values", async () => {
+			expect(readRecord.id).toBe(id);
+			expect(readRecord.primaryKey).toBe("Upsert Update");
+		});
+	});
+
+	describe("Delete", async () => {
+		await airtable.primary.delete(id);
+		let deleted = false;
+		try {
+			await airtable.primary.get(id);
+		} catch {
+			deleted = true;
+		}
+
+		it("should be deleted", async () => {
+			expect(deleted).toBe(true);
 		});
 	});
 });

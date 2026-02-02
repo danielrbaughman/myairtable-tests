@@ -115,8 +115,7 @@ export class LinkedRecords<Mdl extends AirtableModel<FieldSet, unknown, keyof Fi
 	public async get(fetch: boolean = false): Promise<Mdl[]> {
 		if (this.records === undefined || fetch) {
 			const config = this.__configBaseId ? { baseId: this.__configBaseId, ...this.__configOptions } : undefined;
-			this.records =
-				this.ids?.map((id) => this.modelCtor!(id, config)) ?? [];
+			this.records = this.ids?.map((id) => this.modelCtor!(id, config)) ?? [];
 			await Promise.all(this.records.map((record) => record.fetch()));
 		}
 		return this.records;
