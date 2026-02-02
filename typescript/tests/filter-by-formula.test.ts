@@ -362,3 +362,234 @@ describe("Filter by AttachmentsField Formula", async () => {
 		await airtable.primary.delete(allRecords.map((r) => r.id!));
 	});
 });
+
+describe("Filter by DateField Formula", async () => {
+	const newRecords: PrimaryModel[] = [];
+
+	beforeAll(async () => {
+		const toCreate = [
+			new PrimaryModel({ primaryKey: "DateField Test A", date: "2024-01-15" }),
+			new PrimaryModel({ primaryKey: "DateField Test B", date: "2024-06-15" }),
+			new PrimaryModel({ primaryKey: "DateField Test C" }),
+		];
+		const created = await airtable.primary.create(toCreate);
+		newRecords.push(...created);
+	});
+
+	it("should filter by on()", async () => {
+		const formula = PrimaryModel.f.date.on("2024-01-15");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date!.startsWith("2024-01-15")).toBe(true);
+		});
+	});
+
+	it("should filter by notOn()", async () => {
+		const formula = PrimaryModel.f.date.notOn("2024-01-15");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date!.startsWith("2024-01-15")).toBe(false);
+		});
+	});
+
+	it("should filter by onOrAfter()", async () => {
+		const formula = PrimaryModel.f.date.onOrAfter("2024-06-15");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(new Date(record.date!).getTime()).toBeLessThanOrEqual(new Date("2024-06-15").getTime());
+		});
+	});
+
+	it("should filter by onOrBefore()", async () => {
+		const formula = PrimaryModel.f.date.onOrBefore("2024-01-15");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(new Date(record.date!).getTime()).toBeGreaterThanOrEqual(new Date("2024-01-15").getTime());
+		});
+	});
+
+	it("should filter by after()", async () => {
+		const formula = PrimaryModel.f.date.after("2024-01-15");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		const dates = records.map((r) => r.date!.substring(0, 10));
+		expect(dates).toContain("2024-06-15");
+	});
+
+	it("should filter by before()", async () => {
+		const formula = PrimaryModel.f.date.before("2024-06-15");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		const withDate = records.filter((r) => r.date !== undefined);
+		const dates = withDate.map((r) => r.date!.substring(0, 10));
+		expect(dates).toContain("2024-01-15");
+	});
+
+	it("should filter by between() inclusive", async () => {
+		const formula = PrimaryModel.f.date.between("2024-06-15", "2024-01-15", true);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(2);
+		const dates = records.map((r) => r.date!.substring(0, 10));
+		expect(dates).toContain("2024-01-15");
+		expect(dates).toContain("2024-06-15");
+	});
+
+	it("should filter by between() exclusive", async () => {
+		const formula = PrimaryModel.f.date.between("2024-01-01", "2024-12-31", false);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(2);
+		const dates = records.map((r) => r.date!.substring(0, 10));
+		expect(dates).toContain("2024-01-15");
+		expect(dates).toContain("2024-06-15");
+	});
+
+	it("should filter by notEmpty()", async () => {
+		const formula = PrimaryModel.f.date.notEmpty();
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date).toBeDefined();
+		});
+	});
+
+	it("should filter by empty()", async () => {
+		const formula = PrimaryModel.f.date.empty();
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date).toBeUndefined();
+		});
+	});
+
+	afterAll(async () => {
+		const allRecords = await airtable.primary.get(newRecords.map((r) => r.id!));
+		await airtable.primary.delete(allRecords.map((r) => r.id!));
+	});
+});
+
+describe("Filter by DateField Chained Formula", async () => {
+	const newRecords: PrimaryModel[] = [];
+
+	beforeAll(async () => {
+		const toCreate = [
+			new PrimaryModel({ primaryKey: "DateChain Test A", date: "2024-01-15" }),
+			new PrimaryModel({ primaryKey: "DateChain Test B", date: "2024-06-15" }),
+		];
+		const created = await airtable.primary.create(toCreate);
+		newRecords.push(...created);
+	});
+
+	it("should filter by before().daysAgo()", async () => {
+		const formula = PrimaryModel.f.date.before().daysAgo(1);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date).toBeDefined();
+		});
+	});
+
+	it("should filter by after().yearsAgo()", async () => {
+		const formula = PrimaryModel.f.date.after().yearsAgo(100);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date).toBeDefined();
+		});
+	});
+
+	it("should filter by on().daysAgo()", async () => {
+		const now = new Date();
+		const target = new Date("2024-01-15");
+		const diffDays = Math.floor((now.getTime() - target.getTime()) / (1000 * 60 * 60 * 24));
+		const formula = PrimaryModel.f.date.on().daysAgo(diffDays);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		const dates = records.map((r) => r.date!.substring(0, 10));
+		expect(dates).toContain("2024-01-15");
+	});
+
+	it("should filter by notOn().daysAgo()", async () => {
+		const now = new Date();
+		const target = new Date("2024-01-15");
+		const diffDays = Math.floor((now.getTime() - target.getTime()) / (1000 * 60 * 60 * 24));
+		const formula = PrimaryModel.f.date.notOn().daysAgo(diffDays);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		const withDate = records.filter((r) => r.date !== undefined);
+		withDate.forEach((record) => {
+			expect(record.date!.startsWith("2024-01-15")).toBe(false);
+		});
+	});
+
+	it("should filter by onOrAfter().daysAgo()", async () => {
+		const formula = PrimaryModel.f.date.onOrAfter().daysAgo(1);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date).toBeDefined();
+		});
+	});
+
+	it("should filter by onOrBefore().yearsAgo()", async () => {
+		const formula = PrimaryModel.f.date.onOrBefore().yearsAgo(5);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date).toBeDefined();
+		});
+	});
+
+	it("should filter by before().weeksAgo()", async () => {
+		const formula = PrimaryModel.f.date.before().weeksAgo(1);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date).toBeDefined();
+		});
+	});
+
+	it("should filter by before().monthsAgo()", async () => {
+		const formula = PrimaryModel.f.date.before().monthsAgo(1);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date).toBeDefined();
+		});
+	});
+
+	it("should filter by before().hoursAgo()", async () => {
+		const formula = PrimaryModel.f.date.before().hoursAgo(1);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date).toBeDefined();
+		});
+	});
+
+	it("should filter by before().minutesAgo()", async () => {
+		const formula = PrimaryModel.f.date.before().minutesAgo(1);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date).toBeDefined();
+		});
+	});
+
+	it("should filter by before().secondsAgo()", async () => {
+		const formula = PrimaryModel.f.date.before().secondsAgo(1);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.date).toBeDefined();
+		});
+	});
+
+	afterAll(async () => {
+		const allRecords = await airtable.primary.get(newRecords.map((r) => r.id!));
+		await airtable.primary.delete(allRecords.map((r) => r.id!));
+	});
+});
