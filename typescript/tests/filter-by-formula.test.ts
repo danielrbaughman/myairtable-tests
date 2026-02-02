@@ -174,3 +174,93 @@ describe("Filter by TextField Formula", async () => {
 		await airtable.primary.delete(allRecords.map((r) => r.id!));
 	});
 });
+
+describe("Filter by NumberField Formula", async () => {
+	const newRecords: PrimaryModel[] = [];
+
+	beforeAll(async () => {
+		const toCreate = [
+			new PrimaryModel({ primaryKey: "NumField Test A", numberInt: 10 }),
+			new PrimaryModel({ primaryKey: "NumField Test B", numberInt: 20 }),
+			new PrimaryModel({ primaryKey: "NumField Test C", numberInt: 30 }),
+		];
+		const created = await airtable.primary.create(toCreate);
+		newRecords.push(...created);
+	});
+
+	it("should filter by equals()", async () => {
+		const formula = PrimaryModel.f.numberInt.equals(20);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(1);
+		expect(records[0].numberInt).toBe(20);
+	});
+
+	it("should filter by notEquals()", async () => {
+		const formula = PrimaryModel.f.numberInt.notEquals(20);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(2);
+		records.forEach((record) => {
+			expect(record.numberInt).not.toBe(20);
+		});
+	});
+
+	it("should filter by greaterThan()", async () => {
+		const formula = PrimaryModel.f.numberInt.greaterThan(10);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(2);
+		records.forEach((record) => {
+			expect(record.numberInt).toBeGreaterThan(10);
+		});
+	});
+
+	it("should filter by lessThan()", async () => {
+		const formula = PrimaryModel.f.numberInt.lessThan(30);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(2);
+		const withValue = records.filter((r) => r.numberInt !== undefined);
+		withValue.forEach((record) => {
+			expect(record.numberInt).toBeLessThan(30);
+		});
+	});
+
+	it("should filter by greaterThanOrEquals()", async () => {
+		const formula = PrimaryModel.f.numberInt.greaterThanOrEquals(20);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(2);
+		records.forEach((record) => {
+			expect(record.numberInt).toBeGreaterThanOrEqual(20);
+		});
+	});
+
+	it("should filter by lessThanOrEquals()", async () => {
+		const formula = PrimaryModel.f.numberInt.lessThanOrEquals(20);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(2);
+		const withValue = records.filter((r) => r.numberInt !== undefined);
+		withValue.forEach((record) => {
+			expect(record.numberInt).toBeLessThanOrEqual(20);
+		});
+	});
+
+	it("should filter by between() inclusive", async () => {
+		const formula = PrimaryModel.f.numberInt.between(10, 30, true);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(3);
+		records.forEach((record) => {
+			expect(record.numberInt).toBeGreaterThanOrEqual(10);
+			expect(record.numberInt).toBeLessThanOrEqual(30);
+		});
+	});
+
+	it("should filter by between() exclusive", async () => {
+		const formula = PrimaryModel.f.numberInt.between(10, 30, false);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(1);
+		expect(records[0].numberInt).toBe(20);
+	});
+
+	afterAll(async () => {
+		const allRecords = await airtable.primary.get(newRecords.map((r) => r.id!));
+		await airtable.primary.delete(allRecords.map((r) => r.id!));
+	});
+});
