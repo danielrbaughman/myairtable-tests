@@ -18,7 +18,8 @@
 			"Bash(source .env)",
 			"Bash(nvm:*)",
 			"Bash(source ~/.nvm/nvm.sh)",
-			"Bash(nvm ls:*)"
+			"Bash(nvm ls:*)",
+			"Bash(yarn install)"
 		]
 	}
 }

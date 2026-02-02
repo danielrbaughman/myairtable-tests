@@ -216,8 +216,11 @@ describe("Complex Properties", async () => {
 		await sec1.save();
 		const sec2 = new SecondaryModel({ name: "Link Target 2", value: "val2" });
 		await sec2.save();
+		const sec3 = new SecondaryModel({ name: "Link Target 3", value: "val3" });
+		await sec3.save();
 		const sec1Id = sec1.id!;
 		const sec2Id = sec2.id!;
+		const sec3Id = sec3.id!;
 
 		const newRecord = new PrimaryModel({
 			primaryKey: "Link Test",
@@ -276,6 +279,24 @@ describe("Complex Properties", async () => {
 			});
 		});
 
+		describe("Add", async () => {
+			const r = PrimaryModel.fromId(newRecord.id);
+			await r.fetch();
+			r.linkMultiple.add(sec3);
+			await r.save();
+
+			const check = PrimaryModel.fromId(newRecord.id);
+			await check.fetch();
+
+			it("should have the added link value", async () => {
+				expect(r.linkMultiple.ids).toEqual([sec1Id, sec3Id]);
+			});
+
+			it("should persist after re-fetch", async () => {
+				expect(check.linkMultiple.ids).toEqual([sec1Id, sec3Id]);
+			});
+		});
+
 		describe("Delete", async () => {
 			const r = PrimaryModel.fromId(newRecord.id);
 			await r.fetch();
@@ -296,6 +317,7 @@ describe("Complex Properties", async () => {
 		describe("Cleanup", async () => {
 			await sec1.delete();
 			await sec2.delete();
+			await sec3.delete();
 
 			it("should clean up secondary records", async () => {
 				expect(true).toBe(true);
