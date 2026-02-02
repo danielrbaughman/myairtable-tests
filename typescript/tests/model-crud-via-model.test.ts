@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { Airtable, PrimaryModel, SecondaryModel } from "../output";
+import { Airtable, PrimaryModel, SecondaryModel, TertiaryModel } from "../output";
 
 const airtable = new Airtable();
 
@@ -315,6 +315,50 @@ describe("Complex Properties", async () => {
 				await sec1.delete();
 				await sec2.delete();
 				await sec3.delete();
+			});
+		});
+	});
+
+	describe("Nested Linked Records", async () => {
+		const tert1 = new TertiaryModel({ name: "Tertiary 1", value: "tval1" });
+		await tert1.save();
+		const tert1Id = tert1.id!;
+
+		const sec1 = new SecondaryModel({ name: "Nested Link Target", value: "sval1", linkToTertiary: [tert1Id] });
+		await sec1.save();
+		const sec1Id = sec1.id!;
+
+		const primary = new PrimaryModel({
+			primaryKey: "Nested Link Test",
+			linkSingle: sec1Id,
+		});
+		await primary.save();
+
+		describe("Read nested links", async () => {
+			const readPrimary = PrimaryModel.fromId(primary.id);
+			await readPrimary.fetch();
+			const linkedSecondary = await readPrimary.linkSingle.get();
+			const linkedTertiaries = await linkedSecondary!.linkToTertiary.get();
+
+			it("should traverse Primary -> Secondary", async () => {
+				expect(linkedSecondary).toBeTruthy();
+				expect(linkedSecondary!.id).toEqual(sec1Id);
+				expect(linkedSecondary!.name).toBe("Nested Link Target");
+			});
+
+			it("should traverse Secondary -> Tertiary", async () => {
+				expect(linkedTertiaries).toHaveLength(1);
+				expect(linkedTertiaries[0].id).toEqual(tert1Id);
+				expect(linkedTertiaries[0].name).toBe("Tertiary 1");
+				expect(linkedTertiaries[0].value).toBe("tval1");
+			});
+		});
+
+		describe("Cleanup", () => {
+			it("should clean up nested records", async () => {
+				await primary.delete();
+				await sec1.delete();
+				await tert1.delete();
 			});
 		});
 	});

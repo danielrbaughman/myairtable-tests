@@ -9,6 +9,7 @@ import { recordIdSchema, AirtableAttachmentSchema, AirtableCollaboratorSchema, A
 export const TertiarySchema = z.object({
     id: recordIdSchema.optional(),
     name: z.string().optional(),
+    secondary: z.array(recordIdSchema).optional(),
     value: z.string().optional(),
 });
 

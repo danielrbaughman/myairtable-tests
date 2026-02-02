@@ -435,7 +435,13 @@
 			"primaryFieldId": "fld1RagdJ09mpWhzM",
 			"fields": [
 				{
-					"type": "singleLineText",
+					"type": "multipleRecordLinks",
+					"options": {
+						"linkedTableId": "tblLFoLxEdWlxjmLP",
+						"isReversed": false,
+						"prefersSingleRecordLink": false,
+						"inverseLinkFieldId": "fld8lCuUXpEXkIeYv"
+					},
 					"id": "fldKR6tdbnOBRCtdQ",
 					"name": "Link to Tertiary"
 				},
@@ -489,6 +495,17 @@
 					"type": "singleLineText",
 					"id": "fldwzqKxsRnPZJ2Ll",
 					"name": "Name"
+				},
+				{
+					"type": "multipleRecordLinks",
+					"options": {
+						"linkedTableId": "tblPPScS3XMuFkDYN",
+						"isReversed": false,
+						"prefersSingleRecordLink": false,
+						"inverseLinkFieldId": "fldKR6tdbnOBRCtdQ"
+					},
+					"id": "fld8lCuUXpEXkIeYv",
+					"name": "Secondary"
 				},
 				{
 					"type": "singleLineText",

@@ -8,7 +8,7 @@ import { recordIdSchema, AirtableAttachmentSchema, AirtableCollaboratorSchema, A
 // #region SECONDARY
 export const SecondarySchema = z.object({
     id: recordIdSchema.optional(),
-    linkToTertiary: z.string().optional(),
+    linkToTertiary: z.array(recordIdSchema).optional(),
     name: z.string().optional(),
     primary: z.array(recordIdSchema).optional(),
     primary2: z.array(recordIdSchema).optional(),

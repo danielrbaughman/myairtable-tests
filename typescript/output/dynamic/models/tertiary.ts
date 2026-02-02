@@ -14,6 +14,9 @@ import {
     TertiaryFieldNamePropertyMapping,
 } from "../types/tertiary";
 import { TertiaryFormulas } from '../formulas/tertiary';
+import {
+    SecondaryModel,
+} from "../models";
 import { TertiaryTable } from '../tables/tertiary';
 import { TertiarySchema, ITertiary } from '../zod/tertiary';
 
@@ -37,12 +40,16 @@ export class TertiaryModel extends AirtableModel<TertiaryFieldSet, ITertiary, Te
 
     protected static fieldDescriptors: FieldDescriptor[] = [
         { propertyName: "name", fieldId: "fldwzqKxsRnPZJ2Ll", fieldName: "Name", isComputed: false, fieldType: "generic" },
+        { propertyName: "secondary", fieldId: "fld8lCuUXpEXkIeYv", fieldName: "Secondary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config) },
         { propertyName: "value", fieldId: "fldjNLBh2UccM64h5", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 
     /** `Name` (fldwzqKxsRnPZJ2Ll) */
     public get name(): string | undefined { return this._fields["name"] as string; }
     public set name(value: string | undefined) { this._fields["name"] = value; this.markDirty('name'); }
+    /** `Secondary` (fld8lCuUXpEXkIeYv) */
+    public get secondary(): LinkedRecords<SecondaryModel> { return this._fields["secondary"] as LinkedRecords<SecondaryModel>; }
+    public set secondary(value: LinkedRecords<SecondaryModel> | undefined) { this._fields["secondary"] = value!; this.markDirty('secondary'); }
     /** `Value` (fldjNLBh2UccM64h5) */
     public get value(): string | undefined { return this._fields["value"] as string; }
     public set value(value: string | undefined) { this._fields["value"] = value; this.markDirty('value'); }

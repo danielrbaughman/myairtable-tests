@@ -15,6 +15,7 @@ import {
 } from "../types/secondary";
 import { SecondaryFormulas } from '../formulas/secondary';
 import {
+    TertiaryModel,
     PrimaryModel,
 } from "../models";
 import { SecondaryTable } from '../tables/secondary';
@@ -39,7 +40,7 @@ export class SecondaryModel extends AirtableModel<SecondaryFieldSet, ISecondary,
     public get tableId(): string { return SecondaryModel.tableId; }
 
     protected static fieldDescriptors: FieldDescriptor[] = [
-        { propertyName: "linkToTertiary", fieldId: "fldKR6tdbnOBRCtdQ", fieldName: "Link to Tertiary", isComputed: false, fieldType: "generic" },
+        { propertyName: "linkToTertiary", fieldId: "fldKR6tdbnOBRCtdQ", fieldName: "Link to Tertiary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => TertiaryModel.fromId(id, config) },
         { propertyName: "name", fieldId: "fld1RagdJ09mpWhzM", fieldName: "Name", isComputed: false, fieldType: "generic" },
         { propertyName: "primary", fieldId: "fldl0nB9WRFSdqlii", fieldName: "Primary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => PrimaryModel.fromId(id, config) },
         { propertyName: "primary2", fieldId: "fldgoE2oZmXmKkQca", fieldName: "Primary 2", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => PrimaryModel.fromId(id, config) },
@@ -47,8 +48,8 @@ export class SecondaryModel extends AirtableModel<SecondaryFieldSet, ISecondary,
     ];
 
     /** `Link to Tertiary` (fldKR6tdbnOBRCtdQ) */
-    public get linkToTertiary(): string | undefined { return this._fields["linkToTertiary"] as string; }
-    public set linkToTertiary(value: string | undefined) { this._fields["linkToTertiary"] = value; this.markDirty('linkToTertiary'); }
+    public get linkToTertiary(): LinkedRecords<TertiaryModel> { return this._fields["linkToTertiary"] as LinkedRecords<TertiaryModel>; }
+    public set linkToTertiary(value: LinkedRecords<TertiaryModel> | undefined) { this._fields["linkToTertiary"] = value!; this.markDirty('linkToTertiary'); }
     /** `Name` (fld1RagdJ09mpWhzM) */
     public get name(): string | undefined { return this._fields["name"] as string; }
     public set name(value: string | undefined) { this._fields["name"] = value; this.markDirty('name'); }

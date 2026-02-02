@@ -133,7 +133,7 @@ export const SecondaryFieldPropertyNameMapping: Record<SecondaryFieldProperty, S
 
 export interface SecondaryFieldSetIds extends FieldSet {
     //@ts-ignore
-    fldKR6tdbnOBRCtdQ?: string
+    fldKR6tdbnOBRCtdQ?: RecordId[]
     //@ts-ignore
     fld1RagdJ09mpWhzM?: string
     //@ts-ignore
@@ -146,7 +146,7 @@ export interface SecondaryFieldSetIds extends FieldSet {
 
 export interface SecondaryFieldSet extends FieldSet {
     //@ts-ignore
-    "Link to Tertiary"?: string,
+    "Link to Tertiary"?: RecordId[],
     //@ts-ignore
     "Name"?: string,
     //@ts-ignore
