@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { Airtable, PrimaryModel } from "../output";
+import { Airtable, PrimaryModel, AND, OR, XOR, NOT } from "../output";
 
 const airtable = new Airtable();
 
@@ -586,6 +586,133 @@ describe("Filter by DateField Chained Formula", async () => {
 		records.forEach((record) => {
 			expect(record.date).toBeDefined();
 		});
+	});
+
+	afterAll(async () => {
+		const allRecords = await airtable.primary.get(newRecords.map((r) => r.id!));
+		await airtable.primary.delete(allRecords.map((r) => r.id!));
+	});
+});
+
+describe("Filter by Complex Formula", async () => {
+	const newRecords: PrimaryModel[] = [];
+
+	beforeAll(async () => {
+		const toCreate = [
+			new PrimaryModel({ primaryKey: "Complex Test A", numberInt: 10, checkbox: true }),
+			new PrimaryModel({ primaryKey: "Complex Test B", numberInt: 20, checkbox: false }),
+			new PrimaryModel({ primaryKey: "Complex Test C", numberInt: 30, checkbox: true }),
+		];
+		const created = await airtable.primary.create(toCreate);
+		newRecords.push(...created);
+	});
+
+	it("should filter by AND(numberInt > 10, checkbox = true)", async () => {
+		const formula = AND(PrimaryModel.f.numberInt.greaterThan(10), PrimaryModel.f.checkbox.equals(true));
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(1);
+		expect(records[0].numberInt).toBe(30);
+		expect(records[0].checkbox).toBe(true);
+	});
+
+	it("should filter by AND(primaryKey contains 'Complex', numberInt >= 20)", async () => {
+		const formula = AND(
+			PrimaryModel.f.primaryKey.contains("Complex"),
+			PrimaryModel.f.numberInt.greaterThanOrEquals(20),
+		);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(2);
+		const names = records.map((r) => r.primaryKey);
+		expect(names).toContain("Complex Test B");
+		expect(names).toContain("Complex Test C");
+	});
+
+	it("should filter by OR(numberInt = 10, numberInt = 30)", async () => {
+		const formula = AND(
+			PrimaryModel.f.primaryKey.contains("Complex Test"),
+			OR(PrimaryModel.f.numberInt.equals(10), PrimaryModel.f.numberInt.equals(30)),
+		);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(2);
+		const values = records.map((r) => r.numberInt);
+		expect(values).toContain(10);
+		expect(values).toContain(30);
+	});
+
+	it("should filter by OR(checkbox = true, numberInt = 20)", async () => {
+		const formula = AND(
+			PrimaryModel.f.primaryKey.contains("Complex Test"),
+			OR(PrimaryModel.f.checkbox.equals(true), PrimaryModel.f.numberInt.equals(20)),
+		);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(3);
+		const names = records.map((r) => r.primaryKey);
+		expect(names).toContain("Complex Test A");
+		expect(names).toContain("Complex Test B");
+		expect(names).toContain("Complex Test C");
+	});
+
+	it("should filter by XOR(checkbox = true, numberInt >= 30)", async () => {
+		const formula = AND(
+			PrimaryModel.f.primaryKey.contains("Complex Test"),
+			XOR(PrimaryModel.f.checkbox.equals(true), PrimaryModel.f.numberInt.greaterThanOrEquals(30)),
+		);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(1);
+		expect(records[0].primaryKey).toBe("Complex Test A");
+	});
+
+	it("should filter by NOT(primaryKey = 'Complex Test A')", async () => {
+		const formula = NOT(PrimaryModel.f.primaryKey.equals("Complex Test A"));
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(2);
+		records.forEach((record) => {
+			expect(record.primaryKey).not.toBe("Complex Test A");
+		});
+	});
+
+	it("should filter by AND(OR(numberInt = 10, numberInt = 30), checkbox = true)", async () => {
+		const formula = AND(
+			OR(PrimaryModel.f.numberInt.equals(10), PrimaryModel.f.numberInt.equals(30)),
+			PrimaryModel.f.checkbox.equals(true),
+		);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(2);
+		const names = records.map((r) => r.primaryKey);
+		expect(names).toContain("Complex Test A");
+		expect(names).toContain("Complex Test C");
+	});
+
+	it("should filter by OR(AND(numberInt > 10, checkbox = true), primaryKey = 'Complex Test A')", async () => {
+		const formula = OR(
+			AND(PrimaryModel.f.numberInt.greaterThan(10), PrimaryModel.f.checkbox.equals(true)),
+			PrimaryModel.f.primaryKey.equals("Complex Test A"),
+		);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(2);
+		const names = records.map((r) => r.primaryKey);
+		expect(names).toContain("Complex Test A");
+		expect(names).toContain("Complex Test C");
+	});
+
+	it("should filter by NOT(AND(checkbox = true, numberInt > 20))", async () => {
+		const formula = NOT(AND(PrimaryModel.f.checkbox.equals(true), PrimaryModel.f.numberInt.greaterThan(20)));
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(2);
+		records.forEach((record) => {
+			expect(record.primaryKey).not.toBe("Complex Test C");
+		});
+	});
+
+	it("should filter by AND(NOT(checkbox = true), numberInt >= 20)", async () => {
+		const formula = AND(
+			PrimaryModel.f.primaryKey.contains("Complex Test"),
+			NOT(PrimaryModel.f.checkbox.equals(true)),
+			PrimaryModel.f.numberInt.greaterThanOrEquals(20),
+		);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(1);
+		expect(records[0].primaryKey).toBe("Complex Test B");
 	});
 
 	afterAll(async () => {
