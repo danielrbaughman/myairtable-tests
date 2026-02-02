@@ -49,16 +49,15 @@ describe("Primary Key Only", async () => {
 		});
 	});
 
-	describe("Delete", async () => {
-		await airtable.primary.delete(id);
-		let deleted = false;
-		try {
-			await airtable.primary.get(id, { returnAs: "interface" });
-		} catch {
-			deleted = true;
-		}
-
+	describe("Delete", () => {
 		it("should be deleted", async () => {
+			await airtable.primary.delete(id);
+			let deleted = false;
+			try {
+				await airtable.primary.get(id, { returnAs: "interface" });
+			} catch {
+				deleted = true;
+			}
 			expect(deleted).toBe(true);
 		});
 	});
@@ -198,16 +197,15 @@ describe("All Simple Properties", async () => {
 		});
 	});
 
-	describe("Delete", async () => {
-		await airtable.primary.delete(id);
-		let deleted = false;
-		try {
-			await airtable.primary.get(id, { returnAs: "interface" });
-		} catch {
-			deleted = true;
-		}
-
+	describe("Delete", () => {
 		it("should be deleted", async () => {
+			await airtable.primary.delete(id);
+			let deleted = false;
+			try {
+				await airtable.primary.get(id, { returnAs: "interface" });
+			} catch {
+				deleted = true;
+			}
 			expect(deleted).toBe(true);
 		});
 	});
@@ -259,26 +257,23 @@ describe("Complex Properties", async () => {
 			});
 		});
 
-		describe("Delete", async () => {
-			await airtable.primary.delete(id);
-			let deleted = false;
-			try {
-				await airtable.primary.get(id, { returnAs: "interface" });
-			} catch {
-				deleted = true;
-			}
-
+		describe("Delete", () => {
 			it("should be deleted", async () => {
+				await airtable.primary.delete(id);
+				let deleted = false;
+				try {
+					await airtable.primary.get(id, { returnAs: "interface" });
+				} catch {
+					deleted = true;
+				}
 				expect(deleted).toBe(true);
 			});
 		});
 
-		describe("Cleanup", async () => {
-			await airtable.secondary.delete(sec1.id);
-			await airtable.secondary.delete(sec2.id);
-
+		describe("Cleanup", () => {
 			it("should clean up secondary records", async () => {
-				expect(true).toBe(true);
+				await airtable.secondary.delete(sec1.id);
+				await airtable.secondary.delete(sec2.id);
 			});
 		});
 	});
@@ -320,16 +315,15 @@ describe("Complex Properties", async () => {
 			});
 		});
 
-		describe("Delete", async () => {
-			await airtable.primary.delete(id);
-			let deleted = false;
-			try {
-				await airtable.primary.get(id, { returnAs: "interface" });
-			} catch {
-				deleted = true;
-			}
-
+		describe("Delete", () => {
 			it("should be deleted", async () => {
+				await airtable.primary.delete(id);
+				let deleted = false;
+				try {
+					await airtable.primary.get(id, { returnAs: "interface" });
+				} catch {
+					deleted = true;
+				}
 				expect(deleted).toBe(true);
 			});
 		});
@@ -376,16 +370,15 @@ describe("Complex Properties", async () => {
 			});
 		});
 
-		describe("Delete", async () => {
-			await airtable.primary.delete(id);
-			let deleted = false;
-			try {
-				await airtable.primary.get(id, { returnAs: "interface" });
-			} catch {
-				deleted = true;
-			}
-
+		describe("Delete", () => {
 			it("should be deleted", async () => {
+				await airtable.primary.delete(id);
+				let deleted = false;
+				try {
+					await airtable.primary.get(id, { returnAs: "interface" });
+				} catch {
+					deleted = true;
+				}
 				expect(deleted).toBe(true);
 			});
 		});
@@ -426,16 +419,15 @@ describe("Complex Properties", async () => {
 			});
 		});
 
-		describe("Delete", async () => {
-			await airtable.primary.delete(id);
-			let deleted = false;
-			try {
-				await airtable.primary.get(id, { returnAs: "interface" });
-			} catch {
-				deleted = true;
-			}
-
+		describe("Delete", () => {
 			it("should be deleted", async () => {
+				await airtable.primary.delete(id);
+				let deleted = false;
+				try {
+					await airtable.primary.get(id, { returnAs: "interface" });
+				} catch {
+					deleted = true;
+				}
 				expect(deleted).toBe(true);
 			});
 		});
@@ -502,11 +494,10 @@ describe("Batch Operations", async () => {
 		});
 	});
 
-	describe("Delete", async () => {
-		await airtable.primary.delete(ids);
-		const remaining = await airtable.primary.get(ids, { returnAs: "interface" });
-
+	describe("Delete", () => {
 		it("should be deleted", async () => {
+			await airtable.primary.delete(ids);
+			const remaining = await airtable.primary.get(ids, { returnAs: "interface" });
 			expect(remaining.length).toBe(0);
 		});
 	});
@@ -580,16 +571,15 @@ describe("Upsert", async () => {
 		});
 	});
 
-	describe("Delete", async () => {
-		await airtable.primary.delete(id);
-		let deleted = false;
-		try {
-			await airtable.primary.get(id, { returnAs: "interface" });
-		} catch {
-			deleted = true;
-		}
-
+	describe("Delete", () => {
 		it("should be deleted", async () => {
+			await airtable.primary.delete(id);
+			let deleted = false;
+			try {
+				await airtable.primary.get(id, { returnAs: "interface" });
+			} catch {
+				deleted = true;
+			}
 			expect(deleted).toBe(true);
 		});
 	});
@@ -620,16 +610,15 @@ describe("Field Selection", async () => {
 		});
 	});
 
-	describe("Delete", async () => {
-		await airtable.primary.delete(id);
-		let deleted = false;
-		try {
-			await airtable.primary.get(id, { returnAs: "interface" });
-		} catch {
-			deleted = true;
-		}
-
+	describe("Delete", () => {
 		it("should be deleted", async () => {
+			await airtable.primary.delete(id);
+			let deleted = false;
+			try {
+				await airtable.primary.get(id, { returnAs: "interface" });
+			} catch {
+				deleted = true;
+			}
 			expect(deleted).toBe(true);
 		});
 	});
@@ -656,11 +645,10 @@ describe("Max Records", async () => {
 		});
 	});
 
-	describe("Delete", async () => {
-		await airtable.primary.delete(ids);
-		const remaining = await airtable.primary.get(ids, { returnAs: "interface" });
-
+	describe("Delete", () => {
 		it("should be deleted", async () => {
+			await airtable.primary.delete(ids);
+			const remaining = await airtable.primary.get(ids, { returnAs: "interface" });
 			expect(remaining.length).toBe(0);
 		});
 	});

@@ -40,19 +40,18 @@ describe("Primary Key Only", async () => {
 		});
 	});
 
-	describe("Delete", async () => {
-		const r = PrimaryModel.fromId(newRecord.id);
-		await r.fetch();
-		await r.delete();
-		let deleted = false;
-		try {
-			const check = PrimaryModel.fromId(newRecord.id);
-			await check.fetch();
-		} catch {
-			deleted = true;
-		}
-
+	describe("Delete", () => {
 		it("should be deleted", async () => {
+			const r = PrimaryModel.fromId(newRecord.id);
+			await r.fetch();
+			await r.delete();
+			let deleted = false;
+			try {
+				const check = PrimaryModel.fromId(newRecord.id);
+				await check.fetch();
+			} catch {
+				deleted = true;
+			}
 			expect(deleted).toBe(true);
 		});
 	});
@@ -192,19 +191,18 @@ describe("All Simple Properties", async () => {
 		});
 	});
 
-	describe("Delete", async () => {
-		const r = PrimaryModel.fromId(newRecord.id);
-		await r.fetch();
-		await r.delete();
-		let deleted = false;
-		try {
-			const check = PrimaryModel.fromId(newRecord.id);
-			await check.fetch();
-		} catch {
-			deleted = true;
-		}
-
+	describe("Delete", () => {
 		it("should be deleted", async () => {
+			const r = PrimaryModel.fromId(newRecord.id);
+			await r.fetch();
+			await r.delete();
+			let deleted = false;
+			try {
+				const check = PrimaryModel.fromId(newRecord.id);
+				await check.fetch();
+			} catch {
+				deleted = true;
+			}
 			expect(deleted).toBe(true);
 		});
 	});
@@ -285,42 +283,38 @@ describe("Complex Properties", async () => {
 			r.linkMultiple.add(sec3);
 			await r.save();
 
-			const check = PrimaryModel.fromId(newRecord.id);
-			await check.fetch();
-
 			it("should have the added link value", async () => {
 				expect(r.linkMultiple.ids).toEqual([sec1Id, sec3Id]);
 			});
 
 			it("should persist after re-fetch", async () => {
+				const check = PrimaryModel.fromId(newRecord.id);
+				await check.fetch();
 				expect(check.linkMultiple.ids).toEqual([sec1Id, sec3Id]);
 			});
 		});
 
-		describe("Delete", async () => {
-			const r = PrimaryModel.fromId(newRecord.id);
-			await r.fetch();
-			await r.delete();
-			let deleted = false;
-			try {
-				const check = PrimaryModel.fromId(newRecord.id);
-				await check.fetch();
-			} catch {
-				deleted = true;
-			}
-
+		describe("Delete", () => {
 			it("should be deleted", async () => {
+				const r = PrimaryModel.fromId(newRecord.id);
+				await r.fetch();
+				await r.delete();
+				let deleted = false;
+				try {
+					const check = PrimaryModel.fromId(newRecord.id);
+					await check.fetch();
+				} catch {
+					deleted = true;
+				}
 				expect(deleted).toBe(true);
 			});
 		});
 
-		describe("Cleanup", async () => {
-			await sec1.delete();
-			await sec2.delete();
-			await sec3.delete();
-
+		describe("Cleanup", () => {
 			it("should clean up secondary records", async () => {
-				expect(true).toBe(true);
+				await sec1.delete();
+				await sec2.delete();
+				await sec3.delete();
 			});
 		});
 	});
@@ -361,19 +355,18 @@ describe("Complex Properties", async () => {
 			});
 		});
 
-		describe("Delete", async () => {
-			const r = PrimaryModel.fromId(newRecord.id);
-			await r.fetch();
-			await r.delete();
-			let deleted = false;
-			try {
-				const check = PrimaryModel.fromId(newRecord.id);
-				await check.fetch();
-			} catch {
-				deleted = true;
-			}
-
+		describe("Delete", () => {
 			it("should be deleted", async () => {
+				const r = PrimaryModel.fromId(newRecord.id);
+				await r.fetch();
+				await r.delete();
+				let deleted = false;
+				try {
+					const check = PrimaryModel.fromId(newRecord.id);
+					await check.fetch();
+				} catch {
+					deleted = true;
+				}
 				expect(deleted).toBe(true);
 			});
 		});
@@ -415,19 +408,18 @@ describe("Complex Properties", async () => {
 			});
 		});
 
-		describe("Delete", async () => {
-			const r = PrimaryModel.fromId(newRecord.id);
-			await r.fetch();
-			await r.delete();
-			let deleted = false;
-			try {
-				const check = PrimaryModel.fromId(newRecord.id);
-				await check.fetch();
-			} catch {
-				deleted = true;
-			}
-
+		describe("Delete", () => {
 			it("should be deleted", async () => {
+				const r = PrimaryModel.fromId(newRecord.id);
+				await r.fetch();
+				await r.delete();
+				let deleted = false;
+				try {
+					const check = PrimaryModel.fromId(newRecord.id);
+					await check.fetch();
+				} catch {
+					deleted = true;
+				}
 				expect(deleted).toBe(true);
 			});
 		});
@@ -467,19 +459,18 @@ describe("Complex Properties", async () => {
 			});
 		});
 
-		describe("Delete", async () => {
-			const r = PrimaryModel.fromId(newRecord.id);
-			await r.fetch();
-			await r.delete();
-			let deleted = false;
-			try {
-				const check = PrimaryModel.fromId(newRecord.id);
-				await check.fetch();
-			} catch {
-				deleted = true;
-			}
-
+		describe("Delete", () => {
 			it("should be deleted", async () => {
+				const r = PrimaryModel.fromId(newRecord.id);
+				await r.fetch();
+				await r.delete();
+				let deleted = false;
+				try {
+					const check = PrimaryModel.fromId(newRecord.id);
+					await check.fetch();
+				} catch {
+					deleted = true;
+				}
 				expect(deleted).toBe(true);
 			});
 		});
@@ -556,16 +547,15 @@ describe("Upsert", async () => {
 		});
 	});
 
-	describe("Delete", async () => {
-		await airtable.primary.delete(id);
-		let deleted = false;
-		try {
-			await airtable.primary.get(id);
-		} catch {
-			deleted = true;
-		}
-
+	describe("Delete", () => {
 		it("should be deleted", async () => {
+			await airtable.primary.delete(id);
+			let deleted = false;
+			try {
+				await airtable.primary.get(id);
+			} catch {
+				deleted = true;
+			}
 			expect(deleted).toBe(true);
 		});
 	});
@@ -596,16 +586,15 @@ describe("Field Selection", async () => {
 		});
 	});
 
-	describe("Delete", async () => {
-		await airtable.primary.delete(id);
-		let deleted = false;
-		try {
-			await airtable.primary.get(id);
-		} catch {
-			deleted = true;
-		}
-
+	describe("Delete", () => {
 		it("should be deleted", async () => {
+			await airtable.primary.delete(id);
+			let deleted = false;
+			try {
+				await airtable.primary.get(id);
+			} catch {
+				deleted = true;
+			}
 			expect(deleted).toBe(true);
 		});
 	});
@@ -632,11 +621,10 @@ describe("Max Records", async () => {
 		});
 	});
 
-	describe("Delete", async () => {
-		await airtable.primary.delete(ids);
-		const remaining = await airtable.primary.get(ids);
-
+	describe("Delete", () => {
 		it("should be deleted", async () => {
+			await airtable.primary.delete(ids);
+			const remaining = await airtable.primary.get(ids);
 			expect(remaining.length).toBe(0);
 		});
 	});
