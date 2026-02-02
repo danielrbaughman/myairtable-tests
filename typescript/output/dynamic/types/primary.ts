@@ -759,26 +759,32 @@ export interface PrimaryFieldSet extends FieldSet {
 
     /** View names for `Primary` */
 export type PrimaryView = 
-    "Grid view"
+    "Grid view" |
+    "Filter by View"
     /** View names for `Primary` */
 export const PrimaryViews: PrimaryView[] = [
     "Grid view",
+    "Filter by View",
 ]
 
     /** View IDs for `Primary` */
 export type PrimaryViewId = 
-    "viwvPRDMaHyldUpmd"
+    "viwvPRDMaHyldUpmd" |
+    "viwHlcwGu4xthX1gf"
     /** View IDs for `Primary` */
 export const PrimaryViewIds: PrimaryViewId[] = [
     "viwvPRDMaHyldUpmd",
+    "viwHlcwGu4xthX1gf",
 ]
 
 export const PrimaryViewNameIdMapping: Record<PrimaryView, PrimaryViewId> = {
     "Grid view": "viwvPRDMaHyldUpmd",
+    "Filter by View": "viwHlcwGu4xthX1gf",
 }
 
 export const PrimaryViewIdNameMapping: Record<PrimaryViewId, PrimaryView> = {
     "viwvPRDMaHyldUpmd": "Grid view",
+    "viwHlcwGu4xthX1gf": "Filter by View",
 }
 
 // #endregion

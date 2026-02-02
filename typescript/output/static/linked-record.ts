@@ -143,10 +143,8 @@ export class LinkedRecords<Mdl extends AirtableModel<FieldSet, unknown, keyof Fi
 	 * @param value - The new record to link.
 	 */
 	public add(value: Mdl): void {
-		if (!this.records)
-			this.records = [];
-		if (!this._ids)
-			this._ids = [];
+		if (!this.records) this.records = [];
+		if (!this._ids) this._ids = [];
 		this.records.push(value);
 		this._ids.push(value.id);
 		this.onDirty?.();

@@ -421,6 +421,11 @@
 					"id": "viwvPRDMaHyldUpmd",
 					"name": "Grid view",
 					"type": "grid"
+				},
+				{
+					"id": "viwHlcwGu4xthX1gf",
+					"name": "Filter by View",
+					"type": "grid"
 				}
 			]
 		},
