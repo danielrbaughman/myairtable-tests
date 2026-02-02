@@ -642,3 +642,38 @@ describe("Field Selection", async () => {
 		});
 	});
 });
+
+describe("Max Records", async () => {
+	const newRecords = Array.from({ length: 5 }, (_, i) => {
+		const r = newPrimaryRecord();
+		r.set("Primary Key", `Max Records ${i + 1}`);
+		return r;
+	});
+	let ids: string[];
+
+	describe("Create", async () => {
+		const createdRecords = await airtable.primary.create(newRecords);
+		ids = createdRecords.map((r) => r.id);
+
+		it("should have created 5 records", async () => {
+			expect(createdRecords.length).toBe(5);
+		});
+	});
+
+	describe("Read with maxRecords option", async () => {
+		const readRecords = await airtable.primary.get(ids, { maxRecords: 3, returnAs: "record" });
+
+		it("should return only 3 records", async () => {
+			expect(readRecords.length).toBe(3);
+		});
+	});
+
+	describe("Delete", async () => {
+		await airtable.primary.delete(ids);
+		const remaining = await airtable.primary.get(ids, { returnAs: "record" });
+
+		it("should be deleted", async () => {
+			expect(remaining.length).toBe(0);
+		});
+	});
+});
