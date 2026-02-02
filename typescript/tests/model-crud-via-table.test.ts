@@ -435,9 +435,7 @@ describe("Complex Properties", async () => {
 
 describe("Batch Operations", async () => {
 	const count = 111;
-	const newRecords = Array.from({ length: count }, (_, i) =>
-		new PrimaryModel({ primaryKey: `Batch Record ${i + 1}` }),
-	);
+	const newRecords = Array.from({ length: count }, (_, i) => new PrimaryModel({ primaryKey: `Batch Record ${i + 1}` }));
 	let ids: string[];
 
 	describe("Create", async () => {
@@ -499,6 +497,34 @@ describe("Batch Operations", async () => {
 
 		it("should be deleted", async () => {
 			expect(remaining.length).toBe(0);
+		});
+	});
+});
+
+describe("Invalid Record ID", async () => {
+	describe("Empty String ID", async () => {
+		let threw = false;
+		try {
+			await airtable.primary.get("");
+		} catch {
+			threw = true;
+		}
+
+		it("should throw an error", async () => {
+			expect(threw).toBe(true);
+		});
+	});
+
+	describe("Invalid ID", async () => {
+		let threw = false;
+		try {
+			await airtable.primary.get("rec_INVALID_ID");
+		} catch {
+			threw = true;
+		}
+
+		it("should throw an error", async () => {
+			expect(threw).toBe(true);
 		});
 	});
 });

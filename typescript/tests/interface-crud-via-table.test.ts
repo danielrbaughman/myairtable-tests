@@ -511,3 +511,31 @@ describe("Batch Operations", async () => {
 		});
 	});
 });
+
+describe("Invalid Record ID", async () => {
+	describe("Empty String ID", async () => {
+		let threw = false;
+		try {
+			await airtable.primary.get("", { returnAs: "interface" });
+		} catch {
+			threw = true;
+		}
+
+		it("should throw an error", async () => {
+			expect(threw).toBe(true);
+		});
+	});
+
+	describe("Invalid ID", async () => {
+		let threw = false;
+		try {
+			await airtable.primary.get("rec_INVALID_ID", { returnAs: "interface" });
+		} catch {
+			threw = true;
+		}
+
+		it("should throw an error", async () => {
+			expect(threw).toBe(true);
+		});
+	});
+});

@@ -461,3 +461,33 @@ describe("Complex Properties", async () => {
 		});
 	});
 });
+
+describe("Invalid Record ID", async () => {
+	describe("Empty String ID", async () => {
+		let threw = false;
+		try {
+			const record = PrimaryModel.fromId("");
+			await record.fetch();
+		} catch {
+			threw = true;
+		}
+
+		it("should throw an error", async () => {
+			expect(threw).toBe(true);
+		});
+	});
+
+	describe("Invalid ID", async () => {
+		let threw = false;
+		try {
+			const record = PrimaryModel.fromId("rec_INVALID_ID");
+			await record.fetch();
+		} catch {
+			threw = true;
+		}
+
+		it("should throw an error", async () => {
+			expect(threw).toBe(true);
+		});
+	});
+});
