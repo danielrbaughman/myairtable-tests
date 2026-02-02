@@ -548,3 +548,43 @@ describe("Upsert", async () => {
 		});
 	});
 });
+
+describe("Field Selection", async () => {
+	const newRecord = new PrimaryModel({ primaryKey: "Field Select", singleLineText: "Hello" });
+	let id: string;
+
+	describe("Create", async () => {
+		const createdRecord = await airtable.primary.create(newRecord);
+		id = createdRecord.id!;
+
+		it("should have a valid id", async () => {
+			expect(createdRecord.id).toBeTruthy();
+		});
+	});
+
+	describe("Read with fields option", async () => {
+		const readRecord = await airtable.primary.get(id, { fields: ["Primary Key"] });
+
+		it("should return the requested field", async () => {
+			expect(readRecord.primaryKey).toBe("Field Select");
+		});
+
+		it("should not return unrequested fields", async () => {
+			expect(readRecord.singleLineText).toBeUndefined();
+		});
+	});
+
+	describe("Delete", async () => {
+		await airtable.primary.delete(id);
+		let deleted = false;
+		try {
+			await airtable.primary.get(id);
+		} catch {
+			deleted = true;
+		}
+
+		it("should be deleted", async () => {
+			expect(deleted).toBe(true);
+		});
+	});
+});
