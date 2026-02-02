@@ -665,3 +665,60 @@ describe("Max Records", async () => {
 		});
 	});
 });
+
+describe("Save via Airtable Record Instance", async () => {
+	const newRecord = newPrimaryRecord();
+	newRecord.set("Primary Key", "Save Test");
+	let id: string;
+
+	describe("Create", async () => {
+		const createdRecord = await airtable.primary.create(newRecord);
+		id = createdRecord.id;
+
+		it("should have a valid id", async () => {
+			expect(createdRecord.id).toBeTruthy();
+		});
+
+		it("should have valid values", async () => {
+			expect(createdRecord.fields["Primary Key"]).toBe("Save Test");
+		});
+	});
+
+	describe("Update via save()", async () => {
+		const r = await airtable.primary.get(id, { returnAs: "record", onlyWritableFields: true });
+		r.set("Primary Key", "Save Update Test");
+		const updatedRecord = await r.save();
+
+		it("should have the same id", async () => {
+			expect(updatedRecord.id).toBe(id);
+		});
+
+		it("should have the updated values", async () => {
+			expect(updatedRecord.fields["Primary Key"]).toBe("Save Update Test");
+		});
+	});
+
+	describe("Read", async () => {
+		const readRecord = await airtable.primary.get(id, { returnAs: "record" });
+
+		it("should have the expected values", async () => {
+			expect(readRecord.id).toBe(id);
+			expect(readRecord.fields["Primary Key"]).toBe("Save Update Test");
+		});
+	});
+
+	describe("Delete", () => {
+		it("should be deleted", async () => {
+			const r = await airtable.primary.get(id, { returnAs: "record" });
+			await r.destroy();
+
+			let deleted = false;
+			try {
+				await airtable.primary.get(id, { returnAs: "record" });
+			} catch {
+				deleted = true;
+			}
+			expect(deleted).toBe(true);
+		});
+	});
+});
