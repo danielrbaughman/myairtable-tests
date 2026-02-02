@@ -318,3 +318,47 @@ describe("Filter by BooleanField Formula", async () => {
 		await airtable.primary.delete(allRecords.map((r) => r.id!));
 	});
 });
+
+describe("Filter by AttachmentsField Formula", async () => {
+	const newRecords: PrimaryModel[] = [];
+
+	beforeAll(async () => {
+		const toCreate = [
+			new PrimaryModel({
+				primaryKey: "AttachField Test A",
+				attachment: [
+					{
+						url: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+					},
+				],
+			}),
+			new PrimaryModel({ primaryKey: "AttachField Test B" }),
+		];
+		const created = await airtable.primary.create(toCreate);
+		newRecords.push(...created);
+	});
+
+	it("should filter by notEmpty()", async () => {
+		const formula = PrimaryModel.f.attachment.notEmpty();
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.attachment).toBeDefined();
+			expect(record.attachment!.length).toBeGreaterThan(0);
+		});
+	});
+
+	it("should filter by empty()", async () => {
+		const formula = PrimaryModel.f.attachment.empty();
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.attachment === undefined || record.attachment.length === 0).toBe(true);
+		});
+	});
+
+	afterAll(async () => {
+		const allRecords = await airtable.primary.get(newRecords.map((r) => r.id!));
+		await airtable.primary.delete(allRecords.map((r) => r.id!));
+	});
+});
