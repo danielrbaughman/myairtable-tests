@@ -6,6 +6,7 @@ import { ID, AttachmentsField, BooleanField, DateField, NumberField, TextField, 
 
 export namespace SecondaryFormulas {
     export const id: ID = new ID();
+    export const linkToTertiary: TextField = new TextField('fldKR6tdbnOBRCtdQ');
     export const name: TextField = new TextField('fld1RagdJ09mpWhzM');
     export const primary: TextField = new TextField('fldl0nB9WRFSdqlii');
     export const primary2: TextField = new TextField('fldgoE2oZmXmKkQca');

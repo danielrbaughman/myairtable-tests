@@ -5,17 +5,14 @@
 import * as z from "zod";
 import { recordIdSchema, AirtableAttachmentSchema, AirtableCollaboratorSchema, AirtableButtonSchema, SpecialNumberSchema, ErrorValueSchema } from "../../static/special-types";
 
-// #region SECONDARY
-export const SecondarySchema = z.object({
+// #region TERTIARY
+export const TertiarySchema = z.object({
     id: recordIdSchema.optional(),
-    linkToTertiary: z.string().optional(),
     name: z.string().optional(),
-    primary: z.array(recordIdSchema).optional(),
-    primary2: z.array(recordIdSchema).optional(),
     value: z.string().optional(),
 });
 
-export type ISecondary = z.infer<typeof SecondarySchema>;
+export type ITertiary = z.infer<typeof TertiarySchema>;
 
 // #endregion
 

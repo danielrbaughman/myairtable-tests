@@ -436,6 +436,11 @@
 			"fields": [
 				{
 					"type": "singleLineText",
+					"id": "fldKR6tdbnOBRCtdQ",
+					"name": "Link to Tertiary"
+				},
+				{
+					"type": "singleLineText",
 					"id": "fld1RagdJ09mpWhzM",
 					"name": "Name"
 				},
@@ -470,6 +475,30 @@
 			"views": [
 				{
 					"id": "viwTml4ZHkNi8kJbD",
+					"name": "Grid view",
+					"type": "grid"
+				}
+			]
+		},
+		{
+			"id": "tblLFoLxEdWlxjmLP",
+			"name": "Tertiary",
+			"primaryFieldId": "fldwzqKxsRnPZJ2Ll",
+			"fields": [
+				{
+					"type": "singleLineText",
+					"id": "fldwzqKxsRnPZJ2Ll",
+					"name": "Name"
+				},
+				{
+					"type": "singleLineText",
+					"id": "fldjNLBh2UccM64h5",
+					"name": "Value"
+				}
+			],
+			"views": [
+				{
+					"id": "viwdp3tOB8ooOCvP4",
 					"name": "Grid view",
 					"type": "grid"
 				}

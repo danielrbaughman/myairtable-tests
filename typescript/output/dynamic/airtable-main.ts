@@ -7,6 +7,7 @@ import { getApiKey, getBaseId, setAirtableConfig } from "../static/helpers";
 import {
     PrimaryTable,
     SecondaryTable,
+    TertiaryTable,
     TableNameToTableType,
 } from "./tables";
 import { TableName, TableNamePropertyMapping } from "./types";
@@ -17,6 +18,8 @@ export class Airtable {
     public primary: PrimaryTable;
     /** `Secondary` (tblPPScS3XMuFkDYN) */
     public secondary: SecondaryTable;
+    /** `Tertiary` (tblLFoLxEdWlxjmLP) */
+    public tertiary: TertiaryTable;
 
     constructor(options?: ExtendedAirtableOptions) {
         const _baseId = options?.baseId || getBaseId();
@@ -31,6 +34,7 @@ export class Airtable {
         setAirtableConfig(_baseId, _options);
         this.primary = new PrimaryTable(_baseId, _options);
         this.secondary = new SecondaryTable(_baseId, _options);
+        this.tertiary = new TertiaryTable(_baseId, _options);
     }
 
 
