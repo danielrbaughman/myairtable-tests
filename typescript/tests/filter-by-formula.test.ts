@@ -90,3 +90,87 @@ describe("Filter by ID Formula", async () => {
 		await airtable.primary.delete(allRecords.map((r) => r.id!));
 	});
 });
+
+describe("Filter by TextField Formula", async () => {
+	const newRecords: PrimaryModel[] = [];
+
+	beforeAll(async () => {
+		const toCreate = [
+			new PrimaryModel({ primaryKey: "TextField Alpha One" }),
+			new PrimaryModel({ primaryKey: "TextField Alpha Two" }),
+			new PrimaryModel({ primaryKey: "TextField Beta One" }),
+		];
+		const created = await airtable.primary.create(toCreate);
+		newRecords.push(...created);
+	});
+
+	it("should filter by equals()", async () => {
+		const formula = PrimaryModel.f.primaryKey.equals("TextField Alpha One");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(1);
+		expect(records[0].primaryKey).toBe("TextField Alpha One");
+	});
+
+	it("should filter by notEquals()", async () => {
+		const formula = PrimaryModel.f.primaryKey.notEquals("TextField Alpha One");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(2);
+		records.forEach((record) => {
+			expect(record.primaryKey).not.toBe("TextField Alpha One");
+		});
+	});
+
+	it("should filter by contains()", async () => {
+		const formula = PrimaryModel.f.primaryKey.contains("Alpha");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(2);
+		records.forEach((record) => {
+			expect(record.primaryKey!.includes("Alpha")).toBe(true);
+		});
+	});
+
+	it("should filter by containsAny()", async () => {
+		const formula = PrimaryModel.f.primaryKey.containsAny(["Alpha", "Beta"]);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(3);
+	});
+
+	it("should filter by containsAll()", async () => {
+		const formula = PrimaryModel.f.primaryKey.containsAll(["Alpha", "One"]);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(1);
+		expect(records[0].primaryKey).toBe("TextField Alpha One");
+	});
+
+	it("should filter by notContains()", async () => {
+		const formula = PrimaryModel.f.primaryKey.notContains("Alpha");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.primaryKey!.includes("Alpha")).toBe(false);
+		});
+	});
+
+	it("should filter by startsWith()", async () => {
+		const formula = PrimaryModel.f.primaryKey.startsWith("TextField Alpha");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(2);
+		records.forEach((record) => {
+			expect(record.primaryKey!.startsWith("TextField Alpha")).toBe(true);
+		});
+	});
+
+	it("should filter by notStartsWith()", async () => {
+		const formula = PrimaryModel.f.primaryKey.notStartsWith("TextField Alpha");
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.primaryKey!.startsWith("TextField Alpha")).toBe(false);
+		});
+	});
+
+	afterAll(async () => {
+		const allRecords = await airtable.primary.get(newRecords.map((r) => r.id!));
+		await airtable.primary.delete(allRecords.map((r) => r.id!));
+	});
+});
