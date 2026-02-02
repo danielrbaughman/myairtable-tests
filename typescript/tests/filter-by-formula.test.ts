@@ -264,3 +264,57 @@ describe("Filter by NumberField Formula", async () => {
 		await airtable.primary.delete(allRecords.map((r) => r.id!));
 	});
 });
+
+describe("Filter by BooleanField Formula", async () => {
+	const newRecords: PrimaryModel[] = [];
+
+	beforeAll(async () => {
+		const toCreate = [
+			new PrimaryModel({ primaryKey: "BoolField Test A", checkbox: true }),
+			new PrimaryModel({ primaryKey: "BoolField Test B", checkbox: false }),
+		];
+		const created = await airtable.primary.create(toCreate);
+		newRecords.push(...created);
+	});
+
+	it("should filter by equals(true)", async () => {
+		const formula = PrimaryModel.f.checkbox.equals(true);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.checkbox).toBe(true);
+		});
+	});
+
+	it("should filter by equals(false)", async () => {
+		const formula = PrimaryModel.f.checkbox.equals(false);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.checkbox === false || record.checkbox === undefined).toBe(true);
+		});
+	});
+
+	it("should filter by true()", async () => {
+		const formula = PrimaryModel.f.checkbox.true();
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.checkbox).toBe(true);
+		});
+	});
+
+	it("should filter by false()", async () => {
+		const formula = PrimaryModel.f.checkbox.false();
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBeGreaterThanOrEqual(1);
+		records.forEach((record) => {
+			expect(record.checkbox === false || record.checkbox === undefined).toBe(true);
+		});
+	});
+
+	afterAll(async () => {
+		const allRecords = await airtable.primary.get(newRecords.map((r) => r.id!));
+		await airtable.primary.delete(allRecords.map((r) => r.id!));
+	});
+});
