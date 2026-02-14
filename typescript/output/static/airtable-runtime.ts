@@ -330,15 +330,6 @@ export class AirtableRuntime {
 		});
 	}
 
-	static DATETIME_PARSE(text: unknown, _format?: unknown, _locale?: unknown): string | null {
-		if (AirtableRuntime.isNull(text)) return null;
-		return AirtableRuntime.D(text).toISOString();
-	}
-
-	static SET_LOCALE(date: unknown, _locale: unknown): unknown {
-		return date;
-	}
-
 	static SET_TIMEZONE(date: unknown, timezone: unknown): string | null {
 		if (AirtableRuntime.isNull(date)) return null;
 		const d = AirtableRuntime.D(date);
@@ -366,7 +357,6 @@ export class AirtableRuntime {
 		);
 		return adjusted.toISOString();
 	}
-
 
 	static WEEKDAY(date: unknown): number {
 		if (AirtableRuntime.isNull(date)) return 0;
