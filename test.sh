@@ -1,10 +1,12 @@
 #!/bin/bash
 set -e
 
-TEST_DIR="typescript/tests"
-
 usage() {
-    echo "Usage: ./test.sh [--all|--crud|--json|--filter|--runtime|--help]"
+    echo "Usage: ./test.sh <ts|js> [--all|--crud|--json|--filter|--runtime|--help]"
+    echo ""
+    echo "Arguments:"
+    echo "  ts        Run TypeScript tests"
+    echo "  js        Run JavaScript tests"
     echo ""
     echo "Options:"
     echo "  --all     Run all test suites (default)"
@@ -15,6 +17,26 @@ usage() {
     echo "  --help    Show this help message"
 }
 
+LANG_ARG="$1"
+
+case "$LANG_ARG" in
+    ts)
+        TEST_DIR="typescript/tests"
+        EXT="ts"
+        ;;
+    js)
+        TEST_DIR="javascript/tests"
+        EXT="js"
+        ;;
+    *)
+        echo "Error: first argument must be 'ts' or 'js'"
+        echo ""
+        usage
+        exit 1
+        ;;
+esac
+
+shift
 SUITE="${1:---all}"
 
 case "$SUITE" in
@@ -23,19 +45,19 @@ case "$SUITE" in
         exit 0
         ;;
     --all)
-        TEST_CMD="yarn test"
+        TEST_CMD="npx vitest run $TEST_DIR"
         ;;
     --crud)
-        TEST_CMD="npx vitest run $TEST_DIR/interface-crud-via-table.test.ts $TEST_DIR/model-crud-via-model.test.ts $TEST_DIR/model-crud-via-table.test.ts $TEST_DIR/record-crud-via-table.test.ts"
+        TEST_CMD="npx vitest run $TEST_DIR/interface-crud-via-table.test.$EXT $TEST_DIR/model-crud-via-model.test.$EXT $TEST_DIR/model-crud-via-table.test.$EXT $TEST_DIR/record-crud-via-table.test.$EXT"
         ;;
     --json)
-        TEST_CMD="npx vitest run $TEST_DIR/serializing.test.ts"
+        TEST_CMD="npx vitest run $TEST_DIR/serializing.test.$EXT"
         ;;
     --filter)
-        TEST_CMD="npx vitest run $TEST_DIR/filter-by-formula.test.ts"
+        TEST_CMD="npx vitest run $TEST_DIR/filter-by-formula.test.$EXT"
         ;;
     --runtime)
-        TEST_CMD="npx vitest run $TEST_DIR/runtime-formulas.test.ts"
+        TEST_CMD="npx vitest run $TEST_DIR/runtime-formulas.test.$EXT"
         ;;
     *)
         echo "Unknown option: $SUITE"

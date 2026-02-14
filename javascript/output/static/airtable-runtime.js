@@ -43,6 +43,23 @@ class AirtableRuntime {
 		if (typeof v === "boolean") return v ? "1" : "0";
 		return String(v);
 	}
+	/** Coerce value to Date */
+	static D(v) {
+		if (Array.isArray(v)) return AirtableRuntime.D(v[0]);
+		if (v instanceof Date) {
+			if (isNaN(v.getTime())) throw new Error("Invalid date");
+			return v;
+		}
+		if (typeof v === "number") {
+			const d = new Date(v);
+			if (isNaN(d.getTime())) throw new Error("Invalid date");
+			return d;
+		}
+		const s = AirtableRuntime._isNull(v) ? "" : AirtableRuntime.S(v);
+		const d = new Date(s);
+		if (isNaN(d.getTime())) throw new Error("Invalid date");
+		return d;
+	}
 	// endregion
 
 	// region Numeric functions
@@ -236,8 +253,7 @@ class AirtableRuntime {
 
 	static DATEADD(date, count, unit) {
 		if (AirtableRuntime._isNull(date)) return null;
-		const d = new Date(AirtableRuntime.S(date));
-		if (isNaN(d.getTime())) return null;
+		const d = AirtableRuntime.D(date);
 		const n = AirtableRuntime.N(count);
 		const u = AirtableRuntime.S(unit).toLowerCase();
 		switch (u) {
@@ -268,9 +284,8 @@ class AirtableRuntime {
 
 	static DATETIME_DIFF(date1, date2, unit) {
 		if (AirtableRuntime._isNull(date1) || AirtableRuntime._isNull(date2)) return 0;
-		const d1 = new Date(AirtableRuntime.S(date1));
-		const d2 = new Date(AirtableRuntime.S(date2));
-		if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
+		const d1 = AirtableRuntime.D(date1);
+		const d2 = AirtableRuntime.D(date2);
 		const diffMs = d1.getTime() - d2.getTime();
 		const u = AirtableRuntime.S(unit || "days").toLowerCase();
 		switch (u) {
@@ -297,8 +312,7 @@ class AirtableRuntime {
 
 	static DATETIME_FORMAT(date, format) {
 		if (AirtableRuntime._isNull(date)) return "";
-		const d = new Date(AirtableRuntime.S(date));
-		if (isNaN(d.getTime())) return "";
+		const d = AirtableRuntime.D(date);
 		if (AirtableRuntime._isNull(format)) return d.toISOString();
 		const f = AirtableRuntime.S(format);
 		return f.replace(/YYYY|YY|MM|DD|HH|hh|mm|ss|A|a/g, (token) => {
@@ -331,8 +345,7 @@ class AirtableRuntime {
 
 	static DATETIME_PARSE(text, _format, _locale) {
 		if (AirtableRuntime._isNull(text)) return null;
-		const d = new Date(AirtableRuntime.S(text));
-		return isNaN(d.getTime()) ? null : d.toISOString();
+		return AirtableRuntime.D(text).toISOString();
 	}
 
 	static SET_LOCALE(date, _locale) {
@@ -340,8 +353,7 @@ class AirtableRuntime {
 	}
 	static SET_TIMEZONE(date, timezone) {
 		if (AirtableRuntime._isNull(date)) return null;
-		const d = new Date(AirtableRuntime.S(date));
-		if (isNaN(d.getTime())) return null;
+		const d = AirtableRuntime.D(date);
 		const tz = AirtableRuntime.S(timezone);
 		const parts = new Intl.DateTimeFormat("en-US", {
 			timeZone: tz,
@@ -369,38 +381,31 @@ class AirtableRuntime {
 
 	static YEAR(date) {
 		if (AirtableRuntime._isNull(date)) return 0;
-		const d = new Date(AirtableRuntime.S(date));
-		return isNaN(d.getTime()) ? 0 : d.getUTCFullYear();
+		return AirtableRuntime.D(date).getUTCFullYear();
 	}
 	static MONTH(date) {
 		if (AirtableRuntime._isNull(date)) return 0;
-		const d = new Date(AirtableRuntime.S(date));
-		return isNaN(d.getTime()) ? 0 : d.getUTCMonth() + 1;
+		return AirtableRuntime.D(date).getUTCMonth() + 1;
 	}
 	static DAY(date) {
 		if (AirtableRuntime._isNull(date)) return 0;
-		const d = new Date(AirtableRuntime.S(date));
-		return isNaN(d.getTime()) ? 0 : d.getUTCDate();
+		return AirtableRuntime.D(date).getUTCDate();
 	}
 	static HOUR(date) {
 		if (AirtableRuntime._isNull(date)) return 0;
-		const d = new Date(AirtableRuntime.S(date));
-		return isNaN(d.getTime()) ? 0 : d.getUTCHours();
+		return AirtableRuntime.D(date).getUTCHours();
 	}
 	static MINUTE(date) {
 		if (AirtableRuntime._isNull(date)) return 0;
-		const d = new Date(AirtableRuntime.S(date));
-		return isNaN(d.getTime()) ? 0 : d.getUTCMinutes();
+		return AirtableRuntime.D(date).getUTCMinutes();
 	}
 	static SECOND(date) {
 		if (AirtableRuntime._isNull(date)) return 0;
-		const d = new Date(AirtableRuntime.S(date));
-		return isNaN(d.getTime()) ? 0 : d.getUTCSeconds();
+		return AirtableRuntime.D(date).getUTCSeconds();
 	}
 	static WEEKDAY(date) {
 		if (AirtableRuntime._isNull(date)) return 0;
-		const d = new Date(AirtableRuntime.S(date));
-		return isNaN(d.getTime()) ? 0 : d.getUTCDay();
+		return AirtableRuntime.D(date).getUTCDay();
 	}
 	static WEEKNUM(date, startDay) {
 		if (AirtableRuntime._isNull(date)) return 0;
