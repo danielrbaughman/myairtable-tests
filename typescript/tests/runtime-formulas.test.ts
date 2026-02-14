@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { Airtable, FormulasModel } from "../output";
 
 const airtable = new Airtable();
@@ -32,5 +32,9 @@ describe("Runtime Formulas", async () => {
 
 	it("Airtable and Runtime Formulas should match (date)", async () => {
 		expect(record.dateFormula()).toEqual(record.dateFormula(true));
+	});
+
+	afterAll(async () => {
+		await record.delete();
 	});
 });

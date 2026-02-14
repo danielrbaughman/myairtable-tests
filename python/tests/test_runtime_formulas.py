@@ -6,12 +6,12 @@ from output import Airtable, FormulasModel
 
 
 @pytest.fixture(scope="module")
-def airtable():
+def airtable() -> Airtable:
     return Airtable()
 
 
 @pytest.fixture(scope="module")
-def record(airtable):
+def record(airtable: Airtable) -> FormulasModel:
     model = FormulasModel()
     model.primary_key = "New Primary Key"
     model.first_number = 10
@@ -27,11 +27,14 @@ def record(airtable):
 
 
 class TestRuntimeFormulas:
-    def test_math_formula(self, record):
+    def test_math_formula(self, record: FormulasModel):
         assert record.math_formula() == record.math_formula(True)
 
-    def test_text_formula(self, record):
+    def test_text_formula(self, record: FormulasModel):
         assert record.text_formula() == record.text_formula(True)
 
-    def test_date_formula(self, record):
+    def test_date_formula(self, record: FormulasModel):
         assert record.date_formula() == record.date_formula(True)
+
+    def test_cleanup(self, record: FormulasModel):
+        record.delete()
