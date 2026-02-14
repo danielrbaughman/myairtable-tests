@@ -3,8 +3,9 @@
 // ==========================================
 
 module.exports = {
-	...require("./formulas"),
-	...require("./primary"),
-	...require("./secondary"),
-	...require("./tertiary"),
+    ...require('./formulas'),
+    ...require('./primary'),
+    ...require('./secondary'),
+    ...require('./tertiary'),
 };
+

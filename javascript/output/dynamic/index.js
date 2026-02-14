@@ -3,9 +3,10 @@
 // ==========================================
 
 module.exports = {
-	...require("./airtable-main"),
-	...require("./tables"),
-	...require("./models"),
-	...require("./types"),
-	...require("./formulas"),
+    ...require("./airtable-main"),
+    ...require("./tables"),
+    ...require("./models"),
+    ...require("./types"),
+    ...require("./formulas"),
 };
+

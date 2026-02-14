@@ -4,20 +4,20 @@
 
 const z = require("zod");
 const {
-	recordIdSchema,
-	AirtableAttachmentSchema,
-	AirtableCollaboratorSchema,
-	AirtableButtonSchema,
-	SpecialNumberSchema,
-	ErrorValueSchema,
+    recordIdSchema,
+    AirtableAttachmentSchema,
+    AirtableCollaboratorSchema,
+    AirtableButtonSchema,
+    SpecialNumberSchema,
+    ErrorValueSchema,
 } = require("../../static/special-types");
 
 // #region TERTIARY
 const TertiarySchema = z.object({
-	id: recordIdSchema.optional(),
-	name: z.string().optional(),
-	secondary: z.array(recordIdSchema).optional(),
-	value: z.string().optional(),
+    id: recordIdSchema.optional(),
+    name: z.string().optional(),
+    secondary: z.array(recordIdSchema).optional(),
+    value: z.string().optional(),
 });
 
 // #endregion

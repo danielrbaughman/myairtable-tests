@@ -3,7 +3,8 @@
 // ==========================================
 
 module.exports = {
-	...require("./dynamic"),
-	...require("./static/formula"),
-	...require("./static/airtable-model"),
+    ...require("./dynamic"),
+    ...require("./static/formula"),
+    ...require("./static/airtable-model"),
 };
+
