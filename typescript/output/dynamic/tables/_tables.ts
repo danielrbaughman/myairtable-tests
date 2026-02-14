@@ -3,14 +3,16 @@
 // ==========================================
 
 import {
+    FormulasTable,
     PrimaryTable,
     SecondaryTable,
     TertiaryTable,
 } from ".";
 
-export type TableUnion = PrimaryTable | SecondaryTable | TertiaryTable;
+export type TableUnion = FormulasTable | PrimaryTable | SecondaryTable | TertiaryTable;
 
 export interface TableNameToTableType {
+    "Formulas": FormulasTable;
     "Primary": PrimaryTable;
     "Secondary": SecondaryTable;
     "Tertiary": TertiaryTable;

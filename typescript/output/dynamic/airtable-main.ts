@@ -5,6 +5,7 @@
 import { ExtendedAirtableOptions } from "../static/special-types";
 import { getApiKey, getBaseId, setAirtableConfig } from "../static/helpers";
 import {
+    FormulasTable,
     PrimaryTable,
     SecondaryTable,
     TertiaryTable,
@@ -14,6 +15,8 @@ import { TableName, TableNamePropertyMapping } from "./types";
 
     /** Airtable base wrapper */
 export class Airtable {
+    /** `Formulas` (tblnuYBsMdXNDsuRc) */
+    public formulas: FormulasTable;
     /** `Primary` (tblmb3iqgpNS1ysV2) */
     public primary: PrimaryTable;
     /** `Secondary` (tblPPScS3XMuFkDYN) */
@@ -32,6 +35,7 @@ export class Airtable {
               requestTimeout: options?.requestTimeout,
         };
         setAirtableConfig(_baseId, _options);
+        this.formulas = new FormulasTable(_baseId, _options);
         this.primary = new PrimaryTable(_baseId, _options);
         this.secondary = new SecondaryTable(_baseId, _options);
         this.tertiary = new TertiaryTable(_baseId, _options);

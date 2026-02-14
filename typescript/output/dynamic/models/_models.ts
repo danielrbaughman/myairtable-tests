@@ -3,10 +3,11 @@
 // ==========================================
 
 import {
+    FormulasModel,
     PrimaryModel,
     SecondaryModel,
     TertiaryModel,
 } from ".";
 
-export type ModelUnion = PrimaryModel | SecondaryModel | TertiaryModel;
+export type ModelUnion = FormulasModel | PrimaryModel | SecondaryModel | TertiaryModel;
 

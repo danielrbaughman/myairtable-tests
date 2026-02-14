@@ -21,6 +21,7 @@ import {
 } from "../models";
 import { PrimaryTable } from '../tables/primary';
 import { PrimarySchema, IPrimary } from '../zod/primary';
+import { AirtableRuntime as F } from "../../static/airtable-runtime";
 
 /** Model for `Primary` (tblmb3iqgpNS1ysV2) */
 export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, PrimaryField> {
@@ -85,19 +86,15 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     public set attachment(value: Attachment[] | undefined) { this._fields["attachment"] = value; this.markDirty('attachment'); }
     /** `Auto Number` (fldizvTkxgIn0mC3L) */
     public get autoNumber(): number | undefined { return this._fields["autoNumber"] as number; }
-    public set autoNumber(value: number | undefined) { this._fields["autoNumber"] = value; this.markDirty('autoNumber'); }
     /** `Button` (fldY48yKPG16AajtU) */
     public get button(): AirtableButton | undefined { return this._fields["button"] as AirtableButton; }
-    public set button(value: AirtableButton | undefined) { this._fields["button"] = value; this.markDirty('button'); }
     /** `Checkbox` (fldjQIaAZVegb1FUa) */
     public get checkbox(): boolean | undefined { return this._fields["checkbox"] as boolean; }
     public set checkbox(value: boolean | undefined) { this._fields["checkbox"] = value; this.markDirty('checkbox'); }
     /** `Created By` (fldGLQhDz2UjjiHG6) */
     public get createdBy(): Collaborator | undefined { return this._fields["createdBy"] as Collaborator; }
-    public set createdBy(value: Collaborator | undefined) { this._fields["createdBy"] = value; this.markDirty('createdBy'); }
     /** `Created Time` (fld2YgW382Kt9xltA) */
     public get createdAtTime(): string | undefined { return this._fields["createdAtTime"] as string; }
-    public set createdAtTime(value: string | undefined) { this._fields["createdAtTime"] = value; this.markDirty('createdAtTime'); }
     /** `Currency (float)` (fldyh8pzDXiy5abEr) */
     public get currencyFloat(): number | undefined { return this._fields["currencyFloat"] as number; }
     public set currencyFloat(value: number | undefined) { this._fields["currencyFloat"] = value; this.markDirty('currencyFloat'); }
@@ -361,8 +358,10 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
      * )
      * ```
      */
-    public get formulaComplex(): string | undefined { return this._fields["formulaComplex"] as string; }
-    public set formulaComplex(value: string | undefined) { this._fields["formulaComplex"] = value; this.markDirty('formulaComplex'); }
+    public formulaComplex(recalculate: boolean = false): string | undefined {
+        if (recalculate) this._fields["formulaComplex"] = F.CONCATENATE("Primary Key: ", this.primaryKey, "\n", "Single Line Text: ", this.singleLineText, "\n", "Long Text: ", this.longText, "\n", "Long Text with Rich Text: ", this.longTextWithRichText, "\n", "Attachment: ", (this.attachment ? this.attachment : "None"), "\n", "Checkbox: ", (this.checkbox ? "Checked" : "Unchecked"), "\n", "Multiple Select: ", (this.multipleSelect ? this.multipleSelect : "None"), "\n", "Single Select: ", (this.singleSelect ? this.singleSelect : "None"), "\n", "User: ", (this.user ? this.user : "None"), "\n", "User (allow multiple): ", (this.userAllowMultiple ? this.userAllowMultiple : "None"), "\n", "Date: ", (this.date ? F.DATETIME_FORMAT(this.date, 'YYYY-MM-DD') : "None"), "\n", "Date (with time): ", (this.dateWithTime ? F.DATETIME_FORMAT(this.dateWithTime, 'YYYY-MM-DD HH:mm') : "None"), "\n", "Phone Number: ", (this.phoneNumber ? this.phoneNumber : "None"), "\n", "Email: ", (this.email ? this.email : "None"), "\n", "URL: ", (this.url ? this.url : "None"), "\n", "Number (int): ", (this.numberInt ? (F.S(this.numberInt) + "") : "None"), "\n", "Number (float): ", (this.numberFloat ? (F.S(this.numberFloat) + "") : "None"), "\n", "Currency (int): ", (this.currencyInt ? (F.S(this.currencyInt) + "") : "None"), "\n", "Currency (float): ", (this.currencyFloat ? (F.S(this.currencyFloat) + "") : "None"), "\n", "Percent (int): ", (this.percentInt ? (F.S(this.percentInt) + "") : "None"), "\n", "Percent (float): ", (this.percentFloat ? (F.S(this.percentFloat) + "") : "None"), "\n", "Duration: ", (this.duration ? (F.S(this.duration) + "") : "None"), "\n", "Rating: ", (this.rating ? (F.S(this.rating) + "") : "None"), "\n", "Created Time: ", (this.createdAtTime ? F.DATETIME_FORMAT(this.createdAtTime, 'YYYY-MM-DD HH:mm') : "None"), "\n", "Last Modified Time: ", (this.lastModifiedTime ? F.DATETIME_FORMAT(this.lastModifiedTime, 'YYYY-MM-DD HH:mm') : "None"), "\n", "Created By: ", (this.createdBy ? this.createdBy : "None"), "\n", "Last Modified By: ", (this.lastModifiedBy ? this.lastModifiedBy : "None"), "\n", "Auto Number: ", (this.autoNumber ? (F.S(this.autoNumber) + "") : "None"), "\n", "Button: ", (this.button ? this.button : "None"), "\n", "Link (single): ", (this.linkSingle.id ? this.linkSingle.id : "None"), "\n", "Link (multiple): ", (this.linkMultiple.ids ? this.linkMultiple.ids : "None"), "\n", "Lookup: ", (this.lookup ? this.lookup : "None"), "\n", "Rollup: ", (this.rollup ? this.rollup : "None"), "\n", "Formula (ID): ", (this.formulaId(recalculate) ? this.formulaId(recalculate) : "None"), "\n", "Formula (Simple): ", (this.formulaSimple(recalculate) ? this.formulaSimple(recalculate) : "None"));
+        return this._fields["formulaComplex"] as string;
+    }
     /**
      * `Formula (ID)` (fldcf62YFeIIDHElt)
      * 
@@ -370,8 +369,10 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
      * RECORD_ID()
      * ```
      */
-    public get formulaId(): string | undefined { return this._fields["formulaId"] as string; }
-    public set formulaId(value: string | undefined) { this._fields["formulaId"] = value; this.markDirty('formulaId'); }
+    public formulaId(recalculate: boolean = false): string | undefined {
+        if (recalculate) this._fields["formulaId"] = this.id;
+        return this._fields["formulaId"] as string;
+    }
     /**
      * `Formula (Nested)` (fldXFeHRPBLz6AiWh)
      * 
@@ -379,8 +380,10 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
      * {Formula (ID)} & {Formula (Simple)} & {Formula (Complex)}
      * ```
      */
-    public get formulaNested(): string | undefined { return this._fields["formulaNested"] as string; }
-    public set formulaNested(value: string | undefined) { this._fields["formulaNested"] = value; this.markDirty('formulaNested'); }
+    public formulaNested(recalculate: boolean = false): string | undefined {
+        if (recalculate) this._fields["formulaNested"] = ((F.S(this.formulaId(recalculate)) + F.S(this.formulaSimple(recalculate))) + F.S(this.formulaComplex(recalculate)));
+        return this._fields["formulaNested"] as string;
+    }
     /**
      * `Formula (Simple)` (fldy1axxaoUToLVC6)
      * 
@@ -388,14 +391,14 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
      * {Number (int)} + {Number (float)}
      * ```
      */
-    public get formulaSimple(): number | undefined { return this._fields["formulaSimple"] as number; }
-    public set formulaSimple(value: number | undefined) { this._fields["formulaSimple"] = value; this.markDirty('formulaSimple'); }
+    public formulaSimple(recalculate: boolean = false): number | undefined {
+        if (recalculate) this._fields["formulaSimple"] = (F.N(this.numberInt) + F.N(this.numberFloat));
+        return this._fields["formulaSimple"] as number;
+    }
     /** `Last Modified By` (fldF8iDttqP0AgzWC) */
     public get lastModifiedBy(): Collaborator | undefined { return this._fields["lastModifiedBy"] as Collaborator; }
-    public set lastModifiedBy(value: Collaborator | undefined) { this._fields["lastModifiedBy"] = value; this.markDirty('lastModifiedBy'); }
     /** `Last Modified Time` (fldMinKh4pa3YX86g) */
     public get lastModifiedTime(): string | undefined { return this._fields["lastModifiedTime"] as string; }
-    public set lastModifiedTime(value: string | undefined) { this._fields["lastModifiedTime"] = value; this.markDirty('lastModifiedTime'); }
     /** `Link (multiple)` (fldFyFheQWczd8oux) */
     public get linkMultiple(): LinkedRecords<SecondaryModel> { return this._fields["linkMultiple"] as LinkedRecords<SecondaryModel>; }
     public set linkMultiple(value: LinkedRecords<SecondaryModel> | undefined) { this._fields["linkMultiple"] = value!; this.markDirty('linkMultiple'); }
@@ -410,7 +413,6 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     public set longTextWithRichText(value: string | undefined) { this._fields["longTextWithRichText"] = value; this.markDirty('longTextWithRichText'); }
     /** `Lookup` (fldbmFmrzYKBktJvE) */
     public get lookup(): string[] | undefined { return this._fields["lookup"] as string[]; }
-    public set lookup(value: string[] | undefined) { this._fields["lookup"] = value; this.markDirty('lookup'); }
     /** `Multiple Select` (fld6GTabFmu1xKPvZ) */
     public get multipleSelect(): PrimaryMultipleSelectOption[] | undefined { return this._fields["multipleSelect"] as PrimaryMultipleSelectOption[]; }
     public set multipleSelect(value: PrimaryMultipleSelectOption[] | undefined) { this._fields["multipleSelect"] = value; this.markDirty('multipleSelect'); }
@@ -437,7 +439,6 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     public set rating(value: any | undefined) { this._fields["rating"] = value; this.markDirty('rating'); }
     /** `Rollup` (fldGaFgBsDC3IBUdV) */
     public get rollup(): string[] | undefined { return this._fields["rollup"] as string[]; }
-    public set rollup(value: string[] | undefined) { this._fields["rollup"] = value; this.markDirty('rollup'); }
     /** `Single Line Text` (fld0BL2lFo9fqcKv3) */
     public get singleLineText(): string | undefined { return this._fields["singleLineText"] as string; }
     public set singleLineText(value: string | undefined) { this._fields["singleLineText"] = value; this.markDirty('singleLineText'); }
