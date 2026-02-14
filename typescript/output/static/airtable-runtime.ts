@@ -44,7 +44,7 @@ export class AirtableRuntime {
 		if (typeof v === "boolean") return v ? "1" : "0";
 		return String(v);
 	}
-	
+
 	/** Coerce value to Date */
 	static D(v: unknown): Date {
 		if (Array.isArray(v)) return AirtableRuntime.D(v[0]);

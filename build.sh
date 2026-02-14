@@ -15,5 +15,5 @@ uv run main.py \
     all \
     --meta-folder "$AIRTABLE_DIR" \
     --ts-folder "$AIRTABLE_DIR/typescript/output" \
-    --js-folder "$AIRTABLE_DIR/javascript/output"
-    # --py-folder "$AIRTABLE_DIR/python/output"
+    --js-folder "$AIRTABLE_DIR/javascript/output" \
+    --py-folder "$AIRTABLE_DIR/python/output"

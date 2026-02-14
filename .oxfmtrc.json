@@ -3,5 +3,13 @@
 	"printWidth": 120,
 	"tabWidth": 2,
 	"useTabs": true,
-	"ignorePatterns": ["dist/**", "node_modules/**", "src/**", "typescript/output/**", "javascript/output/**", ".venv/**"]
+	"ignorePatterns": [
+		"dist/**",
+		"node_modules/**",
+		"src/**",
+		"meta.json",
+		"typescript/output/**",
+		"javascript/output/**",
+		".venv/**"
+	]
 }
