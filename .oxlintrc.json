@@ -28,7 +28,14 @@
 		"@typescript-eslint/prefer-namespace-keyword": "error",
 		"@typescript-eslint/triple-slash-reference": "error"
 	},
-	"ignorePatterns": ["dist/**", "node_modules/**", "src/**", "typescript/output/**", ".venv/**"],
+	"ignorePatterns": [
+		"dist/**",
+		"node_modules/**",
+		"src/**",
+		"typescript/output/**",
+		"javascript/output/**",
+		".venv/**"
+	],
 	"overrides": [
 		{
 			"files": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
