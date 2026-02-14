@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from typing import Any, TYPE_CHECKING
 
 from pyairtable.orm import Model
-from pyairtable.orm.fields import SingleLineTextField, MultilineTextField, PhoneNumberField, EmailField, LinkField, SingleLinkField, UrlField, DateField, CreatedTimeField, LastModifiedTimeField, NumberField, SelectField, MultipleSelectField, CheckboxField, RichTextField, CurrencyField, PercentField, LookupField, AttachmentsField, CreatedByField, ButtonField, CountField, DatetimeField, DurationField, LastModifiedByField, AutoNumberField, CollaboratorField
+from pyairtable.orm.fields import SingleLineTextField, MultilineTextField, PhoneNumberField, EmailField, LinkField, SingleLinkField, UrlField, DateField, CreatedTimeField, LastModifiedTimeField, NumberField, SelectField, MultipleSelectField, CheckboxField, RichTextField, CurrencyField, PercentField, LookupField, AttachmentsField, CreatedByField, ButtonField, CountField, DatetimeField, DurationField, LastModifiedByField, AutoNumberField, CollaboratorField, MultipleCollaboratorsField
 
 from ...static.helpers import get_api_key, get_base_id
 from ...static.special_types import AirtableAttachment, RecordId
@@ -400,6 +400,6 @@ class PrimaryModel(Model):
     """URL `fldLYloz2oP4ymf3B`"""
     user: CollaboratorField = CollaboratorField(field_name="fldU6SbLp8CSkLcA4")
     """User `fldU6SbLp8CSkLcA4`"""
-    user_allow_multiple: CollaboratorField = CollaboratorField(field_name="fldBwCDbAVxRj9yg7")
+    user_allow_multiple: MultipleCollaboratorsField = MultipleCollaboratorsField(field_name="fldBwCDbAVxRj9yg7")
     """User (allow multiple) `fldBwCDbAVxRj9yg7`"""
 
