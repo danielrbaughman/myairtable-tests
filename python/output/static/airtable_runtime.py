@@ -310,16 +310,6 @@ class AirtableRuntime:
         return result
 
     @staticmethod
-    def DATETIME_PARSE(text: Any, _format: Any = None, _locale: Any = None) -> str | None:  # noqa: N802
-        if text is None:
-            return None
-        return AirtableRuntime.D(text).isoformat()
-
-    @staticmethod
-    def SET_LOCALE(date: Any, _locale: Any) -> Any:  # noqa: N802
-        return date
-
-    @staticmethod
     def SET_TIMEZONE(date: Any, tz: Any) -> str | None:  # noqa: N802
         if date is None:
             return None
@@ -329,42 +319,6 @@ class AirtableRuntime:
         # Replace tzinfo with UTC so UTC-based formatting shows local time values
         adjusted = local_dt.replace(tzinfo=timezone.utc)
         return adjusted.isoformat()
-
-    @staticmethod
-    def YEAR(date: Any) -> int:  # noqa: N802
-        if date is None:
-            return 0
-        return AirtableRuntime.D(date).year
-
-    @staticmethod
-    def MONTH(date: Any) -> int:  # noqa: N802
-        if date is None:
-            return 0
-        return AirtableRuntime.D(date).month
-
-    @staticmethod
-    def DAY(date: Any) -> int:  # noqa: N802
-        if date is None:
-            return 0
-        return AirtableRuntime.D(date).day
-
-    @staticmethod
-    def HOUR(date: Any) -> int:  # noqa: N802
-        if date is None:
-            return 0
-        return AirtableRuntime.D(date).hour
-
-    @staticmethod
-    def MINUTE(date: Any) -> int:  # noqa: N802
-        if date is None:
-            return 0
-        return AirtableRuntime.D(date).minute
-
-    @staticmethod
-    def SECOND(date: Any) -> int:  # noqa: N802
-        if date is None:
-            return 0
-        return AirtableRuntime.D(date).second
 
     @staticmethod
     def WEEKDAY(date: Any) -> int:  # noqa: N802
@@ -387,18 +341,6 @@ class AirtableRuntime:
         start_day_of_week = start_of_year.weekday()  # Monday=0
         adjusted = day_of_year + ((start_day_of_week - start_dow + 7) % 7)
         return (adjusted // 7) + 1
-
-    @staticmethod
-    def DATESTR(date: Any) -> str:  # noqa: N802
-        if date is None:
-            return ""
-        return AirtableRuntime.D(date).strftime("%Y-%m-%d")
-
-    @staticmethod
-    def TIMESTR(date: Any) -> str:  # noqa: N802
-        if date is None:
-            return ""
-        return AirtableRuntime.D(date).strftime("%H:%M:%S")
 
     @staticmethod
     def TONOW(date: Any, unit: Any = None) -> int | str:  # noqa: N802
