@@ -11,7 +11,7 @@ from ...static.special_types import AirtableAttachment, AirtableButton, Airtable
 
 
 # region OPTIONS
-PrimaryMultipleSelectOption = Literal[
+type PrimaryMultipleSelectOption = Literal[
     "Option 1",
     "Option 2",
     "Option 3",
@@ -24,7 +24,7 @@ PrimaryMultipleSelectOptions: list[PrimaryMultipleSelectOption] = [
 ]
 """Select options for `Multiple Select`"""
 
-PrimarySingleSelectOption = Literal[
+type PrimarySingleSelectOption = Literal[
     "Choice 1",
     "Choice 2",
     "Choice 3",
@@ -40,7 +40,7 @@ PrimarySingleSelectOptions: list[PrimarySingleSelectOption] = [
 # endregion
 
 # region PRIMARY
-PrimaryField = Literal[
+type PrimaryField = Literal[
     "Attachment",
     "Auto Number",
     "Button",
@@ -121,7 +121,7 @@ PrimaryFields: list[PrimaryField] = [
 ]
 """Field names for `Primary`"""
 
-PrimaryFieldId = Literal[
+type PrimaryFieldId = Literal[
     "fldhF2AEuSC1haCZd",
     "fldizvTkxgIn0mC3L",
     "fldY48yKPG16AajtU",
@@ -202,7 +202,7 @@ PrimaryFieldIds: list[PrimaryFieldId] = [
 ]
 """Field IDs for `Primary`"""
 
-PrimaryFieldProperty = Literal[
+type PrimaryFieldProperty = Literal[
     "attachment",
     "auto_number",
     "button",
@@ -594,7 +594,7 @@ class PrimaryFieldsDict(TypedDict, total=False):
     fldBwCDbAVxRj9yg7: list[AirtableCollaborator]
 
 
-PrimaryView = Literal[
+type PrimaryView = Literal[
     "Grid view",
     "Filter by View",
 ]
@@ -605,7 +605,7 @@ PrimaryViews: list[PrimaryView] = [
 ]
 """View names for `Primary`"""
 
-PrimaryViewId = Literal[
+type PrimaryViewId = Literal[
     "viwvPRDMaHyldUpmd",
     "viwHlcwGu4xthX1gf",
 ]

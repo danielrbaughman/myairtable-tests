@@ -8,7 +8,7 @@ from .primary import PrimaryField, PrimaryFields, PrimaryFieldNameIdMapping
 from .secondary import SecondaryField, SecondaryFields, SecondaryFieldNameIdMapping
 from .tertiary import TertiaryField, TertiaryFields, TertiaryFieldNameIdMapping
 
-TableName = Literal[
+type TableName = Literal[
     "Formulas",
     "Primary",
     "Secondary",
@@ -21,7 +21,7 @@ TableNames: list[TableName] = [
     "Tertiary",
 ]
 
-TableId = Literal[
+type TableId = Literal[
     "tblnuYBsMdXNDsuRc",
     "tblmb3iqgpNS1ysV2",
     "tblPPScS3XMuFkDYN",

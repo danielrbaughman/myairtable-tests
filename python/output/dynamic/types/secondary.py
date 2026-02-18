@@ -14,7 +14,7 @@ from ...static.special_types import AirtableAttachment, AirtableButton, Airtable
 # endregion
 
 # region SECONDARY
-SecondaryField = Literal[
+type SecondaryField = Literal[
     "Link to Tertiary",
     "Name",
     "Primary",
@@ -31,7 +31,7 @@ SecondaryFields: list[SecondaryField] = [
 ]
 """Field names for `Secondary`"""
 
-SecondaryFieldId = Literal[
+type SecondaryFieldId = Literal[
     "fldKR6tdbnOBRCtdQ",
     "fld1RagdJ09mpWhzM",
     "fldl0nB9WRFSdqlii",
@@ -48,7 +48,7 @@ SecondaryFieldIds: list[SecondaryFieldId] = [
 ]
 """Field IDs for `Secondary`"""
 
-SecondaryFieldProperty = Literal[
+type SecondaryFieldProperty = Literal[
     "link_to_tertiary",
     "name",
     "primary",
@@ -128,7 +128,7 @@ class SecondaryFieldsDict(TypedDict, total=False):
     fldi6Mxh5H1gPGxFX: str
 
 
-SecondaryView = Literal[
+type SecondaryView = Literal[
     "Grid view",
 ]
 """View names for `Secondary`"""
@@ -137,7 +137,7 @@ SecondaryViews: list[SecondaryView] = [
 ]
 """View names for `Secondary`"""
 
-SecondaryViewId = Literal[
+type SecondaryViewId = Literal[
     "viwTml4ZHkNi8kJbD",
 ]
 """View IDs for `Secondary`"""

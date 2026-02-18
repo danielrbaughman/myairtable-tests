@@ -14,7 +14,7 @@ from ...static.special_types import AirtableAttachment, AirtableButton, Airtable
 # endregion
 
 # region FORMULAS
-FormulasField = Literal[
+type FormulasField = Literal[
     "Date Formula",
     "First Date",
     "First Number",
@@ -47,7 +47,7 @@ FormulasFields: list[FormulasField] = [
 ]
 """Field names for `Formulas`"""
 
-FormulasFieldId = Literal[
+type FormulasFieldId = Literal[
     "fldY7kjaklLeoSgGd",
     "fldlZT521Iy0FFXFL",
     "fldA04pqfjMkGXcZU",
@@ -80,7 +80,7 @@ FormulasFieldIds: list[FormulasFieldId] = [
 ]
 """Field IDs for `Formulas`"""
 
-FormulasFieldProperty = Literal[
+type FormulasFieldProperty = Literal[
     "date_formula",
     "first_date",
     "first_number",
@@ -238,7 +238,7 @@ class FormulasFieldsDict(TypedDict, total=False):
     fldfruPf8V9K6qIAN: str
 
 
-FormulasView = Literal[
+type FormulasView = Literal[
     "Grid view",
 ]
 """View names for `Formulas`"""
@@ -247,7 +247,7 @@ FormulasViews: list[FormulasView] = [
 ]
 """View names for `Formulas`"""
 
-FormulasViewId = Literal[
+type FormulasViewId = Literal[
     "viw7gdr4uJSpnHjR7",
 ]
 """View IDs for `Formulas`"""
