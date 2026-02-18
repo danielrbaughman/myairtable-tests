@@ -30,6 +30,16 @@ class AirtableRuntime:
         return result
 
     @staticmethod
+    def AN(args: tuple[Any, ...]) -> list[int | float]:  # noqa: N802
+        """Coerce arguments to a flat array of numbers"""
+        return [AirtableRuntime.N(v) for v in AirtableRuntime.A(args)]
+
+    @staticmethod
+    def AS(args: tuple[Any, ...]) -> list[str]:  # noqa: N802
+        """Coerce arguments to a flat array of strings"""
+        return [AirtableRuntime.S(v) for v in AirtableRuntime.A(args)]
+
+    @staticmethod
     def N(v: Any) -> int | float:  # noqa: N802
         """Coerce value to number"""
         if isinstance(v, list):
@@ -78,30 +88,9 @@ class AirtableRuntime:
 
     # region Numeric functions
     @staticmethod
-    def SUM(*args: Any) -> int | float:  # noqa: N802
-        flat = AirtableRuntime.A(args)
-        return sum(AirtableRuntime.N(v) for v in flat)
-
-    @staticmethod
     def AVERAGE(*args: Any) -> float:  # noqa: N802
-        flat = AirtableRuntime.A(args)
-        if not flat:
-            return float("nan")
-        return AirtableRuntime.SUM(*flat) / len(flat)
-
-    @staticmethod
-    def MIN(*args: Any) -> int | float:  # noqa: N802
-        flat = AirtableRuntime.A(args)
-        if not flat:
-            return float("inf")
-        return min(AirtableRuntime.N(v) for v in flat)
-
-    @staticmethod
-    def MAX(*args: Any) -> int | float:  # noqa: N802
-        flat = AirtableRuntime.A(args)
-        if not flat:
-            return float("-inf")
-        return max(AirtableRuntime.N(v) for v in flat)
+        flat = AirtableRuntime.AN(args)
+        return sum(flat) / len(flat)
 
     @staticmethod
     def COUNT(*args: Any) -> int:  # noqa: N802
@@ -112,16 +101,6 @@ class AirtableRuntime:
     def COUNTA(*args: Any) -> int:  # noqa: N802
         flat = AirtableRuntime.A(args)
         return sum(1 for v in flat if v is not None and v != "")
-
-    @staticmethod
-    def COUNTALL(*args: Any) -> int:  # noqa: N802
-        return len(AirtableRuntime.A(args))
-
-    @staticmethod
-    def ROUND(value: Any, precision: Any = 0) -> float:  # noqa: N802
-        n = AirtableRuntime.N(value)
-        p = int(AirtableRuntime.N(precision))
-        return round(n, p)
 
     @staticmethod
     def ROUNDUP(value: Any, precision: Any = 0) -> float:  # noqa: N802
@@ -184,10 +163,6 @@ class AirtableRuntime:
 
     # region String functions
     @staticmethod
-    def CONCATENATE(*args: Any) -> str:  # noqa: N802
-        return "".join(AirtableRuntime.S(a) for a in args)
-
-    @staticmethod
     def LEFT(text: Any, count: Any) -> str:  # noqa: N802
         return AirtableRuntime.S(text)[: int(AirtableRuntime.N(count))]
 
@@ -245,38 +220,12 @@ class AirtableRuntime:
         return s[:start_idx] + AirtableRuntime.S(replacement) + s[start_idx + length :]
 
     @staticmethod
-    def REPT(text: Any, count: Any) -> str:  # noqa: N802
-        return AirtableRuntime.S(text) * max(0, int(AirtableRuntime.N(count)))
-
-    @staticmethod
     def T(value: Any) -> str:  # noqa: N802
         return value if isinstance(value, str) else ""
-
-    @staticmethod
-    def REGEX_MATCH(text: Any, regex: Any) -> bool:  # noqa: N802
-        try:
-            return bool(re.search(AirtableRuntime.S(regex), AirtableRuntime.S(text)))
-        except re.error:
-            return False
-
-    @staticmethod
-    def REGEX_REPLACE(text: Any, regex: Any, replacement: Any) -> str:  # noqa: N802
-        try:
-            return re.sub(AirtableRuntime.S(regex), AirtableRuntime.S(replacement), AirtableRuntime.S(text))
-        except re.error:
-            return AirtableRuntime.S(text)
 
     # endregion
 
     # region Date/Time functions
-    @staticmethod
-    def TODAY() -> str:  # noqa: N802
-        return datetime.now().strftime("%Y-%m-%d")
-
-    @staticmethod
-    def NOW() -> str:  # noqa: N802
-        return datetime.now().isoformat()
-
     @staticmethod
     def DATEADD(date: Any, count: Any, unit: Any) -> str | None:  # noqa: N802
         if date is None:
