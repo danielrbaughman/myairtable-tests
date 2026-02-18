@@ -38,6 +38,8 @@ class TertiaryModel(Model):
 
     f: TertiaryFormulas = TertiaryFormulas()
 
+    evaluate_formulas_at_runtime: bool = False
+
     name: SingleLineTextField = SingleLineTextField(field_name="fldwzqKxsRnPZJ2Ll")
     """Name `fldwzqKxsRnPZJ2Ll` - `Primary Key`"""
     secondary: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fld8lCuUXpEXkIeYv", model="output.dynamic.models.secondary.SecondaryModel") # type: ignore

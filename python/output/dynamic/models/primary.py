@@ -46,6 +46,8 @@ class PrimaryModel(Model):
 
     f: PrimaryFormulas = PrimaryFormulas()
 
+    evaluate_formulas_at_runtime: bool = False
+
     attachment: AttachmentsField = AttachmentsField(field_name="fldhF2AEuSC1haCZd")
     """Attachment `fldhF2AEuSC1haCZd`"""
     auto_number: AutoNumberField = AutoNumberField(field_name="fldizvTkxgIn0mC3L", readonly=True)
@@ -71,293 +73,293 @@ class PrimaryModel(Model):
     email: EmailField = EmailField(field_name="fldHCJoYBiFVsNvP4")
     """Email `fldHCJoYBiFVsNvP4`"""
     _orm_formula_complex: SingleLineTextField = SingleLineTextField(field_name="fld2vnFc0Bl5IOFUQ", readonly=True)
-    """
-    Formula (Complex) `fld2vnFc0Bl5IOFUQ` - `Read-Only Field`
-    
-    ```
-    CONCATENATE(
-      "Primary Key: ",
-      {Primary Key},
-      "\n",
-      "Single Line Text: ",
-      {Single Line Text},
-      "\n",
-      "Long Text: ",
-      {Long Text},
-      "\n",
-      "Long Text with Rich Text: ",
-      {Long Text with Rich Text},
-      "\n",
-      "Attachment: ",
-      IF(
-        {Attachment},
-        {Attachment},
-        "None"
-      ),
-      "\n",
-      "Checkbox: ",
-      IF(
-        {Checkbox},
-        "Checked",
-        "Unchecked"
-      ),
-      "\n",
-      "Multiple Select: ",
-      IF(
-        {Multiple Select},
-        {Multiple Select},
-        "None"
-      ),
-      "\n",
-      "Single Select: ",
-      IF(
-        {Single Select},
-        {Single Select},
-        "None"
-      ),
-      "\n",
-      "User: ",
-      IF(
-        {User},
-        {User},
-        "None"
-      ),
-      "\n",
-      "User (allow multiple): ",
-      IF(
-        {User (allow multiple)},
-        {User (allow multiple)},
-        "None"
-      ),
-      "\n",
-      "Date: ",
-      IF(
-        {Date},
-        DATETIME_FORMAT({Date}, 'YYYY-MM-DD'),
-        "None"
-      ),
-      "\n",
-      "Date (with time): ",
-      IF(
-        {Date (with time)},
-        DATETIME_FORMAT(
-          {Date (with time)},
-          'YYYY-MM-DD HH:mm'
-        ),
-        "None"
-      ),
-      "\n",
-      "Phone Number: ",
-      IF(
-        {Phone Number},
-        {Phone Number},
-        "None"
-      ),
-      "\n",
-      "Email: ",
-      IF(
-        {Email},
-        {Email},
-        "None"
-      ),
-      "\n",
-      "URL: ",
-      IF(
-        {URL},
-        {URL},
-        "None"
-      ),
-      "\n",
-      "Number (int): ",
-      IF(
-        {Number (int)},
-        {Number(int) } & "",
-        "None"
-      ),
-      "\n",
-      "Number (float): ",
-      IF(
-        {Number (float)},
-        {Number(float) } & "",
-        "None"
-      ),
-      "\n",
-      "Currency (int): ",
-      IF(
-        {Currency (int)},
-        {Currency(int) } & "",
-        "None"
-      ),
-      "\n",
-      "Currency (float): ",
-      IF(
-        {Currency (float)},
-        {Currency(float) } & "",
-        "None"
-      ),
-      "\n",
-      "Percent (int): ",
-      IF(
-        {Percent (int)},
-        {Percent(int) } & "",
-        "None"
-      ),
-      "\n",
-      "Percent (float): ",
-      IF(
-        {Percent (float)},
-        {Percent(float) } & "",
-        "None"
-      ),
-      "\n",
-      "Duration: ",
-      IF(
-        {Duration},
-        {Duration} & "",
-        "None"
-      ),
-      "\n",
-      "Rating: ",
-      IF(
-        {Rating},
-        {Rating} & "",
-        "None"
-      ),
-      "\n",
-      "Created Time: ",
-      IF(
-        {Created Time},
-        DATETIME_FORMAT(
-          {Created Time},
-          'YYYY-MM-DD HH:mm'
-        ),
-        "None"
-      ),
-      "\n",
-      "Last Modified Time: ",
-      IF(
-        {Last Modified Time},
-        DATETIME_FORMAT(
-          {Last Modified Time},
-          'YYYY-MM-DD HH:mm'
-        ),
-        "None"
-      ),
-      "\n",
-      "Created By: ",
-      IF(
-        {Created By},
-        {Created By},
-        "None"
-      ),
-      "\n",
-      "Last Modified By: ",
-      IF(
-        {Last Modified By},
-        {Last Modified By},
-        "None"
-      ),
-      "\n",
-      "Auto Number: ",
-      IF(
-        {Auto Number},
-        {Auto Number} & "",
-        "None"
-      ),
-      "\n",
-      "Button: ",
-      IF(
-        {Button},
-        {Button},
-        "None"
-      ),
-      "\n",
-      "Link (single): ",
-      IF(
-        {Link (single)},
-        {Link (single)},
-        "None"
-      ),
-      "\n",
-      "Link (multiple): ",
-      IF(
-        {Link (multiple)},
-        {Link (multiple)},
-        "None"
-      ),
-      "\n",
-      "Lookup: ",
-      IF(
-        {Lookup},
-        {Lookup},
-        "None"
-      ),
-      "\n",
-      "Rollup: ",
-      IF(
-        {Rollup},
-        {Rollup},
-        "None"
-      ),
-      "\n",
-      "Formula (ID): ",
-      IF(
-        {Formula (ID)},
-        {Formula (ID)},
-        "None"
-      ),
-      "\n",
-      "Formula (Simple): ",
-      IF(
-        {Formula (Simple)},
-        {Formula (Simple)},
-        "None"
-      )
-    )
-    ```
-    """
-
-    def formula_complex(self, recalculate: bool = False) -> str | None:
-        if recalculate:
-            self._fields["fld2vnFc0Bl5IOFUQ"] = F.CONCATENATE("Primary Key: ", self.primary_key, "\n", "Single Line Text: ", self.single_line_text, "\n", "Long Text: ", self.long_text, "\n", "Long Text with Rich Text: ", self.long_text_with_rich_text, "\n", "Attachment: ", (self.attachment if self.attachment else "None"), "\n", "Checkbox: ", ("Checked" if self.checkbox else "Unchecked"), "\n", "Multiple Select: ", (self.multiple_select if self.multiple_select else "None"), "\n", "Single Select: ", (self.single_select if self.single_select else "None"), "\n", "User: ", (self.user if self.user else "None"), "\n", "User (allow multiple): ", (self.user_allow_multiple if self.user_allow_multiple else "None"), "\n", "Date: ", (F.DATETIME_FORMAT(self.date, 'YYYY-MM-DD') if self.date else "None"), "\n", "Date (with time): ", (F.DATETIME_FORMAT(self.date_with_time, 'YYYY-MM-DD HH:mm') if self.date_with_time else "None"), "\n", "Phone Number: ", (self.phone_number if self.phone_number else "None"), "\n", "Email: ", (self.email if self.email else "None"), "\n", "URL: ", (self.url if self.url else "None"), "\n", "Number (int): ", ((F.S(self.number_int) + "") if self.number_int else "None"), "\n", "Number (float): ", ((F.S(self.number_float) + "") if self.number_float else "None"), "\n", "Currency (int): ", ((F.S(self.currency_int) + "") if self.currency_int else "None"), "\n", "Currency (float): ", ((F.S(self.currency_float) + "") if self.currency_float else "None"), "\n", "Percent (int): ", ((F.S(self.percent_int) + "") if self.percent_int else "None"), "\n", "Percent (float): ", ((F.S(self.percent_float) + "") if self.percent_float else "None"), "\n", "Duration: ", ((F.S(self.duration) + "") if self.duration else "None"), "\n", "Rating: ", ((F.S(self.rating) + "") if self.rating else "None"), "\n", "Created Time: ", (F.DATETIME_FORMAT(self.created_at_time, 'YYYY-MM-DD HH:mm') if self.created_at_time else "None"), "\n", "Last Modified Time: ", (F.DATETIME_FORMAT(self.last_modified_time, 'YYYY-MM-DD HH:mm') if self.last_modified_time else "None"), "\n", "Created By: ", (self.created_by if self.created_by else "None"), "\n", "Last Modified By: ", (self.last_modified_by if self.last_modified_by else "None"), "\n", "Auto Number: ", ((F.S(self.auto_number) + "") if self.auto_number else "None"), "\n", "Button: ", (self.button if self.button else "None"), "\n", "Link (single): ", (self.link_single if self.link_single else "None"), "\n", "Link (multiple): ", (self.link_multiple if self.link_multiple else "None"), "\n", "Lookup: ", (self.lookup if self.lookup else "None"), "\n", "Rollup: ", (self.rollup if self.rollup else "None"), "\n", "Formula (ID): ", (self.formula_id(recalculate) if self.formula_id(recalculate) else "None"), "\n", "Formula (Simple): ", (self.formula_simple(recalculate) if self.formula_simple(recalculate) else "None"))
+    @property
+    def formula_complex(self) -> str | None:
+        """
+        Formula (Complex) `fld2vnFc0Bl5IOFUQ` - `Read-Only Field`
+        
+        ```
+        CONCATENATE(
+          "Primary Key: ",
+          {Primary Key},
+          "\n",
+          "Single Line Text: ",
+          {Single Line Text},
+          "\n",
+          "Long Text: ",
+          {Long Text},
+          "\n",
+          "Long Text with Rich Text: ",
+          {Long Text with Rich Text},
+          "\n",
+          "Attachment: ",
+          IF(
+            {Attachment},
+            {Attachment},
+            "None"
+          ),
+          "\n",
+          "Checkbox: ",
+          IF(
+            {Checkbox},
+            "Checked",
+            "Unchecked"
+          ),
+          "\n",
+          "Multiple Select: ",
+          IF(
+            {Multiple Select},
+            {Multiple Select},
+            "None"
+          ),
+          "\n",
+          "Single Select: ",
+          IF(
+            {Single Select},
+            {Single Select},
+            "None"
+          ),
+          "\n",
+          "User: ",
+          IF(
+            {User},
+            {User},
+            "None"
+          ),
+          "\n",
+          "User (allow multiple): ",
+          IF(
+            {User (allow multiple)},
+            {User (allow multiple)},
+            "None"
+          ),
+          "\n",
+          "Date: ",
+          IF(
+            {Date},
+            DATETIME_FORMAT({Date}, 'YYYY-MM-DD'),
+            "None"
+          ),
+          "\n",
+          "Date (with time): ",
+          IF(
+            {Date (with time)},
+            DATETIME_FORMAT(
+              {Date (with time)},
+              'YYYY-MM-DD HH:mm'
+            ),
+            "None"
+          ),
+          "\n",
+          "Phone Number: ",
+          IF(
+            {Phone Number},
+            {Phone Number},
+            "None"
+          ),
+          "\n",
+          "Email: ",
+          IF(
+            {Email},
+            {Email},
+            "None"
+          ),
+          "\n",
+          "URL: ",
+          IF(
+            {URL},
+            {URL},
+            "None"
+          ),
+          "\n",
+          "Number (int): ",
+          IF(
+            {Number (int)},
+            {Number(int) } & "",
+            "None"
+          ),
+          "\n",
+          "Number (float): ",
+          IF(
+            {Number (float)},
+            {Number(float) } & "",
+            "None"
+          ),
+          "\n",
+          "Currency (int): ",
+          IF(
+            {Currency (int)},
+            {Currency(int) } & "",
+            "None"
+          ),
+          "\n",
+          "Currency (float): ",
+          IF(
+            {Currency (float)},
+            {Currency(float) } & "",
+            "None"
+          ),
+          "\n",
+          "Percent (int): ",
+          IF(
+            {Percent (int)},
+            {Percent(int) } & "",
+            "None"
+          ),
+          "\n",
+          "Percent (float): ",
+          IF(
+            {Percent (float)},
+            {Percent(float) } & "",
+            "None"
+          ),
+          "\n",
+          "Duration: ",
+          IF(
+            {Duration},
+            {Duration} & "",
+            "None"
+          ),
+          "\n",
+          "Rating: ",
+          IF(
+            {Rating},
+            {Rating} & "",
+            "None"
+          ),
+          "\n",
+          "Created Time: ",
+          IF(
+            {Created Time},
+            DATETIME_FORMAT(
+              {Created Time},
+              'YYYY-MM-DD HH:mm'
+            ),
+            "None"
+          ),
+          "\n",
+          "Last Modified Time: ",
+          IF(
+            {Last Modified Time},
+            DATETIME_FORMAT(
+              {Last Modified Time},
+              'YYYY-MM-DD HH:mm'
+            ),
+            "None"
+          ),
+          "\n",
+          "Created By: ",
+          IF(
+            {Created By},
+            {Created By},
+            "None"
+          ),
+          "\n",
+          "Last Modified By: ",
+          IF(
+            {Last Modified By},
+            {Last Modified By},
+            "None"
+          ),
+          "\n",
+          "Auto Number: ",
+          IF(
+            {Auto Number},
+            {Auto Number} & "",
+            "None"
+          ),
+          "\n",
+          "Button: ",
+          IF(
+            {Button},
+            {Button},
+            "None"
+          ),
+          "\n",
+          "Link (single): ",
+          IF(
+            {Link (single)},
+            {Link (single)},
+            "None"
+          ),
+          "\n",
+          "Link (multiple): ",
+          IF(
+            {Link (multiple)},
+            {Link (multiple)},
+            "None"
+          ),
+          "\n",
+          "Lookup: ",
+          IF(
+            {Lookup},
+            {Lookup},
+            "None"
+          ),
+          "\n",
+          "Rollup: ",
+          IF(
+            {Rollup},
+            {Rollup},
+            "None"
+          ),
+          "\n",
+          "Formula (ID): ",
+          IF(
+            {Formula (ID)},
+            {Formula (ID)},
+            "None"
+          ),
+          "\n",
+          "Formula (Simple): ",
+          IF(
+            {Formula (Simple)},
+            {Formula (Simple)},
+            "None"
+          )
+        )
+        ```
+        """
+        if self.evaluate_formulas_at_runtime:
+            self._fields["fld2vnFc0Bl5IOFUQ"] = F.CONCATENATE("Primary Key: ", self.primary_key, "\n", "Single Line Text: ", self.single_line_text, "\n", "Long Text: ", self.long_text, "\n", "Long Text with Rich Text: ", self.long_text_with_rich_text, "\n", "Attachment: ", (self.attachment if self.attachment else "None"), "\n", "Checkbox: ", ("Checked" if self.checkbox else "Unchecked"), "\n", "Multiple Select: ", (self.multiple_select if self.multiple_select else "None"), "\n", "Single Select: ", (self.single_select if self.single_select else "None"), "\n", "User: ", (self.user if self.user else "None"), "\n", "User (allow multiple): ", (self.user_allow_multiple if self.user_allow_multiple else "None"), "\n", "Date: ", (F.DATETIME_FORMAT(self.date, 'YYYY-MM-DD') if self.date else "None"), "\n", "Date (with time): ", (F.DATETIME_FORMAT(self.date_with_time, 'YYYY-MM-DD HH:mm') if self.date_with_time else "None"), "\n", "Phone Number: ", (self.phone_number if self.phone_number else "None"), "\n", "Email: ", (self.email if self.email else "None"), "\n", "URL: ", (self.url if self.url else "None"), "\n", "Number (int): ", ((F.S(self.number_int) + "") if self.number_int else "None"), "\n", "Number (float): ", ((F.S(self.number_float) + "") if self.number_float else "None"), "\n", "Currency (int): ", ((F.S(self.currency_int) + "") if self.currency_int else "None"), "\n", "Currency (float): ", ((F.S(self.currency_float) + "") if self.currency_float else "None"), "\n", "Percent (int): ", ((F.S(self.percent_int) + "") if self.percent_int else "None"), "\n", "Percent (float): ", ((F.S(self.percent_float) + "") if self.percent_float else "None"), "\n", "Duration: ", ((F.S(self.duration) + "") if self.duration else "None"), "\n", "Rating: ", ((F.S(self.rating) + "") if self.rating else "None"), "\n", "Created Time: ", (F.DATETIME_FORMAT(self.created_at_time, 'YYYY-MM-DD HH:mm') if self.created_at_time else "None"), "\n", "Last Modified Time: ", (F.DATETIME_FORMAT(self.last_modified_time, 'YYYY-MM-DD HH:mm') if self.last_modified_time else "None"), "\n", "Created By: ", (self.created_by if self.created_by else "None"), "\n", "Last Modified By: ", (self.last_modified_by if self.last_modified_by else "None"), "\n", "Auto Number: ", ((F.S(self.auto_number) + "") if self.auto_number else "None"), "\n", "Button: ", (self.button if self.button else "None"), "\n", "Link (single): ", (self.link_single if self.link_single else "None"), "\n", "Link (multiple): ", (self.link_multiple if self.link_multiple else "None"), "\n", "Lookup: ", (self.lookup if self.lookup else "None"), "\n", "Rollup: ", (self.rollup if self.rollup else "None"), "\n", "Formula (ID): ", (self.formula_id if self.formula_id else "None"), "\n", "Formula (Simple): ", (self.formula_simple if self.formula_simple else "None"))
         return self._fields.get("fld2vnFc0Bl5IOFUQ")
     _orm_formula_id: SingleLineTextField = SingleLineTextField(field_name="fldcf62YFeIIDHElt", readonly=True)
-    """
-    Formula (ID) `fldcf62YFeIIDHElt` - `Read-Only Field`
-    
-    ```
-    RECORD_ID()
-    ```
-    """
-
-    def formula_id(self, recalculate: bool = False) -> str | None:
-        if recalculate:
+    @property
+    def formula_id(self) -> str | None:
+        """
+        Formula (ID) `fldcf62YFeIIDHElt` - `Read-Only Field`
+        
+        ```
+        RECORD_ID()
+        ```
+        """
+        if self.evaluate_formulas_at_runtime:
             self._fields["fldcf62YFeIIDHElt"] = self.id
         return self._fields.get("fldcf62YFeIIDHElt")
     _orm_formula_nested: SingleLineTextField = SingleLineTextField(field_name="fldXFeHRPBLz6AiWh", readonly=True)
-    """
-    Formula (Nested) `fldXFeHRPBLz6AiWh` - `Read-Only Field`
-    
-    ```
-    {Formula (ID)} & {Formula (Simple)} & {Formula (Complex)}
-    ```
-    """
-
-    def formula_nested(self, recalculate: bool = False) -> str | None:
-        if recalculate:
-            self._fields["fldXFeHRPBLz6AiWh"] = ((F.S(self.formula_id(recalculate)) + F.S(self.formula_simple(recalculate))) + F.S(self.formula_complex(recalculate)))
+    @property
+    def formula_nested(self) -> str | None:
+        """
+        Formula (Nested) `fldXFeHRPBLz6AiWh` - `Read-Only Field`
+        
+        ```
+        {Formula (ID)} & {Formula (Simple)} & {Formula (Complex)}
+        ```
+        """
+        if self.evaluate_formulas_at_runtime:
+            self._fields["fldXFeHRPBLz6AiWh"] = ((F.S(self.formula_id) + F.S(self.formula_simple)) + F.S(self.formula_complex))
         return self._fields.get("fldXFeHRPBLz6AiWh")
     _orm_formula_simple: NumberField = NumberField(field_name="fldy1axxaoUToLVC6", readonly=True)
-    """
-    Formula (Simple) `fldy1axxaoUToLVC6` - `Read-Only Field`
-    
-    ```
-    {Number (int)} + {Number (float)}
-    ```
-    """
-
-    def formula_simple(self, recalculate: bool = False) -> float | None:
-        if recalculate:
+    @property
+    def formula_simple(self) -> float | None:
+        """
+        Formula (Simple) `fldy1axxaoUToLVC6` - `Read-Only Field`
+        
+        ```
+        {Number (int)} + {Number (float)}
+        ```
+        """
+        if self.evaluate_formulas_at_runtime:
             self._fields["fldy1axxaoUToLVC6"] = (F.N(self.number_int) + F.N(self.number_float))
         return self._fields.get("fldy1axxaoUToLVC6")
     last_modified_by: LastModifiedByField = LastModifiedByField(field_name="fldF8iDttqP0AgzWC", readonly=True)

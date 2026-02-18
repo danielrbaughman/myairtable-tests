@@ -223,10 +223,29 @@ export class AirtableRuntime {
 		return s.slice(0, startIdx) + AirtableRuntime.S(replacement) + s.slice(startIdx + len);
 	}
 
+	static REPT(text: unknown, count: unknown): string {
+		return AirtableRuntime.S(text).repeat(Math.max(0, AirtableRuntime.N(count)));
+	}
+
 	static T(value: unknown): string {
 		return typeof value === "string" ? value : "";
 	}
 
+	static REGEX_MATCH(text: unknown, regex: unknown): boolean {
+		try {
+			return new RegExp(AirtableRuntime.S(regex)).test(AirtableRuntime.S(text));
+		} catch {
+			return false;
+		}
+	}
+
+	static REGEX_REPLACE(text: unknown, regex: unknown, replacement: unknown): string {
+		try {
+			return AirtableRuntime.S(text).replace(new RegExp(AirtableRuntime.S(regex), "g"), AirtableRuntime.S(replacement));
+		} catch {
+			return AirtableRuntime.S(text);
+		}
+	}
 	// endregion
 
 	// region Date/Time functions
@@ -330,6 +349,15 @@ export class AirtableRuntime {
 		});
 	}
 
+	static DATETIME_PARSE(text: unknown, _format?: unknown, _locale?: unknown): string | null {
+		if (AirtableRuntime.isNull(text)) return null;
+		return AirtableRuntime.D(text).toISOString();
+	}
+
+	static SET_LOCALE(date: unknown, _locale: unknown): unknown {
+		return date;
+	}
+
 	static SET_TIMEZONE(date: unknown, timezone: unknown): string | null {
 		if (AirtableRuntime.isNull(date)) return null;
 		const d = AirtableRuntime.D(date);
@@ -356,6 +384,36 @@ export class AirtableRuntime {
 			),
 		);
 		return adjusted.toISOString();
+	}
+
+	static YEAR(date: unknown): number {
+		if (AirtableRuntime.isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCFullYear();
+	}
+
+	static MONTH(date: unknown): number {
+		if (AirtableRuntime.isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCMonth() + 1;
+	}
+
+	static DAY(date: unknown): number {
+		if (AirtableRuntime.isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCDate();
+	}
+
+	static HOUR(date: unknown): number {
+		if (AirtableRuntime.isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCHours();
+	}
+
+	static MINUTE(date: unknown): number {
+		if (AirtableRuntime.isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCMinutes();
+	}
+
+	static SECOND(date: unknown): number {
+		if (AirtableRuntime.isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCSeconds();
 	}
 
 	static WEEKDAY(date: unknown): number {

@@ -39,6 +39,8 @@ class SecondaryModel(Model):
 
     f: SecondaryFormulas = SecondaryFormulas()
 
+    evaluate_formulas_at_runtime: bool = False
+
     link_to_tertiary: list["TertiaryModel"] = LinkField["TertiaryModel"](field_name="fldKR6tdbnOBRCtdQ", model="output.dynamic.models.tertiary.TertiaryModel") # type: ignore
     """Link to Tertiary `fldKR6tdbnOBRCtdQ`"""
     name: SingleLineTextField = SingleLineTextField(field_name="fld1RagdJ09mpWhzM")

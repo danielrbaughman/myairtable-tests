@@ -221,8 +221,25 @@ class AirtableRuntime {
 		return s.slice(0, startIdx) + AirtableRuntime.S(replacement) + s.slice(startIdx + len);
 	}
 
+	static REPT(text, count) {
+		return AirtableRuntime.S(text).repeat(Math.max(0, AirtableRuntime.N(count)));
+	}
 	static T(value) {
 		return typeof value === "string" ? value : "";
+	}
+	static REGEX_MATCH(text, regex) {
+		try {
+			return new RegExp(AirtableRuntime.S(regex)).test(AirtableRuntime.S(text));
+		} catch {
+			return false;
+		}
+	}
+	static REGEX_REPLACE(text, regex, replacement) {
+		try {
+			return AirtableRuntime.S(text).replace(new RegExp(AirtableRuntime.S(regex), "g"), AirtableRuntime.S(replacement));
+		} catch {
+			return AirtableRuntime.S(text);
+		}
 	}
 	// endregion
 
@@ -327,6 +344,14 @@ class AirtableRuntime {
 		});
 	}
 
+	static DATETIME_PARSE(text, _format, _locale) {
+		if (AirtableRuntime._isNull(text)) return null;
+		return AirtableRuntime.D(text).toISOString();
+	}
+
+	static SET_LOCALE(date, _locale) {
+		return date;
+	}
 	static SET_TIMEZONE(date, timezone) {
 		if (AirtableRuntime._isNull(date)) return null;
 		const d = AirtableRuntime.D(date);
@@ -355,6 +380,30 @@ class AirtableRuntime {
 		return adjusted.toISOString();
 	}
 
+	static YEAR(date) {
+		if (AirtableRuntime._isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCFullYear();
+	}
+	static MONTH(date) {
+		if (AirtableRuntime._isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCMonth() + 1;
+	}
+	static DAY(date) {
+		if (AirtableRuntime._isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCDate();
+	}
+	static HOUR(date) {
+		if (AirtableRuntime._isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCHours();
+	}
+	static MINUTE(date) {
+		if (AirtableRuntime._isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCMinutes();
+	}
+	static SECOND(date) {
+		if (AirtableRuntime._isNull(date)) return 0;
+		return AirtableRuntime.D(date).getUTCSeconds();
+	}
 	static WEEKDAY(date) {
 		if (AirtableRuntime._isNull(date)) return 0;
 		return AirtableRuntime.D(date).getUTCDay();

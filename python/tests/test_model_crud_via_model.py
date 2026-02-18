@@ -14,7 +14,7 @@ def airtable():
 class TestPrimaryKeyOnly:
     id: str
 
-    def test_create(self, airtable):
+    def test_create(self, airtable: Airtable):
         model = PrimaryModel()
         model.primary_key = "New Primary Key"
         model.save()
@@ -22,19 +22,19 @@ class TestPrimaryKeyOnly:
         assert model.id
         assert model.primary_key == "New Primary Key"
 
-    def test_read(self, airtable):
+    def test_read(self, airtable: Airtable):
         read = airtable.primary.get(self.id)
         assert read.id == self.id
         assert read.primary_key == "New Primary Key"
 
-    def test_update(self, airtable):
+    def test_update(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.primary_key = "Updated Primary Key"
         r.save()
         assert r.id == self.id
         assert r.primary_key == "Updated Primary Key"
 
-    def test_delete(self, airtable):
+    def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
         with pytest.raises(Exception):
@@ -44,7 +44,7 @@ class TestPrimaryKeyOnly:
 class TestAllSimpleProperties:
     id: str
 
-    def test_create(self, airtable):
+    def test_create(self, airtable: Airtable):
         model = PrimaryModel()
         model.primary_key = "All Props Key"
         model.single_line_text = "Hello World"
@@ -90,7 +90,7 @@ class TestAllSimpleProperties:
         assert model.single_select == "Choice 1"
         assert model.multiple_select == ["Option 1", "Option 2"]
 
-    def test_read(self, airtable):
+    def test_read(self, airtable: Airtable):
         read = airtable.primary.get(self.id)
         assert read.id == self.id
         assert read.primary_key == "All Props Key"
@@ -114,7 +114,7 @@ class TestAllSimpleProperties:
         assert read.single_select == "Choice 1"
         assert read.multiple_select == ["Option 1", "Option 2"]
 
-    def test_update(self, airtable):
+    def test_update(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.primary_key = "Updated All Props Key"
         r.single_line_text = "Updated Hello"
@@ -159,7 +159,7 @@ class TestAllSimpleProperties:
         assert r.single_select == "Choice 2"
         assert r.multiple_select == ["Option 2", "Option 3"]
 
-    def test_delete(self, airtable):
+    def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
         with pytest.raises(Exception):
@@ -171,7 +171,7 @@ class TestComplexPropertiesLinkedRecords:
     sec2: SecondaryModel
     id: str
 
-    def test_setup_secondary(self, airtable):
+    def test_setup_secondary(self, airtable: Airtable):
         sec1 = SecondaryModel()
         sec1.name = "Link Target 1"
         sec1.value = "val1"
@@ -183,7 +183,7 @@ class TestComplexPropertiesLinkedRecords:
         self.__class__.sec1 = sec1
         self.__class__.sec2 = sec2
 
-    def test_create(self, airtable):
+    def test_create(self, airtable: Airtable):
         model = PrimaryModel()
         model.primary_key = "Link Test"
         model.link_single = self.sec1
@@ -192,12 +192,12 @@ class TestComplexPropertiesLinkedRecords:
         self.__class__.id = model.id
         assert model.id
 
-    def test_read(self, airtable):
+    def test_read(self, airtable: Airtable):
         read = airtable.primary.get(self.id)
         assert read.link_single.id == self.sec1.id
         assert [m.id for m in read.link_multiple] == [self.sec1.id, self.sec2.id]
 
-    def test_update(self, airtable):
+    def test_update(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.link_single = self.sec2
         r.link_multiple = [self.sec1]
@@ -206,13 +206,13 @@ class TestComplexPropertiesLinkedRecords:
         assert updated.link_single.id == self.sec2.id
         assert [m.id for m in updated.link_multiple] == [self.sec1.id]
 
-    def test_delete(self, airtable):
+    def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
         with pytest.raises(Exception):
             airtable.primary.get(self.id)
 
-    def test_cleanup(self, airtable):
+    def test_cleanup(self, airtable: Airtable):
         self.sec1.delete()
         self.sec2.delete()
 
@@ -222,7 +222,7 @@ class TestNestedLinkedRecords:
     sec1: SecondaryModel
     primary_id: str
 
-    def test_setup(self, airtable):
+    def test_setup(self, airtable: Airtable):
         tert1 = TertiaryModel()
         tert1.name = "Tertiary 1"
         tert1.value = "tval1"
@@ -242,14 +242,14 @@ class TestNestedLinkedRecords:
         primary.save()
         self.__class__.primary_id = primary.id
 
-    def test_traverse_primary_to_secondary(self, airtable):
+    def test_traverse_primary_to_secondary(self, airtable: Airtable):
         read_primary = airtable.primary.get(self.primary_id)
         assert read_primary.link_single
         linked_secondary = airtable.secondary.get(read_primary.link_single.id)
         assert linked_secondary.id == self.sec1.id
         assert linked_secondary.name == "Nested Link Target"
 
-    def test_traverse_secondary_to_tertiary(self, airtable):
+    def test_traverse_secondary_to_tertiary(self, airtable: Airtable):
         read_secondary = airtable.secondary.get(self.sec1.id)
         assert read_secondary.link_to_tertiary
         linked_tertiaries = airtable.tertiary.get([m.id for m in read_secondary.link_to_tertiary])
@@ -258,7 +258,7 @@ class TestNestedLinkedRecords:
         assert linked_tertiaries[0].name == "Tertiary 1"
         assert linked_tertiaries[0].value == "tval1"
 
-    def test_cleanup(self, airtable):
+    def test_cleanup(self, airtable: Airtable):
         primary = airtable.primary.get(self.primary_id)
         primary.delete()
         self.sec1.delete()
@@ -268,7 +268,7 @@ class TestNestedLinkedRecords:
 class TestComplexPropertiesAttachments:
     id: str
 
-    def test_create(self, airtable):
+    def test_create(self, airtable: Airtable):
         model = PrimaryModel()
         model.primary_key = "Attachment Test"
         model.attachment = [
@@ -280,7 +280,7 @@ class TestComplexPropertiesAttachments:
         assert len(model.attachment) == 1
         assert model.attachment[0]["url"]
 
-    def test_read(self, airtable):
+    def test_read(self, airtable: Airtable):
         read = None
         for _ in range(10):
             time.sleep(5)
@@ -290,7 +290,7 @@ class TestComplexPropertiesAttachments:
         assert len(read.attachment) == 1
         assert read.attachment[0]["url"]
 
-    def test_delete(self, airtable):
+    def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
         with pytest.raises(Exception):
@@ -300,7 +300,7 @@ class TestComplexPropertiesAttachments:
 class TestComplexPropertiesUser:
     id: str
 
-    def test_create(self, airtable):
+    def test_create(self, airtable: Airtable):
         model = PrimaryModel()
         model.primary_key = "User Test"
         model.user = {"id": "usrnZ4k98m0Ipji4e", "email": "9vymqckyxq@privaterelay.appleid.com", "name": "Daniel Baughman"}
@@ -315,14 +315,14 @@ class TestComplexPropertiesUser:
         assert len(model.user_allow_multiple) == 1
         assert model.user_allow_multiple[0]["id"] == "usrnZ4k98m0Ipji4e"
 
-    def test_read(self, airtable):
+    def test_read(self, airtable: Airtable):
         read = airtable.primary.get(self.id)
         assert read.user
         assert read.user["id"] == "usrnZ4k98m0Ipji4e"
         assert len(read.user_allow_multiple) == 1
         assert read.user_allow_multiple[0]["id"] == "usrnZ4k98m0Ipji4e"
 
-    def test_delete(self, airtable):
+    def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
         with pytest.raises(Exception):
@@ -332,7 +332,7 @@ class TestComplexPropertiesUser:
 class TestComplexPropertiesComputedFields:
     id: str
 
-    def test_create(self, airtable):
+    def test_create(self, airtable: Airtable):
         model = PrimaryModel()
         model.primary_key = "Computed Test"
         model.number_int = 10
@@ -341,14 +341,14 @@ class TestComplexPropertiesComputedFields:
         self.__class__.id = model.id
         assert model.id
 
-    def test_read(self, airtable):
+    def test_read(self, airtable: Airtable):
         read = airtable.primary.get(self.id)
         assert isinstance(read.auto_number, (int, float))
         assert read.created_at_time
-        assert read.formula_id() == self.id
-        assert read.formula_simple() == 15
+        assert read.formula_id == self.id
+        assert read.formula_simple == 15
 
-    def test_delete(self, airtable):
+    def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
         with pytest.raises(Exception):

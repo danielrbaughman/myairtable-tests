@@ -28,13 +28,22 @@ def record(airtable: Airtable) -> FormulasModel:
 
 class TestRuntimeFormulas:
     def test_math_formula(self, record: FormulasModel):
-        assert record.math_formula() == record.math_formula(True)
+        from_api = record.math_formula
+        record.evaluate_formulas_at_runtime = True
+        runtime = record.math_formula
+        assert from_api == runtime
 
     def test_text_formula(self, record: FormulasModel):
-        assert record.text_formula() == record.text_formula(True)
+        from_api = record.text_formula
+        record.evaluate_formulas_at_runtime = True
+        runtime = record.text_formula
+        assert from_api == runtime
 
     def test_date_formula(self, record: FormulasModel):
-        assert record.date_formula() == record.date_formula(True)
+        from_api = record.date_formula
+        record.evaluate_formulas_at_runtime = True
+        runtime = record.date_formula
+        assert from_api == runtime
 
     def test_cleanup(self, record: FormulasModel):
         record.delete()

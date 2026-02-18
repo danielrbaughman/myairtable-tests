@@ -14,7 +14,7 @@ class TestSimpleFieldsToRecord:
     id: str
     model: PrimaryModel
 
-    def test_setup(self, airtable):
+    def test_setup(self, airtable: Airtable):
         model = PrimaryModel()
         model.primary_key = "Serialize Simple Test"
         model.single_line_text = "Hello World"
@@ -58,7 +58,7 @@ class TestSimpleFieldsToRecord:
         assert r["id"] == self.model.id
         assert r["fields"]["fldol5Q4wmQJQvPRy"] == "Serialize Simple Test"
 
-    def test_cleanup(self, airtable):
+    def test_cleanup(self, airtable: Airtable):
         self.model.delete()
 
 
@@ -67,7 +67,7 @@ class TestLinkedRecordsToRecord:
     sec1: SecondaryModel
     sec2: SecondaryModel
 
-    def test_setup(self, airtable):
+    def test_setup(self, airtable: Airtable):
         sec1 = SecondaryModel()
         sec1.name = "Ser Link 1"
         sec1.value = "val1"
@@ -93,7 +93,7 @@ class TestLinkedRecordsToRecord:
         # "Link (multiple)" field ID is "fldFyFheQWczd8oux"
         assert r["fields"]["fldFyFheQWczd8oux"] == [self.sec1.id, self.sec2.id]
 
-    def test_cleanup(self, airtable):
+    def test_cleanup(self, airtable: Airtable):
         self.model.delete()
         self.sec1.delete()
         self.sec2.delete()

@@ -23,15 +23,24 @@ describe("Runtime Formulas", async () => {
 	});
 
 	it("Airtable and Runtime Formulas should match (math)", async () => {
-		expect(record.mathFormula()).toEqual(record.mathFormula(true));
+		const fromAPI = record.mathFormula;
+		record.evaluateFormulasAtRuntime = true;
+		const runtime = record.mathFormula;
+		expect(fromAPI).toEqual(runtime);
 	});
 
 	it("Airtable and Runtime Formulas should match (text)", async () => {
-		expect(record.textFormula()).toEqual(record.textFormula(true));
+		const fromAPI = record.textFormula;
+		record.evaluateFormulasAtRuntime = true;
+		const runtime = record.textFormula;
+		expect(fromAPI).toEqual(runtime);
 	});
 
 	it("Airtable and Runtime Formulas should match (date)", async () => {
-		expect(record.dateFormula()).toEqual(record.dateFormula(true));
+		const fromAPI = record.dateFormula;
+		record.evaluateFormulasAtRuntime = true;
+		const runtime = record.dateFormula;
+		expect(fromAPI).toEqual(runtime);
 	});
 
 	afterAll(async () => {

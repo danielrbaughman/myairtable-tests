@@ -358,8 +358,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
      * )
      * ```
      */
-    public formulaComplex(recalculate: boolean = false): string | undefined {
-        if (recalculate) this._fields["formulaComplex"] = F.CONCATENATE("Primary Key: ", this.primaryKey, "\n", "Single Line Text: ", this.singleLineText, "\n", "Long Text: ", this.longText, "\n", "Long Text with Rich Text: ", this.longTextWithRichText, "\n", "Attachment: ", (this.attachment ? this.attachment : "None"), "\n", "Checkbox: ", (this.checkbox ? "Checked" : "Unchecked"), "\n", "Multiple Select: ", (this.multipleSelect ? this.multipleSelect : "None"), "\n", "Single Select: ", (this.singleSelect ? this.singleSelect : "None"), "\n", "User: ", (this.user ? this.user : "None"), "\n", "User (allow multiple): ", (this.userAllowMultiple ? this.userAllowMultiple : "None"), "\n", "Date: ", (this.date ? F.DATETIME_FORMAT(this.date, 'YYYY-MM-DD') : "None"), "\n", "Date (with time): ", (this.dateWithTime ? F.DATETIME_FORMAT(this.dateWithTime, 'YYYY-MM-DD HH:mm') : "None"), "\n", "Phone Number: ", (this.phoneNumber ? this.phoneNumber : "None"), "\n", "Email: ", (this.email ? this.email : "None"), "\n", "URL: ", (this.url ? this.url : "None"), "\n", "Number (int): ", (this.numberInt ? (F.S(this.numberInt) + "") : "None"), "\n", "Number (float): ", (this.numberFloat ? (F.S(this.numberFloat) + "") : "None"), "\n", "Currency (int): ", (this.currencyInt ? (F.S(this.currencyInt) + "") : "None"), "\n", "Currency (float): ", (this.currencyFloat ? (F.S(this.currencyFloat) + "") : "None"), "\n", "Percent (int): ", (this.percentInt ? (F.S(this.percentInt) + "") : "None"), "\n", "Percent (float): ", (this.percentFloat ? (F.S(this.percentFloat) + "") : "None"), "\n", "Duration: ", (this.duration ? (F.S(this.duration) + "") : "None"), "\n", "Rating: ", (this.rating ? (F.S(this.rating) + "") : "None"), "\n", "Created Time: ", (this.createdAtTime ? F.DATETIME_FORMAT(this.createdAtTime, 'YYYY-MM-DD HH:mm') : "None"), "\n", "Last Modified Time: ", (this.lastModifiedTime ? F.DATETIME_FORMAT(this.lastModifiedTime, 'YYYY-MM-DD HH:mm') : "None"), "\n", "Created By: ", (this.createdBy ? this.createdBy : "None"), "\n", "Last Modified By: ", (this.lastModifiedBy ? this.lastModifiedBy : "None"), "\n", "Auto Number: ", (this.autoNumber ? (F.S(this.autoNumber) + "") : "None"), "\n", "Button: ", (this.button ? this.button : "None"), "\n", "Link (single): ", (this.linkSingle.id ? this.linkSingle.id : "None"), "\n", "Link (multiple): ", (this.linkMultiple.ids ? this.linkMultiple.ids : "None"), "\n", "Lookup: ", (this.lookup ? this.lookup : "None"), "\n", "Rollup: ", (this.rollup ? this.rollup : "None"), "\n", "Formula (ID): ", (this.formulaId(recalculate) ? this.formulaId(recalculate) : "None"), "\n", "Formula (Simple): ", (this.formulaSimple(recalculate) ? this.formulaSimple(recalculate) : "None"));
+    public get formulaComplex(): string | undefined {
+        if (this.evaluateFormulasAtRuntime) this._fields["formulaComplex"] = F.CONCATENATE("Primary Key: ", this.primaryKey, "\n", "Single Line Text: ", this.singleLineText, "\n", "Long Text: ", this.longText, "\n", "Long Text with Rich Text: ", this.longTextWithRichText, "\n", "Attachment: ", (this.attachment ? this.attachment : "None"), "\n", "Checkbox: ", (this.checkbox ? "Checked" : "Unchecked"), "\n", "Multiple Select: ", (this.multipleSelect ? this.multipleSelect : "None"), "\n", "Single Select: ", (this.singleSelect ? this.singleSelect : "None"), "\n", "User: ", (this.user ? this.user : "None"), "\n", "User (allow multiple): ", (this.userAllowMultiple ? this.userAllowMultiple : "None"), "\n", "Date: ", (this.date ? F.DATETIME_FORMAT(this.date, 'YYYY-MM-DD') : "None"), "\n", "Date (with time): ", (this.dateWithTime ? F.DATETIME_FORMAT(this.dateWithTime, 'YYYY-MM-DD HH:mm') : "None"), "\n", "Phone Number: ", (this.phoneNumber ? this.phoneNumber : "None"), "\n", "Email: ", (this.email ? this.email : "None"), "\n", "URL: ", (this.url ? this.url : "None"), "\n", "Number (int): ", (this.numberInt ? (F.S(this.numberInt) + "") : "None"), "\n", "Number (float): ", (this.numberFloat ? (F.S(this.numberFloat) + "") : "None"), "\n", "Currency (int): ", (this.currencyInt ? (F.S(this.currencyInt) + "") : "None"), "\n", "Currency (float): ", (this.currencyFloat ? (F.S(this.currencyFloat) + "") : "None"), "\n", "Percent (int): ", (this.percentInt ? (F.S(this.percentInt) + "") : "None"), "\n", "Percent (float): ", (this.percentFloat ? (F.S(this.percentFloat) + "") : "None"), "\n", "Duration: ", (this.duration ? (F.S(this.duration) + "") : "None"), "\n", "Rating: ", (this.rating ? (F.S(this.rating) + "") : "None"), "\n", "Created Time: ", (this.createdAtTime ? F.DATETIME_FORMAT(this.createdAtTime, 'YYYY-MM-DD HH:mm') : "None"), "\n", "Last Modified Time: ", (this.lastModifiedTime ? F.DATETIME_FORMAT(this.lastModifiedTime, 'YYYY-MM-DD HH:mm') : "None"), "\n", "Created By: ", (this.createdBy ? this.createdBy : "None"), "\n", "Last Modified By: ", (this.lastModifiedBy ? this.lastModifiedBy : "None"), "\n", "Auto Number: ", (this.autoNumber ? (F.S(this.autoNumber) + "") : "None"), "\n", "Button: ", (this.button ? this.button : "None"), "\n", "Link (single): ", (this.linkSingle.id ? this.linkSingle.id : "None"), "\n", "Link (multiple): ", (this.linkMultiple.ids ? this.linkMultiple.ids : "None"), "\n", "Lookup: ", (this.lookup ? this.lookup : "None"), "\n", "Rollup: ", (this.rollup ? this.rollup : "None"), "\n", "Formula (ID): ", (this.formulaId ? this.formulaId : "None"), "\n", "Formula (Simple): ", (this.formulaSimple ? this.formulaSimple : "None"));
         return this._fields["formulaComplex"] as string;
     }
     /**
@@ -369,8 +369,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
      * RECORD_ID()
      * ```
      */
-    public formulaId(recalculate: boolean = false): string | undefined {
-        if (recalculate) this._fields["formulaId"] = this.id;
+    public get formulaId(): string | undefined {
+        if (this.evaluateFormulasAtRuntime) this._fields["formulaId"] = this.id;
         return this._fields["formulaId"] as string;
     }
     /**
@@ -380,8 +380,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
      * {Formula (ID)} & {Formula (Simple)} & {Formula (Complex)}
      * ```
      */
-    public formulaNested(recalculate: boolean = false): string | undefined {
-        if (recalculate) this._fields["formulaNested"] = ((F.S(this.formulaId(recalculate)) + F.S(this.formulaSimple(recalculate))) + F.S(this.formulaComplex(recalculate)));
+    public get formulaNested(): string | undefined {
+        if (this.evaluateFormulasAtRuntime) this._fields["formulaNested"] = ((F.S(this.formulaId) + F.S(this.formulaSimple)) + F.S(this.formulaComplex));
         return this._fields["formulaNested"] as string;
     }
     /**
@@ -391,8 +391,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
      * {Number (int)} + {Number (float)}
      * ```
      */
-    public formulaSimple(recalculate: boolean = false): number | undefined {
-        if (recalculate) this._fields["formulaSimple"] = (F.N(this.numberInt) + F.N(this.numberFloat));
+    public get formulaSimple(): number | undefined {
+        if (this.evaluateFormulasAtRuntime) this._fields["formulaSimple"] = (F.N(this.numberInt) + F.N(this.numberFloat));
         return this._fields["formulaSimple"] as number;
     }
     /** `Last Modified By` (fldF8iDttqP0AgzWC) */
