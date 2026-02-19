@@ -7,4 +7,5 @@ export * from "./tables";
 export * from "./models";
 export * from "./types";
 export * from "./formulas";
+export * from "./options";
 

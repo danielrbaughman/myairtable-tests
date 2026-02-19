@@ -20,6 +20,7 @@ from ..types import (
 )
 from ..dicts import PrimaryRecordDict
 from ..formulas import PrimaryFormulas
+from ..options import PrimaryOptions
 if TYPE_CHECKING:
     from .secondary import SecondaryModel
 
@@ -45,6 +46,8 @@ class PrimaryModel(Model):
         return self.to_record()
 
     f: PrimaryFormulas = PrimaryFormulas()
+
+    o: PrimaryOptions = PrimaryOptions()
 
     evaluate_formulas_at_runtime: bool = False
 

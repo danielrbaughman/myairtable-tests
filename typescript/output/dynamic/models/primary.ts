@@ -16,6 +16,7 @@ import {
     PrimarySingleSelectOption,
 } from "../types/primary";
 import { PrimaryFormulas } from '../formulas/primary';
+import { PrimaryOptions } from '../options/primary';
 import {
     SecondaryModel,
 } from "../models";
@@ -27,6 +28,7 @@ import { AirtableRuntime as F } from "../../static/airtable-runtime";
 export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, PrimaryField> {
     protected static schema = PrimarySchema;
     public static f = PrimaryFormulas
+    public static o = PrimaryOptions
     protected static nameToIdMap = PrimaryFieldNameIdMapping;
     protected static idToNameMap = PrimaryFieldIdNameMapping;
     protected static nameToPropertyMap = PrimaryFieldNamePropertyMapping;

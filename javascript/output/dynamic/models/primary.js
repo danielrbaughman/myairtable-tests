@@ -22,6 +22,7 @@ const {
     PrimarySingleSelectOptions,
 } = require("../types/primary");
 const { PrimaryFormulas } = require("../formulas/primary");
+const { PrimaryOptions } = require("../options/primary");
 const { PrimaryTable } = require("../tables/primary");
 const { PrimarySchema } = require("../zod/primary");
 const { AirtableRuntime: F } = require("../../static/airtable-runtime");
@@ -33,6 +34,7 @@ const { AirtableRuntime: F } = require("../../static/airtable-runtime");
 class PrimaryModel extends AirtableModel {
     static schema = PrimarySchema;
     static f = PrimaryFormulas;
+    static o = PrimaryOptions;
     static nameToIdMap = PrimaryFieldNameIdMapping;
     static idToNameMap = PrimaryFieldIdNameMapping;
     static nameToPropertyMap = PrimaryFieldNamePropertyMapping;

@@ -8,5 +8,6 @@ module.exports = {
     ...require("./models"),
     ...require("./types"),
     ...require("./formulas"),
+    ...require("./options"),
 };
 
