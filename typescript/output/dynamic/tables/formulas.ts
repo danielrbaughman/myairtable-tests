@@ -30,6 +30,6 @@ export class FormulasTable extends AirtableTable<FormulasFieldSet, FormulasModel
     public get tableId(): string { return FormulasTable.tableId; }
 
     constructor(baseId: string, options: AirtableOptions) {
-        super(baseId, "tblnuYBsMdXNDsuRc", FormulasViewNameIdMapping, FormulasFieldNameIdMapping, FormulasFieldIdNameMapping, FormulasWritableFieldIds, (record) => FormulasModel.fromRecord(record, { baseId: this.baseId, ...this._options }), options);
+        super(baseId, "tblnuYBsMdXNDsuRc", FormulasViewNameIdMapping, FormulasFieldNameIdMapping, FormulasFieldIdNameMapping, FormulasWritableFieldIds, (record) => FormulasModel.fromRecord(record, { baseId: this.baseId, ...this._options }, false), options);
     }
 }

@@ -30,6 +30,6 @@ export class PrimaryTable extends AirtableTable<PrimaryFieldSet, PrimaryModel, P
     public get tableId(): string { return PrimaryTable.tableId; }
 
     constructor(baseId: string, options: AirtableOptions) {
-        super(baseId, "tblmb3iqgpNS1ysV2", PrimaryViewNameIdMapping, PrimaryFieldNameIdMapping, PrimaryFieldIdNameMapping, PrimaryWritableFieldIds, (record) => PrimaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }), options);
+        super(baseId, "tblmb3iqgpNS1ysV2", PrimaryViewNameIdMapping, PrimaryFieldNameIdMapping, PrimaryFieldIdNameMapping, PrimaryWritableFieldIds, (record) => PrimaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }, false), options);
     }
 }

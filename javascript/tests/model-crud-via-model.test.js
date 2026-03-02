@@ -484,8 +484,8 @@ describe("Complex Properties", async () => {
 			it("should have computed field values", async () => {
 				expect(newRecord.autoNumber).toEqual(expect.any(Number));
 				expect(newRecord.createdAtTime).toBeTruthy();
-				expect(newRecord.formulaId()).toBeTruthy();
-				expect(newRecord.formulaSimple()).toBe(15);
+				expect(newRecord.formulaId).toBeTruthy();
+				expect(newRecord.formulaSimple).toBe(15);
 			});
 		});
 
@@ -496,8 +496,8 @@ describe("Complex Properties", async () => {
 			it("should have the expected computed values", async () => {
 				expect(readRecord.autoNumber).toEqual(expect.any(Number));
 				expect(readRecord.createdAtTime).toBeTruthy();
-				expect(readRecord.formulaId()).toBe(newRecord.id);
-				expect(readRecord.formulaSimple()).toBe(15);
+				expect(readRecord.formulaId).toBe(newRecord.id);
+				expect(readRecord.formulaSimple).toBe(15);
 			});
 		});
 

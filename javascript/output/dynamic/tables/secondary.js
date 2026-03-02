@@ -25,7 +25,7 @@ class SecondaryTable extends AirtableTable {
     get tableId() { return SecondaryTable.tableId; }
 
     constructor(baseId, options) {
-        super(baseId, "tblPPScS3XMuFkDYN", SecondaryViewNameIdMapping, SecondaryFieldNameIdMapping, SecondaryFieldIdNameMapping, SecondaryWritableFieldIds, (record) => require("../models/secondary").SecondaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }), options);
+        super(baseId, "tblPPScS3XMuFkDYN", SecondaryViewNameIdMapping, SecondaryFieldNameIdMapping, SecondaryFieldIdNameMapping, SecondaryWritableFieldIds, (record) => require("../models/secondary").SecondaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }, false), options);
     }
 }
 

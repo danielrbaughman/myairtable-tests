@@ -34,8 +34,8 @@ class SecondaryModel(Model):
         use_field_ids = True
         memoize = True
 
-    def to_record_dict(self) -> SecondaryRecordDict:
-        return self.to_record()
+    def to_record_dict(self, only_writable: bool = False) -> SecondaryRecordDict:
+        return self.to_record(only_writable)
 
     f: SecondaryFormulas = SecondaryFormulas()
 

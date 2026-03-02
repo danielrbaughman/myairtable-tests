@@ -42,8 +42,8 @@ class PrimaryModel(Model):
         use_field_ids = True
         memoize = True
 
-    def to_record_dict(self) -> PrimaryRecordDict:
-        return self.to_record()
+    def to_record_dict(self, only_writable: bool = False) -> PrimaryRecordDict:
+        return self.to_record(only_writable)
 
     f: PrimaryFormulas = PrimaryFormulas()
 

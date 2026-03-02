@@ -25,7 +25,7 @@ class TertiaryTable extends AirtableTable {
     get tableId() { return TertiaryTable.tableId; }
 
     constructor(baseId, options) {
-        super(baseId, "tblLFoLxEdWlxjmLP", TertiaryViewNameIdMapping, TertiaryFieldNameIdMapping, TertiaryFieldIdNameMapping, TertiaryWritableFieldIds, (record) => require("../models/tertiary").TertiaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }), options);
+        super(baseId, "tblLFoLxEdWlxjmLP", TertiaryViewNameIdMapping, TertiaryFieldNameIdMapping, TertiaryFieldIdNameMapping, TertiaryWritableFieldIds, (record) => require("../models/tertiary").TertiaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }, false), options);
     }
 }
 

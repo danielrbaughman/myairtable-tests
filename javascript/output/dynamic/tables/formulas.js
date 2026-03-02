@@ -25,7 +25,7 @@ class FormulasTable extends AirtableTable {
     get tableId() { return FormulasTable.tableId; }
 
     constructor(baseId, options) {
-        super(baseId, "tblnuYBsMdXNDsuRc", FormulasViewNameIdMapping, FormulasFieldNameIdMapping, FormulasFieldIdNameMapping, FormulasWritableFieldIds, (record) => require("../models/formulas").FormulasModel.fromRecord(record, { baseId: this.baseId, ...this._options }), options);
+        super(baseId, "tblnuYBsMdXNDsuRc", FormulasViewNameIdMapping, FormulasFieldNameIdMapping, FormulasFieldIdNameMapping, FormulasWritableFieldIds, (record) => require("../models/formulas").FormulasModel.fromRecord(record, { baseId: this.baseId, ...this._options }, false), options);
     }
 }
 

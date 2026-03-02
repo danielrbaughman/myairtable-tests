@@ -30,6 +30,6 @@ export class SecondaryTable extends AirtableTable<SecondaryFieldSet, SecondaryMo
     public get tableId(): string { return SecondaryTable.tableId; }
 
     constructor(baseId: string, options: AirtableOptions) {
-        super(baseId, "tblPPScS3XMuFkDYN", SecondaryViewNameIdMapping, SecondaryFieldNameIdMapping, SecondaryFieldIdNameMapping, SecondaryWritableFieldIds, (record) => SecondaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }), options);
+        super(baseId, "tblPPScS3XMuFkDYN", SecondaryViewNameIdMapping, SecondaryFieldNameIdMapping, SecondaryFieldIdNameMapping, SecondaryWritableFieldIds, (record) => SecondaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }, false), options);
     }
 }

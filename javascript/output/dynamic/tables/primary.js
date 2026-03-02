@@ -25,7 +25,7 @@ class PrimaryTable extends AirtableTable {
     get tableId() { return PrimaryTable.tableId; }
 
     constructor(baseId, options) {
-        super(baseId, "tblmb3iqgpNS1ysV2", PrimaryViewNameIdMapping, PrimaryFieldNameIdMapping, PrimaryFieldIdNameMapping, PrimaryWritableFieldIds, (record) => require("../models/primary").PrimaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }), options);
+        super(baseId, "tblmb3iqgpNS1ysV2", PrimaryViewNameIdMapping, PrimaryFieldNameIdMapping, PrimaryFieldIdNameMapping, PrimaryWritableFieldIds, (record) => require("../models/primary").PrimaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }, false), options);
     }
 }
 

@@ -30,6 +30,6 @@ export class TertiaryTable extends AirtableTable<TertiaryFieldSet, TertiaryModel
     public get tableId(): string { return TertiaryTable.tableId; }
 
     constructor(baseId: string, options: AirtableOptions) {
-        super(baseId, "tblLFoLxEdWlxjmLP", TertiaryViewNameIdMapping, TertiaryFieldNameIdMapping, TertiaryFieldIdNameMapping, TertiaryWritableFieldIds, (record) => TertiaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }), options);
+        super(baseId, "tblLFoLxEdWlxjmLP", TertiaryViewNameIdMapping, TertiaryFieldNameIdMapping, TertiaryFieldIdNameMapping, TertiaryWritableFieldIds, (record) => TertiaryModel.fromRecord(record, { baseId: this.baseId, ...this._options }, false), options);
     }
 }
