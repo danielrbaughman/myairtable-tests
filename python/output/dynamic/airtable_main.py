@@ -6,7 +6,7 @@
 from pyairtable import Api
 
 from .types import TableName
-from ..static.airtable_table import TableType
+from ..static.airtable_table import AirtableTable, TableType
 from ..static.helpers import get_api_key, get_base_id, set_airtable_config
 from ..static.schema_types import BaseSchema
 from .tables import (
@@ -43,7 +43,7 @@ class Airtable:
 
     _api: Api
     _base_id: str
-    _tables: dict[TableName, TableType] = {}
+    _tables: dict[TableName, AirtableTable] = {}
 
     def __init__(self, api_key: str | None = None, base_id: str | None = None, endpoint_url: str = "https://api.airtable.com"):
         self._base_id: str = base_id or get_base_id()
@@ -55,6 +55,11 @@ class Airtable:
         # Register config so ORM models can look it up
         set_airtable_config(self._base_id, api_key, endpoint_url)
         self._api = Api(api_key=api_key, endpoint_url=endpoint_url)
+
+    def table(self, table_name: TableName) -> AirtableTable:
+        """Get a table by its Airtable name."""
+        from .types import TableNamePropertyMapping
+        return getattr(self, TableNamePropertyMapping[table_name])
 
     @property
     def formulas(self) -> FormulasTable:

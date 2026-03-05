@@ -48,6 +48,13 @@ TableIdNameMapping: dict[TableId, TableName] = {
     "tblLFoLxEdWlxjmLP": "Tertiary",
 }
 
+TableNamePropertyMapping: dict[TableName, str] = {
+    "Formulas": "formulas",
+    "Primary": "primary",
+    "Secondary": "secondary",
+    "Tertiary": "tertiary",
+}
+
 TableIdToFieldNameIdMapping: dict[TableId, dict[str, str]] = {
     "tblnuYBsMdXNDsuRc": FormulasFieldNameIdMapping,
     "tblmb3iqgpNS1ysV2": PrimaryFieldNameIdMapping,
