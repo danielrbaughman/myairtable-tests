@@ -6,9 +6,12 @@ import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "air
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
 import { RecordId, AirtableButton } from "../../static/special-types";
 import { LinkedRecord, LinkedRecords } from "../../static/linked-record";
+import { buildUrl } from "../../static/helpers";
 import {
     SecondaryFieldSet,
     SecondaryField,
+    SecondaryView,
+    SecondaryViewNameIdMapping,
     SecondaryFieldNameIdMapping,
     SecondaryFieldIdNameMapping,
     SecondaryFieldNamePropertyMapping,
@@ -68,6 +71,15 @@ export class SecondaryModel extends AirtableModel<SecondaryFieldSet, ISecondary,
         this.initializeFields(data);
         this.record = new Record<SecondaryFieldSet>(new SecondaryTable(this.getInstanceBaseId(), this.getInstanceOptions())._table, this.id, {});
         this.updateRecord();
+    }
+
+    /** Get the URL for this record in Airtable, with optional view. */
+    public url(view?: SecondaryView): string {
+        if (view) {
+            return buildUrl(this.getInstanceBaseId(), 'tblPPScS3XMuFkDYN', this.id, SecondaryViewNameIdMapping[view]);
+        } else {
+            return buildUrl(this.getInstanceBaseId(), 'tblPPScS3XMuFkDYN', this.id);
+        }
     }
 
 }

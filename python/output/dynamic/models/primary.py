@@ -8,7 +8,7 @@ from typing import Any, TYPE_CHECKING
 from pyairtable.orm import Model
 from pyairtable.orm.fields import SingleLineTextField, MultilineTextField, PhoneNumberField, EmailField, LinkField, SingleLinkField, UrlField, DateField, CreatedTimeField, LastModifiedTimeField, NumberField, SelectField, MultipleSelectField, CheckboxField, RichTextField, CurrencyField, PercentField, LookupField, AttachmentsField, CreatedByField, ButtonField, CountField, DatetimeField, DurationField, LastModifiedByField, AutoNumberField, CollaboratorField, MultipleCollaboratorsField
 
-from ...static.helpers import get_api_key, get_base_id
+from ...static.helpers import get_api_key, get_base_id, build_url
 from ...static.special_types import AirtableAttachment, RecordId
 from ...static.airtable_runtime import AirtableRuntime as F
 import urllib.parse
@@ -20,6 +20,7 @@ from ..types import (
 )
 from ..dicts import PrimaryRecordDict
 from ..formulas import PrimaryFormulas
+from ..types import PrimaryView, PrimaryViewNameIdMapping
 from ..options import PrimaryOptions
 if TYPE_CHECKING:
     from .secondary import SecondaryModel
@@ -44,6 +45,13 @@ class PrimaryModel(Model):
 
     def to_record_dict(self, only_writable: bool = False) -> PrimaryRecordDict:
         return self.to_record(only_writable)
+
+    def URL(self, view: PrimaryView | None = None) -> str:
+        """Get the URL for this record in Airtable, with optional view."""
+        if view:
+            return build_url(base_id=get_base_id(), table_id='tblmb3iqgpNS1ysV2', record_id=self.id, view_id=PrimaryViewNameIdMapping[view])
+        else:
+            return build_url(base_id=get_base_id(), table_id='tblmb3iqgpNS1ysV2', record_id=self.id)
 
     f: PrimaryFormulas = PrimaryFormulas()
 

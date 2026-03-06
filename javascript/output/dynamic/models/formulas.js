@@ -11,11 +11,13 @@ const {
 const {
     getOptions,
     getBaseId,
+    buildUrl,
 } = require("../../static/helpers");
 const {
     FormulasFieldNameIdMapping,
     FormulasFieldIdNameMapping,
     FormulasFieldNamePropertyMapping,
+    FormulasViewNameIdMapping,
 } = require("../types/formulas");
 const { FormulasFormulas } = require("../formulas/formulas");
 const { FormulasTable } = require("../tables/formulas");
@@ -271,6 +273,15 @@ class FormulasModel extends AirtableModel {
         this.initializeFields(data);
         this.record = new (require('airtable').Record)(new FormulasTable(this.getInstanceBaseId(), this.getInstanceOptions())._table, this.id, {});
         this.updateRecord();
+    }
+
+    /** Get the URL for this record in Airtable, with optional view. */
+    url(view) {
+        if (view) {
+            return buildUrl(this.getInstanceBaseId(), 'tblnuYBsMdXNDsuRc', this.id, FormulasViewNameIdMapping[view]);
+        } else {
+            return buildUrl(this.getInstanceBaseId(), 'tblnuYBsMdXNDsuRc', this.id);
+        }
     }
 
 }

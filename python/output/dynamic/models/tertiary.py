@@ -8,10 +8,11 @@ from typing import Any, TYPE_CHECKING
 from pyairtable.orm import Model
 from pyairtable.orm.fields import SingleLineTextField, MultilineTextField, PhoneNumberField, EmailField, LinkField, SingleLinkField, UrlField, DateField, CreatedTimeField, LastModifiedTimeField, NumberField, SelectField, MultipleSelectField, CheckboxField, RichTextField, CurrencyField, PercentField, LookupField, AttachmentsField, CreatedByField, ButtonField, CountField, DatetimeField, DurationField, LastModifiedByField, AutoNumberField, CollaboratorField, MultipleCollaboratorsField
 
-from ...static.helpers import get_api_key, get_base_id
+from ...static.helpers import get_api_key, get_base_id, build_url
 from ...static.special_types import AirtableAttachment, RecordId
 from ..dicts import TertiaryRecordDict
 from ..formulas import TertiaryFormulas
+from ..types import TertiaryView, TertiaryViewNameIdMapping
 if TYPE_CHECKING:
     from .secondary import SecondaryModel
 
@@ -35,6 +36,13 @@ class TertiaryModel(Model):
 
     def to_record_dict(self, only_writable: bool = False) -> TertiaryRecordDict:
         return self.to_record(only_writable)
+
+    def url(self, view: TertiaryView | None = None) -> str:
+        """Get the URL for this record in Airtable, with optional view."""
+        if view:
+            return build_url(base_id=get_base_id(), table_id='tblLFoLxEdWlxjmLP', record_id=self.id, view_id=TertiaryViewNameIdMapping[view])
+        else:
+            return build_url(base_id=get_base_id(), table_id='tblLFoLxEdWlxjmLP', record_id=self.id)
 
     f: TertiaryFormulas = TertiaryFormulas()
 

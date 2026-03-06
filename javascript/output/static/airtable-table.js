@@ -2,10 +2,12 @@ const Airtable = require("airtable");
 const { AirtableModel } = require("./airtable-model");
 const { ID } = require("./formula");
 const { baseIdSchema, validateRecordIds } = require("./special-types");
+const { buildUrl } = require("./helpers");
 
 class AirtableTable {
 	/** Underlying Airtable.js Table instance */
 	_table;
+	id;
 	/** Base ID */
 	baseId;
 	_options = {};
@@ -29,6 +31,7 @@ class AirtableTable {
 		this.baseId = baseIdSchema.parse(baseId);
 		this._options = options;
 		this._table = new Airtable(options).base(this.baseId).table(tableNameOrId);
+		this.id = tableNameOrId;
 		this.recordCtor = recordCtor;
 		this.viewNameToIdMap = viewNameToIdMap;
 		this.fieldNameToIdMap = fieldNameToIdMap;
@@ -38,6 +41,14 @@ class AirtableTable {
 
 	getViewId(viewName) {
 		return this.viewNameToIdMap[viewName] || viewName;
+	}
+
+	url(view) {
+		if (view) {
+			return buildUrl(this.baseId, this.id, this.getViewId(view));
+		} else {
+			return buildUrl(this.baseId, this.id);
+		}
 	}
 
 	//#region GET

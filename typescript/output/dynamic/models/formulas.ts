@@ -6,9 +6,12 @@ import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "air
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
 import { RecordId, AirtableButton } from "../../static/special-types";
 import { LinkedRecord, LinkedRecords } from "../../static/linked-record";
+import { buildUrl } from "../../static/helpers";
 import {
     FormulasFieldSet,
     FormulasField,
+    FormulasView,
+    FormulasViewNameIdMapping,
     FormulasFieldNameIdMapping,
     FormulasFieldIdNameMapping,
     FormulasFieldNamePropertyMapping,
@@ -265,6 +268,15 @@ export class FormulasModel extends AirtableModel<FormulasFieldSet, IFormulas, Fo
         this.initializeFields(data);
         this.record = new Record<FormulasFieldSet>(new FormulasTable(this.getInstanceBaseId(), this.getInstanceOptions())._table, this.id, {});
         this.updateRecord();
+    }
+
+    /** Get the URL for this record in Airtable, with optional view. */
+    public url(view?: FormulasView): string {
+        if (view) {
+            return buildUrl(this.getInstanceBaseId(), 'tblnuYBsMdXNDsuRc', this.id, FormulasViewNameIdMapping[view]);
+        } else {
+            return buildUrl(this.getInstanceBaseId(), 'tblnuYBsMdXNDsuRc', this.id);
+        }
     }
 
 }

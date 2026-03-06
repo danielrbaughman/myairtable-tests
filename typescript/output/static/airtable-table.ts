@@ -4,6 +4,7 @@ import { AirtableModel } from "./airtable-model";
 import { QueryParams, SortParameter } from "airtable/lib/query_params";
 import { ID } from "./formula";
 import { baseIdSchema, IRecord, validateRecordIds } from "./special-types";
+import { buildUrl } from "./helpers";
 
 /** Options for fetching records via `get()` */
 export interface FetchOptions<Fld> {
@@ -58,6 +59,7 @@ export class AirtableTable<
 > {
 	/** Underlying Airtable.js Table instance */
 	public _table: Table<FldSt>;
+	public id: string;
 	/** Base ID */
 	public readonly baseId: string;
 	public _options: AirtableOptions = {};
@@ -81,6 +83,7 @@ export class AirtableTable<
 		this.baseId = baseIdSchema.parse(baseId);
 		this._options = options;
 		this._table = new Airtable(options).base(this.baseId).table(tableNameOrId);
+		this.id = tableNameOrId;
 		this.recordCtor = recordCtor;
 		this.viewNameToIdMap = viewNameToIdMap;
 		this.fieldNameToIdMap = fieldNameToIdMap;
@@ -90,6 +93,14 @@ export class AirtableTable<
 
 	public getViewId(viewName: Vw): string {
 		return this.viewNameToIdMap[viewName] || viewName;
+	}
+
+	public url(view?: Vw): string {
+		if (view) {
+			return buildUrl(this.baseId, this.id, this.getViewId(view));
+		} else {
+			return buildUrl(this.baseId, this.id);
+		}
 	}
 
 	//#region GET

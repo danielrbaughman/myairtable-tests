@@ -93,7 +93,7 @@ class ORMTable(Generic[ORMType, ViewType, FieldType]):
     @overload
     def get(
         self,
-        formula: Optional[Formula] = None,
+        formula: Optional[Formula | str] = None,
         view: Optional[ViewType] = None,
         use_field_ids: bool = True,
         page_size: int = 100,
@@ -139,9 +139,12 @@ class ORMTable(Generic[ORMType, ViewType, FieldType]):
         if fields is not None:
             validate_keys(fields, self._field_names)
 
-        if isinstance(record_id, list) and len(record_id) > 0 and isinstance(record_id[0], str):
-            record_ids = record_id
-            record_id = None  # type: ignore
+        if isinstance(record_id, list):
+            if len(record_id) == 0:
+                return []
+            if len(record_id) > 0 and isinstance(record_id[0], str):
+                record_ids = record_id
+                record_id = None  # type: ignore
 
         if isinstance(record_id, str) and not record_id.strip():
             raise ValueError("Record ID cannot be an empty string.")
@@ -237,11 +240,18 @@ class ORMTable(Generic[ORMType, ViewType, FieldType]):
         record: ORMType | None = None,
         records: list[ORMType] | None = None,
     ) -> ORMType | list[ORMType]:
-        if isinstance(record, list) and len(record) > 0 and isinstance(record[0], self._orm_cls):
-            records = record
-            record = None  # type: ignore
+        if isinstance(record, list):
+            if len(record) == 0:
+                return []
+            if len(record) > 0 and isinstance(record[0], self._orm_cls):
+                records = record
+                record = None  # type: ignore
 
-        if records:
+        if records is not None and isinstance(records, list):
+            if records is None:
+                raise ValueError("Records to create cannot be None.")
+            if len(records) == 0:
+                return []
             self._orm_cls.batch_save(records)
             new_records = self.get(record_ids=[r.id for r in records])
             return new_records
@@ -277,13 +287,18 @@ class ORMTable(Generic[ORMType, ViewType, FieldType]):
         record: ORMType | None = None,
         records: list[ORMType] | None = None,
     ) -> ORMType | list[ORMType]:
-        if isinstance(record, list) and len(record) > 0 and isinstance(record[0], self._orm_cls):
-            records = record
-            record = None  # type: ignore
+        if isinstance(record, list):
+            if len(record) == 0:
+                return []
+            if len(record) > 0 and isinstance(record[0], self._orm_cls):
+                records = record
+                record = None  # type: ignore
 
-        if isinstance(records, list):
+        if records is not None and isinstance(records, list):
             if records is None:
                 raise ValueError("Records to update cannot be None.")
+            if len(records) == 0:
+                return []
             records: list[RecordDict] = [r.to_record() for r in records]  # type: ignore
             for r in records:
                 r["fields"] = prepare_fields_for_save(r["fields"], self._calculated_field_ids)

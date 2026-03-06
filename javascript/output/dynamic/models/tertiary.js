@@ -11,11 +11,13 @@ const {
 const {
     getOptions,
     getBaseId,
+    buildUrl,
 } = require("../../static/helpers");
 const {
     TertiaryFieldNameIdMapping,
     TertiaryFieldIdNameMapping,
     TertiaryFieldNamePropertyMapping,
+    TertiaryViewNameIdMapping,
 } = require("../types/tertiary");
 const { TertiaryFormulas } = require("../formulas/tertiary");
 const { TertiaryTable } = require("../tables/tertiary");
@@ -62,6 +64,15 @@ class TertiaryModel extends AirtableModel {
         this.initializeFields(data);
         this.record = new (require('airtable').Record)(new TertiaryTable(this.getInstanceBaseId(), this.getInstanceOptions())._table, this.id, {});
         this.updateRecord();
+    }
+
+    /** Get the URL for this record in Airtable, with optional view. */
+    url(view) {
+        if (view) {
+            return buildUrl(this.getInstanceBaseId(), 'tblLFoLxEdWlxjmLP', this.id, TertiaryViewNameIdMapping[view]);
+        } else {
+            return buildUrl(this.getInstanceBaseId(), 'tblLFoLxEdWlxjmLP', this.id);
+        }
     }
 
 }

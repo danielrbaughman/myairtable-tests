@@ -11,11 +11,13 @@ const {
 const {
     getOptions,
     getBaseId,
+    buildUrl,
 } = require("../../static/helpers");
 const {
     PrimaryFieldNameIdMapping,
     PrimaryFieldIdNameMapping,
     PrimaryFieldNamePropertyMapping,
+    PrimaryViewNameIdMapping,
 } = require("../types/primary");
 const {
     PrimaryMultipleSelectOptions,
@@ -467,6 +469,15 @@ class PrimaryModel extends AirtableModel {
         this.initializeFields(data);
         this.record = new (require('airtable').Record)(new PrimaryTable(this.getInstanceBaseId(), this.getInstanceOptions())._table, this.id, {});
         this.updateRecord();
+    }
+
+    /** Get the URL for this record in Airtable, with optional view. */
+    URL(view) {
+        if (view) {
+            return buildUrl(this.getInstanceBaseId(), 'tblmb3iqgpNS1ysV2', this.id, PrimaryViewNameIdMapping[view]);
+        } else {
+            return buildUrl(this.getInstanceBaseId(), 'tblmb3iqgpNS1ysV2', this.id);
+        }
     }
 
 }

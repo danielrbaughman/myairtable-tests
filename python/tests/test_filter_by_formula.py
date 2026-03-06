@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 import pytest
 
@@ -29,7 +29,7 @@ class TestFilterByView:
         yield
         airtable.primary.delete(record_ids=self.ids)
 
-    def test_only_returns_records_in_view(self, airtable):
+    def test_only_returns_records_in_view(self, airtable: Airtable):
         records = airtable.primary.get(view="Filter by View")
         assert len(records) == 5
         for record in records:
@@ -426,9 +426,9 @@ class TestFilterByDateFieldChainedFormula:
         for record in records:
             assert record.date is not None
 
-    def test_on_days_ago(self, airtable):
-        now = datetime.now()
-        target = datetime(2024, 1, 15)
+    def test_on_days_ago(self, airtable: Airtable):
+        now = datetime.now(timezone.utc)
+        target = datetime(2024, 1, 15, tzinfo=timezone.utc)
         diff_days = (now - target).days
         formula = PrimaryModel.f.date.on().days_ago(diff_days)
         records = airtable.primary.get(formula=formula)
@@ -437,8 +437,8 @@ class TestFilterByDateFieldChainedFormula:
         assert date(2024, 1, 15) in dates
 
     def test_not_on_days_ago(self, airtable):
-        now = datetime.now()
-        target = datetime(2024, 1, 15)
+        now = datetime.now(timezone.utc)
+        target = datetime(2024, 1, 15, tzinfo=timezone.utc)
         diff_days = (now - target).days
         formula = PrimaryModel.f.date.not_on().days_ago(diff_days)
         records = airtable.primary.get(formula=formula)

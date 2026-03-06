@@ -6,9 +6,12 @@ import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "air
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
 import { RecordId, AirtableButton } from "../../static/special-types";
 import { LinkedRecord, LinkedRecords } from "../../static/linked-record";
+import { buildUrl } from "../../static/helpers";
 import {
     TertiaryFieldSet,
     TertiaryField,
+    TertiaryView,
+    TertiaryViewNameIdMapping,
     TertiaryFieldNameIdMapping,
     TertiaryFieldIdNameMapping,
     TertiaryFieldNamePropertyMapping,
@@ -59,6 +62,15 @@ export class TertiaryModel extends AirtableModel<TertiaryFieldSet, ITertiary, Te
         this.initializeFields(data);
         this.record = new Record<TertiaryFieldSet>(new TertiaryTable(this.getInstanceBaseId(), this.getInstanceOptions())._table, this.id, {});
         this.updateRecord();
+    }
+
+    /** Get the URL for this record in Airtable, with optional view. */
+    public url(view?: TertiaryView): string {
+        if (view) {
+            return buildUrl(this.getInstanceBaseId(), 'tblLFoLxEdWlxjmLP', this.id, TertiaryViewNameIdMapping[view]);
+        } else {
+            return buildUrl(this.getInstanceBaseId(), 'tblLFoLxEdWlxjmLP', this.id);
+        }
     }
 
 }

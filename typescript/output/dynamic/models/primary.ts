@@ -6,9 +6,12 @@ import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "air
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
 import { RecordId, AirtableButton } from "../../static/special-types";
 import { LinkedRecord, LinkedRecords } from "../../static/linked-record";
+import { buildUrl } from "../../static/helpers";
 import {
     PrimaryFieldSet,
     PrimaryField,
+    PrimaryView,
+    PrimaryViewNameIdMapping,
     PrimaryFieldNameIdMapping,
     PrimaryFieldIdNameMapping,
     PrimaryFieldNamePropertyMapping,
@@ -462,6 +465,15 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
         this.initializeFields(data);
         this.record = new Record<PrimaryFieldSet>(new PrimaryTable(this.getInstanceBaseId(), this.getInstanceOptions())._table, this.id, {});
         this.updateRecord();
+    }
+
+    /** Get the URL for this record in Airtable, with optional view. */
+    public URL(view?: PrimaryView): string {
+        if (view) {
+            return buildUrl(this.getInstanceBaseId(), 'tblmb3iqgpNS1ysV2', this.id, PrimaryViewNameIdMapping[view]);
+        } else {
+            return buildUrl(this.getInstanceBaseId(), 'tblmb3iqgpNS1ysV2', this.id);
+        }
     }
 
 }

@@ -112,7 +112,7 @@ class DictTable(Generic[DictType, UpdateDictType, CreateDictType, ViewType, Fiel
     @overload
     def get(
         self,
-        formula: Optional[Formula] = None,
+        formula: Optional[Formula | str] = None,
         view: Optional[ViewType] = None,
         use_field_ids: bool = False,
         page_size: int = 100,
@@ -144,7 +144,7 @@ class DictTable(Generic[DictType, UpdateDictType, CreateDictType, ViewType, Fiel
         self,
         record_id: str | None = None,
         record_ids: list[str] | None = None,
-        formula: Optional[Formula] = None,
+        formula: Optional[Formula | str] = None,
         view: Optional[ViewType] = None,
         use_field_ids: bool = False,
         page_size: int = 100,
@@ -159,9 +159,12 @@ class DictTable(Generic[DictType, UpdateDictType, CreateDictType, ViewType, Fiel
         if fields is not None:
             validate_keys(fields, self._field_names)
 
-        if isinstance(record_id, list) and len(record_id) > 0 and isinstance(record_id[0], str):
-            record_ids = record_id
-            record_id = None  # type: ignore
+        if isinstance(record_id, list):
+            if len(record_id) == 0:
+                return []
+            if len(record_id) > 0 and isinstance(record_id[0], str):
+                record_ids = record_id
+                record_id = None  # type: ignore
 
         if isinstance(record_id, str) and not record_id.strip():
             raise ValueError("Record ID cannot be an empty string.")
@@ -216,7 +219,7 @@ class DictTable(Generic[DictType, UpdateDictType, CreateDictType, ViewType, Fiel
             if page_size > 100:
                 raise ValueError("Page size cannot exceed 100.")
             records: list[RecordDict] = self._table.all(
-                formula=formula.flatten() if formula else None,
+                formula=Formula(str(formula)).flatten() if formula else None,
                 view=self.get_view_id(view) if view else None,
                 use_field_ids=use_field_ids,
                 page_size=page_size,
@@ -273,13 +276,18 @@ class DictTable(Generic[DictType, UpdateDictType, CreateDictType, ViewType, Fiel
         **options,
     ) -> DictType | list[DictType]:
         calculated_field_keys = self._calculated_field_ids if use_field_ids else self._calculated_field_names
-        if isinstance(record, list) and len(record) > 0 and isinstance(record[0], dict):
-            records = record
-            record = None  # type: ignore
+        if isinstance(record, list):
+            if len(record) == 0:
+                return []
+            if len(record) > 0 and isinstance(record[0], dict):
+                records = record
+                record = None  # type: ignore
 
-        if records:
+        if records is not None and isinstance(records, list):
             if records is None:
                 raise ValueError("Records to create cannot be None.")
+            if len(records) == 0:
+                return []
             for r in records:
                 r["fields"] = prepare_fields_for_save(r["fields"], calculated_field_keys)
             records = self._table.batch_create([r["fields"] for r in records], use_field_ids=use_field_ids, **options)
@@ -335,13 +343,18 @@ class DictTable(Generic[DictType, UpdateDictType, CreateDictType, ViewType, Fiel
         **options,
     ) -> DictType | list[DictType]:
         calculated_field_keys = self._calculated_field_ids if use_field_ids else self._calculated_field_names
-        if isinstance(record, list) and len(record) > 0 and isinstance(record[0], dict):
-            records = record
-            record = None  # type: ignore
+        if isinstance(record, list):
+            if len(record) == 0:
+                return []
+            if len(record) > 0 and isinstance(record[0], dict):
+                records = record
+                record = None  # type: ignore
 
-        if isinstance(records, list):
+        if records is not None and isinstance(records, list):
             if records is None:
                 raise ValueError("Records to update cannot be None.")
+            if len(records) == 0:
+                return []
             for r in records:
                 r["fields"] = prepare_fields_for_save(r["fields"], calculated_field_keys)
             update_dicts: list[UpdateDictType] = [{"id": r["id"], "fields": r["fields"]} for r in records]

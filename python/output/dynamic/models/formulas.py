@@ -8,7 +8,7 @@ from typing import Any, TYPE_CHECKING
 from pyairtable.orm import Model
 from pyairtable.orm.fields import SingleLineTextField, MultilineTextField, PhoneNumberField, EmailField, LinkField, SingleLinkField, UrlField, DateField, CreatedTimeField, LastModifiedTimeField, NumberField, SelectField, MultipleSelectField, CheckboxField, RichTextField, CurrencyField, PercentField, LookupField, AttachmentsField, CreatedByField, ButtonField, CountField, DatetimeField, DurationField, LastModifiedByField, AutoNumberField, CollaboratorField, MultipleCollaboratorsField
 
-from ...static.helpers import get_api_key, get_base_id
+from ...static.helpers import get_api_key, get_base_id, build_url
 from ...static.special_types import AirtableAttachment, RecordId
 from ...static.airtable_runtime import AirtableRuntime as F
 import urllib.parse
@@ -16,6 +16,7 @@ import math
 import re
 from ..dicts import FormulasRecordDict
 from ..formulas import FormulasFormulas
+from ..types import FormulasView, FormulasViewNameIdMapping
 
 
 class FormulasModel(Model):
@@ -37,6 +38,13 @@ class FormulasModel(Model):
 
     def to_record_dict(self, only_writable: bool = False) -> FormulasRecordDict:
         return self.to_record(only_writable)
+
+    def url(self, view: FormulasView | None = None) -> str:
+        """Get the URL for this record in Airtable, with optional view."""
+        if view:
+            return build_url(base_id=get_base_id(), table_id='tblnuYBsMdXNDsuRc', record_id=self.id, view_id=FormulasViewNameIdMapping[view])
+        else:
+            return build_url(base_id=get_base_id(), table_id='tblnuYBsMdXNDsuRc', record_id=self.id)
 
     f: FormulasFormulas = FormulasFormulas()
 

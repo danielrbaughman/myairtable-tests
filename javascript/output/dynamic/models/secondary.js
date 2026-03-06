@@ -11,11 +11,13 @@ const {
 const {
     getOptions,
     getBaseId,
+    buildUrl,
 } = require("../../static/helpers");
 const {
     SecondaryFieldNameIdMapping,
     SecondaryFieldIdNameMapping,
     SecondaryFieldNamePropertyMapping,
+    SecondaryViewNameIdMapping,
 } = require("../types/secondary");
 const { SecondaryFormulas } = require("../formulas/secondary");
 const { SecondaryTable } = require("../tables/secondary");
@@ -70,6 +72,15 @@ class SecondaryModel extends AirtableModel {
         this.initializeFields(data);
         this.record = new (require('airtable').Record)(new SecondaryTable(this.getInstanceBaseId(), this.getInstanceOptions())._table, this.id, {});
         this.updateRecord();
+    }
+
+    /** Get the URL for this record in Airtable, with optional view. */
+    url(view) {
+        if (view) {
+            return buildUrl(this.getInstanceBaseId(), 'tblPPScS3XMuFkDYN', this.id, SecondaryViewNameIdMapping[view]);
+        } else {
+            return buildUrl(this.getInstanceBaseId(), 'tblPPScS3XMuFkDYN', this.id);
+        }
     }
 
 }
