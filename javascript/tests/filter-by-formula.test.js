@@ -399,7 +399,7 @@ describe("Filter by DateField Formula", async () => {
 		const records = await airtable.primary.get({ formula });
 		expect(records.length).toBeGreaterThanOrEqual(1);
 		records.forEach((record) => {
-			expect(new Date(record.date).getTime()).toBeLessThanOrEqual(new Date("2024-06-15").getTime());
+			expect(new Date(record.date).getTime()).toBeGreaterThanOrEqual(new Date("2024-06-15").getTime());
 		});
 	});
 
@@ -408,7 +408,7 @@ describe("Filter by DateField Formula", async () => {
 		const records = await airtable.primary.get({ formula });
 		expect(records.length).toBeGreaterThanOrEqual(1);
 		records.forEach((record) => {
-			expect(new Date(record.date).getTime()).toBeGreaterThanOrEqual(new Date("2024-01-15").getTime());
+			expect(new Date(record.date).getTime()).toBeLessThanOrEqual(new Date("2024-01-15").getTime());
 		});
 	});
 
@@ -430,7 +430,7 @@ describe("Filter by DateField Formula", async () => {
 	});
 
 	it("should filter by between() inclusive", async () => {
-		const formula = PrimaryModel.f.date.between("2024-06-15", "2024-01-15", true);
+		const formula = PrimaryModel.f.date.between("2024-01-15", "2024-06-15", true);
 		const records = await airtable.primary.get({ formula });
 		expect(records.length).toBeGreaterThanOrEqual(2);
 		const dates = records.map((r) => r.date.substring(0, 10));
@@ -526,16 +526,19 @@ describe("Filter by DateField Chained Formula", async () => {
 	});
 
 	it("should filter by onOrAfter().daysAgo()", async () => {
-		const formula = PrimaryModel.f.date.onOrAfter().daysAgo(1);
+		const now = new Date();
+		const target = new Date("2024-01-15");
+		const diffDays = Math.floor((now.getTime() - target.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+		const formula = PrimaryModel.f.date.onOrAfter().daysAgo(diffDays);
 		const records = await airtable.primary.get({ formula });
-		expect(records.length).toBeGreaterThanOrEqual(1);
-		records.forEach((record) => {
-			expect(record.date).toBeDefined();
-		});
+		expect(records.length).toBeGreaterThanOrEqual(2);
+		const dates = records.map((r) => r.date.substring(0, 10));
+		expect(dates).toContain("2024-01-15");
+		expect(dates).toContain("2024-06-15");
 	});
 
 	it("should filter by onOrBefore().yearsAgo()", async () => {
-		const formula = PrimaryModel.f.date.onOrBefore().yearsAgo(5);
+		const formula = PrimaryModel.f.date.onOrBefore().yearsAgo(1);
 		const records = await airtable.primary.get({ formula });
 		expect(records.length).toBeGreaterThanOrEqual(1);
 		records.forEach((record) => {

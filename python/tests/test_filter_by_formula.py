@@ -448,14 +448,18 @@ class TestFilterByDateFieldChainedFormula:
             assert record.date != date(2024, 1, 15)
 
     def test_on_or_after_days_ago(self, airtable):
-        formula = PrimaryModel.f.date.on_or_after().days_ago(1)
+        now = datetime.now(timezone.utc)
+        target = datetime(2024, 1, 15, tzinfo=timezone.utc)
+        diff_days = (now - target).days + 1
+        formula = PrimaryModel.f.date.on_or_after().days_ago(diff_days)
         records = airtable.primary.get(formula=formula)
-        assert len(records) >= 1
-        for record in records:
-            assert record.date is not None
+        assert len(records) >= 2
+        dates = [r.date for r in records]
+        assert date(2024, 1, 15) in dates
+        assert date(2024, 6, 15) in dates
 
     def test_on_or_before_years_ago(self, airtable):
-        formula = PrimaryModel.f.date.on_or_before().years_ago(5)
+        formula = PrimaryModel.f.date.on_or_before().years_ago(1)
         records = airtable.primary.get(formula=formula)
         assert len(records) >= 1
         for record in records:
