@@ -4,10 +4,6 @@
 
 import * as z from "zod";
 import { recordIdSchema, AirtableAttachmentSchema, AirtableCollaboratorSchema, AirtableButtonSchema, SpecialNumberSchema, ErrorValueSchema } from "../../static/special-types";
-import {
-    PrimaryMultipleSelectOptions,
-    PrimarySingleSelectOptions,
-} from "../types/primary";
 
 // #region PRIMARY
 export const PrimarySchema = z.object({
@@ -35,7 +31,7 @@ export const PrimarySchema = z.object({
     longText: z.string().optional(),
     longTextWithRichText: z.string().optional(),
     lookup: z.union([z.string(), SpecialNumberSchema, ErrorValueSchema, z.array(z.union([z.string(), SpecialNumberSchema, ErrorValueSchema]).nullable())]).optional(),
-    multipleSelect: z.array(z.enum(PrimaryMultipleSelectOptions)).optional(),
+    multipleSelect: z.array(z.string()).optional(),
     numberFloat: z.number().optional(),
     numberInt: z.number().optional(),
     percentFloat: z.number().optional(),
@@ -45,7 +41,7 @@ export const PrimarySchema = z.object({
     rating: z.any().optional(),
     rollup: z.union([z.string(), SpecialNumberSchema, ErrorValueSchema, z.array(z.union([z.string(), SpecialNumberSchema, ErrorValueSchema]).nullable())]).optional(),
     singleLineText: z.string().optional(),
-    singleSelect: z.enum(PrimarySingleSelectOptions).optional(),
+    singleSelect: z.string().optional(),
     url: z.string().optional(),
     user: AirtableCollaboratorSchema.optional(),
     userAllowMultiple: z.array(AirtableCollaboratorSchema).optional(),

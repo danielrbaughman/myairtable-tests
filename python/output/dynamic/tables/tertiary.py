@@ -42,7 +42,7 @@ class TertiaryTable(AirtableTable[TertiaryRecordDict, TertiaryCreateRecordDict, 
     You can also use the ORM Models directly. See https://pyairtable.readthedocs.io/en/stable/orm.html#
     """
     @classmethod
-    def from_table(cls, table: Table):
+    def from_table(cls, table: Table, cache_seconds: int = 0):
         cls = super().from_table(
             table,
             TertiaryRecordDict,
@@ -53,6 +53,7 @@ class TertiaryTable(AirtableTable[TertiaryRecordDict, TertiaryCreateRecordDict, 
             TertiaryCalculatedFieldIds,
             TertiaryViewNameIdMapping,
             TertiaryFields,
+            cache_seconds=cache_seconds,
         )
         return cls
 # endregion

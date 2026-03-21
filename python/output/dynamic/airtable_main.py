@@ -45,7 +45,7 @@ class Airtable:
     base_id: str
     _tables: dict[TableName, AirtableTable] = {}
 
-    def __init__(self, api_key: str | None = None, base_id: str | None = None, endpoint_url: str = "https://api.airtable.com"):
+    def __init__(self, api_key: str | None = None, base_id: str | None = None, endpoint_url: str = "https://api.airtable.com", cache_seconds: int = 0):
         self.base_id: str = base_id or get_base_id()
         if not self.base_id:
             raise ValueError("Base ID must be provided.")
@@ -54,6 +54,7 @@ class Airtable:
             raise ValueError("API key must be provided.")
         # Register config so ORM models can look it up
         set_airtable_config(self.base_id, api_key, endpoint_url)
+        self._cache_seconds: int = cache_seconds
         self._api = Api(api_key=api_key, endpoint_url=endpoint_url)
 
     def table(self, table_name: TableName) -> AirtableTable:
@@ -65,32 +66,37 @@ class Airtable:
         """Get the URL for the Airtable base."""
         return build_url(base_id=self.base_id)
 
+    def invalidate_cache(self) -> None:
+        """Invalidates the cache for all tables."""
+        for table in self._tables.values():
+            table.invalidate_cache()
+
     @property
     def formulas(self) -> FormulasTable:
         """`Formulas` (tblnuYBsMdXNDsuRc)"""
         if 'Formulas' not in self._tables:
-            self._tables["Formulas"] = FormulasTable.from_table(self._api.table(self.base_id, "Formulas"))
+            self._tables["Formulas"] = FormulasTable.from_table(self._api.table(self.base_id, "Formulas"), cache_seconds=self._cache_seconds)
         return self._tables["Formulas"]
 
     @property
     def primary(self) -> PrimaryTable:
         """`Primary` (tblmb3iqgpNS1ysV2)"""
         if 'Primary' not in self._tables:
-            self._tables["Primary"] = PrimaryTable.from_table(self._api.table(self.base_id, "Primary"))
+            self._tables["Primary"] = PrimaryTable.from_table(self._api.table(self.base_id, "Primary"), cache_seconds=self._cache_seconds)
         return self._tables["Primary"]
 
     @property
     def secondary(self) -> SecondaryTable:
         """`Secondary` (tblPPScS3XMuFkDYN)"""
         if 'Secondary' not in self._tables:
-            self._tables["Secondary"] = SecondaryTable.from_table(self._api.table(self.base_id, "Secondary"))
+            self._tables["Secondary"] = SecondaryTable.from_table(self._api.table(self.base_id, "Secondary"), cache_seconds=self._cache_seconds)
         return self._tables["Secondary"]
 
     @property
     def tertiary(self) -> TertiaryTable:
         """`Tertiary` (tblLFoLxEdWlxjmLP)"""
         if 'Tertiary' not in self._tables:
-            self._tables["Tertiary"] = TertiaryTable.from_table(self._api.table(self.base_id, "Tertiary"))
+            self._tables["Tertiary"] = TertiaryTable.from_table(self._api.table(self.base_id, "Tertiary"), cache_seconds=self._cache_seconds)
         return self._tables["Tertiary"]
 
 # endregion

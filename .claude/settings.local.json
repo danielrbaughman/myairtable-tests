@@ -19,7 +19,11 @@
 			"Bash(nvm:*)",
 			"Bash(source ~/.nvm/nvm.sh)",
 			"Bash(nvm ls:*)",
-			"Bash(yarn install)"
+			"Bash(yarn install)",
+			"Bash(git diff:*)",
+			"Bash(./test.sh py:*)",
+			"Bash(./test.sh js:*)",
+			"Bash(./test.sh ts:*)"
 		]
 	}
 }

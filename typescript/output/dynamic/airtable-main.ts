@@ -37,6 +37,7 @@ export class Airtable {
               endpointUrl: options?.endpointUrl,
               noRetryIfRateLimited: options?.noRetryIfRateLimited ?? false,
               requestTimeout: options?.requestTimeout,
+              cacheSeconds: options?.cacheSeconds,
         };
         setAirtableConfig(this.baseId, _options);
         this.formulas = new FormulasTable(this.baseId, _options);
@@ -54,5 +55,13 @@ export class Airtable {
     /** Get the URL for the Airtable base. */
     public url(): string {
         return buildUrl(this.baseId);
+    }
+
+    /** Invalidates the cache for all tables. */
+    public invalidateCache(): void {
+        this.formulas.invalidateCache();
+        this.primary.invalidateCache();
+        this.secondary.invalidateCache();
+        this.tertiary.invalidateCache();
     }
 }

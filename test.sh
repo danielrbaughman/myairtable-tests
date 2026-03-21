@@ -15,6 +15,7 @@ usage() {
     echo "  --json    Run serializing tests"
     echo "  --filter  Run filter-by-formula tests"
     echo "  --runtime Run runtime-formulas tests"
+    echo "  --cache   Run caching tests"
     echo "  --help    Show this help message"
 }
 
@@ -64,6 +65,9 @@ if [ "$LANG_ARG" = "py" ]; then
         --runtime)
             TEST_CMD="uv run pytest -x -v $TEST_DIR/test_runtime_formulas.py"
             ;;
+        --cache)
+            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_caching.py"
+            ;;
         *)
             echo "Unknown option: $SUITE"
             echo ""
@@ -91,6 +95,9 @@ else
             ;;
         --runtime)
             TEST_CMD="npx vitest run $TEST_DIR/runtime-formulas.test.$EXT"
+            ;;
+        --cache)
+            TEST_CMD="npx vitest run $TEST_DIR/caching.test.$EXT"
             ;;
         *)
             echo "Unknown option: $SUITE"
