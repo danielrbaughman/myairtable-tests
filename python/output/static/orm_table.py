@@ -153,8 +153,9 @@ class ORMTable(Generic[ORMType, ViewType, FieldType]):
     ) -> ORMType | list[ORMType]:
         # Cache check
         if self._cache_seconds > 0:
-            cache_key = self._cache_key(record_id, record_ids, str(formula), view, use_field_ids,
-                                        page_size, fields, sort, offset, time_zone, user_locale)
+            cache_key = self._cache_key(
+                record_id, record_ids, str(formula), view, use_field_ids, page_size, fields, sort, offset, time_zone, user_locale
+            )
             cached = self._cache.get(cache_key)
             if cached is not None:
                 value, expires_at = cached

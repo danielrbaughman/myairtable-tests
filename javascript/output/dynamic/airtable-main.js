@@ -58,6 +58,18 @@ class Airtable {
         return buildUrl(this.baseId);
     }
 
+    /** Fetch a live version of the schema from Airtable's metadata API. */
+    async getSchema() {
+        const url = `https://api.airtable.com/v0/meta/bases/${this.baseId}/tables`;
+        const response = await fetch(url, {
+            headers: { Authorization: `Bearer ${getApiKey(this.baseId)}` },
+        });
+        if (!response.ok) {
+            throw new Error(`Failed to fetch schema: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    }
+
     /** Invalidates the cache for all tables. */
     invalidateCache() {
         this.formulas.invalidateCache();

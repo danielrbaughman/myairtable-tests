@@ -66,6 +66,15 @@ class Airtable:
         """Get the URL for the Airtable base."""
         return build_url(base_id=self.base_id)
 
+    def get_schema(self) -> BaseSchema:
+        """Fetch a live version of the schema from Airtable's metadata API."""
+        import json
+        import urllib.request
+        url = f"https://api.airtable.com/v0/meta/bases/{self.base_id}/tables"
+        req = urllib.request.Request(url, headers={"Authorization": f"Bearer {get_api_key(self.base_id)}"})
+        with urllib.request.urlopen(req) as resp:
+            return json.loads(resp.read())
+
     def invalidate_cache(self) -> None:
         """Invalidates the cache for all tables."""
         for table in self._tables.values():
