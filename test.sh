@@ -2,12 +2,13 @@
 set -e
 
 usage() {
-    echo "Usage: ./test.sh <ts|js|py> [--all|--crud|--json|--filter|--runtime|--help]"
+    echo "Usage: ./test.sh <ts|js|py|rs> [--all|--crud|--json|--filter|--runtime|--help]"
     echo ""
     echo "Arguments:"
     echo "  ts        Run TypeScript tests"
     echo "  js        Run JavaScript tests"
     echo "  py        Run Python tests"
+    echo "  rs        Run Rust tests"
     echo ""
     echo "Options:"
     echo "  --all     Run all test suites (default)"
@@ -33,8 +34,11 @@ case "$LANG_ARG" in
     py)
         TEST_DIR="python/tests"
         ;;
+    rs)
+        RUST_DIR="rust"
+        ;;
     *)
-        echo "Error: first argument must be 'ts', 'js', or 'py'"
+        echo "Error: first argument must be 'ts', 'js', 'py', or 'rs'"
         echo ""
         usage
         exit 1
@@ -67,6 +71,22 @@ if [ "$LANG_ARG" = "py" ]; then
             ;;
         --cache)
             TEST_CMD="uv run pytest -x -v $TEST_DIR/test_caching.py"
+            ;;
+        *)
+            echo "Unknown option: $SUITE"
+            echo ""
+            usage
+            exit 1
+            ;;
+    esac
+elif [ "$LANG_ARG" = "rs" ]; then
+    case "$SUITE" in
+        --help)
+            usage
+            exit 0
+            ;;
+        --all)
+            TEST_CMD="cargo test --manifest-path $RUST_DIR/Cargo.toml"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -114,6 +134,8 @@ if [ "$LANG_ARG" = "py" ]; then
     uv sync
     uv run ruff check
     uv run ruff format
+    $TEST_CMD
+elif [ "$LANG_ARG" = "rs" ]; then
     $TEST_CMD
 else
     if ! command -v nvm &> /dev/null; then
