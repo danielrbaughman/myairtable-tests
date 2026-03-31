@@ -17,5 +17,9 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 name = "test_hello"
 path = "rust/tests/test_hello.rs"
 
+[[bin]]
+name = "playground"
+path = "playground.rs"
+
 [dev-dependencies]
 dotenvy = "0.15"

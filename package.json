@@ -12,6 +12,7 @@
 		"build": "npx tsc",
 		"start": "node -r dotenv/config dist/playground.js",
 		"ts": "yarn install && yarn build && yarn start",
+		"rs": "cargo run --bin playground",
 		"test": "vitest run"
 	},
 	"dependencies": {
