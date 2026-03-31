@@ -16,3 +16,7 @@ nvm use
 yarn install
 yarn lint
 yarn format
+
+# Rust
+cargo check
+cargo fmt
