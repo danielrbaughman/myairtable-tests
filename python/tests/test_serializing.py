@@ -56,7 +56,7 @@ class TestSimpleFieldsToRecord:
     def test_to_record_dict_returns_same(self):
         r = self.model.to_record_dict()
         assert r["id"] == self.model.id
-        assert r["fields"]["fldol5Q4wmQJQvPRy"] == "Serialize Simple Test"
+        assert r["fields"]["fldol5Q4wmQJQvPRy"] == "Serialize Simple Test"  # ty: ignore[invalid-argument-type]
 
     def test_cleanup(self, airtable: Airtable):
         self.model.delete()
@@ -110,4 +110,4 @@ class TestUnfetchedModel:
         m = PrimaryModel()
         m.primary_key = "Unsaved Model"
         r = m.to_record_dict()
-        assert r["fields"]["fldol5Q4wmQJQvPRy"] == "Unsaved Model"
+        assert r["fields"]["fldol5Q4wmQJQvPRy"] == "Unsaved Model"  # ty: ignore[invalid-argument-type]

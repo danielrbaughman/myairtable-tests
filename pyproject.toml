@@ -21,7 +21,7 @@ ignore = ["N999"]
 known-first-party = ["output"]
 
 [tool.ty.src]
-exclude = ["python/output", "python/tests"]
+exclude = ["python/output"]
 
 [tool.ruff.format]
 skip-magic-trailing-comma = false

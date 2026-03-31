@@ -250,6 +250,7 @@ class TestComplexPropertiesAttachments:
             read = airtable.primary.dict.get(self.id)
             if read["fields"].get("Attachment"):
                 break
+        assert read is not None
         assert len(read["fields"]["Attachment"]) == 1
         assert read["fields"]["Attachment"][0]["url"]
 
