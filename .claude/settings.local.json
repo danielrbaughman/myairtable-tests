@@ -23,7 +23,9 @@
 			"Bash(git diff:*)",
 			"Bash(./test.sh py:*)",
 			"Bash(./test.sh js:*)",
-			"Bash(./test.sh ts:*)"
+			"Bash(./test.sh ts:*)",
+			"Bash(bash checks.sh)",
+			"Bash(uv run:*)"
 		]
 	}
 }
