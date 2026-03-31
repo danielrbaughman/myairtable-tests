@@ -5,7 +5,7 @@
 import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "airtable";
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
 import { RecordId, AirtableButton } from "../../static/special-types";
-import { LinkedRecord, LinkedRecords } from "../../static/linked-record";
+import { LinkedRecord, LinkedRecords, ChainableLinkedRecord } from "../../static/linked-record";
 import { buildUrl } from "../../static/helpers";
 import {
     PrimaryFieldSet,
@@ -65,8 +65,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
         { propertyName: "formulaSimple", fieldId: "fldy1axxaoUToLVC6", fieldName: "Formula (Simple)", isComputed: true, fieldType: "generic" },
         { propertyName: "lastModifiedBy", fieldId: "fldF8iDttqP0AgzWC", fieldName: "Last Modified By", isComputed: true, fieldType: "generic" },
         { propertyName: "lastModifiedTime", fieldId: "fldMinKh4pa3YX86g", fieldName: "Last Modified Time", isComputed: true, fieldType: "generic" },
-        { propertyName: "linkMultiple", fieldId: "fldFyFheQWczd8oux", fieldName: "Link (multiple)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config) },
-        { propertyName: "linkSingle", fieldId: "fld7F5onkDo6mkmbN", fieldName: "Link (single)", isComputed: false, fieldType: "linkedRecord", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config) },
+        { propertyName: "linkMultiple", fieldId: "fldFyFheQWczd8oux", fieldName: "Link (multiple)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config), linkedModelClass: SecondaryModel as any },
+        { propertyName: "linkSingle", fieldId: "fld7F5onkDo6mkmbN", fieldName: "Link (single)", isComputed: false, fieldType: "linkedRecord", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config), linkedModelClass: SecondaryModel as any },
         { propertyName: "longText", fieldId: "fld8ulc6J0W29M6La", fieldName: "Long Text", isComputed: false, fieldType: "generic" },
         { propertyName: "longTextWithRichText", fieldId: "fldHJkxCMC0xo343u", fieldName: "Long Text with Rich Text", isComputed: false, fieldType: "generic" },
         { propertyName: "lookup", fieldId: "fldbmFmrzYKBktJvE", fieldName: "Lookup", isComputed: true, fieldType: "generic" },
@@ -406,10 +406,10 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     public get lastModifiedTime(): string | undefined { return this._fields["lastModifiedTime"] as string; }
     /** `Link (multiple)` (fldFyFheQWczd8oux) */
     public get linkMultiple(): LinkedRecords<SecondaryModel> { return this._fields["linkMultiple"] as LinkedRecords<SecondaryModel>; }
-    public set linkMultiple(value: LinkedRecords<SecondaryModel> | undefined) { this._fields["linkMultiple"] = value!; this.markDirty('linkMultiple'); }
+    public set linkMultiple(value: SecondaryModel[] | LinkedRecords<SecondaryModel> | RecordId[] | undefined) { this._setLinkedRecordsField('linkMultiple', value); }
     /** `Link (single)` (fld7F5onkDo6mkmbN) */
-    public get linkSingle(): LinkedRecord<SecondaryModel> { return this._fields["linkSingle"] as LinkedRecord<SecondaryModel>; }
-    public set linkSingle(value: LinkedRecord<SecondaryModel> | undefined) { this._fields["linkSingle"] = value!; this.markDirty('linkSingle'); }
+    public get linkSingle(): ChainableLinkedRecord<SecondaryModel> { return this._fields["linkSingle"] as ChainableLinkedRecord<SecondaryModel>; }
+    public set linkSingle(value: SecondaryModel | LinkedRecord<SecondaryModel> | RecordId | undefined) { this._setLinkedField('linkSingle', value); }
     /** `Long Text` (fld8ulc6J0W29M6La) */
     public get longText(): string | undefined { return this._fields["longText"] as string; }
     public set longText(value: string | undefined) { this._fields["longText"] = value; this.markDirty('longText'); }

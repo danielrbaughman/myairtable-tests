@@ -5,7 +5,7 @@
 import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "airtable";
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
 import { RecordId, AirtableButton } from "../../static/special-types";
-import { LinkedRecord, LinkedRecords } from "../../static/linked-record";
+import { LinkedRecord, LinkedRecords, ChainableLinkedRecord } from "../../static/linked-record";
 import { buildUrl } from "../../static/helpers";
 import {
     SecondaryFieldSet,
@@ -43,25 +43,25 @@ export class SecondaryModel extends AirtableModel<SecondaryFieldSet, ISecondary,
     public get tableId(): string { return SecondaryModel.tableId; }
 
     protected static fieldDescriptors: FieldDescriptor[] = [
-        { propertyName: "linkToTertiary", fieldId: "fldKR6tdbnOBRCtdQ", fieldName: "Link to Tertiary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => TertiaryModel.fromId(id, config) },
+        { propertyName: "linkToTertiary", fieldId: "fldKR6tdbnOBRCtdQ", fieldName: "Link to Tertiary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => TertiaryModel.fromId(id, config), linkedModelClass: TertiaryModel as any },
         { propertyName: "name", fieldId: "fld1RagdJ09mpWhzM", fieldName: "Name", isComputed: false, fieldType: "generic" },
-        { propertyName: "primary", fieldId: "fldl0nB9WRFSdqlii", fieldName: "Primary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => PrimaryModel.fromId(id, config) },
-        { propertyName: "primary2", fieldId: "fldgoE2oZmXmKkQca", fieldName: "Primary 2", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => PrimaryModel.fromId(id, config) },
+        { propertyName: "primary", fieldId: "fldl0nB9WRFSdqlii", fieldName: "Primary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => PrimaryModel.fromId(id, config), linkedModelClass: PrimaryModel as any },
+        { propertyName: "primary2", fieldId: "fldgoE2oZmXmKkQca", fieldName: "Primary 2", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => PrimaryModel.fromId(id, config), linkedModelClass: PrimaryModel as any },
         { propertyName: "value", fieldId: "fldi6Mxh5H1gPGxFX", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 
     /** `Link to Tertiary` (fldKR6tdbnOBRCtdQ) */
     public get linkToTertiary(): LinkedRecords<TertiaryModel> { return this._fields["linkToTertiary"] as LinkedRecords<TertiaryModel>; }
-    public set linkToTertiary(value: LinkedRecords<TertiaryModel> | undefined) { this._fields["linkToTertiary"] = value!; this.markDirty('linkToTertiary'); }
+    public set linkToTertiary(value: TertiaryModel[] | LinkedRecords<TertiaryModel> | RecordId[] | undefined) { this._setLinkedRecordsField('linkToTertiary', value); }
     /** `Name` (fld1RagdJ09mpWhzM) */
     public get name(): string | undefined { return this._fields["name"] as string; }
     public set name(value: string | undefined) { this._fields["name"] = value; this.markDirty('name'); }
     /** `Primary` (fldl0nB9WRFSdqlii) */
     public get primary(): LinkedRecords<PrimaryModel> { return this._fields["primary"] as LinkedRecords<PrimaryModel>; }
-    public set primary(value: LinkedRecords<PrimaryModel> | undefined) { this._fields["primary"] = value!; this.markDirty('primary'); }
+    public set primary(value: PrimaryModel[] | LinkedRecords<PrimaryModel> | RecordId[] | undefined) { this._setLinkedRecordsField('primary', value); }
     /** `Primary 2` (fldgoE2oZmXmKkQca) */
     public get primary2(): LinkedRecords<PrimaryModel> { return this._fields["primary2"] as LinkedRecords<PrimaryModel>; }
-    public set primary2(value: LinkedRecords<PrimaryModel> | undefined) { this._fields["primary2"] = value!; this.markDirty('primary2'); }
+    public set primary2(value: PrimaryModel[] | LinkedRecords<PrimaryModel> | RecordId[] | undefined) { this._setLinkedRecordsField('primary2', value); }
     /** `Value` (fldi6Mxh5H1gPGxFX) */
     public get value(): string | undefined { return this._fields["value"] as string; }
     public set value(value: string | undefined) { this._fields["value"] = value; this.markDirty('value'); }

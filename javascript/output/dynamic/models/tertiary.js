@@ -7,6 +7,7 @@ const { AirtableModel } = require("../../static/airtable-model");
 const {
     LinkedRecord,
     LinkedRecords,
+    wrapLinkedRecordProxy,
 } = require("../../static/linked-record");
 const {
     getOptions,
@@ -45,7 +46,7 @@ class TertiaryModel extends AirtableModel {
 
     static fieldDescriptors = [
         { propertyName: "name", fieldId: "fldwzqKxsRnPZJ2Ll", fieldName: "Name", isComputed: false, fieldType: "generic" },
-        { propertyName: "secondary", fieldId: "fld8lCuUXpEXkIeYv", fieldName: "Secondary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./secondary").SecondaryModel.fromId(id, config) },
+        { propertyName: "secondary", fieldId: "fld8lCuUXpEXkIeYv", fieldName: "Secondary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./secondary").SecondaryModel.fromId(id, config), linkedModelClass: require("./secondary").SecondaryModel },
         { propertyName: "value", fieldId: "fldjNLBh2UccM64h5", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 
@@ -54,7 +55,7 @@ class TertiaryModel extends AirtableModel {
     set name(value) { this._fields["name"] = value; this.markDirty('name'); }
     /** `Secondary` (fld8lCuUXpEXkIeYv) */
     get secondary() { return this._fields["secondary"]; }
-    set secondary(value) { this._fields["secondary"] = value; this.markDirty('secondary'); }
+    set secondary(value) { this._setLinkedRecordsField('secondary', value); }
     /** `Value` (fldjNLBh2UccM64h5) */
     get value() { return this._fields["value"]; }
     set value(value) { this._fields["value"] = value; this.markDirty('value'); }

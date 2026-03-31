@@ -7,6 +7,7 @@ const { AirtableModel } = require("../../static/airtable-model");
 const {
     LinkedRecord,
     LinkedRecords,
+    wrapLinkedRecordProxy,
 } = require("../../static/linked-record");
 const {
     getOptions,
@@ -69,8 +70,8 @@ class PrimaryModel extends AirtableModel {
         { propertyName: "formulaSimple", fieldId: "fldy1axxaoUToLVC6", fieldName: "Formula (Simple)", isComputed: true, fieldType: "generic" },
         { propertyName: "lastModifiedBy", fieldId: "fldF8iDttqP0AgzWC", fieldName: "Last Modified By", isComputed: true, fieldType: "generic" },
         { propertyName: "lastModifiedTime", fieldId: "fldMinKh4pa3YX86g", fieldName: "Last Modified Time", isComputed: true, fieldType: "generic" },
-        { propertyName: "linkMultiple", fieldId: "fldFyFheQWczd8oux", fieldName: "Link (multiple)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./secondary").SecondaryModel.fromId(id, config) },
-        { propertyName: "linkSingle", fieldId: "fld7F5onkDo6mkmbN", fieldName: "Link (single)", isComputed: false, fieldType: "linkedRecord", linkedModelFromId: (id, config) => require("./secondary").SecondaryModel.fromId(id, config) },
+        { propertyName: "linkMultiple", fieldId: "fldFyFheQWczd8oux", fieldName: "Link (multiple)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./secondary").SecondaryModel.fromId(id, config), linkedModelClass: require("./secondary").SecondaryModel },
+        { propertyName: "linkSingle", fieldId: "fld7F5onkDo6mkmbN", fieldName: "Link (single)", isComputed: false, fieldType: "linkedRecord", linkedModelFromId: (id, config) => require("./secondary").SecondaryModel.fromId(id, config), linkedModelClass: require("./secondary").SecondaryModel },
         { propertyName: "longText", fieldId: "fld8ulc6J0W29M6La", fieldName: "Long Text", isComputed: false, fieldType: "generic" },
         { propertyName: "longTextWithRichText", fieldId: "fldHJkxCMC0xo343u", fieldName: "Long Text with Rich Text", isComputed: false, fieldType: "generic" },
         { propertyName: "lookup", fieldId: "fldbmFmrzYKBktJvE", fieldName: "Lookup", isComputed: true, fieldType: "generic" },
@@ -410,10 +411,10 @@ class PrimaryModel extends AirtableModel {
     get lastModifiedTime() { return this._fields["lastModifiedTime"]; }
     /** `Link (multiple)` (fldFyFheQWczd8oux) */
     get linkMultiple() { return this._fields["linkMultiple"]; }
-    set linkMultiple(value) { this._fields["linkMultiple"] = value; this.markDirty('linkMultiple'); }
+    set linkMultiple(value) { this._setLinkedRecordsField('linkMultiple', value); }
     /** `Link (single)` (fld7F5onkDo6mkmbN) */
     get linkSingle() { return this._fields["linkSingle"]; }
-    set linkSingle(value) { this._fields["linkSingle"] = value; this.markDirty('linkSingle'); }
+    set linkSingle(value) { this._setLinkedField('linkSingle', value); }
     /** `Long Text` (fld8ulc6J0W29M6La) */
     get longText() { return this._fields["longText"]; }
     set longText(value) { this._fields["longText"] = value; this.markDirty('longText'); }

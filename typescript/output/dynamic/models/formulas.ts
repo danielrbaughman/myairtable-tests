@@ -5,7 +5,7 @@
 import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "airtable";
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
 import { RecordId, AirtableButton } from "../../static/special-types";
-import { LinkedRecord, LinkedRecords } from "../../static/linked-record";
+import { LinkedRecord, LinkedRecords, ChainableLinkedRecord } from "../../static/linked-record";
 import { buildUrl } from "../../static/helpers";
 import {
     FormulasFieldSet,

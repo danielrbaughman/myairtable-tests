@@ -7,6 +7,7 @@ const { AirtableModel } = require("../../static/airtable-model");
 const {
     LinkedRecord,
     LinkedRecords,
+    wrapLinkedRecordProxy,
 } = require("../../static/linked-record");
 const {
     getOptions,
@@ -44,25 +45,25 @@ class SecondaryModel extends AirtableModel {
     get tableId() { return SecondaryModel.tableId; }
 
     static fieldDescriptors = [
-        { propertyName: "linkToTertiary", fieldId: "fldKR6tdbnOBRCtdQ", fieldName: "Link to Tertiary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./tertiary").TertiaryModel.fromId(id, config) },
+        { propertyName: "linkToTertiary", fieldId: "fldKR6tdbnOBRCtdQ", fieldName: "Link to Tertiary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./tertiary").TertiaryModel.fromId(id, config), linkedModelClass: require("./tertiary").TertiaryModel },
         { propertyName: "name", fieldId: "fld1RagdJ09mpWhzM", fieldName: "Name", isComputed: false, fieldType: "generic" },
-        { propertyName: "primary", fieldId: "fldl0nB9WRFSdqlii", fieldName: "Primary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./primary").PrimaryModel.fromId(id, config) },
-        { propertyName: "primary2", fieldId: "fldgoE2oZmXmKkQca", fieldName: "Primary 2", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./primary").PrimaryModel.fromId(id, config) },
+        { propertyName: "primary", fieldId: "fldl0nB9WRFSdqlii", fieldName: "Primary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./primary").PrimaryModel.fromId(id, config), linkedModelClass: require("./primary").PrimaryModel },
+        { propertyName: "primary2", fieldId: "fldgoE2oZmXmKkQca", fieldName: "Primary 2", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./primary").PrimaryModel.fromId(id, config), linkedModelClass: require("./primary").PrimaryModel },
         { propertyName: "value", fieldId: "fldi6Mxh5H1gPGxFX", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 
     /** `Link to Tertiary` (fldKR6tdbnOBRCtdQ) */
     get linkToTertiary() { return this._fields["linkToTertiary"]; }
-    set linkToTertiary(value) { this._fields["linkToTertiary"] = value; this.markDirty('linkToTertiary'); }
+    set linkToTertiary(value) { this._setLinkedRecordsField('linkToTertiary', value); }
     /** `Name` (fld1RagdJ09mpWhzM) */
     get name() { return this._fields["name"]; }
     set name(value) { this._fields["name"] = value; this.markDirty('name'); }
     /** `Primary` (fldl0nB9WRFSdqlii) */
     get primary() { return this._fields["primary"]; }
-    set primary(value) { this._fields["primary"] = value; this.markDirty('primary'); }
+    set primary(value) { this._setLinkedRecordsField('primary', value); }
     /** `Primary 2` (fldgoE2oZmXmKkQca) */
     get primary2() { return this._fields["primary2"]; }
-    set primary2(value) { this._fields["primary2"] = value; this.markDirty('primary2'); }
+    set primary2(value) { this._setLinkedRecordsField('primary2', value); }
     /** `Value` (fldi6Mxh5H1gPGxFX) */
     get value() { return this._fields["value"]; }
     set value(value) { this._fields["value"] = value; this.markDirty('value'); }

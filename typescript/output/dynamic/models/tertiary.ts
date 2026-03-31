@@ -5,7 +5,7 @@
 import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "airtable";
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
 import { RecordId, AirtableButton } from "../../static/special-types";
-import { LinkedRecord, LinkedRecords } from "../../static/linked-record";
+import { LinkedRecord, LinkedRecords, ChainableLinkedRecord } from "../../static/linked-record";
 import { buildUrl } from "../../static/helpers";
 import {
     TertiaryFieldSet,
@@ -43,7 +43,7 @@ export class TertiaryModel extends AirtableModel<TertiaryFieldSet, ITertiary, Te
 
     protected static fieldDescriptors: FieldDescriptor[] = [
         { propertyName: "name", fieldId: "fldwzqKxsRnPZJ2Ll", fieldName: "Name", isComputed: false, fieldType: "generic" },
-        { propertyName: "secondary", fieldId: "fld8lCuUXpEXkIeYv", fieldName: "Secondary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config) },
+        { propertyName: "secondary", fieldId: "fld8lCuUXpEXkIeYv", fieldName: "Secondary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config), linkedModelClass: SecondaryModel as any },
         { propertyName: "value", fieldId: "fldjNLBh2UccM64h5", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 
@@ -52,7 +52,7 @@ export class TertiaryModel extends AirtableModel<TertiaryFieldSet, ITertiary, Te
     public set name(value: string | undefined) { this._fields["name"] = value; this.markDirty('name'); }
     /** `Secondary` (fld8lCuUXpEXkIeYv) */
     public get secondary(): LinkedRecords<SecondaryModel> { return this._fields["secondary"] as LinkedRecords<SecondaryModel>; }
-    public set secondary(value: LinkedRecords<SecondaryModel> | undefined) { this._fields["secondary"] = value!; this.markDirty('secondary'); }
+    public set secondary(value: SecondaryModel[] | LinkedRecords<SecondaryModel> | RecordId[] | undefined) { this._setLinkedRecordsField('secondary', value); }
     /** `Value` (fldjNLBh2UccM64h5) */
     public get value(): string | undefined { return this._fields["value"] as string; }
     public set value(value: string | undefined) { this._fields["value"] = value; this.markDirty('value'); }
