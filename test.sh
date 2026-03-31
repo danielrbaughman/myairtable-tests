@@ -86,7 +86,7 @@ elif [ "$LANG_ARG" = "rs" ]; then
             exit 0
             ;;
         --all)
-            TEST_CMD="cargo test --manifest-path $RUST_DIR/Cargo.toml"
+            TEST_CMD="cargo test --manifest-path Cargo.toml"
             ;;
         *)
             echo "Unknown option: $SUITE"

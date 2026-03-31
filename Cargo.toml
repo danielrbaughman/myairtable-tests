@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [lib]
-path = "rust/output/static/lib.rs"
+path = "rust/output/dynamic/lib.rs"
 
 [dependencies]
 reqwest = { version = "0.12", features = ["json"] }
@@ -14,8 +14,12 @@ serde_json = "1"
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 
 [[test]]
-name = "test_hello"
-path = "rust/tests/test_hello.rs"
+name = "test_serializing"
+path = "rust/tests/test_serializing.rs"
+
+[[test]]
+name = "test_crud"
+path = "rust/tests/test_crud.rs"
 
 [[bin]]
 name = "playground"
