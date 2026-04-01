@@ -26,7 +26,6 @@ fn model_deserializes_from_fields_json() {
     assert_eq!(model.checkbox, Some(true));
     assert_eq!(model.number_int, Some(42));
     assert_eq!(model.number_float, Some(3.14));
-    // id and created_time are not in the fields JSON
     assert!(model.id.is_none());
     assert!(model.created_time.is_none());
 }
@@ -50,7 +49,6 @@ fn model_serializes_skipping_none() {
 
     let json = serde_json::to_value(&model).unwrap();
     let obj = json.as_object().unwrap();
-
     assert_eq!(obj.get("fldol5Q4wmQJQvPRy").unwrap(), "Test");
     assert_eq!(obj.get("fldjQIaAZVegb1FUa").unwrap(), true);
     assert!(!obj.contains_key("fldOfPKGmnRPv94QH"));
@@ -95,7 +93,6 @@ fn model_select_enums() {
 
 #[test]
 fn model_id_not_serialized() {
-    // id and created_time should not appear in serialized output
     let model = PrimaryModel {
         id: Some("recTEST123".to_string()),
         created_time: Some("2025-01-01T00:00:00.000Z".to_string()),
@@ -111,57 +108,361 @@ fn model_id_not_serialized() {
 }
 
 // =============================================================================
-// CRUD via OrmTable (integration tests)
+// Primary key only — basic CRUD
 // =============================================================================
 
 #[tokio::test]
-async fn orm_create_get_update_delete() {
+async fn primary_key_only_crud() {
     let at = setup();
 
     // Create
     let fields = CreatePrimaryModel {
-        primary_key: Some("ORM CRUD Test".to_string()),
-        single_line_text: Some("Hello from ORM".to_string()),
-        number_int: Some(42),
-        checkbox: Some(true),
+        primary_key: Some("ORM Primary Key Only".to_string()),
         ..Default::default()
     };
-
     let created = at.primary_orm.create_one(&fields).await.unwrap();
     let id = created.id.clone().unwrap();
-    assert_eq!(created.primary_key.as_deref(), Some("ORM CRUD Test"));
-    assert_eq!(created.single_line_text.as_deref(), Some("Hello from ORM"));
-    assert_eq!(created.number_int, Some(42));
-    assert_eq!(created.checkbox, Some(true));
-    assert!(created.auto_number.is_some());
-    assert!(created.created_at_time.is_some());
+    assert_eq!(created.primary_key.as_deref(), Some("ORM Primary Key Only"));
 
-    // Get
+    // Read
     let fetched = at.primary_orm.get_one(&id).await.unwrap();
     assert_eq!(fetched.id.as_deref(), Some(id.as_str()));
-    assert_eq!(fetched.primary_key.as_deref(), Some("ORM CRUD Test"));
+    assert_eq!(fetched.primary_key.as_deref(), Some("ORM Primary Key Only"));
 
     // Update
     let update = CreatePrimaryModel {
-        single_line_text: Some("Updated via ORM".to_string()),
-        number_int: Some(99),
+        primary_key: Some("ORM Updated Primary Key".to_string()),
         ..Default::default()
     };
     let updated = at.primary_orm.update_one(&id, &update).await.unwrap();
-    assert_eq!(updated.single_line_text.as_deref(), Some("Updated via ORM"));
-    assert_eq!(updated.number_int, Some(99));
-    assert_eq!(updated.primary_key.as_deref(), Some("ORM CRUD Test"));
+    assert_eq!(
+        updated.primary_key.as_deref(),
+        Some("ORM Updated Primary Key")
+    );
 
     // Delete
     at.primary_orm.delete_one(&id).await.unwrap();
     assert!(at.primary_orm.get_one(&id).await.is_err());
 }
 
+// =============================================================================
+// All simple properties
+// =============================================================================
+
 #[tokio::test]
-async fn orm_batch_create_delete() {
+async fn all_simple_properties_crud() {
     let at = setup();
 
-    let records: Vec<CreatePrimaryModel> = (1..=3)
+    let fields = CreatePrimaryModel {
+        primary_key: Some("ORM All Props".to_string()),
+        single_line_text: Some("Hello World".to_string()),
+        long_text: Some("Long text content".to_string()),
+        long_text_with_rich_text: Some("Rich text content".to_string()),
+        email: Some("test@example.com".to_string()),
+        url: Some("https://example.com".to_string()),
+        phone_number: Some("555-1234".to_string()),
+        checkbox: Some(true),
+        number_int: Some(42),
+        number_float: Some(3.14),
+        currency_int: Some(10.0),
+        currency_float: Some(9.99),
+        percent_int: Some(0.5),
+        percent_float: Some(0.333),
+        duration: Some(3600),
+        rating: Some(serde_json::json!(3)),
+        date: Some("2025-01-15".to_string()),
+        date_with_time: Some("2025-01-15T10:00:00.000Z".to_string()),
+        single_select: Some(PrimarySingleSelectOption::Choice1),
+        multiple_select: Some(vec![
+            PrimaryMultipleSelectOption::Option1,
+            PrimaryMultipleSelectOption::Option2,
+        ]),
+        ..Default::default()
+    };
+
+    let created = at.primary_orm.create_one(&fields).await.unwrap();
+    let id = created.id.clone().unwrap();
+
+    assert_eq!(created.primary_key.as_deref(), Some("ORM All Props"));
+    assert_eq!(created.single_line_text.as_deref(), Some("Hello World"));
+    assert_eq!(created.long_text.as_deref(), Some("Long text content"));
+    assert_eq!(
+        created.long_text_with_rich_text.as_deref(),
+        Some("Rich text content")
+    );
+    assert_eq!(created.email.as_deref(), Some("test@example.com"));
+    assert_eq!(created.url.as_deref(), Some("https://example.com"));
+    assert_eq!(created.phone_number.as_deref(), Some("555-1234"));
+    assert_eq!(created.checkbox, Some(true));
+    assert_eq!(created.number_int, Some(42));
+    assert_eq!(created.number_float, Some(3.14));
+    assert_eq!(created.currency_int, Some(10.0));
+    assert_eq!(created.currency_float, Some(9.99));
+    assert_eq!(created.percent_int, Some(0.5));
+    assert_eq!(created.percent_float, Some(0.333));
+    assert_eq!(created.duration, Some(3600));
+    assert_eq!(created.date.as_deref(), Some("2025-01-15"));
+    assert_eq!(
+        created.date_with_time.as_deref(),
+        Some("2025-01-15T10:00:00.000Z")
+    );
+    assert_eq!(
+        created.single_select,
+        Some(PrimarySingleSelectOption::Choice1)
+    );
+    assert_eq!(
+        created.multiple_select,
+        Some(vec![
+            PrimaryMultipleSelectOption::Option1,
+            PrimaryMultipleSelectOption::Option2,
+        ])
+    );
+
+    // Read
+    let read = at.primary_orm.get_one(&id).await.unwrap();
+    assert_eq!(read.primary_key.as_deref(), Some("ORM All Props"));
+    assert_eq!(read.single_line_text.as_deref(), Some("Hello World"));
+    assert_eq!(read.checkbox, Some(true));
+    assert_eq!(read.number_int, Some(42));
+    assert_eq!(read.single_select, Some(PrimarySingleSelectOption::Choice1));
+
+    // Update all fields
+    let update = CreatePrimaryModel {
+        primary_key: Some("ORM Updated All Props".to_string()),
+        single_line_text: Some("Updated Hello".to_string()),
+        long_text: Some("Updated long text".to_string()),
+        long_text_with_rich_text: Some("Updated rich text".to_string()),
+        email: Some("updated@example.com".to_string()),
+        url: Some("https://updated.com".to_string()),
+        phone_number: Some("555-5678".to_string()),
+        checkbox: Some(false),
+        number_int: Some(100),
+        number_float: Some(2.72),
+        currency_int: Some(20.0),
+        currency_float: Some(19.99),
+        percent_int: Some(0.75),
+        percent_float: Some(0.667),
+        duration: Some(7200),
+        rating: Some(serde_json::json!(5)),
+        date: Some("2025-06-15".to_string()),
+        date_with_time: Some("2025-06-15T14:00:00.000Z".to_string()),
+        single_select: Some(PrimarySingleSelectOption::Choice2),
+        multiple_select: Some(vec![
+            PrimaryMultipleSelectOption::Option2,
+            PrimaryMultipleSelectOption::Option3,
+        ]),
+        ..Default::default()
+    };
+
+    let updated = at.primary_orm.update_one(&id, &update).await.unwrap();
+    assert_eq!(
+        updated.primary_key.as_deref(),
+        Some("ORM Updated All Props")
+    );
+    assert_eq!(updated.single_line_text.as_deref(), Some("Updated Hello"));
+    assert_eq!(updated.number_int, Some(100));
+    assert_eq!(
+        updated.single_select,
+        Some(PrimarySingleSelectOption::Choice2)
+    );
+    assert_eq!(
+        updated.multiple_select,
+        Some(vec![
+            PrimaryMultipleSelectOption::Option2,
+            PrimaryMultipleSelectOption::Option3,
+        ])
+    );
+
+    // Delete
+    at.primary_orm.delete_one(&id).await.unwrap();
+    assert!(at.primary_orm.get_one(&id).await.is_err());
+}
+
+// =============================================================================
+// Linked records
+// =============================================================================
+
+#[tokio::test]
+async fn linked_records_crud() {
+    let at = setup();
+
+    // Setup secondary records
+    let sec1 = at
+        .secondary_orm
+        .create_one(&CreateSecondaryModel {
+            name: Some("ORM Link Target 1".to_string()),
+            value: Some("val1".to_string()),
+            ..Default::default()
+        })
+        .await
+        .unwrap();
+    let sec2 = at
+        .secondary_orm
+        .create_one(&CreateSecondaryModel {
+            name: Some("ORM Link Target 2".to_string()),
+            value: Some("val2".to_string()),
+            ..Default::default()
+        })
+        .await
+        .unwrap();
+
+    let sec1_id = sec1.id.clone().unwrap();
+    let sec2_id = sec2.id.clone().unwrap();
+
+    // Create with links
+    let fields = CreatePrimaryModel {
+        primary_key: Some("ORM Link Test".to_string()),
+        link_single: Some(vec![sec1_id.clone()]),
+        link_multiple: Some(vec![sec1_id.clone(), sec2_id.clone()]),
+        ..Default::default()
+    };
+    let created = at.primary_orm.create_one(&fields).await.unwrap();
+    let id = created.id.clone().unwrap();
+    assert_eq!(created.link_single, Some(vec![sec1_id.clone()]));
+    assert_eq!(
+        created.link_multiple,
+        Some(vec![sec1_id.clone(), sec2_id.clone()])
+    );
+
+    // Read
+    let read = at.primary_orm.get_one(&id).await.unwrap();
+    assert_eq!(read.link_single, Some(vec![sec1_id.clone()]));
+    assert_eq!(
+        read.link_multiple,
+        Some(vec![sec1_id.clone(), sec2_id.clone()])
+    );
+
+    // Update: swap links
+    let update = CreatePrimaryModel {
+        link_single: Some(vec![sec2_id.clone()]),
+        link_multiple: Some(vec![sec1_id.clone()]),
+        ..Default::default()
+    };
+    let updated = at.primary_orm.update_one(&id, &update).await.unwrap();
+    assert_eq!(updated.link_single, Some(vec![sec2_id.clone()]));
+    assert_eq!(updated.link_multiple, Some(vec![sec1_id.clone()]));
+
+    // Cleanup
+    at.primary_orm.delete_one(&id).await.unwrap();
+    at.secondary_orm.delete_one(&sec1_id).await.unwrap();
+    at.secondary_orm.delete_one(&sec2_id).await.unwrap();
+}
+
+// =============================================================================
+// Attachments
+// =============================================================================
+
+#[tokio::test]
+async fn attachment_crud() {
+    let at = setup();
+
+    let fields = CreatePrimaryModel {
+        primary_key: Some("ORM Attachment Test".to_string()),
+        attachment: Some(vec![Attachment {
+            url:
+                "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+                    .to_string(),
+            ..Default::default()
+        }]),
+        ..Default::default()
+    };
+    let created = at.primary_orm.create_one(&fields).await.unwrap();
+    let id = created.id.clone().unwrap();
+    let attachments = created.attachment.unwrap();
+    assert_eq!(attachments.len(), 1);
+    assert!(!attachments[0].url.is_empty());
+
+    // Read with retry (Airtable processes attachments async)
+    let mut read = at.primary_orm.get_one(&id).await.unwrap();
+    for _ in 0..10 {
+        if read.attachment.is_some() {
+            break;
+        }
+        tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+        read = at.primary_orm.get_one(&id).await.unwrap();
+    }
+    let attachments = read.attachment.unwrap();
+    assert_eq!(attachments.len(), 1);
+    assert!(!attachments[0].url.is_empty());
+
+    // Cleanup
+    at.primary_orm.delete_one(&id).await.unwrap();
+}
+
+// =============================================================================
+// User / Collaborator fields
+// =============================================================================
+
+#[tokio::test]
+async fn user_fields_crud() {
+    let at = setup();
+
+    let fields = CreatePrimaryModel {
+        primary_key: Some("ORM User Test".to_string()),
+        user: Some(serde_json::from_value(json!({"id": "usrnZ4k98m0Ipji4e", "email": "9vymqckyxq@privaterelay.appleid.com", "name": "Daniel Baughman"})).unwrap()),
+        user_allow_multiple: Some(vec![
+            serde_json::from_value(json!({"id": "usrnZ4k98m0Ipji4e", "email": "9vymqckyxq@privaterelay.appleid.com", "name": "Daniel Baughman"})).unwrap(),
+        ]),
+        ..Default::default()
+    };
+    let created = at.primary_orm.create_one(&fields).await.unwrap();
+    let id = created.id.clone().unwrap();
+
+    assert_eq!(created.user.as_ref().unwrap().id, "usrnZ4k98m0Ipji4e");
+    let users = created.user_allow_multiple.as_ref().unwrap();
+    assert_eq!(users.len(), 1);
+    assert_eq!(users[0].id, "usrnZ4k98m0Ipji4e");
+
+    // Read
+    let read = at.primary_orm.get_one(&id).await.unwrap();
+    assert_eq!(read.user.as_ref().unwrap().id, "usrnZ4k98m0Ipji4e");
+
+    // Cleanup
+    at.primary_orm.delete_one(&id).await.unwrap();
+}
+
+// =============================================================================
+// Computed fields
+// =============================================================================
+
+#[tokio::test]
+async fn computed_fields() {
+    let at = setup();
+
+    let fields = CreatePrimaryModel {
+        primary_key: Some("ORM Computed Test".to_string()),
+        number_int: Some(10),
+        number_float: Some(5.0),
+        ..Default::default()
+    };
+    let created = at.primary_orm.create_one(&fields).await.unwrap();
+    let id = created.id.clone().unwrap();
+
+    assert!(created.auto_number.is_some());
+    assert!(created.created_at_time.is_some());
+    assert_eq!(created.formula_id.as_deref(), Some(id.as_str()));
+    assert_eq!(created.formula_simple, Some(15.0));
+
+    // Read
+    let read = at.primary_orm.get_one(&id).await.unwrap();
+    assert_eq!(read.formula_id.as_deref(), Some(id.as_str()));
+    assert_eq!(read.formula_simple, Some(15.0));
+
+    // Cleanup
+    at.primary_orm.delete_one(&id).await.unwrap();
+}
+
+// =============================================================================
+// Batch operations
+// =============================================================================
+
+#[tokio::test]
+async fn batch_create_update_delete() {
+    let at = setup();
+    let count = 25;
+
+    // Create
+    let records: Vec<CreatePrimaryModel> = (1..=count)
         .map(|i| CreatePrimaryModel {
             primary_key: Some(format!("ORM Batch {i}")),
             number_int: Some(i),
@@ -170,17 +471,45 @@ async fn orm_batch_create_delete() {
         .collect();
 
     let created = at.primary_orm.create_many(&records).await.unwrap();
-    assert_eq!(created.len(), 3);
-    assert_eq!(created[0].primary_key.as_deref(), Some("ORM Batch 1"));
-    assert_eq!(created[1].number_int, Some(2));
+    assert_eq!(created.len(), count as usize);
+    for (i, record) in created.iter().enumerate() {
+        assert_eq!(
+            record.primary_key.as_deref(),
+            Some(format!("ORM Batch {}", i + 1).as_str())
+        );
+    }
 
+    // Update all
     let ids: Vec<RecordId> = created.iter().map(|r| r.id.clone().unwrap()).collect();
+    let update_fields: Vec<CreatePrimaryModel> = (1..=count)
+        .map(|i| CreatePrimaryModel {
+            primary_key: Some(format!("ORM Updated Batch {i}")),
+            ..Default::default()
+        })
+        .collect();
+    let updates: Vec<(&RecordId, &CreatePrimaryModel)> =
+        ids.iter().zip(update_fields.iter()).collect();
+
+    let updated = at.primary_orm.update_many(&updates).await.unwrap();
+    assert_eq!(updated.len(), count as usize);
+    for (i, record) in updated.iter().enumerate() {
+        assert_eq!(
+            record.primary_key.as_deref(),
+            Some(format!("ORM Updated Batch {}", i + 1).as_str())
+        );
+    }
+
+    // Delete all
     at.primary_orm.delete_many(&ids).await.unwrap();
     assert!(at.primary_orm.get_one(&ids[0]).await.is_err());
 }
 
+// =============================================================================
+// List records
+// =============================================================================
+
 #[tokio::test]
-async fn orm_list_records() {
+async fn list_records() {
     let at = setup();
 
     let (records, _offset) = at.secondary_orm.get_many(&ListParams::new()).await.unwrap();
@@ -188,4 +517,24 @@ async fn orm_list_records() {
     for record in &records {
         assert!(record.id.is_some());
     }
+}
+
+// =============================================================================
+// Invalid record IDs
+// =============================================================================
+
+#[tokio::test]
+async fn invalid_record_id() {
+    let at = setup();
+    assert!(at
+        .primary_orm
+        .get_one(&"rec_INVALID_ID".to_string())
+        .await
+        .is_err());
+}
+
+#[tokio::test]
+async fn empty_record_id() {
+    let at = setup();
+    assert!(at.primary_orm.get_one(&String::new()).await.is_err());
 }

@@ -136,6 +136,7 @@ if [ "$LANG_ARG" = "py" ]; then
     uv run ruff format
     $TEST_CMD
 elif [ "$LANG_ARG" = "rs" ]; then
+    cargo fmt
     $TEST_CMD
 else
     if ! command -v nvm &> /dev/null; then
