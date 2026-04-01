@@ -43,6 +43,8 @@ pub struct SecondaryModel {
 }
 
 impl SecondaryModel {
+    /// Formula builder for this table.
+    pub const F: crate::formulas::SecondaryFormulas = crate::formulas::SecondaryFormulas::new();
     /// Create a model from just a record ID (for later fetch).
     pub fn from_id(
         client: std::sync::Arc<crate::client::AirtableClient>,

@@ -8,6 +8,8 @@ pub mod airtable_model;
 pub mod client;
 #[path = "../static/error.rs"]
 pub mod error;
+#[path = "../static/formula.rs"]
+pub mod formula;
 #[path = "../static/orm_table.rs"]
 pub mod orm_table;
 #[path = "../static/pagination.rs"]
@@ -22,6 +24,7 @@ pub mod types;
 pub mod airtable;
 #[path = "types/mod.rs"]
 pub mod field_types;
+pub mod formulas;
 pub mod models;
 pub mod options;
 
@@ -33,6 +36,10 @@ pub use field_types::{CreateFormulasFields, FormulasFields, FormulasView};
 pub use field_types::{CreatePrimaryFields, PrimaryFields, PrimaryView};
 pub use field_types::{CreateSecondaryFields, SecondaryFields, SecondaryView};
 pub use field_types::{CreateTertiaryFields, TertiaryFields, TertiaryView};
+pub use formulas::FormulasFormulas;
+pub use formulas::PrimaryFormulas;
+pub use formulas::SecondaryFormulas;
+pub use formulas::TertiaryFormulas;
 pub use models::{CreateFormulasModel, FormulasModel};
 pub use models::{CreatePrimaryModel, PrimaryModel};
 pub use models::{CreateSecondaryModel, SecondaryModel};

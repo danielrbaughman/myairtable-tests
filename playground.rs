@@ -1,4 +1,4 @@
-use myairtable_tests::{field_types::PrimaryView, *};
+use myairtable_tests::*;
 
 #[tokio::main]
 async fn main() {
@@ -9,8 +9,10 @@ async fn main() {
     let base_id = std::env::var("AIRTABLE_BASE_ID").expect("AIRTABLE_BASE_ID must be set");
     let airtable = Airtable::new(&api_key, &base_id);
 
-    let record_id = "recUCWnd7r6zTKS0z".to_string();
-    let query = AirtableQuery::new().view(PrimaryView::FilterByView);
+    // let record_id = "recUCWnd7r6zTKS0z".to_string();
+    let query = AirtableQuery::new().formula(formula::AND(&[&PrimaryModel::F
+        .single_line_text
+        .contains("single", true, false)]));
     let (records, _offset) = airtable.primary_orm.get_many(&query).await.unwrap();
     println!(
         "Fetched record: {:?} - {:?}",

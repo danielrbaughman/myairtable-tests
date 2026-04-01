@@ -458,6 +458,8 @@ pub struct PrimaryModel {
 }
 
 impl PrimaryModel {
+    /// Formula builder for this table.
+    pub const F: crate::formulas::PrimaryFormulas = crate::formulas::PrimaryFormulas::new();
     /// Create a model from just a record ID (for later fetch).
     pub fn from_id(
         client: std::sync::Arc<crate::client::AirtableClient>,

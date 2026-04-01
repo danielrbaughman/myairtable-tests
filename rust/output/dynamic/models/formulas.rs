@@ -239,6 +239,8 @@ pub struct FormulasModel {
 }
 
 impl FormulasModel {
+    /// Formula builder for this table.
+    pub const F: crate::formulas::FormulasFormulas = crate::formulas::FormulasFormulas::new();
     /// Create a model from just a record ID (for later fetch).
     pub fn from_id(
         client: std::sync::Arc<crate::client::AirtableClient>,

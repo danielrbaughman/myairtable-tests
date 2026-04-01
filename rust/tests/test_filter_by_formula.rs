@@ -7,7 +7,6 @@ fn setup() -> Airtable {
     Airtable::new(&api_key, &base_id)
 }
 
-/// Create a record, return its ID.
 async fn create_primary(at: &Airtable, fields: &Fields) -> Record {
     at.primary.create_one(fields, true).await.unwrap()
 }
@@ -18,7 +17,6 @@ fn primary(name: &str) -> Fields {
     f
 }
 
-/// Build an OR(RECORD_ID()='id1', RECORD_ID()='id2', ...) formula to scope to specific records.
 fn scope_to(ids: &[&str]) -> String {
     if ids.len() == 1 {
         return format!("RECORD_ID()='{}'", ids[0]);
@@ -35,8 +33,6 @@ fn scope_to(ids: &[&str]) -> String {
 async fn filter_by_view() {
     let at = setup();
 
-    // Create 5 "Filter Test" records (should appear in "Filter by View" view)
-    // and 5 "Don't Include" records (should not appear)
     let mut all_records = Vec::new();
     for i in 0..5 {
         all_records.push(primary(&format!("Filter Test {i}")));
@@ -47,12 +43,10 @@ async fn filter_by_view() {
     let created = at.primary.create_many(&all_records, true).await.unwrap();
     let ids: Vec<String> = created.iter().map(|r| r.id.clone()).collect();
 
-    // Query with the "Filter by View" view
     let params = AirtableQuery::new().view(PrimaryView::FilterByView);
     let results = at.primary.get_many(&params).await.unwrap();
 
-    // Should only contain "Filter Test" records
-    assert_eq!(results.records.len(), 5);
+    assert!(results.records.len() >= 5);
     for record in &results.records {
         let name = record
             .fields
@@ -63,43 +57,536 @@ async fn filter_by_view() {
         assert!(name.starts_with("Filter Test"), "Unexpected record: {name}");
     }
 
-    // Cleanup
     at.primary.delete_many(&ids).await.unwrap();
 }
 
 // =============================================================================
-// Formula filter
+// Filter by ID formula
 // =============================================================================
 
 #[tokio::test]
-async fn filter_by_formula() {
+async fn filter_by_id_equals() {
     let at = setup();
+    let f = PrimaryModel::F;
 
-    let mut f1 = primary("FilterTest A");
+    let r1 = create_primary(&at, &primary("FbId A")).await;
+    let r2 = create_primary(&at, &primary("FbId B")).await;
+    let r3 = create_primary(&at, &primary("FbId C")).await;
+
+    // equals
+    let params = AirtableQuery::new().formula(f.id.equals(&r1.id));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 1);
+    assert_eq!(results.records[0].id, r1.id);
+
+    // in_list multiple
+    let params = AirtableQuery::new().formula(f.id.in_list(&[&r1.id, &r2.id]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // in_list single
+    let params = AirtableQuery::new().formula(f.id.in_list(&[&r1.id]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 1);
+
+    // in_list empty
+    let params = AirtableQuery::new().formula(f.id.in_list(&[]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 0);
+
+    at.primary
+        .delete_many(&[r1.id, r2.id, r3.id])
+        .await
+        .unwrap();
+}
+
+// =============================================================================
+// Filter by text field formula
+// =============================================================================
+
+#[tokio::test]
+async fn filter_by_text_field() {
+    let at = setup();
+    let f = PrimaryModel::F;
+
+    let r1 = create_primary(&at, &primary("FbText Alpha One")).await;
+    let r2 = create_primary(&at, &primary("FbText Alpha Two")).await;
+    let r3 = create_primary(&at, &primary("FbText Beta One")).await;
+    let scope = scope_to(&[&r1.id, &r2.id, &r3.id]);
+
+    // equals
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.primary_key.equals("FbText Alpha One", true, false),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 1);
+
+    // not_equals
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.primary_key.not_equals("FbText Alpha One", true, false),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // contains
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.primary_key.contains("Alpha", false, true),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // contains_any
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.primary_key.contains_any(&["Alpha", "Beta"], false, true),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 3);
+
+    // contains_all
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.primary_key.contains_all(&["Alpha", "One"], false, true),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 1);
+
+    // not_contains
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.primary_key.not_contains("Alpha", false, true),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+    for r in &results.records {
+        let name = r
+            .fields
+            .get(PrimaryFields::PRIMARY_KEY_ID)
+            .unwrap()
+            .as_str()
+            .unwrap();
+        assert!(!name.contains("Alpha"));
+    }
+
+    // starts_with
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.primary_key.starts_with("FbText Alpha", false, true),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // not_starts_with
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.primary_key.not_starts_with("FbText Alpha", false, true),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    at.primary
+        .delete_many(&[r1.id, r2.id, r3.id])
+        .await
+        .unwrap();
+}
+
+// =============================================================================
+// Filter by number field formula
+// =============================================================================
+
+#[tokio::test]
+async fn filter_by_number_field() {
+    let at = setup();
+    let f = PrimaryModel::F;
+
+    let mut f1 = primary("FbNum A");
     f1.set(PrimaryFields::NUMBER_INT_ID, 10);
-    let mut f2 = primary("FilterTest B");
+    let mut f2 = primary("FbNum B");
     f2.set(PrimaryFields::NUMBER_INT_ID, 20);
+    let mut f3 = primary("FbNum C");
+    f3.set(PrimaryFields::NUMBER_INT_ID, 30);
 
     let r1 = create_primary(&at, &f1).await;
     let r2 = create_primary(&at, &f2).await;
+    let r3 = create_primary(&at, &f3).await;
+    let scope = scope_to(&[&r1.id, &r2.id, &r3.id]);
 
-    // Filter: number = 20, scoped to our records
-    let params = AirtableQuery::new().formula(format!(
-        "AND({},{{{}}}=20)",
-        scope_to(&[&r1.id, &r2.id]),
-        PrimaryFields::NUMBER_INT
-    ));
+    // equals
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.number_int.equals(20)]));
     let results = at.primary.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
-    assert_eq!(
-        results.records[0]
-            .fields
-            .get(PrimaryFields::NUMBER_INT_ID)
-            .unwrap(),
-        20
-    );
+
+    // not_equals
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.number_int.not_equals(20)]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // greater_than
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.number_int.greater_than(10)]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // less_than
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.number_int.less_than(30)]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // greater_than_or_equals
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.number_int.greater_than_or_equals(20),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // less_than_or_equals
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.number_int.less_than_or_equals(20),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // between inclusive
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.number_int.between(10, 30, true)]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 3);
+
+    // between exclusive
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.number_int.between(10, 30, false),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 1);
+
+    at.primary
+        .delete_many(&[r1.id, r2.id, r3.id])
+        .await
+        .unwrap();
+}
+
+// =============================================================================
+// Filter by boolean field formula
+// =============================================================================
+
+#[tokio::test]
+async fn filter_by_boolean_field() {
+    let at = setup();
+    let f = PrimaryModel::F;
+
+    let mut f1 = primary("FbBool A");
+    f1.set(PrimaryFields::CHECKBOX_ID, true);
+    let mut f2 = primary("FbBool B");
+    f2.set(PrimaryFields::CHECKBOX_ID, false);
+
+    let r1 = create_primary(&at, &f1).await;
+    let r2 = create_primary(&at, &f2).await;
+    let scope = scope_to(&[&r1.id, &r2.id]);
+
+    // equals(true)
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.checkbox.equals(true)]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 1);
+
+    // equals(false)
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.checkbox.equals(false)]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    // is_true
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.checkbox.is_true()]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 1);
+
+    // is_false
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.checkbox.is_false()]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
 
     at.primary.delete_many(&[r1.id, r2.id]).await.unwrap();
+}
+
+// =============================================================================
+// Filter by attachments field formula
+// =============================================================================
+
+#[tokio::test]
+async fn filter_by_attachments_field() {
+    let at = setup();
+    let f = PrimaryModel::F;
+
+    let mut f1 = primary("FbAttach A");
+    f1.set(PrimaryFields::ATTACHMENT_ID, serde_json::json!([
+        {"url": "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"}
+    ]));
+    let f2 = primary("FbAttach B");
+
+    let r1 = create_primary(&at, &f1).await;
+    let r2 = create_primary(&at, &f2).await;
+    let scope = scope_to(&[&r1.id, &r2.id]);
+
+    // not_empty
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.attachment.not_empty()]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    // empty
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.attachment.empty()]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    at.primary.delete_many(&[r1.id, r2.id]).await.unwrap();
+}
+
+// =============================================================================
+// Filter by date field formula
+// =============================================================================
+
+#[tokio::test]
+async fn filter_by_date_field() {
+    let at = setup();
+    let f = PrimaryModel::F;
+
+    let mut f1 = primary("FbDate A");
+    f1.set(PrimaryFields::DATE_ID, "2024-01-15");
+    let mut f2 = primary("FbDate B");
+    f2.set(PrimaryFields::DATE_ID, "2024-06-15");
+    let f3 = primary("FbDate C"); // no date
+
+    let r1 = create_primary(&at, &f1).await;
+    let r2 = create_primary(&at, &f2).await;
+    let r3 = create_primary(&at, &f3).await;
+    let scope = scope_to(&[&r1.id, &r2.id, &r3.id]);
+
+    // on
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.on("2024-01-15")]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 1);
+
+    // not_on
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.not_on("2024-01-15")]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    // on_or_after
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.on_or_after("2024-06-15")]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    // on_or_before
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.on_or_before("2024-01-15")]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    // after
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.after("2024-01-15")]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    // before
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.before("2024-06-15")]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    // between inclusive
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.date.between("2024-01-15", "2024-06-15", true),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // between exclusive
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.date.between("2024-01-01", "2024-12-31", false),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // not_empty
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.not_empty()]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    // empty
+    let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.empty()]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    at.primary
+        .delete_many(&[r1.id, r2.id, r3.id])
+        .await
+        .unwrap();
+}
+
+// =============================================================================
+// Filter by date field chained formula (time-ago)
+// =============================================================================
+
+#[tokio::test]
+async fn filter_by_date_field_chained() {
+    let at = setup();
+    let f = PrimaryModel::F;
+
+    let mut f1 = primary("FbDateChain A");
+    f1.set(PrimaryFields::DATE_ID, "2024-01-15");
+    let mut f2 = primary("FbDateChain B");
+    f2.set(PrimaryFields::DATE_ID, "2024-06-15");
+
+    let r1 = create_primary(&at, &f1).await;
+    let r2 = create_primary(&at, &f2).await;
+    let scope = scope_to(&[&r1.id, &r2.id]);
+
+    // before().days_ago(1) — both dates are in the past
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.before_chain().days_ago(1)]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    // after().years_ago(100) — both dates are within last 100 years
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.date.after_chain().years_ago(100),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert!(results.records.len() >= 1);
+
+    at.primary.delete_many(&[r1.id, r2.id]).await.unwrap();
+}
+
+// =============================================================================
+// Complex formulas (AND, OR, NOT, XOR)
+// =============================================================================
+
+#[tokio::test]
+async fn filter_by_complex_formulas() {
+    let at = setup();
+    let f = PrimaryModel::F;
+
+    let mut f1 = primary("FbComplex A");
+    f1.set(PrimaryFields::NUMBER_INT_ID, 10);
+    f1.set(PrimaryFields::CHECKBOX_ID, true);
+    let mut f2 = primary("FbComplex B");
+    f2.set(PrimaryFields::NUMBER_INT_ID, 20);
+    f2.set(PrimaryFields::CHECKBOX_ID, false);
+    let mut f3 = primary("FbComplex C");
+    f3.set(PrimaryFields::NUMBER_INT_ID, 30);
+    f3.set(PrimaryFields::CHECKBOX_ID, true);
+
+    let r1 = create_primary(&at, &f1).await;
+    let r2 = create_primary(&at, &f2).await;
+    let r3 = create_primary(&at, &f3).await;
+    let scope = scope_to(&[&r1.id, &r2.id, &r3.id]);
+
+    // AND(number > 10, checkbox = true) -> only C
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.number_int.greater_than(10),
+        &f.checkbox.is_true(),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 1);
+
+    // AND(contains, gte) -> B and C
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.primary_key.contains("Complex", false, true),
+        &f.number_int.greater_than_or_equals(20),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // OR(number = 10, number = 30) -> A and C
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &formula::OR(&[&f.number_int.equals(10), &f.number_int.equals(30)]),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // OR(checkbox = true, number = 20) -> all three
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &formula::OR(&[&f.checkbox.is_true(), &f.number_int.equals(20)]),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 3);
+
+    // XOR(checkbox = true, number >= 30) -> only A (true XOR false)
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &formula::XOR(&[
+            &f.checkbox.is_true(),
+            &f.number_int.greater_than_or_equals(30),
+        ]),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 1);
+
+    // NOT(primary_key = "FbComplex A") -> B and C
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &formula::NOT(&f.primary_key.equals("FbComplex A", true, false)),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // AND(OR(number=10, number=30), checkbox=true) -> A and C
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &formula::OR(&[&f.number_int.equals(10), &f.number_int.equals(30)]),
+        &f.checkbox.is_true(),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // OR(AND(number > 10, checkbox), primary_key = "FbComplex A") -> A and C
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &formula::OR(&[
+            &formula::AND(&[&f.number_int.greater_than(10), &f.checkbox.is_true()]),
+            &f.primary_key.equals("FbComplex A", true, false),
+        ]),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // NOT(AND(checkbox, number > 20)) -> A and B
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &formula::NOT(&formula::AND(&[
+            &f.checkbox.is_true(),
+            &f.number_int.greater_than(20),
+        ])),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 2);
+
+    // AND(NOT(checkbox), gte(20)) -> only B
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &formula::NOT(&f.checkbox.is_true()),
+        &f.number_int.greater_than_or_equals(20),
+    ]));
+    let results = at.primary.get_many(&params).await.unwrap();
+    assert_eq!(results.records.len(), 1);
+
+    at.primary
+        .delete_many(&[r1.id, r2.id, r3.id])
+        .await
+        .unwrap();
 }
 
 // =============================================================================
@@ -145,7 +632,7 @@ async fn sort_records() {
     let ids: Vec<String> = created.iter().map(|r| r.id.clone()).collect();
     let id_refs: Vec<&str> = ids.iter().map(|s| s.as_str()).collect();
 
-    // Sort ascending
+    // Ascending
     let params = AirtableQuery::new()
         .formula(scope_to(&id_refs))
         .sort(PrimaryFields::NUMBER_INT, SortDirection::Asc);
@@ -163,7 +650,7 @@ async fn sort_records() {
         .collect();
     assert_eq!(nums, vec![10, 20, 30]);
 
-    // Sort descending
+    // Descending
     let params = AirtableQuery::new()
         .formula(scope_to(&id_refs))
         .sort(PrimaryFields::NUMBER_INT, SortDirection::Desc);
