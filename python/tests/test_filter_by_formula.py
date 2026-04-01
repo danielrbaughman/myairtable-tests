@@ -121,6 +121,14 @@ class TestFilterByTextFieldFormula:
         records = airtable.primary.get(formula=formula)
         assert len(records) == 3
 
+    def test_equals_any(self, airtable):
+        formula = PrimaryModel.f.primary_key.equals_any(["TextField Alpha One", "TextField Beta One"])
+        records = airtable.primary.get(formula=formula)
+        assert len(records) == 2
+        names = [r.primary_key for r in records]
+        assert "TextField Alpha One" in names
+        assert "TextField Beta One" in names
+
     def test_contains_all(self, airtable):
         formula = PrimaryModel.f.primary_key.contains_all(["Alpha", "One"])
         records = airtable.primary.get(formula=formula)

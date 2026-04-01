@@ -135,6 +135,15 @@ describe("Filter by TextField Formula", async () => {
 		expect(records.length).toBe(3);
 	});
 
+	it("should filter by equalsAny()", async () => {
+		const formula = PrimaryModel.f.primaryKey.equalsAny(["TextField Alpha One", "TextField Beta One"]);
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(2);
+		const names = records.map((r) => r.primaryKey);
+		expect(names).toContain("TextField Alpha One");
+		expect(names).toContain("TextField Beta One");
+	});
+
 	it("should filter by containsAll()", async () => {
 		const formula = PrimaryModel.f.primaryKey.containsAll(["Alpha", "One"]);
 		const records = await airtable.primary.get({ formula });

@@ -37,8 +37,8 @@ class TestPrimaryKeyOnly:
     def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
-        with pytest.raises(Exception):
-            airtable.primary.get(self.id)
+        remaining = airtable.primary.get([self.id])
+        assert len(remaining) == 0
 
 
 class TestAllSimpleProperties:
@@ -162,8 +162,8 @@ class TestAllSimpleProperties:
     def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
-        with pytest.raises(Exception):
-            airtable.primary.get(self.id)
+        remaining = airtable.primary.get([self.id])
+        assert len(remaining) == 0
 
 
 class TestComplexPropertiesLinkedRecords:
@@ -209,8 +209,8 @@ class TestComplexPropertiesLinkedRecords:
     def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
-        with pytest.raises(Exception):
-            airtable.primary.get(self.id)
+        remaining = airtable.primary.get([self.id])
+        assert len(remaining) == 0
 
     def test_cleanup(self, airtable: Airtable):
         self.sec1.delete()
@@ -293,8 +293,8 @@ class TestComplexPropertiesAttachments:
     def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
-        with pytest.raises(Exception):
-            airtable.primary.get(self.id)
+        remaining = airtable.primary.get([self.id])
+        assert len(remaining) == 0
 
 
 class TestComplexPropertiesUser:
@@ -325,8 +325,8 @@ class TestComplexPropertiesUser:
     def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
-        with pytest.raises(Exception):
-            airtable.primary.get(self.id)
+        remaining = airtable.primary.get([self.id])
+        assert len(remaining) == 0
 
 
 class TestComplexPropertiesComputedFields:
@@ -351,5 +351,5 @@ class TestComplexPropertiesComputedFields:
     def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
         r.delete()
-        with pytest.raises(Exception):
-            airtable.primary.get(self.id)
+        remaining = airtable.primary.get([self.id])
+        assert len(remaining) == 0
