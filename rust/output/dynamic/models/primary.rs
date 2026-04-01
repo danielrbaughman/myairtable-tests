@@ -2,19 +2,20 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
+use crate::airtable_model::{ModelMeta, OrmModel};
 use crate::options::{PrimaryMultipleSelectOption, PrimarySingleSelectOption};
-use crate::types::{AirtableButton, Attachment, Collaborator, OrmModel, RecordId};
+use crate::types::{AirtableButton, Attachment, Collaborator, RecordId};
 use serde::{Deserialize, Serialize};
 
 /// ORM model for `Primary`
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct PrimaryModel {
-    #[serde(default)]
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub id: Option<RecordId>,
-    #[serde(default)]
-    #[serde(skip_serializing)]
+    #[serde(skip)]
     pub created_time: Option<String>,
+    #[serde(skip)]
+    pub _meta: ModelMeta,
     /// Attachment `fldhF2AEuSC1haCZd`
     #[serde(rename = "fldhF2AEuSC1haCZd")]
     #[serde(default)]
@@ -456,10 +457,36 @@ pub struct PrimaryModel {
     pub user_allow_multiple: Option<Vec<Collaborator>>,
 }
 
+impl PrimaryModel {
+    /// Create a model from just a record ID (for later fetch).
+    pub fn from_id(
+        client: std::sync::Arc<crate::client::AirtableClient>,
+        table_id: &'static str,
+        id: &str,
+    ) -> Self {
+        let mut model = Self::default();
+        model.id = Some(id.to_string());
+        model._meta.client = Some(client);
+        model._meta.table_id = Some(table_id);
+        model
+    }
+}
+
 impl OrmModel for PrimaryModel {
-    fn set_record_meta(&mut self, id: RecordId, created_time: Option<String>) {
-        self.id = Some(id);
-        self.created_time = created_time;
+    fn meta(&self) -> &ModelMeta {
+        &self._meta
+    }
+    fn meta_mut(&mut self) -> &mut ModelMeta {
+        &mut self._meta
+    }
+    fn get_id(&self) -> &Option<RecordId> {
+        &self.id
+    }
+    fn set_id(&mut self, id: Option<RecordId>) {
+        self.id = id;
+    }
+    fn set_created_time(&mut self, ct: Option<String>) {
+        self.created_time = ct;
     }
 }
 

@@ -93,12 +93,12 @@ fn model_select_enums() {
 
 #[test]
 fn model_id_not_serialized() {
-    let model = PrimaryModel {
-        id: Some("recTEST123".to_string()),
-        created_time: Some("2025-01-01T00:00:00.000Z".to_string()),
+    let mut model = PrimaryModel {
         primary_key: Some("Test".to_string()),
         ..Default::default()
     };
+    model.id = Some("recTEST123".to_string());
+    model.created_time = Some("2025-01-01T00:00:00.000Z".to_string());
 
     let json = serde_json::to_value(&model).unwrap();
     let obj = json.as_object().unwrap();
@@ -121,7 +121,7 @@ async fn primary_key_only_crud() {
         ..Default::default()
     };
     let created = at.primary_orm.create_one(&fields).await.unwrap();
-    let id = created.id.clone().unwrap();
+    let id = created.id.as_deref().unwrap().to_string();
     assert_eq!(created.primary_key.as_deref(), Some("ORM Primary Key Only"));
 
     // Read
@@ -181,7 +181,7 @@ async fn all_simple_properties_crud() {
     };
 
     let created = at.primary_orm.create_one(&fields).await.unwrap();
-    let id = created.id.clone().unwrap();
+    let id = created.id.as_deref().unwrap().to_string();
 
     assert_eq!(created.primary_key.as_deref(), Some("ORM All Props"));
     assert_eq!(created.single_line_text.as_deref(), Some("Hello World"));
@@ -306,8 +306,8 @@ async fn linked_records_crud() {
         .await
         .unwrap();
 
-    let sec1_id = sec1.id.clone().unwrap();
-    let sec2_id = sec2.id.clone().unwrap();
+    let sec1_id = sec1.id.as_deref().unwrap().to_string();
+    let sec2_id = sec2.id.as_deref().unwrap().to_string();
 
     // Create with links
     let fields = CreatePrimaryModel {
@@ -317,7 +317,7 @@ async fn linked_records_crud() {
         ..Default::default()
     };
     let created = at.primary_orm.create_one(&fields).await.unwrap();
-    let id = created.id.clone().unwrap();
+    let id = created.id.as_deref().unwrap().to_string();
     assert_eq!(created.link_single, Some(vec![sec1_id.clone()]));
     assert_eq!(
         created.link_multiple,
@@ -367,7 +367,7 @@ async fn attachment_crud() {
         ..Default::default()
     };
     let created = at.primary_orm.create_one(&fields).await.unwrap();
-    let id = created.id.clone().unwrap();
+    let id = created.id.as_deref().unwrap().to_string();
     let attachments = created.attachment.unwrap();
     assert_eq!(attachments.len(), 1);
     assert!(!attachments[0].url.is_empty());
@@ -406,7 +406,7 @@ async fn user_fields_crud() {
         ..Default::default()
     };
     let created = at.primary_orm.create_one(&fields).await.unwrap();
-    let id = created.id.clone().unwrap();
+    let id = created.id.as_deref().unwrap().to_string();
 
     assert_eq!(created.user.as_ref().unwrap().id, "usrnZ4k98m0Ipji4e");
     let users = created.user_allow_multiple.as_ref().unwrap();
@@ -436,10 +436,10 @@ async fn computed_fields() {
         ..Default::default()
     };
     let created = at.primary_orm.create_one(&fields).await.unwrap();
-    let id = created.id.clone().unwrap();
+    let id = created.id.as_deref().unwrap().to_string();
 
     assert!(created.auto_number.is_some());
-    assert!(created.created_at_time.is_some());
+    assert!(created.created_time.is_some());
     assert_eq!(created.formula_id.as_deref(), Some(id.as_str()));
     assert_eq!(created.formula_simple, Some(15.0));
 
@@ -480,7 +480,10 @@ async fn batch_create_update_delete() {
     }
 
     // Update all
-    let ids: Vec<RecordId> = created.iter().map(|r| r.id.clone().unwrap()).collect();
+    let ids: Vec<RecordId> = created
+        .iter()
+        .map(|r| r.id.as_deref().unwrap().to_string())
+        .collect();
     let update_fields: Vec<CreatePrimaryModel> = (1..=count)
         .map(|i| CreatePrimaryModel {
             primary_key: Some(format!("ORM Updated Batch {i}")),

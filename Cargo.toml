@@ -30,6 +30,10 @@ path = "rust/tests/test_filter_by_formula.rs"
 name = "test_orm_crud_via_table"
 path = "rust/tests/test_orm_crud_via_table.rs"
 
+[[test]]
+name = "test_orm_crud_via_model"
+path = "rust/tests/test_orm_crud_via_model.rs"
+
 [[bin]]
 name = "playground"
 path = "playground.rs"

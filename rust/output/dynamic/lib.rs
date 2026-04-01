@@ -2,6 +2,8 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
+#[path = "../static/airtable_model.rs"]
+pub mod airtable_model;
 #[path = "../static/client.rs"]
 pub mod client;
 #[path = "../static/error.rs"]
@@ -24,6 +26,7 @@ pub mod models;
 pub mod options;
 
 pub use airtable::Airtable;
+pub use airtable_model::{ModelMeta, OrmModel};
 pub use client::AirtableClient;
 pub use error::AirtableError;
 pub use field_types::{CreateFormulasFields, FormulasFields};
