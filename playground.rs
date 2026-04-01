@@ -10,7 +10,6 @@ async fn main() {
     let airtable = Airtable::new(&api_key, &base_id);
 
     let record_id = "recNk6Lmrr5y3Fx81".to_string();
-    let record = airtable.primary.get_one(&record_id, true).await.unwrap();
-    let name = record.fields.get(PrimaryFields::PRIMARY_KEY_ID).unwrap();
-    println!("Fetched record: {} - {}", record.id, name);
+    let record = airtable.primary_orm.get_one(&record_id).await.unwrap();
+    println!("Fetched record: {:?} - {:?}", record.id, record.primary_key);
 }

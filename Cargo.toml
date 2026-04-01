@@ -22,6 +22,14 @@ path = "rust/tests/test_serializing.rs"
 name = "test_struct_crud_via_table"
 path = "rust/tests/test_struct_crud_via_table.rs"
 
+[[test]]
+name = "test_filter_by_formula"
+path = "rust/tests/test_filter_by_formula.rs"
+
+[[test]]
+name = "test_orm_crud_via_table"
+path = "rust/tests/test_orm_crud_via_table.rs"
+
 [[bin]]
 name = "playground"
 path = "playground.rs"
