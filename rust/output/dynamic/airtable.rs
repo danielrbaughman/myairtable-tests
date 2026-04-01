@@ -2,42 +2,32 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
+use std::sync::Arc;
+
 use crate::client::AirtableClient;
-use crate::tables::FormulasTable;
-use crate::tables::PrimaryTable;
-use crate::tables::SecondaryTable;
-use crate::tables::TertiaryTable;
+use crate::table::StructTable;
 
 /// Main entry point for the Airtable base.
 pub struct Airtable {
-    client: AirtableClient,
+    /// `Formulas`
+    pub formulas: StructTable,
+    /// `Primary`
+    pub primary: StructTable,
+    /// `Secondary`
+    pub secondary: StructTable,
+    /// `Tertiary`
+    pub tertiary: StructTable,
 }
 
 impl Airtable {
     /// Create a new Airtable instance.
     pub fn new(api_key: &str, base_id: &str) -> Self {
+        let client = Arc::new(AirtableClient::new(api_key, base_id));
         Self {
-            client: AirtableClient::new(api_key, base_id),
+            formulas: StructTable::new(Arc::clone(&client), "tblnuYBsMdXNDsuRc", "Formulas"),
+            primary: StructTable::new(Arc::clone(&client), "tblmb3iqgpNS1ysV2", "Primary"),
+            secondary: StructTable::new(Arc::clone(&client), "tblPPScS3XMuFkDYN", "Secondary"),
+            tertiary: StructTable::new(Arc::clone(&client), "tblLFoLxEdWlxjmLP", "Tertiary"),
         }
-    }
-
-    /// Access the `Formulas` table.
-    pub fn formulas(&self) -> FormulasTable<'_> {
-        FormulasTable::new(&self.client)
-    }
-
-    /// Access the `Primary` table.
-    pub fn primary(&self) -> PrimaryTable<'_> {
-        PrimaryTable::new(&self.client)
-    }
-
-    /// Access the `Secondary` table.
-    pub fn secondary(&self) -> SecondaryTable<'_> {
-        SecondaryTable::new(&self.client)
-    }
-
-    /// Access the `Tertiary` table.
-    pub fn tertiary(&self) -> TertiaryTable<'_> {
-        TertiaryTable::new(&self.client)
     }
 }

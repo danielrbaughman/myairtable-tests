@@ -1,11 +1,10 @@
 use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION, CONTENT_TYPE};
 use reqwest::Client;
-use serde::de::DeserializeOwned;
 use serde::Serialize;
 
 use crate::error::AirtableError;
 use crate::pagination::PaginatedResponse;
-use crate::types::RecordId;
+use crate::types::{Record, RecordId};
 
 /// Airtable API client.
 pub struct AirtableClient {
@@ -36,14 +35,20 @@ impl AirtableClient {
     }
 
     /// List records from a table.
-    pub async fn list_records<T: DeserializeOwned>(
+    pub async fn list_records(
         &self,
         table_id: &str,
+        use_field_ids: bool,
         offset: Option<&str>,
-    ) -> Result<PaginatedResponse<T>, AirtableError> {
-        let mut url = format!("{}?returnFieldsByFieldId=true", self.table_url(table_id));
+    ) -> Result<PaginatedResponse, AirtableError> {
+        let mut url = if use_field_ids {
+            format!("{}?returnFieldsByFieldId=true", self.table_url(table_id))
+        } else {
+            self.table_url(table_id)
+        };
         if let Some(offset) = offset {
-            url = format!("{url}&offset={offset}");
+            let sep = if url.contains('?') { '&' } else { '?' };
+            url = format!("{url}{sep}offset={offset}");
         }
 
         let response = self
@@ -63,16 +68,21 @@ impl AirtableClient {
     }
 
     /// Get a single record by ID.
-    pub async fn get_record<T: DeserializeOwned>(
+    pub async fn get_record(
         &self,
         table_id: &str,
         record_id: &RecordId,
-    ) -> Result<crate::types::Record<T>, AirtableError> {
-        let url = format!(
-            "{}/{}?returnFieldsByFieldId=true",
-            self.table_url(table_id),
-            record_id
-        );
+        use_field_ids: bool,
+    ) -> Result<Record, AirtableError> {
+        let url = if use_field_ids {
+            format!(
+                "{}/{}?returnFieldsByFieldId=true",
+                self.table_url(table_id),
+                record_id
+            )
+        } else {
+            format!("{}/{}", self.table_url(table_id), record_id)
+        };
 
         let response = self
             .client
@@ -91,13 +101,17 @@ impl AirtableClient {
     }
 
     /// Create a record.
-    pub async fn create_record<T: DeserializeOwned, U: Serialize>(
+    pub async fn create_record<U: Serialize>(
         &self,
         table_id: &str,
         fields: &U,
-    ) -> Result<crate::types::Record<T>, AirtableError> {
+        use_field_ids: bool,
+    ) -> Result<Record, AirtableError> {
         let url = self.table_url(table_id);
-        let body = serde_json::json!({ "fields": fields, "returnFieldsByFieldId": true });
+        let mut body = serde_json::json!({ "fields": fields });
+        if use_field_ids {
+            body["returnFieldsByFieldId"] = serde_json::json!(true);
+        }
 
         let response = self
             .client
@@ -117,14 +131,18 @@ impl AirtableClient {
     }
 
     /// Update a record.
-    pub async fn update_record<T: DeserializeOwned, U: Serialize>(
+    pub async fn update_record<U: Serialize>(
         &self,
         table_id: &str,
         record_id: &RecordId,
         fields: &U,
-    ) -> Result<crate::types::Record<T>, AirtableError> {
+        use_field_ids: bool,
+    ) -> Result<Record, AirtableError> {
         let url = format!("{}/{}", self.table_url(table_id), record_id);
-        let body = serde_json::json!({ "fields": fields, "returnFieldsByFieldId": true });
+        let mut body = serde_json::json!({ "fields": fields });
+        if use_field_ids {
+            body["returnFieldsByFieldId"] = serde_json::json!(true);
+        }
 
         let response = self
             .client
@@ -168,19 +186,24 @@ impl AirtableClient {
     }
 
     /// Create multiple records in batches of 10 (Airtable API limit).
-    pub async fn create_records<T: DeserializeOwned, U: Serialize>(
+    pub async fn create_records<U: Serialize>(
         &self,
         table_id: &str,
         records: &[U],
-    ) -> Result<Vec<crate::types::Record<T>>, AirtableError> {
+        use_field_ids: bool,
+    ) -> Result<Vec<Record>, AirtableError> {
         let url = self.table_url(table_id);
         let mut results = Vec::with_capacity(records.len());
 
         for chunk in records.chunks(10) {
-            let body = serde_json::json!({
-                "records": chunk.iter().map(|f| serde_json::json!({"fields": f})).collect::<Vec<_>>(),
-                "returnFieldsByFieldId": true,
-            });
+            let recs: Vec<_> = chunk
+                .iter()
+                .map(|f| serde_json::json!({"fields": f}))
+                .collect();
+            let mut body = serde_json::json!({ "records": recs });
+            if use_field_ids {
+                body["returnFieldsByFieldId"] = serde_json::json!(true);
+            }
 
             let response = self
                 .client
@@ -208,22 +231,29 @@ impl AirtableClient {
     }
 
     /// Update multiple records in batches of 10 (Airtable API limit).
-    pub async fn update_records<T: DeserializeOwned, U: Serialize>(
+    pub async fn update_records<U: Serialize>(
         &self,
         table_id: &str,
         records: &[(&RecordId, &U)],
-    ) -> Result<Vec<crate::types::Record<T>>, AirtableError> {
+        use_field_ids: bool,
+    ) -> Result<Vec<Record>, AirtableError> {
         let url = self.table_url(table_id);
         let mut results = Vec::with_capacity(records.len());
 
         for chunk in records.chunks(10) {
-            let body = serde_json::json!({
-                "records": chunk.iter().map(|(id, fields)| serde_json::json!({
-                    "id": id,
-                    "fields": fields,
-                })).collect::<Vec<_>>(),
-                "returnFieldsByFieldId": true,
-            });
+            let recs: Vec<_> = chunk
+                .iter()
+                .map(|(id, fields)| {
+                    serde_json::json!({
+                        "id": id,
+                        "fields": fields,
+                    })
+                })
+                .collect();
+            let mut body = serde_json::json!({ "records": recs });
+            if use_field_ids {
+                body["returnFieldsByFieldId"] = serde_json::json!(true);
+            }
 
             let response = self
                 .client
