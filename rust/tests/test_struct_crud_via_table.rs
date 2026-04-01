@@ -499,7 +499,7 @@ async fn batch_create_update_delete() {
 async fn get_many_records() {
     let at = setup();
 
-    let page = at.secondary.get_many(&ListParams::new()).await.unwrap();
+    let page = at.secondary.get_many(&AirtableQuery::new()).await.unwrap();
     assert!(!page.records.is_empty());
 
     for record in &page.records {

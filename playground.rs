@@ -1,4 +1,4 @@
-use myairtable_tests::*;
+use myairtable_tests::{field_types::PrimaryView, *};
 
 #[tokio::main]
 async fn main() {
@@ -10,13 +10,17 @@ async fn main() {
     let airtable = Airtable::new(&api_key, &base_id);
 
     let record_id = "recUCWnd7r6zTKS0z".to_string();
-    let mut record = airtable.primary_orm.get_one(&record_id).await.unwrap();
-    println!("Fetched record: {:?} - {:?}", record.id, record.primary_key);
-
-    record.single_line_text = Some("hello".to_string());
-    record.save().await.unwrap();
+    let query = AirtableQuery::new().view(PrimaryView::FilterByView);
+    let (records, _offset) = airtable.primary_orm.get_many(&query).await.unwrap();
     println!(
-        "Updated record: {:?} - {:?}",
-        record.id, record.single_line_text
+        "Fetched record: {:?} - {:?}",
+        records[0].id, records[0].primary_key
     );
+
+    // records[0].single_line_text = Some("hello".to_string());
+    // records[0].save().await.unwrap();
+    // println!(
+    //     "Updated record: {:?} - {:?}",
+    //     records[0].id, records[0].single_line_text
+    // );
 }

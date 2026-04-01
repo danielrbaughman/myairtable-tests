@@ -2,6 +2,8 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
+use serde::{Deserialize, Serialize};
+
 /// Field constants for `Formulas`
 pub struct FormulasFields;
 
@@ -58,6 +60,22 @@ impl FormulasFields {
     pub const THIRD_TEXT: &'static str = "Third Text";
     /// `Third Text` (field ID)
     pub const THIRD_TEXT_ID: &'static str = "fldfruPf8V9K6qIAN";
+}
+
+/// Views for `Formulas`
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum FormulasView {
+    /// `Grid view` (grid)
+    #[serde(rename = "viw7gdr4uJSpnHjR7")]
+    GridView,
+}
+
+impl From<FormulasView> for String {
+    fn from(v: FormulasView) -> String {
+        match v {
+            FormulasView::GridView => "viw7gdr4uJSpnHjR7".to_string(),
+        }
+    }
 }
 
 /// Writable field constants for `Formulas`

@@ -2,6 +2,8 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
+use serde::{Deserialize, Serialize};
+
 /// Field constants for `Secondary`
 pub struct SecondaryFields;
 
@@ -26,6 +28,22 @@ impl SecondaryFields {
     pub const VALUE: &'static str = "Value";
     /// `Value` (field ID)
     pub const VALUE_ID: &'static str = "fldi6Mxh5H1gPGxFX";
+}
+
+/// Views for `Secondary`
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum SecondaryView {
+    /// `Grid view` (grid)
+    #[serde(rename = "viwTml4ZHkNi8kJbD")]
+    GridView,
+}
+
+impl From<SecondaryView> for String {
+    fn from(v: SecondaryView) -> String {
+        match v {
+            SecondaryView::GridView => "viwTml4ZHkNi8kJbD".to_string(),
+        }
+    }
 }
 
 /// Writable field constants for `Secondary`

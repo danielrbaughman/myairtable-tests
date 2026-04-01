@@ -2,6 +2,8 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
+use serde::{Deserialize, Serialize};
+
 /// Field constants for `Primary`
 pub struct PrimaryFields;
 
@@ -154,6 +156,26 @@ impl PrimaryFields {
     pub const USER_ALLOW_MULTIPLE: &'static str = "User (allow multiple)";
     /// `User (allow multiple)` (field ID)
     pub const USER_ALLOW_MULTIPLE_ID: &'static str = "fldBwCDbAVxRj9yg7";
+}
+
+/// Views for `Primary`
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub enum PrimaryView {
+    /// `Grid view` (grid)
+    #[serde(rename = "viwvPRDMaHyldUpmd")]
+    GridView,
+    /// `Filter by View` (grid)
+    #[serde(rename = "viwHlcwGu4xthX1gf")]
+    FilterByView,
+}
+
+impl From<PrimaryView> for String {
+    fn from(v: PrimaryView) -> String {
+        match v {
+            PrimaryView::GridView => "viwvPRDMaHyldUpmd".to_string(),
+            PrimaryView::FilterByView => "viwHlcwGu4xthX1gf".to_string(),
+        }
+    }
 }
 
 /// Writable field constants for `Primary`

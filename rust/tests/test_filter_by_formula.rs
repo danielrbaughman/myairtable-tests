@@ -28,6 +28,46 @@ fn scope_to(ids: &[&str]) -> String {
 }
 
 // =============================================================================
+// Filter by view
+// =============================================================================
+
+#[tokio::test]
+async fn filter_by_view() {
+    let at = setup();
+
+    // Create 5 "Filter Test" records (should appear in "Filter by View" view)
+    // and 5 "Don't Include" records (should not appear)
+    let mut all_records = Vec::new();
+    for i in 0..5 {
+        all_records.push(primary(&format!("Filter Test {i}")));
+    }
+    for i in 0..5 {
+        all_records.push(primary(&format!("Don't Include Test {i}")));
+    }
+    let created = at.primary.create_many(&all_records, true).await.unwrap();
+    let ids: Vec<String> = created.iter().map(|r| r.id.clone()).collect();
+
+    // Query with the "Filter by View" view
+    let params = AirtableQuery::new().view(PrimaryView::FilterByView);
+    let results = at.primary.get_many(&params).await.unwrap();
+
+    // Should only contain "Filter Test" records
+    assert_eq!(results.records.len(), 5);
+    for record in &results.records {
+        let name = record
+            .fields
+            .get(PrimaryFields::PRIMARY_KEY_ID)
+            .unwrap()
+            .as_str()
+            .unwrap();
+        assert!(name.starts_with("Filter Test"), "Unexpected record: {name}");
+    }
+
+    // Cleanup
+    at.primary.delete_many(&ids).await.unwrap();
+}
+
+// =============================================================================
 // Formula filter
 // =============================================================================
 
@@ -44,7 +84,7 @@ async fn filter_by_formula() {
     let r2 = create_primary(&at, &f2).await;
 
     // Filter: number = 20, scoped to our records
-    let params = ListParams::new().formula(format!(
+    let params = AirtableQuery::new().formula(format!(
         "AND({},{{{}}}=20)",
         scope_to(&[&r1.id, &r2.id]),
         PrimaryFields::NUMBER_INT
@@ -77,7 +117,9 @@ async fn max_records() {
     let ids: Vec<String> = created.iter().map(|r| r.id.clone()).collect();
     let id_refs: Vec<&str> = ids.iter().map(|s| s.as_str()).collect();
 
-    let params = ListParams::new().formula(scope_to(&id_refs)).max_records(3);
+    let params = AirtableQuery::new()
+        .formula(scope_to(&id_refs))
+        .max_records(3);
     let results = at.primary.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 3);
 
@@ -104,7 +146,7 @@ async fn sort_records() {
     let id_refs: Vec<&str> = ids.iter().map(|s| s.as_str()).collect();
 
     // Sort ascending
-    let params = ListParams::new()
+    let params = AirtableQuery::new()
         .formula(scope_to(&id_refs))
         .sort(PrimaryFields::NUMBER_INT, SortDirection::Asc);
     let results = at.primary.get_many(&params).await.unwrap();
@@ -122,7 +164,7 @@ async fn sort_records() {
     assert_eq!(nums, vec![10, 20, 30]);
 
     // Sort descending
-    let params = ListParams::new()
+    let params = AirtableQuery::new()
         .formula(scope_to(&id_refs))
         .sort(PrimaryFields::NUMBER_INT, SortDirection::Desc);
     let results = at.primary.get_many(&params).await.unwrap();
@@ -156,7 +198,7 @@ async fn field_selection() {
 
     let created = create_primary(&at, &f).await;
 
-    let params = ListParams::new()
+    let params = AirtableQuery::new()
         .formula(format!("RECORD_ID()='{}'", created.id))
         .fields(vec![PrimaryFields::PRIMARY_KEY_ID.to_string()]);
     let results = at.primary.get_many(&params).await.unwrap();
