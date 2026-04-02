@@ -21,6 +21,7 @@ async fn main() {
         "Fetched record: {:?} - {:?}",
         records[0].id, records[0].primary_key
     );
+    PrimaryModel::O.single_select;
 
     // records[0].single_line_text = Some("hello".to_string());
     // records[0].save().await.unwrap();

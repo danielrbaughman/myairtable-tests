@@ -29,3 +29,28 @@ pub enum PrimarySingleSelectOption {
     #[serde(other)]
     Unknown,
 }
+
+/// Select field options for `Primary`
+pub struct PrimaryOptions {
+    /// Valid options for `Multiple Select`
+    pub multiple_select: &'static [PrimaryMultipleSelectOption],
+    /// Valid options for `Single Select`
+    pub single_select: &'static [PrimarySingleSelectOption],
+}
+
+impl PrimaryOptions {
+    pub const fn new() -> Self {
+        Self {
+            multiple_select: &[
+                PrimaryMultipleSelectOption::Option1,
+                PrimaryMultipleSelectOption::Option2,
+                PrimaryMultipleSelectOption::Option3,
+            ],
+            single_select: &[
+                PrimarySingleSelectOption::Choice1,
+                PrimarySingleSelectOption::Choice2,
+                PrimarySingleSelectOption::Choice3,
+            ],
+        }
+    }
+}
