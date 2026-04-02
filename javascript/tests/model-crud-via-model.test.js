@@ -242,21 +242,21 @@ describe("Complex Properties", async () => {
 		describe("Read", async () => {
 			const readRecord = PrimaryModel.fromId(newRecord.id);
 			await readRecord.fetch();
-			const linkedSingle = await readRecord.linkSingle.get();
-			const linkedMultiple = await readRecord.linkMultiple.get();
+			const linkedSingle = await readRecord.linkSingle;
+			const linkedMultiple = await readRecord.linkMultiple;
 
 			it("should have the expected link values", async () => {
 				expect(readRecord.linkSingle.id).toEqual(sec1Id);
 				expect(readRecord.linkMultiple.ids).toEqual([sec1Id, sec2Id]);
 			});
 
-			it("should fetch linked single record via get()", async () => {
+			it("should fetch linked single record via await", async () => {
 				expect(linkedSingle).toBeTruthy();
 				expect(linkedSingle.id).toEqual(sec1Id);
 				expect(linkedSingle.name).toBe("Link Target 1");
 			});
 
-			it("should fetch linked multiple records via get()", async () => {
+			it("should fetch linked multiple records via await", async () => {
 				expect(linkedMultiple).toHaveLength(2);
 				expect(linkedMultiple.map((r) => r.id)).toEqual([sec1Id, sec2Id]);
 				expect(linkedMultiple[0].name).toBe("Link Target 1");
@@ -267,8 +267,8 @@ describe("Complex Properties", async () => {
 		describe("Update", async () => {
 			const r = PrimaryModel.fromId(newRecord.id);
 			await r.fetch();
-			r.linkSingle.set(sec2);
-			r.linkMultiple.set([sec1]);
+			r.linkSingle = sec2;
+			r.linkMultiple = [sec1];
 			await r.save();
 
 			it("should have the updated link values", async () => {
@@ -337,8 +337,8 @@ describe("Complex Properties", async () => {
 		describe("Read nested links", async () => {
 			const readPrimary = PrimaryModel.fromId(primary.id);
 			await readPrimary.fetch();
-			const linkedSecondary = await readPrimary.linkSingle.get();
-			const linkedTertiaries = await linkedSecondary.linkToTertiary.get();
+			const linkedSecondary = await readPrimary.linkSingle;
+			const linkedTertiaries = await linkedSecondary.linkToTertiary;
 
 			it("should traverse Primary -> Secondary", async () => {
 				expect(linkedSecondary).toBeTruthy();

@@ -67,12 +67,6 @@ describe("Linked Record Chaining", async () => {
 			expect(primary.linkSingle.id).toBe(sec.id);
 		});
 
-		it(".get() still works", async () => {
-			const result = await primary.linkSingle.get();
-			expect(result).toBeDefined();
-			expect(result!.name).toBe("Chain Sec");
-		});
-
 		it("instanceof LinkedRecord is true", () => {
 			expect(primary.linkSingle instanceof LinkedRecord).toBe(true);
 		});

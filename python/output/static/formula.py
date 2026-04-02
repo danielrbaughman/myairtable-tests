@@ -72,7 +72,7 @@ class TextField(Field):
                 return F.EQ(F.LOWER(F.TRIM(self)), F.LOWER(F.TRIM(value)))
             else:
                 return F.EQ(F.LOWER(self), F.LOWER(value))
-            
+
     def equals_any(self, values: list[str], case_sensitive: bool = True, trim: bool = False) -> F.Formula:
         """
         Checks if the field equals any of the provided values, with options for case sensitivity and trimming whitespace.

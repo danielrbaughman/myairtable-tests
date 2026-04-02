@@ -239,8 +239,8 @@ describe("Complex Properties", async () => {
 
 		describe("Update", async () => {
 			const r = await airtable.primary.get(id);
-			r.linkSingle.set(sec2);
-			r.linkMultiple.set([sec1]);
+			r.linkSingle = sec2;
+			r.linkMultiple = [sec1];
 			const updatedRecord = await airtable.primary.update(r);
 
 			it("should have the updated link values", async () => {

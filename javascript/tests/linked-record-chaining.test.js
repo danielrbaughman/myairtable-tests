@@ -64,17 +64,9 @@ describe("Linked Record Chaining", async () => {
 			expect(primary.linkSingle.id).toBe(sec.id);
 		});
 
-		it(".get() still works", async () => {
-			const result = await primary.linkSingle.get();
-			expect(result).toBeDefined();
-			expect(result.name).toBe("Chain Sec");
-		});
-
-		it("has LinkedRecord shape (id, get, set, then)", () => {
+		it("has LinkedRecord shape (id, then)", () => {
 			const lr = primary.linkSingle;
 			expect(typeof lr.id).toBe("string");
-			expect(typeof lr.get).toBe("function");
-			expect(typeof lr.set).toBe("function");
 			expect(typeof lr.then).toBe("function");
 		});
 	});
