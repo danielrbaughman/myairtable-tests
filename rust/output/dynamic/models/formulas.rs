@@ -253,6 +253,18 @@ impl FormulasModel {
         model._meta.table_id = Some(table_id);
         model
     }
+
+    /// Get the Airtable web URL for this record.
+    pub fn url(&self, view_id: impl AsRef<str>) -> String {
+        let base_id = self
+            ._meta
+            .client
+            .as_ref()
+            .map(|c| c.base_id())
+            .unwrap_or("");
+        let record_id = self.id.as_deref().unwrap_or("");
+        crate::types::build_url(base_id, "tblnuYBsMdXNDsuRc", view_id.as_ref(), record_id)
+    }
 }
 
 impl OrmModel for FormulasModel {

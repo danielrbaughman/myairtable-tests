@@ -70,11 +70,17 @@ pub enum FormulasView {
     GridView,
 }
 
+impl AsRef<str> for FormulasView {
+    fn as_ref(&self) -> &str {
+        match self {
+            Self::GridView => "viw7gdr4uJSpnHjR7",
+        }
+    }
+}
+
 impl From<FormulasView> for String {
     fn from(v: FormulasView) -> String {
-        match v {
-            FormulasView::GridView => "viw7gdr4uJSpnHjR7".to_string(),
-        }
+        v.as_ref().to_string()
     }
 }
 

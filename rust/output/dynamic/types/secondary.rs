@@ -38,11 +38,17 @@ pub enum SecondaryView {
     GridView,
 }
 
+impl AsRef<str> for SecondaryView {
+    fn as_ref(&self) -> &str {
+        match self {
+            Self::GridView => "viwTml4ZHkNi8kJbD",
+        }
+    }
+}
+
 impl From<SecondaryView> for String {
     fn from(v: SecondaryView) -> String {
-        match v {
-            SecondaryView::GridView => "viwTml4ZHkNi8kJbD".to_string(),
-        }
+        v.as_ref().to_string()
     }
 }
 

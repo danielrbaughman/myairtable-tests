@@ -14,6 +14,9 @@ async fn main() {
         .single_line_text
         .contains("single", true, false)]));
     let (records, _offset) = airtable.primary_orm.get_many(&query).await.unwrap();
+    airtable.url();
+    records[0].record_url("");
+    airtable.primary_orm.url();
     println!(
         "Fetched record: {:?} - {:?}",
         records[0].id, records[0].primary_key

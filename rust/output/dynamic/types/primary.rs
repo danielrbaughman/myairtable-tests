@@ -169,12 +169,18 @@ pub enum PrimaryView {
     FilterByView,
 }
 
+impl AsRef<str> for PrimaryView {
+    fn as_ref(&self) -> &str {
+        match self {
+            Self::GridView => "viwvPRDMaHyldUpmd",
+            Self::FilterByView => "viwHlcwGu4xthX1gf",
+        }
+    }
+}
+
 impl From<PrimaryView> for String {
     fn from(v: PrimaryView) -> String {
-        match v {
-            PrimaryView::GridView => "viwvPRDMaHyldUpmd".to_string(),
-            PrimaryView::FilterByView => "viwHlcwGu4xthX1gf".to_string(),
-        }
+        v.as_ref().to_string()
     }
 }
 

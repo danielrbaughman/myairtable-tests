@@ -12,8 +12,11 @@ use crate::models::{CreateTertiaryModel, TertiaryModel};
 use crate::orm_table::OrmTable;
 use crate::table::StructTable;
 
+use crate::types::build_url;
+
 /// Main entry point for the Airtable base.
 pub struct Airtable {
+    base_id: String,
     /// `Formulas` (dict)
     pub formulas: StructTable,
     /// `Formulas` (ORM)
@@ -37,6 +40,7 @@ impl Airtable {
     pub fn new(api_key: &str, base_id: &str) -> Self {
         let client = Arc::new(AirtableClient::new(api_key, base_id));
         Self {
+            base_id: base_id.to_string(),
             formulas: StructTable::new(Arc::clone(&client), "tblnuYBsMdXNDsuRc", "Formulas"),
             formulas_orm: OrmTable::new(Arc::clone(&client), "tblnuYBsMdXNDsuRc", "Formulas"),
             primary: StructTable::new(Arc::clone(&client), "tblmb3iqgpNS1ysV2", "Primary"),
@@ -46,5 +50,10 @@ impl Airtable {
             tertiary: StructTable::new(Arc::clone(&client), "tblLFoLxEdWlxjmLP", "Tertiary"),
             tertiary_orm: OrmTable::new(Arc::clone(&client), "tblLFoLxEdWlxjmLP", "Tertiary"),
         }
+    }
+
+    /// Get the Airtable web URL for this base.
+    pub fn url(&self) -> String {
+        build_url(&self.base_id, "", "", "")
     }
 }
