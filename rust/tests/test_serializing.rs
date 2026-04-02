@@ -205,3 +205,97 @@ fn field_constants_match_between_all_and_create() {
     );
     assert_eq!(PrimaryFields::CHECKBOX, CreatePrimaryFields::CHECKBOX);
 }
+
+// =============================================================================
+// ORM model — to_json / to_record
+// =============================================================================
+
+#[test]
+fn model_to_json_has_field_values() {
+    let model = PrimaryModel {
+        primary_key: Some("ToJson Test".to_string()),
+        single_line_text: Some("Hello".to_string()),
+        checkbox: Some(true),
+        number_int: Some(42),
+        single_select: Some(PrimarySingleSelectOption::Choice1),
+        ..Default::default()
+    };
+
+    let json = model.to_json();
+    let obj = json.as_object().unwrap();
+
+    assert_eq!(
+        obj.get(PrimaryFields::PRIMARY_KEY_ID).unwrap(),
+        "ToJson Test"
+    );
+    assert_eq!(
+        obj.get(PrimaryFields::SINGLE_LINE_TEXT_ID).unwrap(),
+        "Hello"
+    );
+    assert_eq!(obj.get(PrimaryFields::CHECKBOX_ID).unwrap(), true);
+    assert_eq!(obj.get(PrimaryFields::NUMBER_INT_ID).unwrap(), 42);
+    assert_eq!(
+        obj.get(PrimaryFields::SINGLE_SELECT_ID).unwrap(),
+        "Choice 1"
+    );
+
+    // id and created_time should NOT appear (they are #[serde(skip)])
+    assert!(!obj.contains_key("id"));
+    assert!(!obj.contains_key("created_time"));
+}
+
+#[test]
+fn model_to_json_skips_none_fields() {
+    let model = PrimaryModel {
+        primary_key: Some("Sparse".to_string()),
+        ..Default::default()
+    };
+
+    let json = model.to_json();
+    let obj = json.as_object().unwrap();
+
+    assert_eq!(obj.get(PrimaryFields::PRIMARY_KEY_ID).unwrap(), "Sparse");
+    assert!(!obj.contains_key(PrimaryFields::NUMBER_INT_ID));
+    assert!(!obj.contains_key(PrimaryFields::CHECKBOX_ID));
+}
+
+#[test]
+fn model_to_record_has_id_and_fields() {
+    let mut model = PrimaryModel {
+        primary_key: Some("ToRecord Test".to_string()),
+        number_int: Some(99),
+        ..Default::default()
+    };
+    model.id = Some("recTEST123".to_string());
+    model.created_time = Some("2025-01-15T00:00:00.000Z".to_string());
+
+    let record = model.to_record();
+
+    assert_eq!(record.id, "recTEST123");
+    assert_eq!(
+        record.fields.get(PrimaryFields::PRIMARY_KEY_ID).unwrap(),
+        "ToRecord Test"
+    );
+    assert_eq!(record.fields.get(PrimaryFields::NUMBER_INT_ID).unwrap(), 99);
+    assert_eq!(
+        record.created_time.as_deref(),
+        Some("2025-01-15T00:00:00.000Z")
+    );
+}
+
+#[test]
+fn model_to_record_unsaved() {
+    let model = PrimaryModel {
+        primary_key: Some("Unsaved".to_string()),
+        ..Default::default()
+    };
+
+    let record = model.to_record();
+
+    assert!(record.id.is_empty());
+    assert_eq!(
+        record.fields.get(PrimaryFields::PRIMARY_KEY_ID).unwrap(),
+        "Unsaved"
+    );
+    assert!(record.created_time.is_none());
+}

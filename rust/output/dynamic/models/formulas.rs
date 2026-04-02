@@ -280,6 +280,9 @@ impl OrmModel for FormulasModel {
     fn set_id(&mut self, id: Option<RecordId>) {
         self.id = id;
     }
+    fn get_created_time(&self) -> &Option<String> {
+        &self.created_time
+    }
     fn set_created_time(&mut self, ct: Option<String>) {
         self.created_time = ct;
     }
