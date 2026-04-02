@@ -545,3 +545,65 @@ async fn empty_record_id() {
     let at = setup();
     assert!(at.primary_orm.get_one(&String::new()).await.is_err());
 }
+
+// =============================================================================
+// Upsert
+// =============================================================================
+
+#[tokio::test]
+async fn upsert_as_create() {
+    let at = setup();
+
+    let mut model = PrimaryModel {
+        primary_key: Some("Upsert Create Test".to_string()),
+        ..Default::default()
+    };
+    model.set_client(
+        std::sync::Arc::new(AirtableClient::new(
+            &std::env::var("AIRTABLE_API_KEY").unwrap(),
+            &std::env::var("AIRTABLE_BASE_ID").unwrap(),
+        )),
+        "tblmb3iqgpNS1ysV2",
+    );
+
+    // Upsert without ID → creates
+    at.primary_orm.upsert(&mut model).await.unwrap();
+    assert!(model.id.is_some());
+    assert_eq!(model.primary_key.as_deref(), Some("Upsert Create Test"));
+
+    let id = model.id.as_deref().unwrap().to_string();
+
+    // Verify via get
+    let read = at.primary_orm.get_one(&id).await.unwrap();
+    assert_eq!(read.primary_key.as_deref(), Some("Upsert Create Test"));
+
+    // Cleanup
+    at.primary_orm.delete_one(&id).await.unwrap();
+}
+
+#[tokio::test]
+async fn upsert_as_update() {
+    let at = setup();
+
+    // First create a record
+    let fields = CreatePrimaryModel {
+        primary_key: Some("Upsert Update Test".to_string()),
+        ..Default::default()
+    };
+    let mut model = at.primary_orm.create_one(&fields).await.unwrap();
+    let id = model.id.as_deref().unwrap().to_string();
+
+    // Modify and upsert → updates
+    model.primary_key = Some("Upsert Updated".to_string());
+    at.primary_orm.upsert(&mut model).await.unwrap();
+
+    assert_eq!(model.id.as_deref(), Some(id.as_str()));
+    assert_eq!(model.primary_key.as_deref(), Some("Upsert Updated"));
+
+    // Verify persisted
+    let read = at.primary_orm.get_one(&id).await.unwrap();
+    assert_eq!(read.primary_key.as_deref(), Some("Upsert Updated"));
+
+    // Cleanup
+    at.primary_orm.delete_one(&id).await.unwrap();
+}
