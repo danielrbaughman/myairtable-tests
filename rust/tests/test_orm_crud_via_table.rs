@@ -120,12 +120,12 @@ async fn primary_key_only_crud() {
         primary_key: Some("ORM Primary Key Only".to_string()),
         ..Default::default()
     };
-    let created = at.primary_orm.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
     assert_eq!(created.primary_key.as_deref(), Some("ORM Primary Key Only"));
 
     // Read
-    let fetched = at.primary_orm.get_one(&id).await.unwrap();
+    let fetched = at.primary.get_one(&id).await.unwrap();
     assert_eq!(fetched.id.as_deref(), Some(id.as_str()));
     assert_eq!(fetched.primary_key.as_deref(), Some("ORM Primary Key Only"));
 
@@ -134,15 +134,15 @@ async fn primary_key_only_crud() {
         primary_key: Some("ORM Updated Primary Key".to_string()),
         ..Default::default()
     };
-    let updated = at.primary_orm.update_one(&id, &update).await.unwrap();
+    let updated = at.primary.update_one(&id, &update).await.unwrap();
     assert_eq!(
         updated.primary_key.as_deref(),
         Some("ORM Updated Primary Key")
     );
 
     // Delete
-    at.primary_orm.delete_one(&id).await.unwrap();
-    assert!(at.primary_orm.get_one(&id).await.is_err());
+    at.primary.delete_one(&id).await.unwrap();
+    assert!(at.primary.get_one(&id).await.is_err());
 }
 
 // =============================================================================
@@ -180,7 +180,7 @@ async fn all_simple_properties_crud() {
         ..Default::default()
     };
 
-    let created = at.primary_orm.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     assert_eq!(created.primary_key.as_deref(), Some("ORM All Props"));
@@ -219,7 +219,7 @@ async fn all_simple_properties_crud() {
     );
 
     // Read
-    let read = at.primary_orm.get_one(&id).await.unwrap();
+    let read = at.primary.get_one(&id).await.unwrap();
     assert_eq!(read.primary_key.as_deref(), Some("ORM All Props"));
     assert_eq!(read.single_line_text.as_deref(), Some("Hello World"));
     assert_eq!(read.checkbox, Some(true));
@@ -254,7 +254,7 @@ async fn all_simple_properties_crud() {
         ..Default::default()
     };
 
-    let updated = at.primary_orm.update_one(&id, &update).await.unwrap();
+    let updated = at.primary.update_one(&id, &update).await.unwrap();
     assert_eq!(
         updated.primary_key.as_deref(),
         Some("ORM Updated All Props")
@@ -274,8 +274,8 @@ async fn all_simple_properties_crud() {
     );
 
     // Delete
-    at.primary_orm.delete_one(&id).await.unwrap();
-    assert!(at.primary_orm.get_one(&id).await.is_err());
+    at.primary.delete_one(&id).await.unwrap();
+    assert!(at.primary.get_one(&id).await.is_err());
 }
 
 // =============================================================================
@@ -288,7 +288,7 @@ async fn linked_records_crud() {
 
     // Setup secondary records
     let sec1 = at
-        .secondary_orm
+        .secondary
         .create_one(&CreateSecondaryModel {
             name: Some("ORM Link Target 1".to_string()),
             value: Some("val1".to_string()),
@@ -297,7 +297,7 @@ async fn linked_records_crud() {
         .await
         .unwrap();
     let sec2 = at
-        .secondary_orm
+        .secondary
         .create_one(&CreateSecondaryModel {
             name: Some("ORM Link Target 2".to_string()),
             value: Some("val2".to_string()),
@@ -316,7 +316,7 @@ async fn linked_records_crud() {
         link_multiple: Some(vec![sec1_id.clone(), sec2_id.clone()]),
         ..Default::default()
     };
-    let created = at.primary_orm.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
     assert_eq!(created.link_single, Some(vec![sec1_id.clone()]));
     assert_eq!(
@@ -325,7 +325,7 @@ async fn linked_records_crud() {
     );
 
     // Read
-    let read = at.primary_orm.get_one(&id).await.unwrap();
+    let read = at.primary.get_one(&id).await.unwrap();
     assert_eq!(read.link_single, Some(vec![sec1_id.clone()]));
     assert_eq!(
         read.link_multiple,
@@ -338,14 +338,14 @@ async fn linked_records_crud() {
         link_multiple: Some(vec![sec1_id.clone()]),
         ..Default::default()
     };
-    let updated = at.primary_orm.update_one(&id, &update).await.unwrap();
+    let updated = at.primary.update_one(&id, &update).await.unwrap();
     assert_eq!(updated.link_single, Some(vec![sec2_id.clone()]));
     assert_eq!(updated.link_multiple, Some(vec![sec1_id.clone()]));
 
     // Cleanup
-    at.primary_orm.delete_one(&id).await.unwrap();
-    at.secondary_orm.delete_one(&sec1_id).await.unwrap();
-    at.secondary_orm.delete_one(&sec2_id).await.unwrap();
+    at.primary.delete_one(&id).await.unwrap();
+    at.secondary.delete_one(&sec1_id).await.unwrap();
+    at.secondary.delete_one(&sec2_id).await.unwrap();
 }
 
 // =============================================================================
@@ -366,27 +366,27 @@ async fn attachment_crud() {
         }]),
         ..Default::default()
     };
-    let created = at.primary_orm.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
     let attachments = created.attachment.unwrap();
     assert_eq!(attachments.len(), 1);
     assert!(!attachments[0].url.is_empty());
 
     // Read with retry (Airtable processes attachments async)
-    let mut read = at.primary_orm.get_one(&id).await.unwrap();
+    let mut read = at.primary.get_one(&id).await.unwrap();
     for _ in 0..10 {
         if read.attachment.is_some() {
             break;
         }
         tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-        read = at.primary_orm.get_one(&id).await.unwrap();
+        read = at.primary.get_one(&id).await.unwrap();
     }
     let attachments = read.attachment.unwrap();
     assert_eq!(attachments.len(), 1);
     assert!(!attachments[0].url.is_empty());
 
     // Cleanup
-    at.primary_orm.delete_one(&id).await.unwrap();
+    at.primary.delete_one(&id).await.unwrap();
 }
 
 // =============================================================================
@@ -405,7 +405,7 @@ async fn user_fields_crud() {
         ]),
         ..Default::default()
     };
-    let created = at.primary_orm.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     assert_eq!(created.user.as_ref().unwrap().id, "usrnZ4k98m0Ipji4e");
@@ -414,11 +414,11 @@ async fn user_fields_crud() {
     assert_eq!(users[0].id, "usrnZ4k98m0Ipji4e");
 
     // Read
-    let read = at.primary_orm.get_one(&id).await.unwrap();
+    let read = at.primary.get_one(&id).await.unwrap();
     assert_eq!(read.user.as_ref().unwrap().id, "usrnZ4k98m0Ipji4e");
 
     // Cleanup
-    at.primary_orm.delete_one(&id).await.unwrap();
+    at.primary.delete_one(&id).await.unwrap();
 }
 
 // =============================================================================
@@ -435,7 +435,7 @@ async fn computed_fields() {
         number_float: Some(5.0),
         ..Default::default()
     };
-    let created = at.primary_orm.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     assert!(created.auto_number.is_some());
@@ -444,12 +444,12 @@ async fn computed_fields() {
     assert_eq!(created.formula_simple, Some(15.0));
 
     // Read
-    let read = at.primary_orm.get_one(&id).await.unwrap();
+    let read = at.primary.get_one(&id).await.unwrap();
     assert_eq!(read.formula_id.as_deref(), Some(id.as_str()));
     assert_eq!(read.formula_simple, Some(15.0));
 
     // Cleanup
-    at.primary_orm.delete_one(&id).await.unwrap();
+    at.primary.delete_one(&id).await.unwrap();
 }
 
 // =============================================================================
@@ -470,7 +470,7 @@ async fn batch_create_update_delete() {
         })
         .collect();
 
-    let created = at.primary_orm.create_many(&records).await.unwrap();
+    let created = at.primary.create_many(&records).await.unwrap();
     assert_eq!(created.len(), count as usize);
     for (i, record) in created.iter().enumerate() {
         assert_eq!(
@@ -493,7 +493,7 @@ async fn batch_create_update_delete() {
     let updates: Vec<(&RecordId, &CreatePrimaryModel)> =
         ids.iter().zip(update_fields.iter()).collect();
 
-    let updated = at.primary_orm.update_many(&updates).await.unwrap();
+    let updated = at.primary.update_many(&updates).await.unwrap();
     assert_eq!(updated.len(), count as usize);
     for (i, record) in updated.iter().enumerate() {
         assert_eq!(
@@ -503,8 +503,8 @@ async fn batch_create_update_delete() {
     }
 
     // Delete all
-    at.primary_orm.delete_many(&ids).await.unwrap();
-    assert!(at.primary_orm.get_one(&ids[0]).await.is_err());
+    at.primary.delete_many(&ids).await.unwrap();
+    assert!(at.primary.get_one(&ids[0]).await.is_err());
 }
 
 // =============================================================================
@@ -515,11 +515,7 @@ async fn batch_create_update_delete() {
 async fn list_records() {
     let at = setup();
 
-    let (records, _offset) = at
-        .secondary_orm
-        .get_many(&AirtableQuery::new())
-        .await
-        .unwrap();
+    let (records, _offset) = at.secondary.get_many(&AirtableQuery::new()).await.unwrap();
     assert!(!records.is_empty());
     for record in &records {
         assert!(record.id.is_some());
@@ -534,7 +530,7 @@ async fn list_records() {
 async fn invalid_record_id() {
     let at = setup();
     assert!(at
-        .primary_orm
+        .primary
         .get_one(&"rec_INVALID_ID".to_string())
         .await
         .is_err());
@@ -543,7 +539,7 @@ async fn invalid_record_id() {
 #[tokio::test]
 async fn empty_record_id() {
     let at = setup();
-    assert!(at.primary_orm.get_one(&String::new()).await.is_err());
+    assert!(at.primary.get_one(&String::new()).await.is_err());
 }
 
 // =============================================================================
@@ -567,18 +563,18 @@ async fn upsert_as_create() {
     );
 
     // Upsert without ID → creates
-    at.primary_orm.upsert(&mut model).await.unwrap();
+    at.primary.upsert(&mut model).await.unwrap();
     assert!(model.id.is_some());
     assert_eq!(model.primary_key.as_deref(), Some("Upsert Create Test"));
 
     let id = model.id.as_deref().unwrap().to_string();
 
     // Verify via get
-    let read = at.primary_orm.get_one(&id).await.unwrap();
+    let read = at.primary.get_one(&id).await.unwrap();
     assert_eq!(read.primary_key.as_deref(), Some("Upsert Create Test"));
 
     // Cleanup
-    at.primary_orm.delete_one(&id).await.unwrap();
+    at.primary.delete_one(&id).await.unwrap();
 }
 
 #[tokio::test]
@@ -590,20 +586,20 @@ async fn upsert_as_update() {
         primary_key: Some("Upsert Update Test".to_string()),
         ..Default::default()
     };
-    let mut model = at.primary_orm.create_one(&fields).await.unwrap();
+    let mut model = at.primary.create_one(&fields).await.unwrap();
     let id = model.id.as_deref().unwrap().to_string();
 
     // Modify and upsert → updates
     model.primary_key = Some("Upsert Updated".to_string());
-    at.primary_orm.upsert(&mut model).await.unwrap();
+    at.primary.upsert(&mut model).await.unwrap();
 
     assert_eq!(model.id.as_deref(), Some(id.as_str()));
     assert_eq!(model.primary_key.as_deref(), Some("Upsert Updated"));
 
     // Verify persisted
-    let read = at.primary_orm.get_one(&id).await.unwrap();
+    let read = at.primary.get_one(&id).await.unwrap();
     assert_eq!(read.primary_key.as_deref(), Some("Upsert Updated"));
 
     // Cleanup
-    at.primary_orm.delete_one(&id).await.unwrap();
+    at.primary.delete_one(&id).await.unwrap();
 }

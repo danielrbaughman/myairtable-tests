@@ -29,6 +29,10 @@ pub mod models;
 pub mod options;
 
 pub use airtable::Airtable;
+pub use airtable::FormulasTable;
+pub use airtable::PrimaryTable;
+pub use airtable::SecondaryTable;
+pub use airtable::TertiaryTable;
 pub use airtable_model::{ModelMeta, OrmModel};
 pub use client::AirtableClient;
 pub use error::AirtableError;

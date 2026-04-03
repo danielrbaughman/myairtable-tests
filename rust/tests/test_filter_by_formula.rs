@@ -8,7 +8,7 @@ fn setup() -> Airtable {
 }
 
 async fn create_primary(at: &Airtable, fields: &Fields) -> Record {
-    at.primary.create_one(fields, true).await.unwrap()
+    at.primary.dict.create_one(fields, true).await.unwrap()
 }
 
 fn primary(name: &str) -> Fields {
@@ -40,11 +40,16 @@ async fn filter_by_view() {
     for i in 0..5 {
         all_records.push(primary(&format!("Don't Include Test {i}")));
     }
-    let created = at.primary.create_many(&all_records, true).await.unwrap();
+    let created = at
+        .primary
+        .dict
+        .create_many(&all_records, true)
+        .await
+        .unwrap();
     let ids: Vec<String> = created.iter().map(|r| r.id.clone()).collect();
 
     let params = AirtableQuery::new().view(PrimaryView::FilterByView);
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
 
     assert!(results.records.len() >= 5);
     for record in &results.records {
@@ -57,7 +62,7 @@ async fn filter_by_view() {
         assert!(name.starts_with("Filter Test"), "Unexpected record: {name}");
     }
 
-    at.primary.delete_many(&ids).await.unwrap();
+    at.primary.dict.delete_many(&ids).await.unwrap();
 }
 
 // =============================================================================
@@ -75,23 +80,23 @@ async fn filter_by_id_equals() {
 
     // equals
     let params = AirtableQuery::new().formula(f.id.equals(&r1.id));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
     assert_eq!(results.records[0].id, r1.id);
 
     // in_list multiple
     let params = AirtableQuery::new().formula(f.id.in_list(&[&r1.id, &r2.id]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // in_list single
     let params = AirtableQuery::new().formula(f.id.in_list(&[&r1.id]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     // in_list empty
     let params = AirtableQuery::new().formula(f.id.in_list(&[]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 0);
 
     at.primary
@@ -119,7 +124,7 @@ async fn filter_by_text_field() {
         &scope,
         &f.primary_key.equals("FbText Alpha One", true, false),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     // not_equals
@@ -127,7 +132,7 @@ async fn filter_by_text_field() {
         &scope,
         &f.primary_key.not_equals("FbText Alpha One", true, false),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // contains
@@ -135,7 +140,7 @@ async fn filter_by_text_field() {
         &scope,
         &f.primary_key.contains("Alpha", false, true),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // contains_any
@@ -143,7 +148,7 @@ async fn filter_by_text_field() {
         &scope,
         &f.primary_key.contains_any(&["Alpha", "Beta"], false, true),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 3);
 
     // contains_all
@@ -151,7 +156,7 @@ async fn filter_by_text_field() {
         &scope,
         &f.primary_key.contains_all(&["Alpha", "One"], false, true),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     // not_contains
@@ -159,7 +164,7 @@ async fn filter_by_text_field() {
         &scope,
         &f.primary_key.not_contains("Alpha", false, true),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
     for r in &results.records {
         let name = r
@@ -176,7 +181,7 @@ async fn filter_by_text_field() {
         &scope,
         &f.primary_key.starts_with("FbText Alpha", false, true),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // not_starts_with
@@ -184,7 +189,7 @@ async fn filter_by_text_field() {
         &scope,
         &f.primary_key.not_starts_with("FbText Alpha", false, true),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
     at.primary
@@ -216,24 +221,24 @@ async fn filter_by_number_field() {
 
     // equals
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.number_int.equals(20)]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     // not_equals
     let params =
         AirtableQuery::new().formula(formula::AND(&[&scope, &f.number_int.not_equals(20)]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // greater_than
     let params =
         AirtableQuery::new().formula(formula::AND(&[&scope, &f.number_int.greater_than(10)]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // less_than
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.number_int.less_than(30)]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // greater_than_or_equals
@@ -241,7 +246,7 @@ async fn filter_by_number_field() {
         &scope,
         &f.number_int.greater_than_or_equals(20),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // less_than_or_equals
@@ -249,13 +254,13 @@ async fn filter_by_number_field() {
         &scope,
         &f.number_int.less_than_or_equals(20),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // between inclusive
     let params =
         AirtableQuery::new().formula(formula::AND(&[&scope, &f.number_int.between(10, 30, true)]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 3);
 
     // between exclusive
@@ -263,7 +268,7 @@ async fn filter_by_number_field() {
         &scope,
         &f.number_int.between(10, 30, false),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     at.primary
@@ -292,25 +297,25 @@ async fn filter_by_boolean_field() {
 
     // equals(true)
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.checkbox.equals(true)]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     // equals(false)
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.checkbox.equals(false)]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
     // is_true
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.checkbox.is_true()]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     // is_false
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.checkbox.is_false()]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
-    at.primary.delete_many(&[r1.id, r2.id]).await.unwrap();
+    at.primary.dict.delete_many(&[r1.id, r2.id]).await.unwrap();
 }
 
 // =============================================================================
@@ -334,15 +339,15 @@ async fn filter_by_attachments_field() {
 
     // not_empty
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.attachment.not_empty()]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
     // empty
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.attachment.empty()]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
-    at.primary.delete_many(&[r1.id, r2.id]).await.unwrap();
+    at.primary.dict.delete_many(&[r1.id, r2.id]).await.unwrap();
 }
 
 // =============================================================================
@@ -367,36 +372,36 @@ async fn filter_by_date_field() {
 
     // on
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.on("2024-01-15")]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     // not_on
     let params =
         AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.not_on("2024-01-15")]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
     // on_or_after
     let params =
         AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.on_or_after("2024-06-15")]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
     // on_or_before
     let params =
         AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.on_or_before("2024-01-15")]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
     // after
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.after("2024-01-15")]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
     // before
     let params =
         AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.before("2024-06-15")]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
     // between inclusive
@@ -404,7 +409,7 @@ async fn filter_by_date_field() {
         &scope,
         &f.date.between("2024-01-15", "2024-06-15", true),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // between exclusive
@@ -412,17 +417,17 @@ async fn filter_by_date_field() {
         &scope,
         &f.date.between("2024-01-01", "2024-12-31", false),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // not_empty
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.not_empty()]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
     // empty
     let params = AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.empty()]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
     at.primary
@@ -452,7 +457,7 @@ async fn filter_by_date_field_chained() {
     // before().days_ago(1) — both dates are in the past
     let params =
         AirtableQuery::new().formula(formula::AND(&[&scope, &f.date.before_chain().days_ago(1)]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
     // after().years_ago(100) — both dates are within last 100 years
@@ -460,10 +465,10 @@ async fn filter_by_date_field_chained() {
         &scope,
         &f.date.after_chain().years_ago(100),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert!(results.records.len() >= 1);
 
-    at.primary.delete_many(&[r1.id, r2.id]).await.unwrap();
+    at.primary.dict.delete_many(&[r1.id, r2.id]).await.unwrap();
 }
 
 // =============================================================================
@@ -496,7 +501,7 @@ async fn filter_by_complex_formulas() {
         &f.number_int.greater_than(10),
         &f.checkbox.is_true(),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     // AND(contains, gte) -> B and C
@@ -505,7 +510,7 @@ async fn filter_by_complex_formulas() {
         &f.primary_key.contains("Complex", false, true),
         &f.number_int.greater_than_or_equals(20),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // OR(number = 10, number = 30) -> A and C
@@ -513,7 +518,7 @@ async fn filter_by_complex_formulas() {
         &scope,
         &formula::OR(&[&f.number_int.equals(10), &f.number_int.equals(30)]),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // OR(checkbox = true, number = 20) -> all three
@@ -521,7 +526,7 @@ async fn filter_by_complex_formulas() {
         &scope,
         &formula::OR(&[&f.checkbox.is_true(), &f.number_int.equals(20)]),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 3);
 
     // XOR(checkbox = true, number >= 30) -> only A (true XOR false)
@@ -532,7 +537,7 @@ async fn filter_by_complex_formulas() {
             &f.number_int.greater_than_or_equals(30),
         ]),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     // NOT(primary_key = "FbComplex A") -> B and C
@@ -540,7 +545,7 @@ async fn filter_by_complex_formulas() {
         &scope,
         &formula::NOT(&f.primary_key.equals("FbComplex A", true, false)),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // AND(OR(number=10, number=30), checkbox=true) -> A and C
@@ -549,7 +554,7 @@ async fn filter_by_complex_formulas() {
         &formula::OR(&[&f.number_int.equals(10), &f.number_int.equals(30)]),
         &f.checkbox.is_true(),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // OR(AND(number > 10, checkbox), primary_key = "FbComplex A") -> A and C
@@ -560,7 +565,7 @@ async fn filter_by_complex_formulas() {
             &f.primary_key.equals("FbComplex A", true, false),
         ]),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // NOT(AND(checkbox, number > 20)) -> A and B
@@ -571,7 +576,7 @@ async fn filter_by_complex_formulas() {
             &f.number_int.greater_than(20),
         ])),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 2);
 
     // AND(NOT(checkbox), gte(20)) -> only B
@@ -580,7 +585,7 @@ async fn filter_by_complex_formulas() {
         &formula::NOT(&f.checkbox.is_true()),
         &f.number_int.greater_than_or_equals(20),
     ]));
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     at.primary
@@ -600,17 +605,17 @@ async fn max_records() {
     let records: Vec<Fields> = (1..=5)
         .map(|i| primary(&format!("MaxRecTest {i}")))
         .collect();
-    let created = at.primary.create_many(&records, true).await.unwrap();
+    let created = at.primary.dict.create_many(&records, true).await.unwrap();
     let ids: Vec<String> = created.iter().map(|r| r.id.clone()).collect();
     let id_refs: Vec<&str> = ids.iter().map(|s| s.as_str()).collect();
 
     let params = AirtableQuery::new()
         .formula(scope_to(&id_refs))
         .max_records(3);
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 3);
 
-    at.primary.delete_many(&ids).await.unwrap();
+    at.primary.dict.delete_many(&ids).await.unwrap();
 }
 
 // =============================================================================
@@ -628,7 +633,12 @@ async fn sort_records() {
     let mut f3 = primary("SortTest B");
     f3.set(PrimaryFields::NUMBER_INT_ID, 20);
 
-    let created = at.primary.create_many(&[f1, f2, f3], true).await.unwrap();
+    let created = at
+        .primary
+        .dict
+        .create_many(&[f1, f2, f3], true)
+        .await
+        .unwrap();
     let ids: Vec<String> = created.iter().map(|r| r.id.clone()).collect();
     let id_refs: Vec<&str> = ids.iter().map(|s| s.as_str()).collect();
 
@@ -636,7 +646,7 @@ async fn sort_records() {
     let params = AirtableQuery::new()
         .formula(scope_to(&id_refs))
         .sort(PrimaryFields::NUMBER_INT, SortDirection::Asc);
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     let nums: Vec<i64> = results
         .records
         .iter()
@@ -654,7 +664,7 @@ async fn sort_records() {
     let params = AirtableQuery::new()
         .formula(scope_to(&id_refs))
         .sort(PrimaryFields::NUMBER_INT, SortDirection::Desc);
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     let nums: Vec<i64> = results
         .records
         .iter()
@@ -668,7 +678,7 @@ async fn sort_records() {
         .collect();
     assert_eq!(nums, vec![30, 20, 10]);
 
-    at.primary.delete_many(&ids).await.unwrap();
+    at.primary.dict.delete_many(&ids).await.unwrap();
 }
 
 // =============================================================================
@@ -688,7 +698,7 @@ async fn field_selection() {
     let params = AirtableQuery::new()
         .formula(format!("RECORD_ID()='{}'", created.id))
         .fields(vec![PrimaryFields::PRIMARY_KEY_ID.to_string()]);
-    let results = at.primary.get_many(&params).await.unwrap();
+    let results = at.primary.dict.get_many(&params).await.unwrap();
     assert_eq!(results.records.len(), 1);
 
     let fields = &results.records[0].fields;
@@ -696,5 +706,5 @@ async fn field_selection() {
     assert!(fields.get(PrimaryFields::SINGLE_LINE_TEXT_ID).is_none());
     assert!(fields.get(PrimaryFields::NUMBER_INT_ID).is_none());
 
-    at.primary.delete_one(&created.id).await.unwrap();
+    at.primary.dict.delete_one(&created.id).await.unwrap();
 }

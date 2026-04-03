@@ -20,7 +20,7 @@ async fn primary_key_only_crud() {
     let mut fields = Fields::new();
     fields.set(PrimaryFields::PRIMARY_KEY_ID, "Rust Primary Key Only");
 
-    let created = at.primary.create_one(&fields, true).await.unwrap();
+    let created = at.primary.dict.create_one(&fields, true).await.unwrap();
     assert!(!created.id.is_empty());
     assert_eq!(
         created.fields.get(PrimaryFields::PRIMARY_KEY_ID).unwrap(),
@@ -30,7 +30,7 @@ async fn primary_key_only_crud() {
     let record_id = created.id.clone();
 
     // Read
-    let fetched = at.primary.get_one(&record_id, true).await.unwrap();
+    let fetched = at.primary.dict.get_one(&record_id, true).await.unwrap();
     assert_eq!(fetched.id, record_id);
     assert_eq!(
         fetched.fields.get(PrimaryFields::PRIMARY_KEY_ID).unwrap(),
@@ -42,6 +42,7 @@ async fn primary_key_only_crud() {
     update.set(PrimaryFields::PRIMARY_KEY_ID, "Rust Updated Primary Key");
     let updated = at
         .primary
+        .dict
         .update_one(&record_id, &update, true)
         .await
         .unwrap();
@@ -51,10 +52,10 @@ async fn primary_key_only_crud() {
     );
 
     // Delete
-    at.primary.delete_one(&record_id).await.unwrap();
+    at.primary.dict.delete_one(&record_id).await.unwrap();
 
     // Verify deleted
-    let result = at.primary.get_one(&record_id, true).await;
+    let result = at.primary.dict.get_one(&record_id, true).await;
     assert!(result.is_err());
 }
 
@@ -95,7 +96,7 @@ async fn all_simple_properties_crud() {
         json!(["Option 1", "Option 2"]),
     );
 
-    let created = at.primary.create_one(&fields, true).await.unwrap();
+    let created = at.primary.dict.create_one(&fields, true).await.unwrap();
     let record_id = created.id.clone();
     let f = &created.fields;
 
@@ -139,7 +140,7 @@ async fn all_simple_properties_crud() {
     );
 
     // Read
-    let read = at.primary.get_one(&record_id, true).await.unwrap();
+    let read = at.primary.dict.get_one(&record_id, true).await.unwrap();
     assert_eq!(
         read.fields.get(PrimaryFields::PRIMARY_KEY_ID).unwrap(),
         "Rust All Props"
@@ -186,6 +187,7 @@ async fn all_simple_properties_crud() {
 
     let updated = at
         .primary
+        .dict
         .update_one(&record_id, &update, true)
         .await
         .unwrap();
@@ -206,8 +208,8 @@ async fn all_simple_properties_crud() {
     );
 
     // Delete
-    at.primary.delete_one(&record_id).await.unwrap();
-    assert!(at.primary.get_one(&record_id, true).await.is_err());
+    at.primary.dict.delete_one(&record_id).await.unwrap();
+    assert!(at.primary.dict.get_one(&record_id, true).await.is_err());
 }
 
 // =============================================================================
@@ -222,12 +224,22 @@ async fn linked_records_crud() {
     let mut sec1_fields = Fields::new();
     sec1_fields.set(SecondaryFields::NAME_ID, "Rust Link Target 1");
     sec1_fields.set(SecondaryFields::VALUE_ID, "val1");
-    let sec1 = at.secondary.create_one(&sec1_fields, true).await.unwrap();
+    let sec1 = at
+        .secondary
+        .dict
+        .create_one(&sec1_fields, true)
+        .await
+        .unwrap();
 
     let mut sec2_fields = Fields::new();
     sec2_fields.set(SecondaryFields::NAME_ID, "Rust Link Target 2");
     sec2_fields.set(SecondaryFields::VALUE_ID, "val2");
-    let sec2 = at.secondary.create_one(&sec2_fields, true).await.unwrap();
+    let sec2 = at
+        .secondary
+        .dict
+        .create_one(&sec2_fields, true)
+        .await
+        .unwrap();
 
     // Create primary with links
     let mut fields = Fields::new();
@@ -235,7 +247,7 @@ async fn linked_records_crud() {
     fields.set(PrimaryFields::LINK_SINGLE_ID, json!([&sec1.id]));
     fields.set(PrimaryFields::LINK_MULTIPLE_ID, json!([&sec1.id, &sec2.id]));
 
-    let created = at.primary.create_one(&fields, true).await.unwrap();
+    let created = at.primary.dict.create_one(&fields, true).await.unwrap();
     let record_id = created.id.clone();
     assert_eq!(
         created.fields.get(PrimaryFields::LINK_SINGLE_ID).unwrap(),
@@ -247,7 +259,7 @@ async fn linked_records_crud() {
     );
 
     // Read
-    let read = at.primary.get_one(&record_id, true).await.unwrap();
+    let read = at.primary.dict.get_one(&record_id, true).await.unwrap();
     assert_eq!(
         read.fields.get(PrimaryFields::LINK_SINGLE_ID).unwrap(),
         &json!([&sec1.id])
@@ -263,6 +275,7 @@ async fn linked_records_crud() {
     update.set(PrimaryFields::LINK_MULTIPLE_ID, json!([&sec1.id]));
     let updated = at
         .primary
+        .dict
         .update_one(&record_id, &update, true)
         .await
         .unwrap();
@@ -276,9 +289,9 @@ async fn linked_records_crud() {
     );
 
     // Cleanup
-    at.primary.delete_one(&record_id).await.unwrap();
-    at.secondary.delete_one(&sec1.id).await.unwrap();
-    at.secondary.delete_one(&sec2.id).await.unwrap();
+    at.primary.dict.delete_one(&record_id).await.unwrap();
+    at.secondary.dict.delete_one(&sec1.id).await.unwrap();
+    at.secondary.dict.delete_one(&sec2.id).await.unwrap();
 }
 
 // =============================================================================
@@ -296,7 +309,7 @@ async fn attachment_crud() {
         json!([{"url": "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"}]),
     );
 
-    let created = at.primary.create_one(&fields, true).await.unwrap();
+    let created = at.primary.dict.create_one(&fields, true).await.unwrap();
     let record_id = created.id.clone();
     let attachments = created
         .fields
@@ -311,13 +324,13 @@ async fn attachment_crud() {
         .starts_with("https://"));
 
     // Read (with retry — Airtable processes attachments asynchronously)
-    let mut read = at.primary.get_one(&record_id, true).await.unwrap();
+    let mut read = at.primary.dict.get_one(&record_id, true).await.unwrap();
     for _ in 0..10 {
         if read.fields.get(PrimaryFields::ATTACHMENT_ID).is_some() {
             break;
         }
         tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-        read = at.primary.get_one(&record_id, true).await.unwrap();
+        read = at.primary.dict.get_one(&record_id, true).await.unwrap();
     }
     let attachments = read
         .fields
@@ -332,7 +345,7 @@ async fn attachment_crud() {
         .starts_with("https://"));
 
     // Cleanup
-    at.primary.delete_one(&record_id).await.unwrap();
+    at.primary.dict.delete_one(&record_id).await.unwrap();
 }
 
 // =============================================================================
@@ -354,7 +367,7 @@ async fn user_fields_crud() {
         json!([{"id": "usrnZ4k98m0Ipji4e", "email": "9vymqckyxq@privaterelay.appleid.com", "name": "Daniel Baughman"}]),
     );
 
-    let created = at.primary.create_one(&fields, true).await.unwrap();
+    let created = at.primary.dict.create_one(&fields, true).await.unwrap();
     let record_id = created.id.clone();
 
     let user = &created.fields.get(PrimaryFields::USER_ID).unwrap();
@@ -370,14 +383,14 @@ async fn user_fields_crud() {
     assert_eq!(users[0]["id"], "usrnZ4k98m0Ipji4e");
 
     // Read
-    let read = at.primary.get_one(&record_id, true).await.unwrap();
+    let read = at.primary.dict.get_one(&record_id, true).await.unwrap();
     assert_eq!(
         read.fields.get(PrimaryFields::USER_ID).unwrap()["id"],
         "usrnZ4k98m0Ipji4e"
     );
 
     // Cleanup
-    at.primary.delete_one(&record_id).await.unwrap();
+    at.primary.dict.delete_one(&record_id).await.unwrap();
 }
 
 // =============================================================================
@@ -393,7 +406,7 @@ async fn computed_fields() {
     fields.set(PrimaryFields::NUMBER_INT_ID, 10);
     fields.set(PrimaryFields::NUMBER_FLOAT_ID, 5);
 
-    let created = at.primary.create_one(&fields, true).await.unwrap();
+    let created = at.primary.dict.create_one(&fields, true).await.unwrap();
     let record_id = created.id.clone();
     let f = &created.fields;
 
@@ -418,7 +431,7 @@ async fn computed_fields() {
     assert_eq!(f.get(PrimaryFields::FORMULA_SIMPLE_ID).unwrap(), 15);
 
     // Read and verify
-    let read = at.primary.get_one(&record_id, true).await.unwrap();
+    let read = at.primary.dict.get_one(&record_id, true).await.unwrap();
     assert_eq!(
         read.fields.get(PrimaryFields::FORMULA_ID_ID).unwrap(),
         record_id.as_str()
@@ -429,7 +442,7 @@ async fn computed_fields() {
     );
 
     // Cleanup
-    at.primary.delete_one(&record_id).await.unwrap();
+    at.primary.dict.delete_one(&record_id).await.unwrap();
 }
 
 // =============================================================================
@@ -451,7 +464,7 @@ async fn batch_create_update_delete() {
         })
         .collect();
 
-    let created = at.primary.create_many(&records, true).await.unwrap();
+    let created = at.primary.dict.create_many(&records, true).await.unwrap();
     assert_eq!(created.len(), count);
     for (i, record) in created.iter().enumerate() {
         assert_eq!(
@@ -474,7 +487,7 @@ async fn batch_create_update_delete() {
         .collect();
     let updates: Vec<(&RecordId, &Fields)> = ids.iter().zip(update_fields.iter()).collect();
 
-    let updated = at.primary.update_many(&updates, true).await.unwrap();
+    let updated = at.primary.dict.update_many(&updates, true).await.unwrap();
     assert_eq!(updated.len(), count);
     for (i, record) in updated.iter().enumerate() {
         assert_eq!(
@@ -484,10 +497,10 @@ async fn batch_create_update_delete() {
     }
 
     // Delete all
-    at.primary.delete_many(&ids).await.unwrap();
+    at.primary.dict.delete_many(&ids).await.unwrap();
 
     // Verify first one is deleted
-    let result = at.primary.get_one(&ids[0], true).await;
+    let result = at.primary.dict.get_one(&ids[0], true).await;
     assert!(result.is_err());
 }
 
@@ -499,7 +512,12 @@ async fn batch_create_update_delete() {
 async fn get_many_records() {
     let at = setup();
 
-    let page = at.secondary.get_many(&AirtableQuery::new()).await.unwrap();
+    let page = at
+        .secondary
+        .dict
+        .get_many(&AirtableQuery::new())
+        .await
+        .unwrap();
     assert!(!page.records.is_empty());
 
     for record in &page.records {
@@ -517,6 +535,7 @@ async fn invalid_record_id() {
 
     let result = at
         .primary
+        .dict
         .get_one(&"rec_INVALID_ID".to_string(), true)
         .await;
     assert!(result.is_err());
@@ -526,6 +545,6 @@ async fn invalid_record_id() {
 async fn empty_record_id() {
     let at = setup();
 
-    let result = at.primary.get_one(&String::new(), true).await;
+    let result = at.primary.dict.get_one(&String::new(), true).await;
     assert!(result.is_err());
 }
