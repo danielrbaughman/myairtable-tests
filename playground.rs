@@ -10,10 +10,11 @@ async fn main() {
     let airtable = Airtable::new(&api_key, &base_id);
 
     // let record_id = String::from("recUCWnd7r6zTKS0z");
-    // let record = airtable
-    //     .primary
-    //     .get_many(&AirtableQuery::new())
-    //     .await
-    //     .unwrap();
+    let record = airtable
+        .primary
+        .dict
+        .get_many(&AirtableQuery::new())
+        .await
+        .unwrap();
     // println!("Fetched record: {:?} - {:?}", record.id, record.primary_key);
 }

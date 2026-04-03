@@ -515,7 +515,7 @@ async fn batch_create_update_delete() {
 async fn list_records() {
     let at = setup();
 
-    let (records, _offset) = at.secondary.get_many(&AirtableQuery::new()).await.unwrap();
+    let records = at.secondary.get_many(&AirtableQuery::new()).await.unwrap();
     assert!(!records.is_empty());
     for record in &records {
         assert!(record.id.is_some());

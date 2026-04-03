@@ -512,15 +512,15 @@ async fn batch_create_update_delete() {
 async fn get_many_records() {
     let at = setup();
 
-    let page = at
+    let records = at
         .secondary
         .dict
         .get_many(&AirtableQuery::new())
         .await
         .unwrap();
-    assert!(!page.records.is_empty());
+    assert!(!records.is_empty());
 
-    for record in &page.records {
+    for record in &records {
         assert!(!record.id.is_empty());
     }
 }

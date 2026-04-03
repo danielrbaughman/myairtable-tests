@@ -31,7 +31,7 @@ impl FormulasTable {
     pub async fn get_many(
         &self,
         params: &AirtableQuery,
-    ) -> Result<(Vec<FormulasModel>, Option<String>), AirtableError> {
+    ) -> Result<Vec<FormulasModel>, AirtableError> {
         self.orm.get_many(params).await
     }
     /// Create a new record.
@@ -97,7 +97,7 @@ impl PrimaryTable {
     pub async fn get_many(
         &self,
         params: &AirtableQuery,
-    ) -> Result<(Vec<PrimaryModel>, Option<String>), AirtableError> {
+    ) -> Result<Vec<PrimaryModel>, AirtableError> {
         self.orm.get_many(params).await
     }
     /// Create a new record.
@@ -163,7 +163,7 @@ impl SecondaryTable {
     pub async fn get_many(
         &self,
         params: &AirtableQuery,
-    ) -> Result<(Vec<SecondaryModel>, Option<String>), AirtableError> {
+    ) -> Result<Vec<SecondaryModel>, AirtableError> {
         self.orm.get_many(params).await
     }
     /// Create a new record.
@@ -229,7 +229,7 @@ impl TertiaryTable {
     pub async fn get_many(
         &self,
         params: &AirtableQuery,
-    ) -> Result<(Vec<TertiaryModel>, Option<String>), AirtableError> {
+    ) -> Result<Vec<TertiaryModel>, AirtableError> {
         self.orm.get_many(params).await
     }
     /// Create a new record.
