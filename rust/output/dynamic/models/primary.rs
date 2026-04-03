@@ -3,9 +3,11 @@
 // ==========================================
 
 use crate::airtable_model::{ModelMeta, OrmModel};
+use crate::airtable_runtime as F;
 use crate::options::{PrimaryMultipleSelectOption, PrimarySingleSelectOption};
 use crate::types::{AirtableButton, Attachment, Collaborator, RecordId};
 use serde::{Deserialize, Serialize};
+use serde_json::{json, Value};
 
 /// ORM model for `Primary`
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -486,6 +488,320 @@ impl PrimaryModel {
             .unwrap_or("");
         let record_id = self.id.as_deref().unwrap_or("");
         crate::types::build_url(base_id, "tblmb3iqgpNS1ysV2", view_id.as_ref(), record_id)
+    }
+
+    /// Evaluate formula: `CONCATENATE( 'Primary Key: ', {fldol5Q4wmQJQvPRy}, '\n', 'Single Line Text: ', {...`
+    #[allow(unused_parens)]
+    pub fn evaluate_formula_complex(&self) -> Value {
+        F::CONCATENATE(&[
+            json!("Primary Key: "),
+            serde_json::to_value(&self.primary_key).unwrap_or(Value::Null),
+            json!("\n"),
+            json!("Single Line Text: "),
+            serde_json::to_value(&self.single_line_text).unwrap_or(Value::Null),
+            json!("\n"),
+            json!("Long Text: "),
+            serde_json::to_value(&self.long_text).unwrap_or(Value::Null),
+            json!("\n"),
+            json!("Long Text with Rich Text: "),
+            serde_json::to_value(&self.long_text_with_rich_text).unwrap_or(Value::Null),
+            json!("\n"),
+            json!("Attachment: "),
+            if F::is_truthy(&serde_json::to_value(&self.attachment).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.attachment).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Checkbox: "),
+            if F::is_truthy(&serde_json::to_value(&self.checkbox).unwrap_or(Value::Null)) {
+                json!("Checked")
+            } else {
+                json!("Unchecked")
+            },
+            json!("\n"),
+            json!("Multiple Select: "),
+            if F::is_truthy(&serde_json::to_value(&self.multiple_select).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.multiple_select).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Single Select: "),
+            if F::is_truthy(&serde_json::to_value(&self.single_select).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.single_select).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("User: "),
+            if F::is_truthy(&serde_json::to_value(&self.user).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.user).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("User (allow multiple): "),
+            if F::is_truthy(&serde_json::to_value(&self.user_allow_multiple).unwrap_or(Value::Null))
+            {
+                serde_json::to_value(&self.user_allow_multiple).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Date: "),
+            if F::is_truthy(&serde_json::to_value(&self.date).unwrap_or(Value::Null)) {
+                F::DATETIME_FORMAT(
+                    &serde_json::to_value(&self.date).unwrap_or(Value::Null),
+                    Some(&json!("YYYY-MM-DD")),
+                )
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Date (with time): "),
+            if F::is_truthy(&serde_json::to_value(&self.date_with_time).unwrap_or(Value::Null)) {
+                F::DATETIME_FORMAT(
+                    &serde_json::to_value(&self.date_with_time).unwrap_or(Value::Null),
+                    Some(&json!("YYYY-MM-DD HH:mm")),
+                )
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Phone Number: "),
+            if F::is_truthy(&serde_json::to_value(&self.phone_number).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.phone_number).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Email: "),
+            if F::is_truthy(&serde_json::to_value(&self.email).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.email).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("URL: "),
+            if F::is_truthy(&serde_json::to_value(&self.url).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.url).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Number (int): "),
+            if F::is_truthy(&serde_json::to_value(&self.number_int).unwrap_or(Value::Null)) {
+                Value::String(format!(
+                    "{}{}",
+                    F::S(&serde_json::to_value(&self.number_int).unwrap_or(Value::Null)),
+                    ""
+                ))
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Number (float): "),
+            if F::is_truthy(&serde_json::to_value(&self.number_float).unwrap_or(Value::Null)) {
+                Value::String(format!(
+                    "{}{}",
+                    F::S(&serde_json::to_value(&self.number_float).unwrap_or(Value::Null)),
+                    ""
+                ))
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Currency (int): "),
+            if F::is_truthy(&serde_json::to_value(&self.currency_int).unwrap_or(Value::Null)) {
+                Value::String(format!(
+                    "{}{}",
+                    F::S(&serde_json::to_value(&self.currency_int).unwrap_or(Value::Null)),
+                    ""
+                ))
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Currency (float): "),
+            if F::is_truthy(&serde_json::to_value(&self.currency_float).unwrap_or(Value::Null)) {
+                Value::String(format!(
+                    "{}{}",
+                    F::S(&serde_json::to_value(&self.currency_float).unwrap_or(Value::Null)),
+                    ""
+                ))
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Percent (int): "),
+            if F::is_truthy(&serde_json::to_value(&self.percent_int).unwrap_or(Value::Null)) {
+                Value::String(format!(
+                    "{}{}",
+                    F::S(&serde_json::to_value(&self.percent_int).unwrap_or(Value::Null)),
+                    ""
+                ))
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Percent (float): "),
+            if F::is_truthy(&serde_json::to_value(&self.percent_float).unwrap_or(Value::Null)) {
+                Value::String(format!(
+                    "{}{}",
+                    F::S(&serde_json::to_value(&self.percent_float).unwrap_or(Value::Null)),
+                    ""
+                ))
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Duration: "),
+            if F::is_truthy(&serde_json::to_value(&self.duration).unwrap_or(Value::Null)) {
+                Value::String(format!(
+                    "{}{}",
+                    F::S(&serde_json::to_value(&self.duration).unwrap_or(Value::Null)),
+                    ""
+                ))
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Rating: "),
+            if F::is_truthy(&serde_json::to_value(&self.rating).unwrap_or(Value::Null)) {
+                Value::String(format!(
+                    "{}{}",
+                    F::S(&serde_json::to_value(&self.rating).unwrap_or(Value::Null)),
+                    ""
+                ))
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Created Time: "),
+            if F::is_truthy(&serde_json::to_value(&self.created_at_time).unwrap_or(Value::Null)) {
+                F::DATETIME_FORMAT(
+                    &serde_json::to_value(&self.created_at_time).unwrap_or(Value::Null),
+                    Some(&json!("YYYY-MM-DD HH:mm")),
+                )
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Last Modified Time: "),
+            if F::is_truthy(&serde_json::to_value(&self.last_modified_time).unwrap_or(Value::Null))
+            {
+                F::DATETIME_FORMAT(
+                    &serde_json::to_value(&self.last_modified_time).unwrap_or(Value::Null),
+                    Some(&json!("YYYY-MM-DD HH:mm")),
+                )
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Created By: "),
+            if F::is_truthy(&serde_json::to_value(&self.created_by).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.created_by).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Last Modified By: "),
+            if F::is_truthy(&serde_json::to_value(&self.last_modified_by).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.last_modified_by).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Auto Number: "),
+            if F::is_truthy(&serde_json::to_value(&self.auto_number).unwrap_or(Value::Null)) {
+                Value::String(format!(
+                    "{}{}",
+                    F::S(&serde_json::to_value(&self.auto_number).unwrap_or(Value::Null)),
+                    ""
+                ))
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Button: "),
+            if F::is_truthy(&serde_json::to_value(&self.button).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.button).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Link (single): "),
+            if F::is_truthy(&serde_json::to_value(&self.link_single).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.link_single).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Link (multiple): "),
+            if F::is_truthy(&serde_json::to_value(&self.link_multiple).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.link_multiple).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Lookup: "),
+            if F::is_truthy(&serde_json::to_value(&self.lookup).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.lookup).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Rollup: "),
+            if F::is_truthy(&serde_json::to_value(&self.rollup).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.rollup).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Formula (ID): "),
+            if F::is_truthy(&serde_json::to_value(&self.formula_id).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.formula_id).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+            json!("\n"),
+            json!("Formula (Simple): "),
+            if F::is_truthy(&serde_json::to_value(&self.formula_simple).unwrap_or(Value::Null)) {
+                serde_json::to_value(&self.formula_simple).unwrap_or(Value::Null)
+            } else {
+                json!("None")
+            },
+        ])
+    }
+
+    /// Evaluate formula: `RECORD_ID()...`
+    #[allow(unused_parens)]
+    pub fn evaluate_formula_id(&self) -> Value {
+        json!(self.get_id().as_deref().unwrap_or(""))
+    }
+
+    /// Evaluate formula: `{fldcf62YFeIIDHElt} & {fldy1axxaoUToLVC6} & {fld2vnFc0Bl5IOFUQ}...`
+    #[allow(unused_parens)]
+    pub fn evaluate_formula_nested(&self) -> Value {
+        Value::String(format!(
+            "{}{}",
+            format!(
+                "{}{}",
+                F::S(&serde_json::to_value(&self.formula_id).unwrap_or(Value::Null)),
+                F::S(&serde_json::to_value(&self.formula_simple).unwrap_or(Value::Null))
+            ),
+            F::S(&serde_json::to_value(&self.formula_complex).unwrap_or(Value::Null))
+        ))
+    }
+
+    /// Evaluate formula: `{fldOfPKGmnRPv94QH} + {fldmU0X2l4RWd21dd}...`
+    #[allow(unused_parens)]
+    pub fn evaluate_formula_simple(&self) -> Value {
+        json!(
+            (F::N(&serde_json::to_value(&self.number_int).unwrap_or(Value::Null))
+                + F::N(&serde_json::to_value(&self.number_float).unwrap_or(Value::Null)))
+        )
     }
 }
 

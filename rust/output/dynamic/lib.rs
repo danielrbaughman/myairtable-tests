@@ -4,6 +4,8 @@
 
 #[path = "../static/airtable_model.rs"]
 pub mod airtable_model;
+#[path = "../static/airtable_runtime.rs"]
+pub mod airtable_runtime;
 #[path = "../static/client.rs"]
 pub mod client;
 #[path = "../static/error.rs"]

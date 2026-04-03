@@ -3,8 +3,10 @@
 // ==========================================
 
 use crate::airtable_model::{ModelMeta, OrmModel};
+use crate::airtable_runtime as F;
 use crate::types::RecordId;
 use serde::{Deserialize, Serialize};
+use serde_json::{json, Value};
 
 /// ORM model for `Formulas`
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -264,6 +266,147 @@ impl FormulasModel {
             .unwrap_or("");
         let record_id = self.id.as_deref().unwrap_or("");
         crate::types::build_url(base_id, "tblnuYBsMdXNDsuRc", view_id.as_ref(), record_id)
+    }
+
+    /// Evaluate formula: `'YEAR: ' & YEAR({fldlZT521Iy0FFXFL}) & ', MONTH: ' & MONTH({fldlZT521Iy0FFXFL}) ...`
+    #[allow(unused_parens)]
+    pub fn evaluate_date_formula(&self) -> Value {
+        Value::String(format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", "YEAR: ", F::S(&F::YEAR(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null)))), ", MONTH: "), F::S(&F::MONTH(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null)))), ", DAY: "), F::S(&F::DAY(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null)))), ", HOUR: "), F::S(&F::HOUR(&serde_json::to_value(&self.second_date).unwrap_or(Value::Null)))), ", MINUTE: "), F::S(&F::MINUTE(&serde_json::to_value(&self.second_date).unwrap_or(Value::Null)))), ", SECOND: "), F::S(&F::SECOND(&serde_json::to_value(&self.second_date).unwrap_or(Value::Null)))), ", TODAY: "), F::S(&F::DATETIME_FORMAT(&F::TODAY(), Some(&json!("YYYY-MM-DD"))))), ", WORKDAY+5: "), F::S(&F::DATETIME_FORMAT(&F::WORKDAY(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null), &json!(5)), Some(&json!("YYYY-MM-DD"))))), ", WORKDAY_DIFF: "), F::S(&F::WORKDAY_DIFF(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null), &serde_json::to_value(&self.second_date).unwrap_or(Value::Null)))), ", PARSE: "), F::S(&F::DATETIME_FORMAT(&F::DATETIME_PARSE(&F::DATESTR(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null))), Some(&json!("YYYY-MM-DD"))))), ", FORMAT: "), F::S(&F::DATETIME_FORMAT(&serde_json::to_value(&self.second_date).unwrap_or(Value::Null), Some(&json!("YYYY-MM-DD HH:mm"))))), ", LOCALE: "), F::S(&F::DATETIME_FORMAT(&serde_json::to_value(&self.second_date).unwrap_or(Value::Null), Some(&json!("YYYY-MM-DD"))))), ", TIMEZONE: "), F::S(&F::DATETIME_FORMAT(&F::SET_TIMEZONE(&serde_json::to_value(&self.second_date).unwrap_or(Value::Null), &json!("America/New_York")), Some(&json!("YYYY-MM-DD HH:mm"))))), ", DATESTR: "), F::S(&F::DATESTR(&serde_json::to_value(&self.second_date).unwrap_or(Value::Null)))), ", TIMESTR: "), F::S(&F::TIMESTR(&serde_json::to_value(&self.second_date).unwrap_or(Value::Null)))), ", TONOW: "), F::S(&F::TONOW(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null), None))), ", FROMNOW: "), F::S(&F::FROMNOW(&serde_json::to_value(&self.second_date).unwrap_or(Value::Null), None))), ", DATEADD+2d: "), F::S(&F::DATETIME_FORMAT(&F::DATEADD(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null), &json!(2), &json!("days")), Some(&json!("YYYY-MM-DD"))))), ", WEEKNUM: "), F::S(&F::WEEKNUM(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null), Some(&json!("Monday"))))), ", DIFF days: "), F::S(&F::DATETIME_DIFF(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null), &serde_json::to_value(&self.second_date).unwrap_or(Value::Null), Some(&json!("days"))))), ", IS_BEFORE: "), F::S(&if F::is_truthy(&F::IS_BEFORE(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null), &serde_json::to_value(&self.second_date).unwrap_or(Value::Null), None)) { json!("Yes") } else { json!("No") })), ", IS_SAME day: "), F::S(&if F::is_truthy(&F::IS_SAME(&serde_json::to_value(&self.first_date).unwrap_or(Value::Null), &serde_json::to_value(&self.second_date).unwrap_or(Value::Null), Some(&json!("day")))) { json!("Yes") } else { json!("No") })), ", IS_AFTER: "), F::S(&if F::is_truthy(&F::IS_AFTER(&serde_json::to_value(&self.third_date).unwrap_or(Value::Null), &serde_json::to_value(&self.second_date).unwrap_or(Value::Null), None)) { json!("Yes") } else { json!("No") })))
+    }
+
+    /// Evaluate formula: `IF(   OR({fldA04pqfjMkGXcZU} = BLANK(), {fldj5nAkal5y8OOZg} = BLANK()),   BLANK(...`
+    #[allow(unused_parens)]
+    pub fn evaluate_math_formula(&self) -> Value {
+        if F::is_truthy(&Value::Bool(
+            F::is_truthy(&Value::Bool(
+                serde_json::to_value(&self.first_number).unwrap_or(Value::Null) == json!(null),
+            )) || F::is_truthy(&Value::Bool(
+                serde_json::to_value(&self.second_number).unwrap_or(Value::Null) == json!(null),
+            )),
+        )) {
+            json!(null)
+        } else {
+            Value::String(format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", format!("{}{}", "SUM: ", F::S(&F::SUM(&[serde_json::to_value(&self.first_number).unwrap_or(Value::Null), serde_json::to_value(&self.second_number).unwrap_or(Value::Null)]))), ", MIN: "), F::S(&F::MIN(&[serde_json::to_value(&self.first_number).unwrap_or(Value::Null), serde_json::to_value(&self.second_number).unwrap_or(Value::Null)]))), ", MAX: "), F::S(&F::MAX(&[serde_json::to_value(&self.first_number).unwrap_or(Value::Null), serde_json::to_value(&self.second_number).unwrap_or(Value::Null)]))), ", AVG: "), F::S(&F::AVERAGE(&[serde_json::to_value(&self.first_number).unwrap_or(Value::Null), serde_json::to_value(&self.second_number).unwrap_or(Value::Null)]))), ", COUNT: "), F::S(&F::COUNT(&[serde_json::to_value(&self.first_number).unwrap_or(Value::Null), serde_json::to_value(&self.second_number).unwrap_or(Value::Null)]))), ", CEIL: "), F::S(&F::CEILING(&serde_json::to_value(&self.first_number).unwrap_or(Value::Null), &json!(0)))), ", FLOOR: "), F::S(&F::FLOOR(&serde_json::to_value(&self.second_number).unwrap_or(Value::Null), &json!(0)))), ", ROUND: "), F::S(&F::ROUND(&json!((F::N(&serde_json::to_value(&self.first_number).unwrap_or(Value::Null)) / 2_f64)), &json!(1)))), ", ROUNDUP: "), F::S(&F::ROUNDUP(&json!((F::N(&serde_json::to_value(&self.second_number).unwrap_or(Value::Null)) / 2_f64)), &json!(0)))), ", ROUNDDOWN: "), F::S(&F::ROUNDDOWN(&json!((F::N(&serde_json::to_value(&self.first_number).unwrap_or(Value::Null)) / 2_f64)), &json!(0)))), ", INT: "), F::S(&F::INT(&json!((F::N(&serde_json::to_value(&self.second_number).unwrap_or(Value::Null)) / 2_f64))))), ", EVEN: "), F::S(&F::EVEN(&serde_json::to_value(&self.first_number).unwrap_or(Value::Null)))), ", ODD: "), F::S(&F::ODD(&serde_json::to_value(&self.second_number).unwrap_or(Value::Null)))), ", MOD: "), F::S(&F::MOD(&serde_json::to_value(&self.first_number).unwrap_or(Value::Null), &serde_json::to_value(&self.second_number).unwrap_or(Value::Null)))), ", LOG: "), F::S(&F::LOG(&serde_json::to_value(&self.first_number).unwrap_or(Value::Null), None))), ", EXP: "), F::S(&F::EXP(&json!(1)))), ", POWER: "), F::S(&F::POWER(&serde_json::to_value(&self.first_number).unwrap_or(Value::Null), &json!(2)))), ", SQRT: "), F::S(&F::SQRT(&F::ABS(&serde_json::to_value(&self.second_number).unwrap_or(Value::Null))))), ", ABS: "), F::S(&F::ABS(&serde_json::to_value(&self.second_number).unwrap_or(Value::Null)))))
+        }
+    }
+
+    /// Evaluate formula: `CONCATENATE(   'LEN: ', LEN({fldHJuw6pAujnHvkP}), '; ',   'MID: ', MID({fldHJuw6...`
+    #[allow(unused_parens)]
+    pub fn evaluate_text_formula(&self) -> Value {
+        F::CONCATENATE(&[
+            json!("LEN: "),
+            F::LEN(&serde_json::to_value(&self.first_text).unwrap_or(Value::Null)),
+            json!("; "),
+            json!("MID: "),
+            F::MID(
+                &serde_json::to_value(&self.first_text).unwrap_or(Value::Null),
+                &json!(2),
+                &json!(3),
+            ),
+            json!("; "),
+            json!("LEFT: "),
+            F::LEFT(
+                &serde_json::to_value(&self.second_text).unwrap_or(Value::Null),
+                &json!(2),
+            ),
+            json!("; "),
+            json!("RIGHT: "),
+            F::RIGHT(
+                &serde_json::to_value(&self.second_text).unwrap_or(Value::Null),
+                &json!(2),
+            ),
+            json!("; "),
+            json!("FIND: "),
+            F::FIND(
+                &json!("e"),
+                &serde_json::to_value(&self.first_text).unwrap_or(Value::Null),
+                None,
+            ),
+            json!("; "),
+            json!("SEARCH: "),
+            F::SEARCH(
+                &json!("e"),
+                &serde_json::to_value(&self.first_text).unwrap_or(Value::Null),
+                None,
+            ),
+            json!("; "),
+            json!("REPLACE: "),
+            F::REPLACE(
+                &serde_json::to_value(&self.first_text).unwrap_or(Value::Null),
+                &json!(2),
+                &json!(2),
+                &json!("XX"),
+            ),
+            json!("; "),
+            json!("REPT: "),
+            F::REPT(
+                &serde_json::to_value(&self.first_text).unwrap_or(Value::Null),
+                &json!(2),
+            ),
+            json!("; "),
+            json!("LOWER: "),
+            F::LOWER(&serde_json::to_value(&self.second_text).unwrap_or(Value::Null)),
+            json!("; "),
+            json!("UPPER: "),
+            F::UPPER(&serde_json::to_value(&self.second_text).unwrap_or(Value::Null)),
+            json!("; "),
+            json!("TRIM: "),
+            F::TRIM(&Value::String(format!(
+                "{}{}",
+                format!(
+                    "{}{}",
+                    "   ",
+                    F::S(&serde_json::to_value(&self.first_text).unwrap_or(Value::Null))
+                ),
+                "   "
+            ))),
+            json!("; "),
+            json!("SUBSTITUTE: "),
+            F::SUBSTITUTE(
+                &serde_json::to_value(&self.first_text).unwrap_or(Value::Null),
+                &json!("e"),
+                &json!("@"),
+                None,
+            ),
+            json!("; "),
+            json!("CONCATENATE: "),
+            F::CONCATENATE(&[
+                serde_json::to_value(&self.first_text).unwrap_or(Value::Null),
+                json!("-"),
+                serde_json::to_value(&self.second_text).unwrap_or(Value::Null),
+                json!("-"),
+                serde_json::to_value(&self.third_text).unwrap_or(Value::Null),
+            ]),
+            json!("; "),
+            json!("T: "),
+            F::T(&serde_json::to_value(&self.first_number).unwrap_or(Value::Null)),
+            json!("; "),
+            json!("REGEX_EXTRACT: "),
+            F::REGEX_EXTRACT(
+                &serde_json::to_value(&self.first_text).unwrap_or(Value::Null),
+                &json!("[aeiou]"),
+            ),
+            json!("; "),
+            json!("REGEX_MATCH: "),
+            if F::is_truthy(&F::REGEX_MATCH(
+                &serde_json::to_value(&self.first_text).unwrap_or(Value::Null),
+                &json!("^.e"),
+            )) {
+                json!("1")
+            } else {
+                json!("0")
+            },
+            json!("; "),
+            json!("REGEX_REPLACE: "),
+            F::REGEX_REPLACE(
+                &serde_json::to_value(&self.first_text).unwrap_or(Value::Null),
+                &json!("[aeiou]"),
+                &json!("*"),
+            ),
+            json!("; "),
+            json!("ENCODE_URL_COMPONENT: "),
+            F::ENCODE_URL_COMPONENT(&serde_json::to_value(&self.first_text).unwrap_or(Value::Null)),
+        ])
     }
 }
 
