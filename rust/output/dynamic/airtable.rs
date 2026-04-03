@@ -79,6 +79,16 @@ impl FormulasTable {
     pub fn url(&self) -> String {
         self.orm.url()
     }
+    /// Set cache TTL in seconds for both ORM and dict layers. 0 = disabled.
+    pub fn set_cache_seconds(&mut self, seconds: u64) {
+        self.orm.set_cache_seconds(seconds);
+        self.dict.set_cache_seconds(seconds);
+    }
+    /// Clear the response cache for both ORM and dict layers.
+    pub fn invalidate_cache(&self) {
+        self.orm.invalidate_cache();
+        self.dict.invalidate_cache();
+    }
 }
 
 /// Table accessor for `Primary`. ORM by default, `.dict` for raw records.
@@ -144,6 +154,16 @@ impl PrimaryTable {
     /// Get the Airtable web URL for this table.
     pub fn url(&self) -> String {
         self.orm.url()
+    }
+    /// Set cache TTL in seconds for both ORM and dict layers. 0 = disabled.
+    pub fn set_cache_seconds(&mut self, seconds: u64) {
+        self.orm.set_cache_seconds(seconds);
+        self.dict.set_cache_seconds(seconds);
+    }
+    /// Clear the response cache for both ORM and dict layers.
+    pub fn invalidate_cache(&self) {
+        self.orm.invalidate_cache();
+        self.dict.invalidate_cache();
     }
 }
 
@@ -211,6 +231,16 @@ impl SecondaryTable {
     pub fn url(&self) -> String {
         self.orm.url()
     }
+    /// Set cache TTL in seconds for both ORM and dict layers. 0 = disabled.
+    pub fn set_cache_seconds(&mut self, seconds: u64) {
+        self.orm.set_cache_seconds(seconds);
+        self.dict.set_cache_seconds(seconds);
+    }
+    /// Clear the response cache for both ORM and dict layers.
+    pub fn invalidate_cache(&self) {
+        self.orm.invalidate_cache();
+        self.dict.invalidate_cache();
+    }
 }
 
 /// Table accessor for `Tertiary`. ORM by default, `.dict` for raw records.
@@ -277,6 +307,16 @@ impl TertiaryTable {
     pub fn url(&self) -> String {
         self.orm.url()
     }
+    /// Set cache TTL in seconds for both ORM and dict layers. 0 = disabled.
+    pub fn set_cache_seconds(&mut self, seconds: u64) {
+        self.orm.set_cache_seconds(seconds);
+        self.dict.set_cache_seconds(seconds);
+    }
+    /// Clear the response cache for both ORM and dict layers.
+    pub fn invalidate_cache(&self) {
+        self.orm.invalidate_cache();
+        self.dict.invalidate_cache();
+    }
 }
 
 /// Main entry point for the Airtable base.
@@ -295,8 +335,13 @@ pub struct Airtable {
 impl Airtable {
     /// Create a new Airtable instance.
     pub fn new(api_key: &str, base_id: &str) -> Self {
+        Self::with_cache(api_key, base_id, 0)
+    }
+
+    /// Create a new Airtable instance with response caching.
+    pub fn with_cache(api_key: &str, base_id: &str, cache_seconds: u64) -> Self {
         let client = Arc::new(AirtableClient::new(api_key, base_id));
-        Self {
+        let mut instance = Self {
             base_id: base_id.to_string(),
             formulas: FormulasTable {
                 dict: StructTable::new(Arc::clone(&client), "tblnuYBsMdXNDsuRc", "Formulas"),
@@ -314,7 +359,14 @@ impl Airtable {
                 dict: StructTable::new(Arc::clone(&client), "tblLFoLxEdWlxjmLP", "Tertiary"),
                 orm: OrmTable::new(Arc::clone(&client), "tblLFoLxEdWlxjmLP", "Tertiary"),
             },
+        };
+        if cache_seconds > 0 {
+            instance.formulas.set_cache_seconds(cache_seconds);
+            instance.primary.set_cache_seconds(cache_seconds);
+            instance.secondary.set_cache_seconds(cache_seconds);
+            instance.tertiary.set_cache_seconds(cache_seconds);
         }
+        instance
     }
 
     /// Get the Airtable web URL for this base.

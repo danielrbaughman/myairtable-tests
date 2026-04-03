@@ -34,6 +34,10 @@ path = "rust/tests/test_orm_crud_via_table.rs"
 name = "test_orm_crud_via_model"
 path = "rust/tests/test_orm_crud_via_model.rs"
 
+[[test]]
+name = "test_caching"
+path = "rust/tests/test_caching.rs"
+
 [[bin]]
 name = "playground"
 path = "playground.rs"
