@@ -321,7 +321,7 @@ impl TertiaryTable {
 
 /// Main entry point for the Airtable base.
 pub struct Airtable {
-    base_id: String,
+    client: Arc<AirtableClient>,
     /// `Formulas`
     pub formulas: FormulasTable,
     /// `Primary`
@@ -342,7 +342,7 @@ impl Airtable {
     pub fn with_cache(api_key: &str, base_id: &str, cache_seconds: u64) -> Self {
         let client = Arc::new(AirtableClient::new(api_key, base_id));
         let mut instance = Self {
-            base_id: base_id.to_string(),
+            client: Arc::clone(&client),
             formulas: FormulasTable {
                 dict: StructTable::new(Arc::clone(&client), "tblnuYBsMdXNDsuRc", "Formulas"),
                 orm: OrmTable::new(Arc::clone(&client), "tblnuYBsMdXNDsuRc", "Formulas"),
@@ -371,6 +371,11 @@ impl Airtable {
 
     /// Get the Airtable web URL for this base.
     pub fn url(&self) -> String {
-        build_url(&self.base_id, "", "", "")
+        build_url(self.client.base_id(), "", "", "")
+    }
+
+    /// Fetch a live version of the schema from Airtable's metadata API.
+    pub async fn get_schema(&self) -> Result<serde_json::Value, AirtableError> {
+        self.client.get_schema().await
     }
 }
