@@ -42,17 +42,17 @@ class FormulasTable(AirtableTable[FormulasRecordDict, FormulasCreateRecordDict, 
     You can also use the ORM Models directly. See https://pyairtable.readthedocs.io/en/stable/orm.html#
     """
     @classmethod
-    def from_table(cls, table: Table, cache_seconds: int = 0):
+    def from_table(cls, table: Table, cache_seconds: int = 0):  # ty: ignore
         cls = super().from_table(
             table,
-            FormulasRecordDict,
-            FormulasCreateRecordDict,
-            FormulasUpdateRecordDict,
-            FormulasModel,
+            FormulasRecordDict,  # ty: ignore[invalid-argument-type]
+            FormulasCreateRecordDict,  # ty: ignore[invalid-argument-type]
+            FormulasUpdateRecordDict,  # ty: ignore[invalid-argument-type]
+            FormulasModel,  # ty: ignore[invalid-argument-type]
             FormulasCalculatedFields,
             FormulasCalculatedFieldIds,
-            FormulasViewNameIdMapping,
-            FormulasFields,
+            FormulasViewNameIdMapping,  # ty: ignore[invalid-argument-type]
+            FormulasFields,  # ty: ignore[invalid-argument-type]
             cache_seconds=cache_seconds,
         )
         return cls

@@ -85,28 +85,28 @@ class Airtable:
         """`Formulas` (tblnuYBsMdXNDsuRc)"""
         if 'Formulas' not in self._tables:
             self._tables["Formulas"] = FormulasTable.from_table(self._api.table(self.base_id, "Formulas"), cache_seconds=self._cache_seconds)
-        return self._tables["Formulas"]
+        return self._tables["Formulas"]  # ty: ignore[invalid-return-type]
 
     @property
     def primary(self) -> PrimaryTable:
         """`Primary` (tblmb3iqgpNS1ysV2)"""
         if 'Primary' not in self._tables:
             self._tables["Primary"] = PrimaryTable.from_table(self._api.table(self.base_id, "Primary"), cache_seconds=self._cache_seconds)
-        return self._tables["Primary"]
+        return self._tables["Primary"]  # ty: ignore[invalid-return-type]
 
     @property
     def secondary(self) -> SecondaryTable:
         """`Secondary` (tblPPScS3XMuFkDYN)"""
         if 'Secondary' not in self._tables:
             self._tables["Secondary"] = SecondaryTable.from_table(self._api.table(self.base_id, "Secondary"), cache_seconds=self._cache_seconds)
-        return self._tables["Secondary"]
+        return self._tables["Secondary"]  # ty: ignore[invalid-return-type]
 
     @property
     def tertiary(self) -> TertiaryTable:
         """`Tertiary` (tblLFoLxEdWlxjmLP)"""
         if 'Tertiary' not in self._tables:
             self._tables["Tertiary"] = TertiaryTable.from_table(self._api.table(self.base_id, "Tertiary"), cache_seconds=self._cache_seconds)
-        return self._tables["Tertiary"]
+        return self._tables["Tertiary"]  # ty: ignore[invalid-return-type]
 
 # endregion
 

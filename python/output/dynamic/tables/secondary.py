@@ -42,17 +42,17 @@ class SecondaryTable(AirtableTable[SecondaryRecordDict, SecondaryCreateRecordDic
     You can also use the ORM Models directly. See https://pyairtable.readthedocs.io/en/stable/orm.html#
     """
     @classmethod
-    def from_table(cls, table: Table, cache_seconds: int = 0):
+    def from_table(cls, table: Table, cache_seconds: int = 0):  # ty: ignore
         cls = super().from_table(
             table,
-            SecondaryRecordDict,
-            SecondaryCreateRecordDict,
-            SecondaryUpdateRecordDict,
-            SecondaryModel,
+            SecondaryRecordDict,  # ty: ignore[invalid-argument-type]
+            SecondaryCreateRecordDict,  # ty: ignore[invalid-argument-type]
+            SecondaryUpdateRecordDict,  # ty: ignore[invalid-argument-type]
+            SecondaryModel,  # ty: ignore[invalid-argument-type]
             SecondaryCalculatedFields,
             SecondaryCalculatedFieldIds,
-            SecondaryViewNameIdMapping,
-            SecondaryFields,
+            SecondaryViewNameIdMapping,  # ty: ignore[invalid-argument-type]
+            SecondaryFields,  # ty: ignore[invalid-argument-type]
             cache_seconds=cache_seconds,
         )
         return cls

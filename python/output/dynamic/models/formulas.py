@@ -37,7 +37,7 @@ class FormulasModel(Model):
         memoize = True
 
     def to_record_dict(self, only_writable: bool = False) -> FormulasRecordDict:
-        return self.to_record(only_writable)
+        return self.to_record(only_writable)  # ty: ignore[invalid-return-type]
 
     def url(self, view: FormulasView | None = None) -> str:
         """Get the URL for this record in Airtable, with optional view."""

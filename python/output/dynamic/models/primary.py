@@ -44,7 +44,7 @@ class PrimaryModel(Model):
         memoize = True
 
     def to_record_dict(self, only_writable: bool = False) -> PrimaryRecordDict:
-        return self.to_record(only_writable)
+        return self.to_record(only_writable)  # ty: ignore[invalid-return-type]
 
     def URL(self, view: PrimaryView | None = None) -> str:
         """Get the URL for this record in Airtable, with optional view."""
@@ -377,17 +377,17 @@ class PrimaryModel(Model):
     """Last Modified By `fldF8iDttqP0AgzWC` - `Read-Only Field`"""
     last_modified_time: LastModifiedTimeField = LastModifiedTimeField(field_name="fldMinKh4pa3YX86g", readonly=True)
     """Last Modified Time `fldMinKh4pa3YX86g` - `Read-Only Field`"""
-    link_multiple: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fldFyFheQWczd8oux", model="output.dynamic.models.secondary.SecondaryModel") # type: ignore
+    link_multiple: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fldFyFheQWczd8oux", model="output.dynamic.models.secondary.SecondaryModel") # ty: ignore
     """Link (multiple) `fldFyFheQWczd8oux`"""
-    link_single: "SecondaryModel" = SingleLinkField["SecondaryModel"](field_name="fld7F5onkDo6mkmbN", model="output.dynamic.models.secondary.SecondaryModel") # type: ignore
+    link_single: "SecondaryModel" = SingleLinkField["SecondaryModel"](field_name="fld7F5onkDo6mkmbN", model="output.dynamic.models.secondary.SecondaryModel") # ty: ignore
     """Link (single) `fld7F5onkDo6mkmbN`"""
     long_text: MultilineTextField = MultilineTextField(field_name="fld8ulc6J0W29M6La")
     """Long Text `fld8ulc6J0W29M6La`"""
     long_text_with_rich_text: MultilineTextField = MultilineTextField(field_name="fldHJkxCMC0xo343u")
     """Long Text with Rich Text `fldHJkxCMC0xo343u`"""
-    lookup: LookupField = LookupField[list[str]](field_name="fldbmFmrzYKBktJvE", readonly=True)
+    lookup: LookupField[list[str]] = LookupField(field_name="fldbmFmrzYKBktJvE", readonly=True)
     """Lookup `fldbmFmrzYKBktJvE` - `Read-Only Field`"""
-    multiple_select: list[PrimaryMultipleSelectOption] = MultipleSelectField(field_name="fld6GTabFmu1xKPvZ") # type: ignore
+    multiple_select: list[PrimaryMultipleSelectOption] = MultipleSelectField(field_name="fld6GTabFmu1xKPvZ") # ty: ignore
     """Multiple Select `fld6GTabFmu1xKPvZ`"""
     number_float: NumberField = NumberField(field_name="fldmU0X2l4RWd21dd")
     """Number (float) `fldmU0X2l4RWd21dd`"""

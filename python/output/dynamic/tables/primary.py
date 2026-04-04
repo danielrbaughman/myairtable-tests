@@ -42,17 +42,17 @@ class PrimaryTable(AirtableTable[PrimaryRecordDict, PrimaryCreateRecordDict, Pri
     You can also use the ORM Models directly. See https://pyairtable.readthedocs.io/en/stable/orm.html#
     """
     @classmethod
-    def from_table(cls, table: Table, cache_seconds: int = 0):
+    def from_table(cls, table: Table, cache_seconds: int = 0):  # ty: ignore
         cls = super().from_table(
             table,
-            PrimaryRecordDict,
-            PrimaryCreateRecordDict,
-            PrimaryUpdateRecordDict,
-            PrimaryModel,
+            PrimaryRecordDict,  # ty: ignore[invalid-argument-type]
+            PrimaryCreateRecordDict,  # ty: ignore[invalid-argument-type]
+            PrimaryUpdateRecordDict,  # ty: ignore[invalid-argument-type]
+            PrimaryModel,  # ty: ignore[invalid-argument-type]
             PrimaryCalculatedFields,
             PrimaryCalculatedFieldIds,
-            PrimaryViewNameIdMapping,
-            PrimaryFields,
+            PrimaryViewNameIdMapping,  # ty: ignore[invalid-argument-type]
+            PrimaryFields,  # ty: ignore[invalid-argument-type]
             cache_seconds=cache_seconds,
         )
         return cls

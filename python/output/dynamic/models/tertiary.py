@@ -35,7 +35,7 @@ class TertiaryModel(Model):
         memoize = True
 
     def to_record_dict(self, only_writable: bool = False) -> TertiaryRecordDict:
-        return self.to_record(only_writable)
+        return self.to_record(only_writable)  # ty: ignore[invalid-return-type]
 
     def url(self, view: TertiaryView | None = None) -> str:
         """Get the URL for this record in Airtable, with optional view."""
@@ -50,7 +50,7 @@ class TertiaryModel(Model):
 
     name: SingleLineTextField = SingleLineTextField(field_name="fldwzqKxsRnPZJ2Ll")
     """Name `fldwzqKxsRnPZJ2Ll` - `Primary Key`"""
-    secondary: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fld8lCuUXpEXkIeYv", model="output.dynamic.models.secondary.SecondaryModel") # type: ignore
+    secondary: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fld8lCuUXpEXkIeYv", model="output.dynamic.models.secondary.SecondaryModel") # ty: ignore
     """Secondary `fld8lCuUXpEXkIeYv`"""
     value: SingleLineTextField = SingleLineTextField(field_name="fldjNLBh2UccM64h5")
     """Value `fldjNLBh2UccM64h5`"""
