@@ -28,7 +28,7 @@ class PrimaryCreateRecordDict(CreateRecordDict):
     }
     ```
     """
-    fields: dict[PrimaryField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[PrimaryField, Any]  # ty: ignore
 
 
 class PrimaryIdsCreateRecordDict(CreateRecordDict):
@@ -48,7 +48,7 @@ class PrimaryIdsCreateRecordDict(CreateRecordDict):
     }
     ```
     """
-    fields: PrimaryFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: PrimaryFieldsDict  # ty: ignore
 
 
 class PrimaryUpdateRecordDict(UpdateRecordDict):
@@ -69,7 +69,7 @@ class PrimaryUpdateRecordDict(UpdateRecordDict):
     }
     ```
     """
-    fields: dict[PrimaryField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[PrimaryField, Any]  # ty: ignore
 
 
 class PrimaryIdsUpdateRecordDict(UpdateRecordDict):
@@ -90,7 +90,7 @@ class PrimaryIdsUpdateRecordDict(UpdateRecordDict):
     }
     ```
     """
-    fields: PrimaryFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: PrimaryFieldsDict  # ty: ignore
 
 
 class PrimaryRecordDict(RecordDict):
@@ -112,7 +112,7 @@ class PrimaryRecordDict(RecordDict):
     }
     ```
     """
-    fields: dict[PrimaryField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[PrimaryField, Any]  # ty: ignore
 
 
 class PrimaryIdsRecordDict(RecordDict):
@@ -133,6 +133,6 @@ class PrimaryIdsRecordDict(RecordDict):
     }
     ```
     """
-    fields: PrimaryFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: PrimaryFieldsDict  # ty: ignore
 
 

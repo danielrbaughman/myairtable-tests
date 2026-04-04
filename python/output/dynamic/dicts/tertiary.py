@@ -28,7 +28,7 @@ class TertiaryCreateRecordDict(CreateRecordDict):
     }
     ```
     """
-    fields: dict[TertiaryField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[TertiaryField, Any]  # ty: ignore
 
 
 class TertiaryIdsCreateRecordDict(CreateRecordDict):
@@ -48,7 +48,7 @@ class TertiaryIdsCreateRecordDict(CreateRecordDict):
     }
     ```
     """
-    fields: TertiaryFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: TertiaryFieldsDict  # ty: ignore
 
 
 class TertiaryUpdateRecordDict(UpdateRecordDict):
@@ -69,7 +69,7 @@ class TertiaryUpdateRecordDict(UpdateRecordDict):
     }
     ```
     """
-    fields: dict[TertiaryField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[TertiaryField, Any]  # ty: ignore
 
 
 class TertiaryIdsUpdateRecordDict(UpdateRecordDict):
@@ -90,7 +90,7 @@ class TertiaryIdsUpdateRecordDict(UpdateRecordDict):
     }
     ```
     """
-    fields: TertiaryFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: TertiaryFieldsDict  # ty: ignore
 
 
 class TertiaryRecordDict(RecordDict):
@@ -112,7 +112,7 @@ class TertiaryRecordDict(RecordDict):
     }
     ```
     """
-    fields: dict[TertiaryField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[TertiaryField, Any]  # ty: ignore
 
 
 class TertiaryIdsRecordDict(RecordDict):
@@ -133,6 +133,6 @@ class TertiaryIdsRecordDict(RecordDict):
     }
     ```
     """
-    fields: TertiaryFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: TertiaryFieldsDict  # ty: ignore
 
 

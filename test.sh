@@ -2,9 +2,10 @@
 set -e
 
 usage() {
-    echo "Usage: ./test.sh <ts|js|py|rs> [--all|--crud|--json|--filter|--runtime|--help]"
+    echo "Usage: ./test.sh <all|ts|js|py|rs> [--all|--crud|--json|--filter|--runtime|--help]"
     echo ""
     echo "Arguments:"
+    echo "  all       Run tests for all languages"
     echo "  ts        Run TypeScript tests"
     echo "  js        Run JavaScript tests"
     echo "  py        Run Python tests"
@@ -23,6 +24,18 @@ usage() {
 LANG_ARG="$1"
 
 case "$LANG_ARG" in
+    all)
+        SUITE="${2:---all}"
+        for lang in ts js py rs; do
+            echo ""
+            echo "========================================="
+            echo "  Running $lang tests ($SUITE)"
+            echo "========================================="
+            echo ""
+            ./test.sh "$lang" "$SUITE"
+        done
+        exit 0
+        ;;
     ts)
         TEST_DIR="typescript/tests"
         EXT="ts"
@@ -38,7 +51,7 @@ case "$LANG_ARG" in
         RUST_DIR="rust"
         ;;
     *)
-        echo "Error: first argument must be 'ts', 'js', 'py', or 'rs'"
+        echo "Error: first argument must be 'all', 'ts', 'js', 'py', or 'rs'"
         echo ""
         usage
         exit 1

@@ -28,7 +28,7 @@ class SecondaryCreateRecordDict(CreateRecordDict):
     }
     ```
     """
-    fields: dict[SecondaryField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[SecondaryField, Any]  # ty: ignore
 
 
 class SecondaryIdsCreateRecordDict(CreateRecordDict):
@@ -48,7 +48,7 @@ class SecondaryIdsCreateRecordDict(CreateRecordDict):
     }
     ```
     """
-    fields: SecondaryFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: SecondaryFieldsDict  # ty: ignore
 
 
 class SecondaryUpdateRecordDict(UpdateRecordDict):
@@ -69,7 +69,7 @@ class SecondaryUpdateRecordDict(UpdateRecordDict):
     }
     ```
     """
-    fields: dict[SecondaryField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[SecondaryField, Any]  # ty: ignore
 
 
 class SecondaryIdsUpdateRecordDict(UpdateRecordDict):
@@ -90,7 +90,7 @@ class SecondaryIdsUpdateRecordDict(UpdateRecordDict):
     }
     ```
     """
-    fields: SecondaryFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: SecondaryFieldsDict  # ty: ignore
 
 
 class SecondaryRecordDict(RecordDict):
@@ -112,7 +112,7 @@ class SecondaryRecordDict(RecordDict):
     }
     ```
     """
-    fields: dict[SecondaryField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[SecondaryField, Any]  # ty: ignore
 
 
 class SecondaryIdsRecordDict(RecordDict):
@@ -133,6 +133,6 @@ class SecondaryIdsRecordDict(RecordDict):
     }
     ```
     """
-    fields: SecondaryFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: SecondaryFieldsDict  # ty: ignore
 
 

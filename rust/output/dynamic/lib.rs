@@ -2,6 +2,8 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
+#![allow(unused_imports)]
+
 #[path = "../static/airtable_model.rs"]
 pub mod airtable_model;
 #[path = "../static/airtable_runtime.rs"]

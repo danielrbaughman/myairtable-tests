@@ -28,7 +28,7 @@ class FormulasCreateRecordDict(CreateRecordDict):
     }
     ```
     """
-    fields: dict[FormulasField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[FormulasField, Any]  # ty: ignore
 
 
 class FormulasIdsCreateRecordDict(CreateRecordDict):
@@ -48,7 +48,7 @@ class FormulasIdsCreateRecordDict(CreateRecordDict):
     }
     ```
     """
-    fields: FormulasFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: FormulasFieldsDict  # ty: ignore
 
 
 class FormulasUpdateRecordDict(UpdateRecordDict):
@@ -69,7 +69,7 @@ class FormulasUpdateRecordDict(UpdateRecordDict):
     }
     ```
     """
-    fields: dict[FormulasField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[FormulasField, Any]  # ty: ignore
 
 
 class FormulasIdsUpdateRecordDict(UpdateRecordDict):
@@ -90,7 +90,7 @@ class FormulasIdsUpdateRecordDict(UpdateRecordDict):
     }
     ```
     """
-    fields: FormulasFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: FormulasFieldsDict  # ty: ignore
 
 
 class FormulasRecordDict(RecordDict):
@@ -112,7 +112,7 @@ class FormulasRecordDict(RecordDict):
     }
     ```
     """
-    fields: dict[FormulasField, Any]  # ty: ignore[invalid-typed-dict-field]
+    fields: dict[FormulasField, Any]  # ty: ignore
 
 
 class FormulasIdsRecordDict(RecordDict):
@@ -133,6 +133,6 @@ class FormulasIdsRecordDict(RecordDict):
     }
     ```
     """
-    fields: FormulasFieldsDict  # ty: ignore[invalid-typed-dict-field]
+    fields: FormulasFieldsDict  # ty: ignore
 
 
