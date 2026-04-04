@@ -271,14 +271,14 @@ class TestComplexPropertiesAttachments:
     def test_create(self, airtable: Airtable):
         model = PrimaryModel()
         model.primary_key = "Attachment Test"
-        model.attachment = [
+        model.attachment = [  # ty: ignore[invalid-assignment]
             {"url": "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"},
         ]
         model.save()
         self.__class__.id = model.id
         assert model.id
         assert len(model.attachment) == 1
-        assert model.attachment[0]["url"]
+        assert model.attachment[0]["url"]  # ty: ignore[invalid-key]
 
     def test_read(self, airtable: Airtable):
         read = None
@@ -287,8 +287,9 @@ class TestComplexPropertiesAttachments:
             read = airtable.primary.get(self.id)
             if read.attachment:
                 break
+        assert read is not None
         assert len(read.attachment) == 1
-        assert read.attachment[0]["url"]
+        assert read.attachment[0]["url"]  # ty: ignore[invalid-key]
 
     def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
@@ -303,24 +304,24 @@ class TestComplexPropertiesUser:
     def test_create(self, airtable: Airtable):
         model = PrimaryModel()
         model.primary_key = "User Test"
-        model.user = {"id": "usrnZ4k98m0Ipji4e", "email": "9vymqckyxq@privaterelay.appleid.com", "name": "Daniel Baughman"}
-        model.user_allow_multiple = [
+        model.user = {"id": "usrnZ4k98m0Ipji4e", "email": "9vymqckyxq@privaterelay.appleid.com", "name": "Daniel Baughman"}  # ty: ignore[invalid-assignment]
+        model.user_allow_multiple = [  # ty: ignore[invalid-assignment]
             {"id": "usrnZ4k98m0Ipji4e", "email": "9vymqckyxq@privaterelay.appleid.com", "name": "Daniel Baughman"},
         ]
         model.save()
         self.__class__.id = model.id
         assert model.id
         assert model.user
-        assert model.user["id"] == "usrnZ4k98m0Ipji4e"
+        assert model.user["id"] == "usrnZ4k98m0Ipji4e"  # ty: ignore[invalid-key]
         assert len(model.user_allow_multiple) == 1
-        assert model.user_allow_multiple[0]["id"] == "usrnZ4k98m0Ipji4e"
+        assert model.user_allow_multiple[0]["id"] == "usrnZ4k98m0Ipji4e"  # ty: ignore[invalid-key]
 
     def test_read(self, airtable: Airtable):
         read = airtable.primary.get(self.id)
         assert read.user
-        assert read.user["id"] == "usrnZ4k98m0Ipji4e"
+        assert read.user["id"] == "usrnZ4k98m0Ipji4e"  # ty: ignore[invalid-key]
         assert len(read.user_allow_multiple) == 1
-        assert read.user_allow_multiple[0]["id"] == "usrnZ4k98m0Ipji4e"
+        assert read.user_allow_multiple[0]["id"] == "usrnZ4k98m0Ipji4e"  # ty: ignore[invalid-key]
 
     def test_delete(self, airtable: Airtable):
         r = airtable.primary.get(self.id)
