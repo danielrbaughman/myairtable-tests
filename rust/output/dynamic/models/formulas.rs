@@ -8,7 +8,17 @@ use crate::types::RecordId;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
-/// ORM model for `Formulas`
+/// ORM model for `Formulas`.
+///
+/// # Example
+///
+/// ```ignore
+/// let record = airtable.formulas.get_one("rec123").await?;
+/// println!("{:?}", record);
+///
+/// let new = CreateFormulasModel { ..Default::default() };
+/// let created = airtable.formulas.create_one(&new).await?;
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct FormulasModel {
     #[serde(skip)]

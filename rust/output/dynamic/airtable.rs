@@ -16,6 +16,16 @@ use crate::table::StructTable;
 use crate::types::{build_url, AirtableQuery, RecordId};
 
 /// Table accessor for `Formulas`. ORM by default, `.dict` for raw records.
+///
+/// # Example
+///
+/// ```ignore
+/// // ORM access (typed models)
+/// let record = airtable.formulas.get_one("rec123").await?;
+///
+/// // Dict access (raw JSON fields)
+/// let record = airtable.formulas.dict.get_one("rec123", true).await?;
+/// ```
 pub struct FormulasTable {
     /// Raw record (dict) access.
     pub dict: StructTable,
@@ -92,6 +102,16 @@ impl FormulasTable {
 }
 
 /// Table accessor for `Primary`. ORM by default, `.dict` for raw records.
+///
+/// # Example
+///
+/// ```ignore
+/// // ORM access (typed models)
+/// let record = airtable.primary.get_one("rec123").await?;
+///
+/// // Dict access (raw JSON fields)
+/// let record = airtable.primary.dict.get_one("rec123", true).await?;
+/// ```
 pub struct PrimaryTable {
     /// Raw record (dict) access.
     pub dict: StructTable,
@@ -168,6 +188,16 @@ impl PrimaryTable {
 }
 
 /// Table accessor for `Secondary`. ORM by default, `.dict` for raw records.
+///
+/// # Example
+///
+/// ```ignore
+/// // ORM access (typed models)
+/// let record = airtable.secondary.get_one("rec123").await?;
+///
+/// // Dict access (raw JSON fields)
+/// let record = airtable.secondary.dict.get_one("rec123", true).await?;
+/// ```
 pub struct SecondaryTable {
     /// Raw record (dict) access.
     pub dict: StructTable,
@@ -244,6 +274,16 @@ impl SecondaryTable {
 }
 
 /// Table accessor for `Tertiary`. ORM by default, `.dict` for raw records.
+///
+/// # Example
+///
+/// ```ignore
+/// // ORM access (typed models)
+/// let record = airtable.tertiary.get_one("rec123").await?;
+///
+/// // Dict access (raw JSON fields)
+/// let record = airtable.tertiary.dict.get_one("rec123", true).await?;
+/// ```
 pub struct TertiaryTable {
     /// Raw record (dict) access.
     pub dict: StructTable,
@@ -320,6 +360,13 @@ impl TertiaryTable {
 }
 
 /// Main entry point for the Airtable base.
+///
+/// # Example
+///
+/// ```ignore
+/// let airtable = Airtable::new("api_key", "base_id");
+/// let records = airtable.formulas.get_many(&AirtableQuery::new()).await?;
+/// ```
 pub struct Airtable {
     client: Arc<AirtableClient>,
     /// `Formulas`

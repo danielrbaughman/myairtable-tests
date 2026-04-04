@@ -9,7 +9,17 @@ use crate::types::{AirtableButton, Attachment, Collaborator, RecordId};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
-/// ORM model for `Primary`
+/// ORM model for `Primary`.
+///
+/// # Example
+///
+/// ```ignore
+/// let record = airtable.primary.get_one("rec123").await?;
+/// println!("{:?}", record);
+///
+/// let new = CreatePrimaryModel { ..Default::default() };
+/// let created = airtable.primary.create_one(&new).await?;
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct PrimaryModel {
     #[serde(skip)]

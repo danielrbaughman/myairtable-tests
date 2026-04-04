@@ -6,7 +6,17 @@ use crate::airtable_model::{ModelMeta, OrmModel};
 use crate::types::RecordId;
 use serde::{Deserialize, Serialize};
 
-/// ORM model for `Secondary`
+/// ORM model for `Secondary`.
+///
+/// # Example
+///
+/// ```ignore
+/// let record = airtable.secondary.get_one("rec123").await?;
+/// println!("{:?}", record);
+///
+/// let new = CreateSecondaryModel { ..Default::default() };
+/// let created = airtable.secondary.create_one(&new).await?;
+/// ```
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct SecondaryModel {
     #[serde(skip)]
