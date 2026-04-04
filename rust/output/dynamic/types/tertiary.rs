@@ -20,6 +20,46 @@ impl TertiaryFields {
     pub const VALUE: &'static str = "Value";
     /// `Value` (field ID)
     pub const VALUE_ID: &'static str = "fldjNLBh2UccM64h5";
+
+    /// Look up a field ID by its Airtable field name.
+    pub fn id_by_name(name: &str) -> Option<&'static str> {
+        match name {
+            "Name" => Some("fldwzqKxsRnPZJ2Ll"),
+            "Secondary" => Some("fld8lCuUXpEXkIeYv"),
+            "Value" => Some("fldjNLBh2UccM64h5"),
+            _ => None,
+        }
+    }
+
+    /// Look up an Airtable field name by its field ID.
+    pub fn name_by_id(id: &str) -> Option<&'static str> {
+        match id {
+            "fldwzqKxsRnPZJ2Ll" => Some("Name"),
+            "fld8lCuUXpEXkIeYv" => Some("Secondary"),
+            "fldjNLBh2UccM64h5" => Some("Value"),
+            _ => None,
+        }
+    }
+
+    /// Look up a Rust property name by field ID.
+    pub fn property_by_id(id: &str) -> Option<&'static str> {
+        match id {
+            "fldwzqKxsRnPZJ2Ll" => Some("name"),
+            "fld8lCuUXpEXkIeYv" => Some("secondary"),
+            "fldjNLBh2UccM64h5" => Some("value"),
+            _ => None,
+        }
+    }
+
+    /// Look up a field ID by Rust property name.
+    pub fn id_by_property(property: &str) -> Option<&'static str> {
+        match property {
+            "name" => Some("fldwzqKxsRnPZJ2Ll"),
+            "secondary" => Some("fld8lCuUXpEXkIeYv"),
+            "value" => Some("fldjNLBh2UccM64h5"),
+            _ => None,
+        }
+    }
 }
 
 /// Views for `Tertiary`

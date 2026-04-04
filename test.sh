@@ -88,6 +88,21 @@ elif [ "$LANG_ARG" = "rs" ]; then
         --all)
             TEST_CMD="cargo test --manifest-path Cargo.toml"
             ;;
+        --crud)
+            TEST_CMD="cargo test --test test_struct_crud_via_table --test test_orm_crud_via_table --test test_orm_crud_via_model"
+            ;;
+        --json)
+            TEST_CMD="cargo test --test test_serializing"
+            ;;
+        --filter)
+            TEST_CMD="cargo test --test test_filter_by_formula"
+            ;;
+        --runtime)
+            TEST_CMD="cargo test --test test_runtime_formulas"
+            ;;
+        --cache)
+            TEST_CMD="cargo test --test test_caching"
+            ;;
         *)
             echo "Unknown option: $SUITE"
             echo ""
