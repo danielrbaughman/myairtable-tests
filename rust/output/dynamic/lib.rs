@@ -44,6 +44,7 @@ pub use field_types::{CreateFormulasFields, FormulasFields, FormulasView};
 pub use field_types::{CreatePrimaryFields, PrimaryFields, PrimaryView};
 pub use field_types::{CreateSecondaryFields, SecondaryFields, SecondaryView};
 pub use field_types::{CreateTertiaryFields, TertiaryFields, TertiaryView};
+pub use formula::{FormulaField, FormulaTextOps};
 pub use formulas::FormulasFormulas;
 pub use formulas::PrimaryFormulas;
 pub use formulas::SecondaryFormulas;
