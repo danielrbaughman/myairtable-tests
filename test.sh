@@ -160,11 +160,8 @@ fi
 
 if [ "$LANG_ARG" = "py" ]; then
     uv sync
-    uv run ruff check
-    uv run ruff format
     $TEST_CMD
 elif [ "$LANG_ARG" = "rs" ]; then
-    cargo fmt
     $TEST_CMD
 else
     if ! command -v nvm &> /dev/null; then
@@ -175,7 +172,7 @@ else
     nvm use
 
     yarn install
-    yarn lint
-    yarn format
     $TEST_CMD
 fi
+
+./checks.sh
