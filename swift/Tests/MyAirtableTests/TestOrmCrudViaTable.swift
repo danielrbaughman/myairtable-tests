@@ -148,6 +148,52 @@ struct TestOrmCrudViaTable {
         }
     }
 
+    // MARK: - Batch create / update / delete (chunks by 10)
+
+    @Test("Batch create / update / delete chunks above Airtable's 10-per-call limit")
+    func batchCreateUpdateDelete() async throws {
+        // 25 records exercises the chunking path (3 batches: 10 + 10 + 5).
+        let count = 25
+        let suite = TestSetup.primaryKey(for: "OrmTable", "Batch")
+
+        let creates = (1...count).map { i in
+            // Init params are alphabetical (numberInt before primaryKey).
+            CreatePrimaryModel(numberInt: i, primaryKey: "\(suite) \(i)")
+        }
+        let created = try await airtable.primary.create(creates)
+        #expect(created.count == count)
+        for (i, model) in created.enumerated() {
+            #expect(model.primaryKey == "\(suite) \(i + 1)")
+        }
+
+        let ids = created.compactMap { $0.id }
+        guard ids.count == count else {
+            Issue.record("Some created records were missing ids")
+            return
+        }
+
+        do {
+            // Update all: mutate each model's primaryKey, then batch-update.
+            for (i, model) in created.enumerated() {
+                model.primaryKey = "\(suite) \(i + 1) Updated"
+            }
+            let updated = try await airtable.primary.update(created)
+            #expect(updated.count == count)
+            for (i, model) in updated.enumerated() {
+                #expect(model.primaryKey == "\(suite) \(i + 1) Updated")
+            }
+
+            // Delete all by ID list.
+            try await airtable.primary.delete(ids)
+            await #expect(throws: AirtableError.self) {
+                _ = try await airtable.primary.get(ids[0])
+            }
+        } catch {
+            try? await airtable.primary.delete(ids)
+            throw error
+        }
+    }
+
     // MARK: - Upsert
 
     @Test("upsertOne inserts when no match exists")
