@@ -25,7 +25,7 @@ struct TestStructCrudViaTable {
         fields.setString(PrimaryFields.primaryKeyId, primaryKey)
 
         // Create
-        let created = try await airtable.primary.dict.create(fields, typecast: true)
+        let created = try await airtable.primary.dict.create(fields)
         #expect(!created.id.isEmpty)
         #expect(created.fields.getString(PrimaryFields.primaryKeyId) == primaryKey)
 
@@ -42,7 +42,7 @@ struct TestStructCrudViaTable {
             let updatedKey = primaryKey + " Updated"
             update.setString(PrimaryFields.primaryKeyId, updatedKey)
             let updated = try await airtable.primary.dict.update(
-                recordId, fields: update, typecast: true)
+                recordId, fields: update)
             #expect(updated.fields.getString(PrimaryFields.primaryKeyId) == updatedKey)
 
             // Delete + verify gone
@@ -71,7 +71,7 @@ struct TestStructCrudViaTable {
         // Set by ID…
         fields.setString(PrimaryFields.primaryKeyId, primaryKey)
 
-        let created = try await airtable.primary.dict.create(fields, typecast: true)
+        let created = try await airtable.primary.dict.create(fields)
         let recordId = created.id
 
         do {
@@ -115,7 +115,7 @@ struct TestStructCrudViaTable {
         fields.setString(PrimaryFields.singleSelectId, "Choice 1")
         fields.setStrings(PrimaryFields.multipleSelectId, ["Option 1", "Option 2"])
 
-        let created = try await airtable.primary.dict.create(fields, typecast: true)
+        let created = try await airtable.primary.dict.create(fields)
         let recordId = created.id
 
         do {

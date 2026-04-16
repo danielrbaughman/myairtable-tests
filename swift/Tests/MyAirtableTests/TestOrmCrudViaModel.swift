@@ -31,8 +31,7 @@ struct TestOrmCrudViaModel {
 
         // Create has to go through the Create payload (class can't self-create).
         let created = try await airtable.primary.create(
-            CreatePrimaryModel(primaryKey: primaryKey),
-            typecast: true
+            CreatePrimaryModel(primaryKey: primaryKey)
         )
         #expect(created.isNew == false)
         #expect(created.primaryKey == primaryKey)
@@ -51,7 +50,7 @@ struct TestOrmCrudViaModel {
             // Update via model.save()
             fetched.primaryKey = primaryKey + " Updated"
             #expect(!fetched.dirtyFields().isEmpty)
-            let saved = try await fetched.save(typecast: true)
+            let saved = try await fetched.save()
             #expect(saved.primaryKey == primaryKey + " Updated")
 
             // Delete via model.delete()
@@ -77,8 +76,7 @@ struct TestOrmCrudViaModel {
     func dirtyTrackingAcrossSave() async throws {
         let primaryKey = TestSetup.primaryKey(for: "OrmModel", "Dirty")
         let created = try await airtable.primary.create(
-            CreatePrimaryModel(primaryKey: primaryKey),
-            typecast: true
+            CreatePrimaryModel(primaryKey: primaryKey)
         )
         guard let recordId = created.id else {
             Issue.record("Missing id")
@@ -97,7 +95,7 @@ struct TestOrmCrudViaModel {
             #expect(dirty[PrimaryFields.singleLineTextId] == .string("First"))
 
             // Save — the returned model is a fresh instance with a fresh snapshot.
-            let saved = try await created.save(typecast: true)
+            let saved = try await created.save()
             #expect(saved.dirtyFields().isEmpty)
             #expect(saved.singleLineText == "First")
 

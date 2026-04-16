@@ -23,7 +23,7 @@ struct TestOrmCrudViaTable {
         let new = CreatePrimaryModel(primaryKey: primaryKey)
 
         // Create
-        let created = try await airtable.primary.create(new, typecast: true)
+        let created = try await airtable.primary.create(new)
         #expect(created.id != nil)
         #expect(created.primaryKey == primaryKey)
         guard let recordId = created.id else {
@@ -41,7 +41,7 @@ struct TestOrmCrudViaTable {
             // Update via model + dirty tracking
             fetched.primaryKey = primaryKey + " Updated"
             #expect(!fetched.dirtyFields().isEmpty)
-            let updated = try await airtable.primary.update(fetched, typecast: true)
+            let updated = try await airtable.primary.update(fetched)
             #expect(updated.primaryKey == primaryKey + " Updated")
 
             // Delete + verify gone
@@ -84,7 +84,7 @@ struct TestOrmCrudViaTable {
             url: "https://example.com"
         )
 
-        let created = try await airtable.primary.create(new, typecast: true)
+        let created = try await airtable.primary.create(new)
         guard let recordId = created.id else {
             Issue.record("Missing id on created model")
             return
@@ -119,8 +119,7 @@ struct TestOrmCrudViaTable {
         do {
             for i in 0..<3 {
                 let model = try await airtable.primary.create(
-                    CreatePrimaryModel(primaryKey: "\(suite) \(i)"),
-                    typecast: true
+                    CreatePrimaryModel(primaryKey: "\(suite) \(i)")
                 )
                 if let id = model.id { createdIds.append(id) }
             }
@@ -158,8 +157,7 @@ struct TestOrmCrudViaTable {
 
         let (model, wasCreated) = try await airtable.primary.upsert(
             new,
-            matchFieldsToMerge: [PrimaryFields.primaryKeyId],
-            typecast: true
+            matchFieldsToMerge: [PrimaryFields.primaryKeyId]
         )
         #expect(wasCreated)
         #expect(model.primaryKey == primaryKey)
@@ -175,8 +173,7 @@ struct TestOrmCrudViaTable {
 
         // Seed a record.
         let seeded = try await airtable.primary.create(
-            CreatePrimaryModel(primaryKey: primaryKey, singleLineText: "before"),
-            typecast: true
+            CreatePrimaryModel(primaryKey: primaryKey, singleLineText: "before")
         )
         guard let seededId = seeded.id else {
             Issue.record("Missing id on seeded model")
@@ -187,8 +184,7 @@ struct TestOrmCrudViaTable {
             // Upsert by primary key; should match the seeded record and update it.
             let (merged, wasCreated) = try await airtable.primary.upsert(
                 CreatePrimaryModel(primaryKey: primaryKey, singleLineText: "after"),
-                matchFieldsToMerge: [PrimaryFields.primaryKeyId],
-                typecast: true
+                matchFieldsToMerge: [PrimaryFields.primaryKeyId]
             )
             #expect(!wasCreated)
             #expect(merged.id == seededId)
