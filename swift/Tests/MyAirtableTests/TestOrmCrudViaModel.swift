@@ -30,7 +30,7 @@ struct TestOrmCrudViaModel {
         let primaryKey = TestSetup.primaryKey(for: "OrmModel", "PKOnly")
 
         // Create has to go through the Create payload (class can't self-create).
-        let created = try await airtable.primary.createOne(
+        let created = try await airtable.primary.create(
             CreatePrimaryModel(primaryKey: primaryKey),
             typecast: true
         )
@@ -66,7 +66,7 @@ struct TestOrmCrudViaModel {
             }
             #expect(wasDeleted)
         } catch {
-            try? await airtable.primary.deleteOne(recordId)
+            try? await airtable.primary.delete(recordId)
             throw error
         }
     }
@@ -76,7 +76,7 @@ struct TestOrmCrudViaModel {
     @Test("Dirty tracking resets after a successful save")
     func dirtyTrackingAcrossSave() async throws {
         let primaryKey = TestSetup.primaryKey(for: "OrmModel", "Dirty")
-        let created = try await airtable.primary.createOne(
+        let created = try await airtable.primary.create(
             CreatePrimaryModel(primaryKey: primaryKey),
             typecast: true
         )
@@ -103,7 +103,7 @@ struct TestOrmCrudViaModel {
 
             try await saved.delete()
         } catch {
-            try? await airtable.primary.deleteOne(recordId)
+            try? await airtable.primary.delete(recordId)
             throw error
         }
     }

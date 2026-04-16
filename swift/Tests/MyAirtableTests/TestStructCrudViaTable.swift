@@ -25,7 +25,7 @@ struct TestStructCrudViaTable {
         fields.setString(PrimaryFields.primaryKeyId, primaryKey)
 
         // Create
-        let created = try await airtable.primary.dict.createOne(fields, typecast: true)
+        let created = try await airtable.primary.dict.create(fields, typecast: true)
         #expect(!created.id.isEmpty)
         #expect(created.fields.getString(PrimaryFields.primaryKeyId) == primaryKey)
 
@@ -33,7 +33,7 @@ struct TestStructCrudViaTable {
 
         do {
             // Read
-            let fetched = try await airtable.primary.dict.getOne(recordId)
+            let fetched = try await airtable.primary.dict.get(recordId)
             #expect(fetched.id == recordId)
             #expect(fetched.fields.getString(PrimaryFields.primaryKeyId) == primaryKey)
 
@@ -41,23 +41,23 @@ struct TestStructCrudViaTable {
             var update = Fields(nameToId: PrimaryFields.nameToId)
             let updatedKey = primaryKey + " Updated"
             update.setString(PrimaryFields.primaryKeyId, updatedKey)
-            let updated = try await airtable.primary.dict.updateOne(
+            let updated = try await airtable.primary.dict.update(
                 recordId, fields: update, typecast: true)
             #expect(updated.fields.getString(PrimaryFields.primaryKeyId) == updatedKey)
 
             // Delete + verify gone
-            try await airtable.primary.dict.deleteOne(recordId)
+            try await airtable.primary.dict.delete(recordId)
 
             var deleted = false
             do {
-                _ = try await airtable.primary.dict.getOne(recordId)
+                _ = try await airtable.primary.dict.get(recordId)
             } catch {
                 deleted = true
             }
             #expect(deleted)
         } catch {
             // Best-effort cleanup on any intermediate failure.
-            try? await airtable.primary.dict.deleteOne(recordId)
+            try? await airtable.primary.dict.delete(recordId)
             throw error
         }
     }
@@ -71,7 +71,7 @@ struct TestStructCrudViaTable {
         // Set by ID…
         fields.setString(PrimaryFields.primaryKeyId, primaryKey)
 
-        let created = try await airtable.primary.dict.createOne(fields, typecast: true)
+        let created = try await airtable.primary.dict.create(fields, typecast: true)
         let recordId = created.id
 
         do {
@@ -81,9 +81,9 @@ struct TestStructCrudViaTable {
             // Also readable by ID.
             let viaId = created.fields.getString(PrimaryFields.primaryKeyId)
             #expect(viaId == primaryKey)
-            try await airtable.primary.dict.deleteOne(recordId)
+            try await airtable.primary.dict.delete(recordId)
         } catch {
-            try? await airtable.primary.dict.deleteOne(recordId)
+            try? await airtable.primary.dict.delete(recordId)
             throw error
         }
     }
@@ -115,7 +115,7 @@ struct TestStructCrudViaTable {
         fields.setString(PrimaryFields.singleSelectId, "Choice 1")
         fields.setStrings(PrimaryFields.multipleSelectId, ["Option 1", "Option 2"])
 
-        let created = try await airtable.primary.dict.createOne(fields, typecast: true)
+        let created = try await airtable.primary.dict.create(fields, typecast: true)
         let recordId = created.id
 
         do {
@@ -132,9 +132,9 @@ struct TestStructCrudViaTable {
             let multi = f.getArray(PrimaryFields.multipleSelectId) ?? []
             #expect(multi.count == 2)
 
-            try await airtable.primary.dict.deleteOne(recordId)
+            try await airtable.primary.dict.delete(recordId)
         } catch {
-            try? await airtable.primary.dict.deleteOne(recordId)
+            try? await airtable.primary.dict.delete(recordId)
             throw error
         }
     }
