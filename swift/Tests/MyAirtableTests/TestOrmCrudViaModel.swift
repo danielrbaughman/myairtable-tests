@@ -1,4 +1,4 @@
-// F4.10 — ORM CRUD via model extension methods (`save` / `refresh` / `delete`).
+// F4.10 — ORM CRUD via model extension methods (`save` / `fetch` / `delete`).
 // Parity with rust/tests/test_orm_crud_via_model.rs's `model.save()` /
 // `.fetch()` / `.delete()` fluent pattern.
 
@@ -30,7 +30,7 @@ struct TestOrmCrudViaModel {
         let primaryKey = TestSetup.primaryKey(for: "OrmModel", "PKOnly")
 
         // Create has to go through the Create payload (class can't self-create).
-        let created = try await airtable.primary.orm.createOne(
+        let created = try await airtable.primary.createOne(
             CreatePrimaryModel(primaryKey: primaryKey),
             typecast: true
         )
@@ -42,31 +42,31 @@ struct TestOrmCrudViaModel {
         }
 
         do {
-            // Refresh — returns a fresh instance with server state.
-            let refreshed = try await created.refresh(via: airtable.primary.orm)
-            #expect(refreshed.id == recordId)
-            #expect(refreshed.primaryKey == primaryKey)
-            #expect(refreshed.dirtyFields().isEmpty)
+            // Fetch — returns a fresh instance with server state.
+            let fetched = try await created.fetch()
+            #expect(fetched.id == recordId)
+            #expect(fetched.primaryKey == primaryKey)
+            #expect(fetched.dirtyFields().isEmpty)
 
             // Update via model.save()
-            refreshed.primaryKey = primaryKey + " Updated"
-            #expect(!refreshed.dirtyFields().isEmpty)
-            let saved = try await refreshed.save(via: airtable.primary.orm, typecast: true)
+            fetched.primaryKey = primaryKey + " Updated"
+            #expect(!fetched.dirtyFields().isEmpty)
+            let saved = try await fetched.save(typecast: true)
             #expect(saved.primaryKey == primaryKey + " Updated")
 
             // Delete via model.delete()
-            try await saved.delete(via: airtable.primary.orm)
+            try await saved.delete()
 
             // Verify deleted
             var wasDeleted = false
             do {
-                _ = try await saved.refresh(via: airtable.primary.orm)
+                _ = try await saved.fetch()
             } catch {
                 wasDeleted = true
             }
             #expect(wasDeleted)
         } catch {
-            try? await airtable.primary.orm.deleteOne(recordId)
+            try? await airtable.primary.deleteOne(recordId)
             throw error
         }
     }
@@ -76,7 +76,7 @@ struct TestOrmCrudViaModel {
     @Test("Dirty tracking resets after a successful save")
     func dirtyTrackingAcrossSave() async throws {
         let primaryKey = TestSetup.primaryKey(for: "OrmModel", "Dirty")
-        let created = try await airtable.primary.orm.createOne(
+        let created = try await airtable.primary.createOne(
             CreatePrimaryModel(primaryKey: primaryKey),
             typecast: true
         )
@@ -97,13 +97,13 @@ struct TestOrmCrudViaModel {
             #expect(dirty[PrimaryFields.singleLineTextId] == .string("First"))
 
             // Save — the returned model is a fresh instance with a fresh snapshot.
-            let saved = try await created.save(via: airtable.primary.orm, typecast: true)
+            let saved = try await created.save(typecast: true)
             #expect(saved.dirtyFields().isEmpty)
             #expect(saved.singleLineText == "First")
 
-            try await saved.delete(via: airtable.primary.orm)
+            try await saved.delete()
         } catch {
-            try? await airtable.primary.orm.deleteOne(recordId)
+            try? await airtable.primary.deleteOne(recordId)
             throw error
         }
     }
@@ -122,12 +122,12 @@ struct TestOrmCrudViaModel {
         #expect(model.isNew == true)
 
         await #expect(throws: AirtableError.self) {
-            try await model.delete(via: airtable.primary.orm)
+            try await model.delete()
         }
     }
 
-    @Test("Refresh on an unsaved model throws")
-    func refreshOnUnsavedThrows() async throws {
+    @Test("Fetch on an unsaved model throws")
+    func fetchOnUnsavedThrows() async throws {
         let json = """
             {"fields": {"\(PrimaryFields.primaryKeyId)": "x"}}
             """
@@ -136,7 +136,7 @@ struct TestOrmCrudViaModel {
         let model = try decoder.decode(PrimaryModel.self, from: Data(json.utf8))
 
         await #expect(throws: AirtableError.self) {
-            _ = try await model.refresh(via: airtable.primary.orm)
+            _ = try await model.fetch()
         }
     }
 }

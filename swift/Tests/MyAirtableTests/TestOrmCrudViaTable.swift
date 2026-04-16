@@ -23,7 +23,7 @@ struct TestOrmCrudViaTable {
         let new = CreatePrimaryModel(primaryKey: primaryKey)
 
         // Create
-        let created = try await airtable.primary.orm.createOne(new, typecast: true)
+        let created = try await airtable.primary.createOne(new, typecast: true)
         #expect(created.id != nil)
         #expect(created.primaryKey == primaryKey)
         guard let recordId = created.id else {
@@ -33,7 +33,7 @@ struct TestOrmCrudViaTable {
 
         do {
             // Read
-            let fetched = try await airtable.primary.orm.getOne(recordId)
+            let fetched = try await airtable.primary.getOne(recordId)
             #expect(fetched.id == recordId)
             #expect(fetched.primaryKey == primaryKey)
             #expect(fetched.dirtyFields().isEmpty)  // fresh decode
@@ -41,20 +41,20 @@ struct TestOrmCrudViaTable {
             // Update via model + dirty tracking
             fetched.primaryKey = primaryKey + " Updated"
             #expect(!fetched.dirtyFields().isEmpty)
-            let updated = try await airtable.primary.orm.updateOne(fetched, typecast: true)
+            let updated = try await airtable.primary.updateOne(fetched, typecast: true)
             #expect(updated.primaryKey == primaryKey + " Updated")
 
             // Delete + verify gone
-            try await airtable.primary.orm.deleteOne(recordId)
+            try await airtable.primary.deleteOne(recordId)
             var deleted = false
             do {
-                _ = try await airtable.primary.orm.getOne(recordId)
+                _ = try await airtable.primary.getOne(recordId)
             } catch {
                 deleted = true
             }
             #expect(deleted)
         } catch {
-            try? await airtable.primary.orm.deleteOne(recordId)
+            try? await airtable.primary.deleteOne(recordId)
             throw error
         }
     }
@@ -84,7 +84,7 @@ struct TestOrmCrudViaTable {
             url: "https://example.com"
         )
 
-        let created = try await airtable.primary.orm.createOne(new, typecast: true)
+        let created = try await airtable.primary.createOne(new, typecast: true)
         guard let recordId = created.id else {
             Issue.record("Missing id on created model")
             return
@@ -101,9 +101,9 @@ struct TestOrmCrudViaTable {
             #expect(created.url == "https://example.com")
             #expect(created.phoneNumber == "555-1234")
 
-            try await airtable.primary.orm.deleteOne(recordId)
+            try await airtable.primary.deleteOne(recordId)
         } catch {
-            try? await airtable.primary.orm.deleteOne(recordId)
+            try? await airtable.primary.deleteOne(recordId)
             throw error
         }
     }
@@ -118,7 +118,7 @@ struct TestOrmCrudViaTable {
 
         do {
             for i in 0..<3 {
-                let model = try await airtable.primary.orm.createOne(
+                let model = try await airtable.primary.createOne(
                     CreatePrimaryModel(primaryKey: "\(suite) \(i)"),
                     typecast: true
                 )
@@ -129,14 +129,14 @@ struct TestOrmCrudViaTable {
             let escaped = suite.replacingOccurrences(of: "\"", with: "\\\"")
             let formula = "FIND(\"\(escaped)\", {Primary Key}) > 0"
             let query = AirtableQuery().withFormula(formula).withMaxRecords(10)
-            let results = try await airtable.primary.orm.getMany(query)
+            let results = try await airtable.primary.getMany(query)
             #expect(results.count == 3)
             #expect(Set(results.compactMap { $0.id }) == Set(createdIds))
         }
 
         // Cleanup
         for id in createdIds {
-            try? await airtable.primary.orm.deleteOne(id)
+            try? await airtable.primary.deleteOne(id)
         }
     }
 
@@ -145,7 +145,7 @@ struct TestOrmCrudViaTable {
     @Test("getOne with a well-formed-but-nonexistent record ID throws")
     func invalidRecordId() async throws {
         await #expect(throws: AirtableError.self) {
-            _ = try await airtable.primary.orm.getOne("recNONEXISTENT__")
+            _ = try await airtable.primary.getOne("recNONEXISTENT__")
         }
     }
 
@@ -156,7 +156,7 @@ struct TestOrmCrudViaTable {
         let primaryKey = TestSetup.primaryKey(for: "OrmTable", "UpsertCreate")
         let new = CreatePrimaryModel(primaryKey: primaryKey)
 
-        let (model, wasCreated) = try await airtable.primary.orm.upsertOne(
+        let (model, wasCreated) = try await airtable.primary.upsertOne(
             new,
             matchFieldsToMerge: [PrimaryFields.primaryKeyId],
             typecast: true
@@ -165,7 +165,7 @@ struct TestOrmCrudViaTable {
         #expect(model.primaryKey == primaryKey)
 
         if let id = model.id {
-            try? await airtable.primary.orm.deleteOne(id)
+            try? await airtable.primary.deleteOne(id)
         }
     }
 
@@ -174,7 +174,7 @@ struct TestOrmCrudViaTable {
         let primaryKey = TestSetup.primaryKey(for: "OrmTable", "UpsertUpdate")
 
         // Seed a record.
-        let seeded = try await airtable.primary.orm.createOne(
+        let seeded = try await airtable.primary.createOne(
             CreatePrimaryModel(primaryKey: primaryKey, singleLineText: "before"),
             typecast: true
         )
@@ -185,7 +185,7 @@ struct TestOrmCrudViaTable {
 
         do {
             // Upsert by primary key; should match the seeded record and update it.
-            let (merged, wasCreated) = try await airtable.primary.orm.upsertOne(
+            let (merged, wasCreated) = try await airtable.primary.upsertOne(
                 CreatePrimaryModel(primaryKey: primaryKey, singleLineText: "after"),
                 matchFieldsToMerge: [PrimaryFields.primaryKeyId],
                 typecast: true
@@ -194,9 +194,9 @@ struct TestOrmCrudViaTable {
             #expect(merged.id == seededId)
             #expect(merged.singleLineText == "after")
 
-            try await airtable.primary.orm.deleteOne(seededId)
+            try await airtable.primary.deleteOne(seededId)
         } catch {
-            try? await airtable.primary.orm.deleteOne(seededId)
+            try? await airtable.primary.deleteOne(seededId)
             throw error
         }
     }
