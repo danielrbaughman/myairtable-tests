@@ -126,8 +126,8 @@ struct TestOrmCrudViaTable {
 
             // Filter to only our seeded records by formula.
             let escaped = suite.replacingOccurrences(of: "\"", with: "\\\"")
-            let formula = "FIND(\"\(escaped)\", {Primary Key}) > 0"
-            let query = AirtableQuery().withFormula(formula).withMaxRecords(10)
+            let filterFormula = "FIND(\"\(escaped)\", {Primary Key}) > 0"
+            let query = AirtableQuery().formula(filterFormula).maxRecords(10)
             let results = try await airtable.primary.get(query)
             #expect(results.count == 3)
             #expect(Set(results.compactMap { $0.id }) == Set(createdIds))
