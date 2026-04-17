@@ -6,7 +6,7 @@ use crate::airtable_model::{ModelMeta, OrmModel};
 use crate::airtable_runtime as F;
 use crate::options::{PrimaryMultipleSelectOption, PrimarySingleSelectOption};
 use crate::types::{
-    AirtableButton, Attachment, Collaborator, MaybeError, MaybeSpecialOrError, RecordId,
+    AirtableButton, Attachment, Collaborator, MaybeSpecialOrError, RecordId, VecOrValue,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -336,7 +336,7 @@ pub struct PrimaryModel {
     #[serde(rename = "fld2vnFc0Bl5IOFUQ")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub formula_complex: Option<MaybeSpecialOrError<String>>,
+    pub formula_complex: Option<VecOrValue<MaybeSpecialOrError<String>>>,
     /// Formula (ID) `fldcf62YFeIIDHElt` - `Read-Only`
     ///
     /// ```text
@@ -354,7 +354,7 @@ pub struct PrimaryModel {
     #[serde(rename = "fldXFeHRPBLz6AiWh")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub formula_nested: Option<MaybeSpecialOrError<String>>,
+    pub formula_nested: Option<VecOrValue<MaybeSpecialOrError<String>>>,
     /// Formula (Simple) `fldy1axxaoUToLVC6` - `Read-Only`
     ///
     /// ```text
@@ -398,7 +398,7 @@ pub struct PrimaryModel {
     #[serde(rename = "fldbmFmrzYKBktJvE")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub lookup: Option<MaybeError<Vec<Option<MaybeSpecialOrError<String>>>>>,
+    pub lookup: Option<VecOrValue<MaybeSpecialOrError<String>>>,
     /// Multiple Select `fld6GTabFmu1xKPvZ`
     #[serde(rename = "fld6GTabFmu1xKPvZ")]
     #[serde(default)]
@@ -413,7 +413,7 @@ pub struct PrimaryModel {
     #[serde(rename = "fldOfPKGmnRPv94QH")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub number_int: Option<i64>,
+    pub number_int: Option<f64>,
     /// Percent (float) `fldiGui9ll69N7WOj`
     #[serde(rename = "fldiGui9ll69N7WOj")]
     #[serde(default)]
@@ -443,7 +443,7 @@ pub struct PrimaryModel {
     #[serde(rename = "fldGaFgBsDC3IBUdV")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub rollup: Option<MaybeError<Vec<Option<MaybeSpecialOrError<String>>>>>,
+    pub rollup: Option<VecOrValue<MaybeSpecialOrError<String>>>,
     /// Single Line Text `fld0BL2lFo9fqcKv3`
     #[serde(rename = "fld0BL2lFo9fqcKv3")]
     #[serde(default)]
@@ -900,7 +900,7 @@ pub struct CreatePrimaryModel {
     #[serde(rename = "fldOfPKGmnRPv94QH")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub number_int: Option<i64>,
+    pub number_int: Option<f64>,
     #[serde(rename = "fldiGui9ll69N7WOj")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]

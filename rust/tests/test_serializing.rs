@@ -216,7 +216,7 @@ fn model_to_json_has_field_values() {
         primary_key: Some("ToJson Test".to_string()),
         single_line_text: Some("Hello".to_string()),
         checkbox: Some(true),
-        number_int: Some(42),
+        number_int: Some(42.0),
         single_select: Some(PrimarySingleSelectOption::Choice1),
         ..Default::default()
     };
@@ -233,7 +233,7 @@ fn model_to_json_has_field_values() {
         "Hello"
     );
     assert_eq!(obj.get(PrimaryFields::CHECKBOX_ID).unwrap(), true);
-    assert_eq!(obj.get(PrimaryFields::NUMBER_INT_ID).unwrap(), 42);
+    assert_eq!(obj.get(PrimaryFields::NUMBER_INT_ID).unwrap(), 42.0);
     assert_eq!(
         obj.get(PrimaryFields::SINGLE_SELECT_ID).unwrap(),
         "Choice 1"
@@ -263,7 +263,7 @@ fn model_to_json_skips_none_fields() {
 fn model_to_record_has_id_and_fields() {
     let mut model = PrimaryModel {
         primary_key: Some("ToRecord Test".to_string()),
-        number_int: Some(99),
+        number_int: Some(99.0),
         ..Default::default()
     };
     model.id = Some("recTEST123".to_string());
@@ -276,7 +276,10 @@ fn model_to_record_has_id_and_fields() {
         record.fields.get(PrimaryFields::PRIMARY_KEY_ID).unwrap(),
         "ToRecord Test"
     );
-    assert_eq!(record.fields.get(PrimaryFields::NUMBER_INT_ID).unwrap(), 99);
+    assert_eq!(
+        record.fields.get(PrimaryFields::NUMBER_INT_ID).unwrap(),
+        99.0
+    );
     assert_eq!(
         record.created_time.as_deref(),
         Some("2025-01-15T00:00:00.000Z")

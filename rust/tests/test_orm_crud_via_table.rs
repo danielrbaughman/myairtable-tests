@@ -24,7 +24,7 @@ fn model_deserializes_from_fields_json() {
     let model: PrimaryModel = serde_json::from_value(json).unwrap();
     assert_eq!(model.primary_key, Some("Hello".to_string()));
     assert_eq!(model.checkbox, Some(true));
-    assert_eq!(model.number_int, Some(42));
+    assert_eq!(model.number_int, Some(42.0));
     assert_eq!(model.number_float, Some(3.14));
     assert!(model.id.is_none());
     assert!(model.created_time.is_none());
@@ -58,7 +58,7 @@ fn model_serializes_skipping_none() {
 fn model_round_trip() {
     let original = PrimaryModel {
         primary_key: Some("Round Trip".to_string()),
-        number_int: Some(99),
+        number_int: Some(99.0),
         single_select: Some(PrimarySingleSelectOption::Choice1),
         ..Default::default()
     };
@@ -162,7 +162,7 @@ async fn all_simple_properties_crud() {
         url: Some("https://example.com".to_string()),
         phone_number: Some("555-1234".to_string()),
         checkbox: Some(true),
-        number_int: Some(42),
+        number_int: Some(42.0),
         number_float: Some(3.14),
         currency_int: Some(10.0),
         currency_float: Some(9.99),
@@ -194,7 +194,7 @@ async fn all_simple_properties_crud() {
     assert_eq!(created.url.as_deref(), Some("https://example.com"));
     assert_eq!(created.phone_number.as_deref(), Some("555-1234"));
     assert_eq!(created.checkbox, Some(true));
-    assert_eq!(created.number_int, Some(42));
+    assert_eq!(created.number_int, Some(42.0));
     assert_eq!(created.number_float, Some(3.14));
     assert_eq!(created.currency_int, Some(10.0));
     assert_eq!(created.currency_float, Some(9.99));
@@ -223,7 +223,7 @@ async fn all_simple_properties_crud() {
     assert_eq!(read.primary_key.as_deref(), Some("ORM All Props"));
     assert_eq!(read.single_line_text.as_deref(), Some("Hello World"));
     assert_eq!(read.checkbox, Some(true));
-    assert_eq!(read.number_int, Some(42));
+    assert_eq!(read.number_int, Some(42.0));
     assert_eq!(read.single_select, Some(PrimarySingleSelectOption::Choice1));
 
     // Update all fields
@@ -236,7 +236,7 @@ async fn all_simple_properties_crud() {
         url: Some("https://updated.com".to_string()),
         phone_number: Some("555-5678".to_string()),
         checkbox: Some(false),
-        number_int: Some(100),
+        number_int: Some(100.0),
         number_float: Some(2.72),
         currency_int: Some(20.0),
         currency_float: Some(19.99),
@@ -260,7 +260,7 @@ async fn all_simple_properties_crud() {
         Some("ORM Updated All Props")
     );
     assert_eq!(updated.single_line_text.as_deref(), Some("Updated Hello"));
-    assert_eq!(updated.number_int, Some(100));
+    assert_eq!(updated.number_int, Some(100.0));
     assert_eq!(
         updated.single_select,
         Some(PrimarySingleSelectOption::Choice2)
@@ -431,7 +431,7 @@ async fn computed_fields() {
 
     let fields = CreatePrimaryModel {
         primary_key: Some("ORM Computed Test".to_string()),
-        number_int: Some(10),
+        number_int: Some(10.0),
         number_float: Some(5.0),
         ..Default::default()
     };
@@ -491,7 +491,7 @@ async fn batch_create_update_delete() {
     let records: Vec<CreatePrimaryModel> = (1..=count)
         .map(|i| CreatePrimaryModel {
             primary_key: Some(format!("ORM Batch {i}")),
-            number_int: Some(i),
+            number_int: Some(i as f64),
             ..Default::default()
         })
         .collect();

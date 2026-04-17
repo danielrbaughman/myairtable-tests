@@ -71,7 +71,7 @@ async fn all_simple_properties_via_model() {
         url: Some("https://example.com".to_string()),
         phone_number: Some("555-1234".to_string()),
         checkbox: Some(true),
-        number_int: Some(42),
+        number_int: Some(42.0),
         number_float: Some(3.14),
         currency_int: Some(10.0),
         currency_float: Some(9.99),
@@ -105,7 +105,7 @@ async fn all_simple_properties_via_model() {
     assert_eq!(model.url.as_deref(), Some("https://example.com"));
     assert_eq!(model.phone_number.as_deref(), Some("555-1234"));
     assert_eq!(model.checkbox, Some(true));
-    assert_eq!(model.number_int, Some(42));
+    assert_eq!(model.number_int, Some(42.0));
     assert_eq!(model.number_float, Some(3.14));
     assert_eq!(model.currency_int, Some(10.0));
     assert_eq!(model.currency_float, Some(9.99));
@@ -135,7 +135,7 @@ async fn all_simple_properties_via_model() {
     assert_eq!(read.primary_key.as_deref(), Some("Model All Props"));
     assert_eq!(read.single_line_text.as_deref(), Some("Hello World"));
     assert_eq!(read.checkbox, Some(true));
-    assert_eq!(read.number_int, Some(42));
+    assert_eq!(read.number_int, Some(42.0));
     assert_eq!(read.date.as_deref(), Some("2025-01-15"));
     assert_eq!(read.single_select, Some(PrimarySingleSelectOption::Choice1));
 
@@ -148,7 +148,7 @@ async fn all_simple_properties_via_model() {
     read.url = Some("https://updated.com".to_string());
     read.phone_number = Some("555-5678".to_string());
     read.checkbox = Some(false);
-    read.number_int = Some(100);
+    read.number_int = Some(100.0);
     read.number_float = Some(2.72);
     read.currency_int = Some(20.0);
     read.currency_float = Some(19.99);
@@ -167,7 +167,7 @@ async fn all_simple_properties_via_model() {
 
     assert_eq!(read.primary_key.as_deref(), Some("Model Updated Props"));
     assert_eq!(read.single_line_text.as_deref(), Some("Updated Hello"));
-    assert_eq!(read.number_int, Some(100));
+    assert_eq!(read.number_int, Some(100.0));
     assert_eq!(read.single_select, Some(PrimarySingleSelectOption::Choice2));
     assert_eq!(
         read.multiple_select,
@@ -335,7 +335,7 @@ async fn computed_fields_via_model() {
 
     let mut model = PrimaryModel {
         primary_key: Some("Model Computed Test".to_string()),
-        number_int: Some(10),
+        number_int: Some(10.0),
         number_float: Some(5.0),
         ..Default::default()
     };
@@ -394,17 +394,17 @@ async fn dirty_tracking() {
     let mut model = PrimaryModel {
         primary_key: Some("Dirty Track Test".to_string()),
         single_line_text: Some("Original".to_string()),
-        number_int: Some(1),
+        number_int: Some(1.0),
         ..Default::default()
     };
     model.set_client(client.clone(), PRIMARY_TABLE_ID);
     model.save().await.unwrap();
 
     // Mutate one field — snapshot diff detects the change
-    model.number_int = Some(999);
+    model.number_int = Some(999.0);
     model.save().await.unwrap();
 
-    assert_eq!(model.number_int, Some(999));
+    assert_eq!(model.number_int, Some(999.0));
     assert_eq!(model.primary_key.as_deref(), Some("Dirty Track Test"));
     assert_eq!(model.single_line_text.as_deref(), Some("Original"));
 

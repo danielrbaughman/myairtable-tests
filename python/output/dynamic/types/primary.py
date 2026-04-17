@@ -580,7 +580,7 @@ class PrimaryFieldsDict(TypedDict, total=False):
     fldbmFmrzYKBktJvE: list[str]
     fld6GTabFmu1xKPvZ: list[PrimaryMultipleSelectOption]
     fldmU0X2l4RWd21dd: float
-    fldOfPKGmnRPv94QH: int
+    fldOfPKGmnRPv94QH: float
     fldiGui9ll69N7WOj: float
     fldbAAyWboGulpb4s: float
     fld38tnNpHmoks8C8: str
