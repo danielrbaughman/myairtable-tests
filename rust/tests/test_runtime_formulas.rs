@@ -61,17 +61,21 @@ async fn runtime_formulas_match_api() {
     let model: FormulasModel = serde_json::from_value(fields_json).unwrap();
 
     // --- Math formula: exact match ---
-    let api_math = model.math_formula.clone();
+    let api_math = model.math_formula.clone().and_then(|x| x.into_value());
     let runtime_math = F::S(&model.evaluate_math_formula());
     assert_eq!(api_math, Some(runtime_math), "Math formula mismatch");
 
     // --- Text formula: exact match ---
-    let api_text = model.text_formula.clone();
+    let api_text = model.text_formula.clone().and_then(|x| x.into_value());
     let runtime_text = F::S(&model.evaluate_text_formula());
     assert_eq!(api_text, Some(runtime_text), "Text formula mismatch");
 
     // --- Date formula: partial match (TODAY/TONOW/FROMNOW are time-dependent) ---
-    let api_date = model.date_formula.clone().unwrap_or_default();
+    let api_date = model
+        .date_formula
+        .clone()
+        .and_then(|x| x.into_value())
+        .unwrap_or_default();
     let runtime_date = F::S(&model.evaluate_date_formula());
 
     // Check all deterministic parts

@@ -345,14 +345,40 @@ async fn computed_fields_via_model() {
     let id = model.id.as_deref().unwrap().to_string();
     assert!(model.auto_number.is_some());
     assert!(model.created_time.is_some());
-    assert_eq!(model.formula_id.as_deref(), Some(id.as_str()));
-    assert_eq!(model.formula_simple, Some(15.0));
+    assert_eq!(
+        model
+            .formula_id
+            .as_ref()
+            .and_then(|x| x.value())
+            .map(String::as_str),
+        Some(id.as_str())
+    );
+    assert_eq!(
+        model
+            .formula_simple
+            .as_ref()
+            .and_then(|x| x.value())
+            .copied(),
+        Some(15.0)
+    );
 
     // Fetch and verify
     let mut read = PrimaryModel::from_id(client.clone(), PRIMARY_TABLE_ID, &id);
     read.fetch().await.unwrap();
-    assert_eq!(read.formula_id.as_deref(), Some(id.as_str()));
-    assert_eq!(read.formula_simple, Some(15.0));
+    assert_eq!(
+        read.formula_id
+            .as_ref()
+            .and_then(|x| x.value())
+            .map(String::as_str),
+        Some(id.as_str())
+    );
+    assert_eq!(
+        read.formula_simple
+            .as_ref()
+            .and_then(|x| x.value())
+            .copied(),
+        Some(15.0)
+    );
 
     read.delete().await.unwrap();
 }

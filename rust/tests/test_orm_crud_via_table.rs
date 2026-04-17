@@ -440,13 +440,39 @@ async fn computed_fields() {
 
     assert!(created.auto_number.is_some());
     assert!(created.created_time.is_some());
-    assert_eq!(created.formula_id.as_deref(), Some(id.as_str()));
-    assert_eq!(created.formula_simple, Some(15.0));
+    assert_eq!(
+        created
+            .formula_id
+            .as_ref()
+            .and_then(|x| x.value())
+            .map(String::as_str),
+        Some(id.as_str())
+    );
+    assert_eq!(
+        created
+            .formula_simple
+            .as_ref()
+            .and_then(|x| x.value())
+            .copied(),
+        Some(15.0)
+    );
 
     // Read
     let read = at.primary.get_one(&id).await.unwrap();
-    assert_eq!(read.formula_id.as_deref(), Some(id.as_str()));
-    assert_eq!(read.formula_simple, Some(15.0));
+    assert_eq!(
+        read.formula_id
+            .as_ref()
+            .and_then(|x| x.value())
+            .map(String::as_str),
+        Some(id.as_str())
+    );
+    assert_eq!(
+        read.formula_simple
+            .as_ref()
+            .and_then(|x| x.value())
+            .copied(),
+        Some(15.0)
+    );
 
     // Cleanup
     at.primary.delete_one(&id).await.unwrap();
