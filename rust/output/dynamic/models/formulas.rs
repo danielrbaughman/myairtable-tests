@@ -4,7 +4,7 @@
 
 use crate::airtable_model::{ModelMeta, OrmModel};
 use crate::airtable_runtime as F;
-use crate::types::{MaybeError, RecordId};
+use crate::types::{MaybeSpecialOrError, RecordId};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 
@@ -89,7 +89,7 @@ pub struct FormulasModel {
     #[serde(rename = "fldY7kjaklLeoSgGd")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub date_formula: Option<MaybeError<String>>,
+    pub date_formula: Option<MaybeSpecialOrError<String>>,
     /// First Date `fldlZT521Iy0FFXFL`
     #[serde(rename = "fldlZT521Iy0FFXFL")]
     #[serde(default)]
@@ -139,7 +139,7 @@ pub struct FormulasModel {
     #[serde(rename = "fldlSuvoeWGokSz8Z")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub math_formula: Option<MaybeError<String>>,
+    pub math_formula: Option<MaybeSpecialOrError<String>>,
     /// Primary Key `fldLZFrZKvSCS4dKb` - `Primary Key`
     #[serde(rename = "fldLZFrZKvSCS4dKb")]
     #[serde(default)]
@@ -232,7 +232,7 @@ pub struct FormulasModel {
     #[serde(rename = "flddvzeqt7FJpQ9NX")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub text_formula: Option<MaybeError<String>>,
+    pub text_formula: Option<MaybeSpecialOrError<String>>,
     /// Third Date `fldxSQRRn8W879aiU`
     #[serde(rename = "fldxSQRRn8W879aiU")]
     #[serde(default)]
