@@ -41,7 +41,7 @@ fn model_missing_fields_are_none() {
 
 #[test]
 fn model_serializes_skipping_none() {
-    let model = CreatePrimaryModel {
+    let model = PrimaryModel {
         primary_key: Some("Test".to_string()),
         checkbox: Some(true),
         ..Default::default()
@@ -116,7 +116,7 @@ async fn primary_key_only_crud() {
     let at = setup();
 
     // Create
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("ORM Primary Key Only".to_string()),
         ..Default::default()
     };
@@ -130,7 +130,7 @@ async fn primary_key_only_crud() {
     assert_eq!(fetched.primary_key.as_deref(), Some("ORM Primary Key Only"));
 
     // Update
-    let update = CreatePrimaryModel {
+    let update = PrimaryModel {
         primary_key: Some("ORM Updated Primary Key".to_string()),
         ..Default::default()
     };
@@ -153,7 +153,7 @@ async fn primary_key_only_crud() {
 async fn all_simple_properties_crud() {
     let at = setup();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("ORM All Props".to_string()),
         single_line_text: Some("Hello World".to_string()),
         long_text: Some("Long text content".to_string()),
@@ -227,7 +227,7 @@ async fn all_simple_properties_crud() {
     assert_eq!(read.single_select, Some(PrimarySingleSelectOption::Choice1));
 
     // Update all fields
-    let update = CreatePrimaryModel {
+    let update = PrimaryModel {
         primary_key: Some("ORM Updated All Props".to_string()),
         single_line_text: Some("Updated Hello".to_string()),
         long_text: Some("Updated long text".to_string()),
@@ -289,7 +289,7 @@ async fn linked_records_crud() {
     // Setup secondary records
     let sec1 = at
         .secondary
-        .create_one(&CreateSecondaryModel {
+        .create_one(&SecondaryModel {
             name: Some("ORM Link Target 1".to_string()),
             value: Some("val1".to_string()),
             ..Default::default()
@@ -298,7 +298,7 @@ async fn linked_records_crud() {
         .unwrap();
     let sec2 = at
         .secondary
-        .create_one(&CreateSecondaryModel {
+        .create_one(&SecondaryModel {
             name: Some("ORM Link Target 2".to_string()),
             value: Some("val2".to_string()),
             ..Default::default()
@@ -310,7 +310,7 @@ async fn linked_records_crud() {
     let sec2_id = sec2.id.as_deref().unwrap().to_string();
 
     // Create with links
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("ORM Link Test".to_string()),
         link_single: Some(vec![sec1_id.clone()]),
         link_multiple: Some(vec![sec1_id.clone(), sec2_id.clone()]),
@@ -333,7 +333,7 @@ async fn linked_records_crud() {
     );
 
     // Update: swap links
-    let update = CreatePrimaryModel {
+    let update = PrimaryModel {
         link_single: Some(vec![sec2_id.clone()]),
         link_multiple: Some(vec![sec1_id.clone()]),
         ..Default::default()
@@ -356,7 +356,7 @@ async fn linked_records_crud() {
 async fn attachment_crud() {
     let at = setup();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("ORM Attachment Test".to_string()),
         attachment: Some(vec![Attachment {
             url:
@@ -397,7 +397,7 @@ async fn attachment_crud() {
 async fn user_fields_crud() {
     let at = setup();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("ORM User Test".to_string()),
         user: Some(serde_json::from_value(json!({"id": "usrnZ4k98m0Ipji4e", "email": "9vymqckyxq@privaterelay.appleid.com", "name": "Daniel Baughman"})).unwrap()),
         user_allow_multiple: Some(vec![
@@ -429,7 +429,7 @@ async fn user_fields_crud() {
 async fn computed_fields() {
     let at = setup();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("ORM Computed Test".to_string()),
         number_int: Some(10.0),
         number_float: Some(5.0),
@@ -488,8 +488,8 @@ async fn batch_create_update_delete() {
     let count = 25;
 
     // Create
-    let records: Vec<CreatePrimaryModel> = (1..=count)
-        .map(|i| CreatePrimaryModel {
+    let records: Vec<PrimaryModel> = (1..=count)
+        .map(|i| PrimaryModel {
             primary_key: Some(format!("ORM Batch {i}")),
             number_int: Some(i as f64),
             ..Default::default()
@@ -510,14 +510,13 @@ async fn batch_create_update_delete() {
         .iter()
         .map(|r| r.id.as_deref().unwrap().to_string())
         .collect();
-    let update_fields: Vec<CreatePrimaryModel> = (1..=count)
-        .map(|i| CreatePrimaryModel {
+    let update_fields: Vec<PrimaryModel> = (1..=count)
+        .map(|i| PrimaryModel {
             primary_key: Some(format!("ORM Updated Batch {i}")),
             ..Default::default()
         })
         .collect();
-    let updates: Vec<(&RecordId, &CreatePrimaryModel)> =
-        ids.iter().zip(update_fields.iter()).collect();
+    let updates: Vec<(&RecordId, &PrimaryModel)> = ids.iter().zip(update_fields.iter()).collect();
 
     let updated = at.primary.update_many(&updates).await.unwrap();
     assert_eq!(updated.len(), count as usize);
@@ -608,7 +607,7 @@ async fn upsert_as_update() {
     let at = setup();
 
     // First create a record
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("Upsert Update Test".to_string()),
         ..Default::default()
     };

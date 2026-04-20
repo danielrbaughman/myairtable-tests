@@ -7,10 +7,10 @@ use std::sync::Arc;
 use crate::airtable_model::OrmModel;
 use crate::client::AirtableClient;
 use crate::error::AirtableError;
-use crate::models::{CreateFormulasModel, FormulasModel};
-use crate::models::{CreatePrimaryModel, PrimaryModel};
-use crate::models::{CreateSecondaryModel, SecondaryModel};
-use crate::models::{CreateTertiaryModel, TertiaryModel};
+use crate::models::FormulasModel;
+use crate::models::PrimaryModel;
+use crate::models::SecondaryModel;
+use crate::models::TertiaryModel;
 use crate::orm_table::OrmTable;
 use crate::table::StructTable;
 use crate::types::{build_url, AirtableQuery, RecordId};
@@ -29,7 +29,7 @@ use crate::types::{build_url, AirtableQuery, RecordId};
 pub struct FormulasTable {
     /// Raw record (dict) access.
     pub dict: StructTable,
-    orm: OrmTable<FormulasModel, CreateFormulasModel>,
+    orm: OrmTable<FormulasModel>,
 }
 
 impl FormulasTable {
@@ -45,31 +45,28 @@ impl FormulasTable {
         self.orm.get_many(params).await
     }
     /// Create a new record.
-    pub async fn create_one(
-        &self,
-        fields: &CreateFormulasModel,
-    ) -> Result<FormulasModel, AirtableError> {
-        self.orm.create_one(fields).await
+    pub async fn create_one(&self, model: &FormulasModel) -> Result<FormulasModel, AirtableError> {
+        self.orm.create_one(model).await
     }
     /// Create multiple records.
     pub async fn create_many(
         &self,
-        records: &[CreateFormulasModel],
+        models: &[FormulasModel],
     ) -> Result<Vec<FormulasModel>, AirtableError> {
-        self.orm.create_many(records).await
+        self.orm.create_many(models).await
     }
     /// Update an existing record.
     pub async fn update_one(
         &self,
         record_id: &RecordId,
-        fields: &CreateFormulasModel,
+        model: &FormulasModel,
     ) -> Result<FormulasModel, AirtableError> {
-        self.orm.update_one(record_id, fields).await
+        self.orm.update_one(record_id, model).await
     }
     /// Update multiple records.
     pub async fn update_many(
         &self,
-        records: &[(&RecordId, &CreateFormulasModel)],
+        records: &[(&RecordId, &FormulasModel)],
     ) -> Result<Vec<FormulasModel>, AirtableError> {
         self.orm.update_many(records).await
     }
@@ -115,7 +112,7 @@ impl FormulasTable {
 pub struct PrimaryTable {
     /// Raw record (dict) access.
     pub dict: StructTable,
-    orm: OrmTable<PrimaryModel, CreatePrimaryModel>,
+    orm: OrmTable<PrimaryModel>,
 }
 
 impl PrimaryTable {
@@ -131,31 +128,28 @@ impl PrimaryTable {
         self.orm.get_many(params).await
     }
     /// Create a new record.
-    pub async fn create_one(
-        &self,
-        fields: &CreatePrimaryModel,
-    ) -> Result<PrimaryModel, AirtableError> {
-        self.orm.create_one(fields).await
+    pub async fn create_one(&self, model: &PrimaryModel) -> Result<PrimaryModel, AirtableError> {
+        self.orm.create_one(model).await
     }
     /// Create multiple records.
     pub async fn create_many(
         &self,
-        records: &[CreatePrimaryModel],
+        models: &[PrimaryModel],
     ) -> Result<Vec<PrimaryModel>, AirtableError> {
-        self.orm.create_many(records).await
+        self.orm.create_many(models).await
     }
     /// Update an existing record.
     pub async fn update_one(
         &self,
         record_id: &RecordId,
-        fields: &CreatePrimaryModel,
+        model: &PrimaryModel,
     ) -> Result<PrimaryModel, AirtableError> {
-        self.orm.update_one(record_id, fields).await
+        self.orm.update_one(record_id, model).await
     }
     /// Update multiple records.
     pub async fn update_many(
         &self,
-        records: &[(&RecordId, &CreatePrimaryModel)],
+        records: &[(&RecordId, &PrimaryModel)],
     ) -> Result<Vec<PrimaryModel>, AirtableError> {
         self.orm.update_many(records).await
     }
@@ -201,7 +195,7 @@ impl PrimaryTable {
 pub struct SecondaryTable {
     /// Raw record (dict) access.
     pub dict: StructTable,
-    orm: OrmTable<SecondaryModel, CreateSecondaryModel>,
+    orm: OrmTable<SecondaryModel>,
 }
 
 impl SecondaryTable {
@@ -219,29 +213,29 @@ impl SecondaryTable {
     /// Create a new record.
     pub async fn create_one(
         &self,
-        fields: &CreateSecondaryModel,
+        model: &SecondaryModel,
     ) -> Result<SecondaryModel, AirtableError> {
-        self.orm.create_one(fields).await
+        self.orm.create_one(model).await
     }
     /// Create multiple records.
     pub async fn create_many(
         &self,
-        records: &[CreateSecondaryModel],
+        models: &[SecondaryModel],
     ) -> Result<Vec<SecondaryModel>, AirtableError> {
-        self.orm.create_many(records).await
+        self.orm.create_many(models).await
     }
     /// Update an existing record.
     pub async fn update_one(
         &self,
         record_id: &RecordId,
-        fields: &CreateSecondaryModel,
+        model: &SecondaryModel,
     ) -> Result<SecondaryModel, AirtableError> {
-        self.orm.update_one(record_id, fields).await
+        self.orm.update_one(record_id, model).await
     }
     /// Update multiple records.
     pub async fn update_many(
         &self,
-        records: &[(&RecordId, &CreateSecondaryModel)],
+        records: &[(&RecordId, &SecondaryModel)],
     ) -> Result<Vec<SecondaryModel>, AirtableError> {
         self.orm.update_many(records).await
     }
@@ -287,7 +281,7 @@ impl SecondaryTable {
 pub struct TertiaryTable {
     /// Raw record (dict) access.
     pub dict: StructTable,
-    orm: OrmTable<TertiaryModel, CreateTertiaryModel>,
+    orm: OrmTable<TertiaryModel>,
 }
 
 impl TertiaryTable {
@@ -303,31 +297,28 @@ impl TertiaryTable {
         self.orm.get_many(params).await
     }
     /// Create a new record.
-    pub async fn create_one(
-        &self,
-        fields: &CreateTertiaryModel,
-    ) -> Result<TertiaryModel, AirtableError> {
-        self.orm.create_one(fields).await
+    pub async fn create_one(&self, model: &TertiaryModel) -> Result<TertiaryModel, AirtableError> {
+        self.orm.create_one(model).await
     }
     /// Create multiple records.
     pub async fn create_many(
         &self,
-        records: &[CreateTertiaryModel],
+        models: &[TertiaryModel],
     ) -> Result<Vec<TertiaryModel>, AirtableError> {
-        self.orm.create_many(records).await
+        self.orm.create_many(models).await
     }
     /// Update an existing record.
     pub async fn update_one(
         &self,
         record_id: &RecordId,
-        fields: &CreateTertiaryModel,
+        model: &TertiaryModel,
     ) -> Result<TertiaryModel, AirtableError> {
-        self.orm.update_one(record_id, fields).await
+        self.orm.update_one(record_id, model).await
     }
     /// Update multiple records.
     pub async fn update_many(
         &self,
-        records: &[(&RecordId, &CreateTertiaryModel)],
+        records: &[(&RecordId, &TertiaryModel)],
     ) -> Result<Vec<TertiaryModel>, AirtableError> {
         self.orm.update_many(records).await
     }

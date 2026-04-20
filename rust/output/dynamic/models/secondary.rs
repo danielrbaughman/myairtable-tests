@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 /// let record = airtable.secondary.get_one("rec123").await?;
 /// println!("{:?}", record);
 ///
-/// let new = CreateSecondaryModel { ..Default::default() };
+/// let new = SecondaryModel { ..Default::default() };
 /// let created = airtable.secondary.create_one(&new).await?;
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -100,29 +100,4 @@ impl OrmModel for SecondaryModel {
     fn set_created_time(&mut self, ct: Option<String>) {
         self.created_time = ct;
     }
-}
-
-/// Writable fields for creating/updating `Secondary` records.
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct CreateSecondaryModel {
-    #[serde(rename = "fldKR6tdbnOBRCtdQ")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub link_to_tertiary: Option<Vec<RecordId>>,
-    #[serde(rename = "fld1RagdJ09mpWhzM")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
-    #[serde(rename = "fldl0nB9WRFSdqlii")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub primary: Option<Vec<RecordId>>,
-    #[serde(rename = "fldgoE2oZmXmKkQca")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub primary_2: Option<Vec<RecordId>>,
-    #[serde(rename = "fldi6Mxh5H1gPGxFX")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub value: Option<String>,
 }

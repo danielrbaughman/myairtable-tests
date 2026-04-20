@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 /// let record = airtable.tertiary.get_one("rec123").await?;
 /// println!("{:?}", record);
 ///
-/// let new = CreateTertiaryModel { ..Default::default() };
+/// let new = TertiaryModel { ..Default::default() };
 /// let created = airtable.tertiary.create_one(&new).await?;
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -90,21 +90,4 @@ impl OrmModel for TertiaryModel {
     fn set_created_time(&mut self, ct: Option<String>) {
         self.created_time = ct;
     }
-}
-
-/// Writable fields for creating/updating `Tertiary` records.
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct CreateTertiaryModel {
-    #[serde(rename = "fldwzqKxsRnPZJ2Ll")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub name: Option<String>,
-    #[serde(rename = "fld8lCuUXpEXkIeYv")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub secondary: Option<Vec<RecordId>>,
-    #[serde(rename = "fldjNLBh2UccM64h5")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub value: Option<String>,
 }

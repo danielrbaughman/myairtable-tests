@@ -22,7 +22,7 @@ fn setup_uncached() -> Airtable {
 async fn cache_hit_returns_same_data() {
     let at = setup_cached();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("Cache Hit Test".to_string()),
         ..Default::default()
     };
@@ -48,7 +48,7 @@ async fn cache_hit_returns_same_data() {
 async fn cache_disabled_by_default() {
     let at = setup_uncached();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("No Cache Test".to_string()),
         ..Default::default()
     };
@@ -70,7 +70,7 @@ async fn cache_disabled_by_default() {
 async fn create_invalidates_cache() {
     let at = setup_cached();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("Mutation Test 1".to_string()),
         ..Default::default()
     };
@@ -81,7 +81,7 @@ async fn create_invalidates_cache() {
     at.primary.get_one(&id).await.unwrap();
 
     // Create should invalidate cache
-    let fields2 = CreatePrimaryModel {
+    let fields2 = PrimaryModel {
         primary_key: Some("Mutation Test 2".to_string()),
         ..Default::default()
     };
@@ -100,7 +100,7 @@ async fn create_invalidates_cache() {
 async fn update_invalidates_cache() {
     let at = setup_cached();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("Update Invalidation".to_string()),
         ..Default::default()
     };
@@ -111,7 +111,7 @@ async fn update_invalidates_cache() {
     at.primary.get_one(&id).await.unwrap();
 
     // Update invalidates cache
-    let update = CreatePrimaryModel {
+    let update = PrimaryModel {
         primary_key: Some("Updated Value".to_string()),
         ..Default::default()
     };
@@ -128,7 +128,7 @@ async fn update_invalidates_cache() {
 async fn delete_invalidates_cache() {
     let at = setup_cached();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("Delete Invalidation".to_string()),
         ..Default::default()
     };
@@ -153,7 +153,7 @@ async fn delete_invalidates_cache() {
 async fn manual_invalidate_cache() {
     let at = setup_cached();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("Manual Invalidation".to_string()),
         ..Default::default()
     };
@@ -182,7 +182,7 @@ async fn cache_expires_after_ttl() {
     let mut at = setup_uncached();
     at.primary.set_cache_seconds(1); // 1 second TTL
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("Expiry Test".to_string()),
         ..Default::default()
     };
@@ -211,7 +211,7 @@ async fn cache_expires_after_ttl() {
 async fn cache_serves_stale_data() {
     let at = setup_cached();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("Stale Data Test".to_string()),
         ..Default::default()
     };
@@ -246,11 +246,11 @@ async fn cache_serves_stale_data() {
 async fn different_queries_cached_independently() {
     let at = setup_cached();
 
-    let fields1 = CreatePrimaryModel {
+    let fields1 = PrimaryModel {
         primary_key: Some("Cache Key 1".to_string()),
         ..Default::default()
     };
-    let fields2 = CreatePrimaryModel {
+    let fields2 = PrimaryModel {
         primary_key: Some("Cache Key 2".to_string()),
         ..Default::default()
     };
@@ -281,7 +281,7 @@ async fn different_queries_cached_independently() {
 async fn formula_query_cached() {
     let at = setup_cached();
 
-    let fields = CreatePrimaryModel {
+    let fields = PrimaryModel {
         primary_key: Some("Formula Cache Test".to_string()),
         ..Default::default()
     };

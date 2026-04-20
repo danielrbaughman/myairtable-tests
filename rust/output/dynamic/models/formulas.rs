@@ -16,7 +16,7 @@ use serde_json::{json, Value};
 /// let record = airtable.formulas.get_one("rec123").await?;
 /// println!("{:?}", record);
 ///
-/// let new = CreateFormulasModel { ..Default::default() };
+/// let new = FormulasModel { ..Default::default() };
 /// let created = airtable.formulas.create_one(&new).await?;
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -88,7 +88,7 @@ pub struct FormulasModel {
     /// ```
     #[serde(rename = "fldY7kjaklLeoSgGd")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub date_formula: Option<MaybeSpecialOrError<String>>,
     /// First Date `fldlZT521Iy0FFXFL`
     #[serde(rename = "fldlZT521Iy0FFXFL")]
@@ -138,7 +138,7 @@ pub struct FormulasModel {
     /// ```
     #[serde(rename = "fldlSuvoeWGokSz8Z")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub math_formula: Option<MaybeSpecialOrError<String>>,
     /// Primary Key `fldLZFrZKvSCS4dKb` - `Primary Key`
     #[serde(rename = "fldLZFrZKvSCS4dKb")]
@@ -231,7 +231,7 @@ pub struct FormulasModel {
     /// ```
     #[serde(rename = "flddvzeqt7FJpQ9NX")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub text_formula: Option<MaybeSpecialOrError<String>>,
     /// Third Date `fldxSQRRn8W879aiU`
     #[serde(rename = "fldxSQRRn8W879aiU")]
@@ -439,49 +439,4 @@ impl OrmModel for FormulasModel {
     fn set_created_time(&mut self, ct: Option<String>) {
         self.created_time = ct;
     }
-}
-
-/// Writable fields for creating/updating `Formulas` records.
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct CreateFormulasModel {
-    #[serde(rename = "fldlZT521Iy0FFXFL")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub first_date: Option<String>,
-    #[serde(rename = "fldA04pqfjMkGXcZU")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub first_number: Option<f64>,
-    #[serde(rename = "fldHJuw6pAujnHvkP")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub first_text: Option<String>,
-    #[serde(rename = "fldLZFrZKvSCS4dKb")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub primary_key: Option<String>,
-    #[serde(rename = "fld1LZ3Ebpt0LaMmu")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub second_date: Option<String>,
-    #[serde(rename = "fldj5nAkal5y8OOZg")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub second_number: Option<f64>,
-    #[serde(rename = "fldA2boNwwsiuvXw1")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub second_text: Option<String>,
-    #[serde(rename = "fldxSQRRn8W879aiU")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub third_date: Option<String>,
-    #[serde(rename = "fld5NBdekrAUzu4Fi")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub third_number: Option<f64>,
-    #[serde(rename = "fldfruPf8V9K6qIAN")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub third_text: Option<String>,
 }

@@ -19,7 +19,7 @@ use serde_json::{json, Value};
 /// let record = airtable.primary.get_one("rec123").await?;
 /// println!("{:?}", record);
 ///
-/// let new = CreatePrimaryModel { ..Default::default() };
+/// let new = PrimaryModel { ..Default::default() };
 /// let created = airtable.primary.create_one(&new).await?;
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -38,12 +38,12 @@ pub struct PrimaryModel {
     /// Auto Number `fldizvTkxgIn0mC3L` - `Read-Only`
     #[serde(rename = "fldizvTkxgIn0mC3L")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub auto_number: Option<MaybeSpecialOrError<i64>>,
     /// Button `fldY48yKPG16AajtU` - `Read-Only`
     #[serde(rename = "fldY48yKPG16AajtU")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub button: Option<MaybeSpecialOrError<AirtableButton>>,
     /// Checkbox `fldjQIaAZVegb1FUa`
     #[serde(rename = "fldjQIaAZVegb1FUa")]
@@ -53,12 +53,12 @@ pub struct PrimaryModel {
     /// Created By `fldGLQhDz2UjjiHG6` - `Read-Only`
     #[serde(rename = "fldGLQhDz2UjjiHG6")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub created_by: Option<MaybeSpecialOrError<Collaborator>>,
     /// Created Time `fld2YgW382Kt9xltA` - `Read-Only`
     #[serde(rename = "fld2YgW382Kt9xltA")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub created_at_time: Option<MaybeSpecialOrError<String>>,
     /// Currency (float) `fldyh8pzDXiy5abEr`
     #[serde(rename = "fldyh8pzDXiy5abEr")]
@@ -335,7 +335,7 @@ pub struct PrimaryModel {
     /// ```
     #[serde(rename = "fld2vnFc0Bl5IOFUQ")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub formula_complex: Option<VecOrValue<MaybeSpecialOrError<String>>>,
     /// Formula (ID) `fldcf62YFeIIDHElt` - `Read-Only`
     ///
@@ -344,7 +344,7 @@ pub struct PrimaryModel {
     /// ```
     #[serde(rename = "fldcf62YFeIIDHElt")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub formula_id: Option<MaybeSpecialOrError<String>>,
     /// Formula (Nested) `fldXFeHRPBLz6AiWh` - `Read-Only`
     ///
@@ -353,7 +353,7 @@ pub struct PrimaryModel {
     /// ```
     #[serde(rename = "fldXFeHRPBLz6AiWh")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub formula_nested: Option<VecOrValue<MaybeSpecialOrError<String>>>,
     /// Formula (Simple) `fldy1axxaoUToLVC6` - `Read-Only`
     ///
@@ -362,17 +362,17 @@ pub struct PrimaryModel {
     /// ```
     #[serde(rename = "fldy1axxaoUToLVC6")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub formula_simple: Option<MaybeSpecialOrError<f64>>,
     /// Last Modified By `fldF8iDttqP0AgzWC` - `Read-Only`
     #[serde(rename = "fldF8iDttqP0AgzWC")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub last_modified_by: Option<MaybeSpecialOrError<Collaborator>>,
     /// Last Modified Time `fldMinKh4pa3YX86g` - `Read-Only`
     #[serde(rename = "fldMinKh4pa3YX86g")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub last_modified_time: Option<MaybeSpecialOrError<String>>,
     /// Link (multiple) `fldFyFheQWczd8oux`
     #[serde(rename = "fldFyFheQWczd8oux")]
@@ -397,7 +397,7 @@ pub struct PrimaryModel {
     /// Lookup `fldbmFmrzYKBktJvE` - `Read-Only`
     #[serde(rename = "fldbmFmrzYKBktJvE")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub lookup: Option<VecOrValue<MaybeSpecialOrError<String>>>,
     /// Multiple Select `fld6GTabFmu1xKPvZ`
     #[serde(rename = "fld6GTabFmu1xKPvZ")]
@@ -442,7 +442,7 @@ pub struct PrimaryModel {
     /// Rollup `fldGaFgBsDC3IBUdV` - `Read-Only`
     #[serde(rename = "fldGaFgBsDC3IBUdV")]
     #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing)]
     pub rollup: Option<VecOrValue<MaybeSpecialOrError<String>>>,
     /// Single Line Text `fld0BL2lFo9fqcKv3`
     #[serde(rename = "fld0BL2lFo9fqcKv3")]
@@ -836,109 +836,4 @@ impl OrmModel for PrimaryModel {
     fn set_created_time(&mut self, ct: Option<String>) {
         self.created_time = ct;
     }
-}
-
-/// Writable fields for creating/updating `Primary` records.
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct CreatePrimaryModel {
-    #[serde(rename = "fldhF2AEuSC1haCZd")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub attachment: Option<Vec<Attachment>>,
-    #[serde(rename = "fldjQIaAZVegb1FUa")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub checkbox: Option<bool>,
-    #[serde(rename = "fldyh8pzDXiy5abEr")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub currency_float: Option<f64>,
-    #[serde(rename = "fldBfo74z9hD78hP8")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub currency_int: Option<f64>,
-    #[serde(rename = "fldC6LfNVvVIxKyQH")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub date: Option<String>,
-    #[serde(rename = "fldizYmjpXABGDLTG")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub date_with_time: Option<String>,
-    #[serde(rename = "fldLTyf6ljS0rhur8")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub duration: Option<i64>,
-    #[serde(rename = "fldHCJoYBiFVsNvP4")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub email: Option<String>,
-    #[serde(rename = "fldFyFheQWczd8oux")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub link_multiple: Option<Vec<RecordId>>,
-    #[serde(rename = "fld7F5onkDo6mkmbN")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub link_single: Option<Vec<RecordId>>,
-    #[serde(rename = "fld8ulc6J0W29M6La")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub long_text: Option<String>,
-    #[serde(rename = "fldHJkxCMC0xo343u")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub long_text_with_rich_text: Option<String>,
-    #[serde(rename = "fld6GTabFmu1xKPvZ")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub multiple_select: Option<Vec<PrimaryMultipleSelectOption>>,
-    #[serde(rename = "fldmU0X2l4RWd21dd")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub number_float: Option<f64>,
-    #[serde(rename = "fldOfPKGmnRPv94QH")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub number_int: Option<f64>,
-    #[serde(rename = "fldiGui9ll69N7WOj")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub percent_float: Option<f64>,
-    #[serde(rename = "fldbAAyWboGulpb4s")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub percent_int: Option<f64>,
-    #[serde(rename = "fld38tnNpHmoks8C8")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub phone_number: Option<String>,
-    #[serde(rename = "fldol5Q4wmQJQvPRy")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub primary_key: Option<String>,
-    #[serde(rename = "fldRsmwFwQNZkKLp4")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub rating: Option<serde_json::Value>,
-    #[serde(rename = "fld0BL2lFo9fqcKv3")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub single_line_text: Option<String>,
-    #[serde(rename = "fldn0GFFtMFpCXUNU")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub single_select: Option<PrimarySingleSelectOption>,
-    #[serde(rename = "fldLYloz2oP4ymf3B")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub url: Option<String>,
-    #[serde(rename = "fldU6SbLp8CSkLcA4")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub user: Option<Collaborator>,
-    #[serde(rename = "fldBwCDbAVxRj9yg7")]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub user_allow_multiple: Option<Vec<Collaborator>>,
 }
