@@ -20,7 +20,7 @@ struct TestOrmCrudViaTable {
     @Test("Primary-key-only CRUD round-trip")
     func primaryKeyOnlyCrud() async throws {
         let primaryKey = TestSetup.primaryKey(for: "OrmTable", "PKOnly")
-        let new = CreatePrimaryModel(primaryKey: primaryKey)
+        let new = PrimaryModel(primaryKey: primaryKey)
 
         // Create
         let created = try await airtable.primary.create(new)
@@ -69,7 +69,7 @@ struct TestOrmCrudViaTable {
         // `AirtableJSONValue` today — exercising them end-to-end waits on a
         // tightening of AIRTABLE_TO_GENERIC that's out of scope here.
         let primaryKey = TestSetup.primaryKey(for: "OrmTable", "AllProps")
-        let new = CreatePrimaryModel(
+        let new = PrimaryModel(
             checkbox: true,
             currencyFloat: 9.99,
             email: "test@example.com",
@@ -119,7 +119,7 @@ struct TestOrmCrudViaTable {
         do {
             for i in 0..<3 {
                 let model = try await airtable.primary.create(
-                    CreatePrimaryModel(primaryKey: "\(suite) \(i)")
+                    PrimaryModel(primaryKey: "\(suite) \(i)")
                 )
                 if let id = model.id { createdIds.append(id) }
             }
@@ -158,7 +158,7 @@ struct TestOrmCrudViaTable {
 
         let creates = (1...count).map { i in
             // Init params are alphabetical (numberInt before primaryKey).
-            CreatePrimaryModel(numberInt: i, primaryKey: "\(suite) \(i)")
+            PrimaryModel(numberInt: i, primaryKey: "\(suite) \(i)")
         }
         let created = try await airtable.primary.create(creates)
         #expect(created.count == count)
@@ -199,7 +199,7 @@ struct TestOrmCrudViaTable {
     @Test("upsertOne inserts when no match exists")
     func upsertAsCreate() async throws {
         let primaryKey = TestSetup.primaryKey(for: "OrmTable", "UpsertCreate")
-        let new = CreatePrimaryModel(primaryKey: primaryKey)
+        let new = PrimaryModel(primaryKey: primaryKey)
 
         let (model, wasCreated) = try await airtable.primary.upsert(
             new,
@@ -219,7 +219,7 @@ struct TestOrmCrudViaTable {
 
         // Seed a record.
         let seeded = try await airtable.primary.create(
-            CreatePrimaryModel(primaryKey: primaryKey, singleLineText: "before")
+            PrimaryModel(primaryKey: primaryKey, singleLineText: "before")
         )
         guard let seededId = seeded.id else {
             Issue.record("Missing id on seeded model")
@@ -229,7 +229,7 @@ struct TestOrmCrudViaTable {
         do {
             // Upsert by primary key; should match the seeded record and update it.
             let (merged, wasCreated) = try await airtable.primary.upsert(
-                CreatePrimaryModel(primaryKey: primaryKey, singleLineText: "after"),
+                PrimaryModel(primaryKey: primaryKey, singleLineText: "after"),
                 matchFieldsToMerge: [PrimaryFields.primaryKeyId]
             )
             #expect(!wasCreated)

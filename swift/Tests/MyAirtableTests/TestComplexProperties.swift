@@ -27,7 +27,7 @@ struct TestComplexProperties {
         let url =
             "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
 
-        let new = CreatePrimaryModel(
+        let new = PrimaryModel(
             attachment: [AirtableAttachment(url: url)],
             primaryKey: primaryKey
         )
@@ -71,7 +71,7 @@ struct TestComplexProperties {
         // Matches the user ID used by the Rust test in the shared test base.
         let userId = "usrnZ4k98m0Ipji4e"
 
-        let new = CreatePrimaryModel(
+        let new = PrimaryModel(
             primaryKey: primaryKey,
             user: AirtableCollaborator(id: userId),
             userAllowMultiple: [AirtableCollaborator(id: userId)]
@@ -104,7 +104,7 @@ struct TestComplexProperties {
     @Test("Computed fields populate on create and read-back")
     func computedFields() async throws {
         let primaryKey = TestSetup.primaryKey(for: "Complex", "Computed")
-        let new = CreatePrimaryModel(
+        let new = PrimaryModel(
             numberFloat: 5.0,
             numberInt: 10,
             primaryKey: primaryKey
@@ -145,7 +145,7 @@ struct TestComplexProperties {
     @Test("Button field decodes on read")
     func buttonDecodes() async throws {
         let primaryKey = TestSetup.primaryKey(for: "Complex", "Button")
-        let new = CreatePrimaryModel(primaryKey: primaryKey)
+        let new = PrimaryModel(primaryKey: primaryKey)
         let created = try await airtable.primary.create(new)
         guard let recordId = created.id else {
             Issue.record("Missing id on created model")

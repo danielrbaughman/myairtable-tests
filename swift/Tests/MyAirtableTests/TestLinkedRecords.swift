@@ -23,10 +23,10 @@ struct TestLinkedRecords {
 
         // Create target records in Secondary.
         let sec1 = try await airtable.secondary.create(
-            CreateSecondaryModel(name: "\(suite) Target 1", value: "val1")
+            SecondaryModel(name: "\(suite) Target 1", value: "val1")
         )
         let sec2 = try await airtable.secondary.create(
-            CreateSecondaryModel(name: "\(suite) Target 2", value: "val2")
+            SecondaryModel(name: "\(suite) Target 2", value: "val2")
         )
         guard let sec1Id = sec1.id, let sec2Id = sec2.id else {
             Issue.record("Missing ids on secondary records")
@@ -35,7 +35,7 @@ struct TestLinkedRecords {
 
         // Create primary with links.
         let prim = try await airtable.primary.create(
-            CreatePrimaryModel(
+            PrimaryModel(
                 linkMultiple: [sec1Id, sec2Id],
                 linkSingle: [sec1Id],
                 primaryKey: "\(suite) Primary"
@@ -82,7 +82,7 @@ struct TestLinkedRecords {
         let suite = TestSetup.primaryKey(for: "LinkedRecords", "FetchSingle")
 
         let sec = try await airtable.secondary.create(
-            CreateSecondaryModel(name: "\(suite) Target", value: "sv")
+            SecondaryModel(name: "\(suite) Target", value: "sv")
         )
         guard let secId = sec.id else {
             Issue.record("Missing id on secondary record")
@@ -90,7 +90,7 @@ struct TestLinkedRecords {
         }
 
         let prim = try await airtable.primary.create(
-            CreatePrimaryModel(linkSingle: [secId], primaryKey: "\(suite) Primary")
+            PrimaryModel(linkSingle: [secId], primaryKey: "\(suite) Primary")
         )
         guard let primId = prim.id else {
             Issue.record("Missing id on primary record")
@@ -118,10 +118,10 @@ struct TestLinkedRecords {
         let suite = TestSetup.primaryKey(for: "LinkedRecords", "FetchMultiple")
 
         let sec1 = try await airtable.secondary.create(
-            CreateSecondaryModel(name: "\(suite) T1", value: "v1")
+            SecondaryModel(name: "\(suite) T1", value: "v1")
         )
         let sec2 = try await airtable.secondary.create(
-            CreateSecondaryModel(name: "\(suite) T2", value: "v2")
+            SecondaryModel(name: "\(suite) T2", value: "v2")
         )
         guard let sec1Id = sec1.id, let sec2Id = sec2.id else {
             Issue.record("Missing ids")
@@ -129,7 +129,7 @@ struct TestLinkedRecords {
         }
 
         let prim = try await airtable.primary.create(
-            CreatePrimaryModel(
+            PrimaryModel(
                 linkMultiple: [sec1Id, sec2Id],
                 primaryKey: "\(suite) Primary"
             )
@@ -161,7 +161,7 @@ struct TestLinkedRecords {
     func fetchNilLinkSingle() async throws {
         let suite = TestSetup.primaryKey(for: "LinkedRecords", "FetchNil")
         let prim = try await airtable.primary.create(
-            CreatePrimaryModel(primaryKey: "\(suite) No Links")
+            PrimaryModel(primaryKey: "\(suite) No Links")
         )
         guard let primId = prim.id else {
             Issue.record("Missing id")

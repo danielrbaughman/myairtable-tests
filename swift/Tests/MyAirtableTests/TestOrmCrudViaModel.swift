@@ -31,7 +31,7 @@ struct TestOrmCrudViaModel {
 
         // Create has to go through the Create payload (class can't self-create).
         let created = try await airtable.primary.create(
-            CreatePrimaryModel(primaryKey: primaryKey)
+            PrimaryModel(primaryKey: primaryKey)
         )
         #expect(created.isNew == false)
         #expect(created.primaryKey == primaryKey)
@@ -76,7 +76,7 @@ struct TestOrmCrudViaModel {
     func dirtyTrackingAcrossSave() async throws {
         let primaryKey = TestSetup.primaryKey(for: "OrmModel", "Dirty")
         let created = try await airtable.primary.create(
-            CreatePrimaryModel(primaryKey: primaryKey)
+            PrimaryModel(primaryKey: primaryKey)
         )
         guard let recordId = created.id else {
             Issue.record("Missing id")

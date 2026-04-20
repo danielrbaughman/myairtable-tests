@@ -32,7 +32,7 @@ struct TestCaching {
         let at = cachedAirtable()
         let primaryKey = TestSetup.primaryKey(for: "Cache", "Hit")
 
-        let created = try await at.primary.create(CreatePrimaryModel(primaryKey: primaryKey))
+        let created = try await at.primary.create(PrimaryModel(primaryKey: primaryKey))
         guard let id = created.id else {
             Issue.record("missing id")
             return
@@ -60,7 +60,7 @@ struct TestCaching {
         #expect(count0 == 0)
 
         let primaryKey = TestSetup.primaryKey(for: "Cache", "Off")
-        let created = try await at.primary.create(CreatePrimaryModel(primaryKey: primaryKey))
+        let created = try await at.primary.create(PrimaryModel(primaryKey: primaryKey))
         guard let id = created.id else {
             Issue.record("missing id")
             return
@@ -84,7 +84,7 @@ struct TestCaching {
     func createInvalidates() async throws {
         let at = cachedAirtable()
         let primaryKey = TestSetup.primaryKey(for: "Cache", "MutateCreate")
-        let a = try await at.primary.create(CreatePrimaryModel(primaryKey: primaryKey))
+        let a = try await at.primary.create(PrimaryModel(primaryKey: primaryKey))
         guard let idA = a.id else {
             Issue.record("missing id")
             return
@@ -97,7 +97,7 @@ struct TestCaching {
 
             // Another create should wipe cached entries for this table.
             let b = try await at.primary.create(
-                CreatePrimaryModel(primaryKey: primaryKey + " B")
+                PrimaryModel(primaryKey: primaryKey + " B")
             )
             guard let idB = b.id else {
                 Issue.record("missing id")
@@ -118,7 +118,7 @@ struct TestCaching {
     func updateInvalidates() async throws {
         let at = cachedAirtable()
         let primaryKey = TestSetup.primaryKey(for: "Cache", "MutateUpdate")
-        let created = try await at.primary.create(CreatePrimaryModel(primaryKey: primaryKey))
+        let created = try await at.primary.create(PrimaryModel(primaryKey: primaryKey))
         guard let id = created.id else {
             Issue.record("missing id")
             return
@@ -144,7 +144,7 @@ struct TestCaching {
     func deleteInvalidates() async throws {
         let at = cachedAirtable()
         let primaryKey = TestSetup.primaryKey(for: "Cache", "MutateDelete")
-        let created = try await at.primary.create(CreatePrimaryModel(primaryKey: primaryKey))
+        let created = try await at.primary.create(PrimaryModel(primaryKey: primaryKey))
         guard let id = created.id else {
             Issue.record("missing id")
             return
@@ -163,7 +163,7 @@ struct TestCaching {
     func manualInvalidateTable() async throws {
         let at = cachedAirtable()
         let primaryKey = TestSetup.primaryKey(for: "Cache", "Manual")
-        let created = try await at.primary.create(CreatePrimaryModel(primaryKey: primaryKey))
+        let created = try await at.primary.create(PrimaryModel(primaryKey: primaryKey))
         guard let id = created.id else {
             Issue.record("missing id")
             return
@@ -187,7 +187,7 @@ struct TestCaching {
     func manualInvalidateAll() async throws {
         let at = cachedAirtable()
         let primaryKey = TestSetup.primaryKey(for: "Cache", "All")
-        let created = try await at.primary.create(CreatePrimaryModel(primaryKey: primaryKey))
+        let created = try await at.primary.create(PrimaryModel(primaryKey: primaryKey))
         guard let id = created.id else {
             Issue.record("missing id")
             return
@@ -213,7 +213,7 @@ struct TestCaching {
     func cacheExpiresAfterTtl() async throws {
         let at = cachedAirtable(seconds: 1)  // 1-second TTL
         let primaryKey = TestSetup.primaryKey(for: "Cache", "TTL")
-        let created = try await at.primary.create(CreatePrimaryModel(primaryKey: primaryKey))
+        let created = try await at.primary.create(PrimaryModel(primaryKey: primaryKey))
         guard let id = created.id else {
             Issue.record("missing id")
             return
@@ -241,8 +241,8 @@ struct TestCaching {
         let at = cachedAirtable()
         let suite = TestSetup.primaryKey(for: "Cache", "QueryKeys")
 
-        let c1 = try await at.primary.create(CreatePrimaryModel(primaryKey: "\(suite) A"))
-        let c2 = try await at.primary.create(CreatePrimaryModel(primaryKey: "\(suite) B"))
+        let c1 = try await at.primary.create(PrimaryModel(primaryKey: "\(suite) A"))
+        let c2 = try await at.primary.create(PrimaryModel(primaryKey: "\(suite) B"))
         guard let id1 = c1.id, let id2 = c2.id else {
             Issue.record("missing ids")
             return

@@ -20,7 +20,7 @@ struct TestFilterByFormula {
     func textFieldEquals() async throws {
         let suite = TestSetup.primaryKey(for: "Filter", "TextEq")
         let created = try await airtable.primary.create(
-            CreatePrimaryModel(primaryKey: suite, singleLineText: "UniqueFilterValue")
+            PrimaryModel(primaryKey: suite, singleLineText: "UniqueFilterValue")
         )
         guard let recordId = created.id else {
             Issue.record("Missing id")
@@ -47,7 +47,7 @@ struct TestFilterByFormula {
     func recordIdFilter() async throws {
         let suite = TestSetup.primaryKey(for: "Filter", "RecordID")
         let created = try await airtable.primary.create(
-            CreatePrimaryModel(primaryKey: suite)
+            PrimaryModel(primaryKey: suite)
         )
         guard let recordId = created.id else {
             Issue.record("Missing id")
@@ -75,10 +75,10 @@ struct TestFilterByFormula {
     func numberFieldFilter() async throws {
         let suite = TestSetup.primaryKey(for: "Filter", "Number")
         let c1 = try await airtable.primary.create(
-            CreatePrimaryModel(numberInt: 10, primaryKey: "\(suite) 1")
+            PrimaryModel(numberInt: 10, primaryKey: "\(suite) 1")
         )
         let c2 = try await airtable.primary.create(
-            CreatePrimaryModel(numberInt: 20, primaryKey: "\(suite) 2")
+            PrimaryModel(numberInt: 20, primaryKey: "\(suite) 2")
         )
         guard let id1 = c1.id, let id2 = c2.id else {
             Issue.record("Missing ids")
@@ -108,7 +108,7 @@ struct TestFilterByFormula {
     func andCombinator() async throws {
         let suite = TestSetup.primaryKey(for: "Filter", "AND")
         let created = try await airtable.primary.create(
-            CreatePrimaryModel(
+            PrimaryModel(
                 checkbox: true,
                 numberInt: 42,
                 primaryKey: suite

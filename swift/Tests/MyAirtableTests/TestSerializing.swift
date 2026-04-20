@@ -217,13 +217,13 @@ struct TestSerializing {
         #expect(model.isNew == false)
     }
 
-    // MARK: - CreatePrimaryModel encoding
+    // MARK: - Unsaved-model encoding
 
-    @Test("CreatePrimaryModel encodes with field-ID keys")
+    @Test("Fresh PrimaryModel encodes with field-ID keys (writable fields only)")
     func createModelEncodesFieldIds() throws {
         // Init params are emitted in schema (alphabetical) order — numberInt,
         // primaryKey, singleLineText — so we respect that ordering here.
-        let create = CreatePrimaryModel(
+        let create = PrimaryModel(
             numberInt: 42,
             primaryKey: "Hello",
             singleLineText: "Line"
@@ -235,9 +235,9 @@ struct TestSerializing {
         #expect(!text.contains("\"Primary Key\":"))
     }
 
-    @Test("CreatePrimaryModel omits nil fields (sparse write)")
+    @Test("Fresh PrimaryModel omits nil fields (sparse write)")
     func createModelOmitsNils() throws {
-        let create = CreatePrimaryModel(primaryKey: "Only Me")
+        let create = PrimaryModel(primaryKey: "Only Me")
         let data = try encoder().encode(create)
         let text = String(data: data, encoding: .utf8) ?? ""
         #expect(text.contains("\"\(PrimaryFields.primaryKeyId)\":\"Only Me\""))
@@ -260,7 +260,7 @@ struct TestSerializingNetwork {
     @Test("Round-trip preserves id + createdTime after fetch")
     func idAndCreatedTimeSurface() async throws {
         let suite = TestSetup.primaryKey(for: "Serialize", "Id")
-        let created = try await airtable.primary.create(CreatePrimaryModel(primaryKey: suite))
+        let created = try await airtable.primary.create(PrimaryModel(primaryKey: suite))
         guard let id = created.id else {
             Issue.record("missing id")
             return
@@ -290,7 +290,7 @@ struct TestSerializingNetwork {
         // family of issues as the date-format one in F8).
         let suite = TestSetup.primaryKey(for: "Serialize", "Links")
         let sec = try await airtable.secondary.create(
-            CreateSecondaryModel(name: "\(suite) Target")
+            SecondaryModel(name: "\(suite) Target")
         )
         guard let secId = sec.id else {
             Issue.record("missing id")
@@ -328,7 +328,7 @@ struct TestSerializingNetwork {
         let suite = TestSetup.primaryKey(for: "Serialize", "ClearField")
 
         let created = try await airtable.primary.create(
-            CreatePrimaryModel(primaryKey: suite, singleLineText: "initial")
+            PrimaryModel(primaryKey: suite, singleLineText: "initial")
         )
         guard let id = created.id else {
             Issue.record("missing id")
