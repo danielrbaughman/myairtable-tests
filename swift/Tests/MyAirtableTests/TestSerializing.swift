@@ -246,3 +246,109 @@ struct TestSerializing {
         #expect(!text.contains(PrimaryFields.numberIntId))
     }
 }
+
+// MARK: - F10 network-bound serialization round-trips
+
+@Suite("Serialization (network)", .serialized)
+struct TestSerializingNetwork {
+    private let airtable: Airtable
+
+    init() {
+        self.airtable = TestSetup.makeAirtable()
+    }
+
+    @Test("Round-trip preserves id + createdTime after fetch")
+    func idAndCreatedTimeSurface() async throws {
+        let suite = TestSetup.primaryKey(for: "Serialize", "Id")
+        let created = try await airtable.primary.create(CreatePrimaryModel(primaryKey: suite))
+        guard let id = created.id else {
+            Issue.record("missing id")
+            return
+        }
+
+        do {
+            #expect(created.createdTime != nil)
+
+            // Re-fetch and verify identity round-trip.
+            let fetched = try await airtable.primary.get(id)
+            #expect(fetched.id == id)
+            #expect(fetched.createdTime != nil)
+            #expect(fetched.primaryKey == suite)
+
+            try await airtable.primary.delete(id)
+        } catch {
+            try? await airtable.primary.delete(id)
+            throw error
+        }
+    }
+
+    @Test("Linked-record fields round-trip as record-ID arrays via DictTable")
+    func linkedRecordSerialization() async throws {
+        // Uses the dict path to sidestep a known decode-strictness issue with
+        // the generated Secondary model (its reverse-lookup fields surface
+        // nulls that fail `[RecordId]?` decoding — tracked separately, same
+        // family of issues as the date-format one in F8).
+        let suite = TestSetup.primaryKey(for: "Serialize", "Links")
+        let sec = try await airtable.secondary.create(
+            CreateSecondaryModel(name: "\(suite) Target")
+        )
+        guard let secId = sec.id else {
+            Issue.record("missing id")
+            return
+        }
+
+        var fields = Fields(nameToId: PrimaryFields.nameToId)
+        fields.setString(PrimaryFields.primaryKeyId, suite)
+        fields.setStrings(PrimaryFields.linkSingleId, [secId])
+        fields.setStrings(PrimaryFields.linkMultipleId, [secId])
+
+        let prim = try await airtable.primary.dict.create(fields)
+
+        do {
+            // Both sides of the link surface as arrays of record-ID strings.
+            let single = prim.fields.getArray(PrimaryFields.linkSingleId) ?? []
+            let multi = prim.fields.getArray(PrimaryFields.linkMultipleId) ?? []
+            #expect(single.count == 1)
+            #expect(multi.count == 1)
+            if case .string(let gotId) = single.first ?? .null {
+                #expect(gotId == secId)
+            }
+
+            try await airtable.primary.dict.delete(prim.id)
+            try await airtable.secondary.delete(secId)
+        } catch {
+            try? await airtable.primary.dict.delete(prim.id)
+            try? await airtable.secondary.delete(secId)
+            throw error
+        }
+    }
+
+    @Test("Explicit nil on a writable field clears it server-side")
+    func explicitNilClearsField() async throws {
+        let suite = TestSetup.primaryKey(for: "Serialize", "ClearField")
+
+        let created = try await airtable.primary.create(
+            CreatePrimaryModel(primaryKey: suite, singleLineText: "initial")
+        )
+        guard let id = created.id else {
+            Issue.record("missing id")
+            return
+        }
+
+        do {
+            #expect(created.singleLineText == "initial")
+
+            let fetched = try await airtable.primary.get(id)
+            fetched.singleLineText = nil
+            _ = try await airtable.primary.update(fetched)
+
+            let reread = try await airtable.primary.get(id)
+            #expect(reread.singleLineText == nil)
+
+            try await airtable.primary.delete(id)
+        } catch {
+            try? await airtable.primary.delete(id)
+            throw error
+        }
+    }
+}
