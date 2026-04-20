@@ -75,10 +75,10 @@ struct TestLinkedRecords {
         }
     }
 
-    // MARK: - fetch{Field}() async chaining
+    // MARK: - Resolving linked IDs through the linked table
 
-    @Test("fetchLinkSingle resolves the linked model")
-    func fetchLinkSingle() async throws {
+    @Test("Linked single record resolves via secondary.get")
+    func resolveLinkSingle() async throws {
         let suite = TestSetup.primaryKey(for: "LinkedRecords", "FetchSingle")
 
         let sec = try await airtable.secondary.create(
@@ -98,11 +98,14 @@ struct TestLinkedRecords {
         }
 
         do {
-            // fetchLinkSingle() follows the ID and returns a full SecondaryModel.
-            let linked = try await prim.fetchLinkSingle()
-            #expect(linked != nil)
-            #expect(linked?.name == "\(suite) Target")
-            #expect(linked?.value == "sv")
+            // Resolve the single-link id via the secondary table directly.
+            guard let linkedId = prim.linkSingle?.first else {
+                Issue.record("linkSingle was empty")
+                return
+            }
+            let linked = try await airtable.secondary.get(linkedId)
+            #expect(linked.name == "\(suite) Target")
+            #expect(linked.value == "sv")
 
             try await airtable.primary.delete(primId)
             try await airtable.secondary.delete(secId)
@@ -113,8 +116,8 @@ struct TestLinkedRecords {
         }
     }
 
-    @Test("fetchLinkMultiple resolves all linked models")
-    func fetchLinkMultiple() async throws {
+    @Test("Linked multi records resolve via secondary.get")
+    func resolveLinkMultiple() async throws {
         let suite = TestSetup.primaryKey(for: "LinkedRecords", "FetchMultiple")
 
         let sec1 = try await airtable.secondary.create(
@@ -140,7 +143,7 @@ struct TestLinkedRecords {
         }
 
         do {
-            let linked = try await prim.fetchLinkMultiple()
+            let linked = try await airtable.secondary.get(prim.linkMultiple ?? [])
             #expect(linked.count == 2)
             let names = Set(linked.compactMap { $0.name })
             #expect(names.contains("\(suite) T1"))
@@ -157,7 +160,7 @@ struct TestLinkedRecords {
         }
     }
 
-    @Test("fetchLinkSingle on nil link returns nil gracefully")
+    @Test("Empty linkSingle yields nil when unwrapped")
     func fetchNilLinkSingle() async throws {
         let suite = TestSetup.primaryKey(for: "LinkedRecords", "FetchNil")
         let prim = try await airtable.primary.create(
@@ -169,8 +172,8 @@ struct TestLinkedRecords {
         }
 
         do {
-            let linked = try await prim.fetchLinkSingle()
-            #expect(linked == nil)
+            // Airtable omits empty link fields entirely; linkSingle decodes as nil.
+            #expect(prim.linkSingle?.first == nil)
             try await airtable.primary.delete(primId)
         } catch {
             try? await airtable.primary.delete(primId)
