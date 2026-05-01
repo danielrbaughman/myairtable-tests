@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { Airtable, PrimaryModel, AND, OR, XOR, NOT } from "../output";
+import { Airtable, PrimaryModel, SecondaryModel, AND, OR, XOR, NOT } from "../output";
 
 const airtable = new Airtable();
 
@@ -730,5 +730,87 @@ describe("Filter by Complex Formula", async () => {
 	afterAll(async () => {
 		const allRecords = await airtable.primary.get(newRecords.map((r) => r.id!));
 		await airtable.primary.delete(allRecords.map((r) => r.id!));
+	});
+});
+
+/**
+ * Lookup fields (multipleLookupValues) hold arrays. Airtable does not auto-coerce
+ * arrays through LOWER/TRIM/FIND, so substring filters used to silently match
+ * nothing. LookupField wraps the field reference in ARRAYJOIN(field, ", ") so
+ * contains/startsWith/endsWith work end-to-end.
+ *
+ * These tests run against real Airtable: a Secondary record provides the
+ * looked-up text, and a Primary record links to it so its `lookup` field
+ * surfaces that text.
+ */
+describe("Filter by LookupField Formula", async () => {
+	let secA: SecondaryModel;
+	let secB: SecondaryModel;
+	let secC: SecondaryModel;
+	const newPrimaries: PrimaryModel[] = [];
+
+	beforeAll(async () => {
+		secA = await airtable.secondary.create(
+			new SecondaryModel({ name: "Lookup Filter Sec A", value: "Groundwork BioAg" }),
+		);
+		secB = await airtable.secondary.create(
+			new SecondaryModel({ name: "Lookup Filter Sec B", value: "Groundwork Lab" }),
+		);
+		secC = await airtable.secondary.create(new SecondaryModel({ name: "Lookup Filter Sec C", value: "Other Vendor" }));
+
+		newPrimaries.push(
+			await airtable.primary.create(new PrimaryModel({ primaryKey: "Lookup Filter A", linkSingle: secA.id! })),
+			await airtable.primary.create(new PrimaryModel({ primaryKey: "Lookup Filter B", linkSingle: secB.id! })),
+			await airtable.primary.create(new PrimaryModel({ primaryKey: "Lookup Filter C", linkSingle: secC.id! })),
+		);
+	});
+
+	const scoped = (lookupFormula: string) => AND(PrimaryModel.f.primaryKey.contains("Lookup Filter"), lookupFormula);
+
+	it("contains matches lookup substring (regression for the silently-empty bug)", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.contains("groundwork"));
+		const records = await airtable.primary.get({ formula });
+		const names = records.map((r) => r.primaryKey).sort();
+		expect(names).toEqual(["Lookup Filter A", "Lookup Filter B"]);
+	});
+
+	it("contains returns nothing when no match", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.contains("nonexistent-substring-xyz"));
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(0);
+	});
+
+	it("startsWith", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.startsWith("Ground"));
+		const records = await airtable.primary.get({ formula });
+		const names = records.map((r) => r.primaryKey).sort();
+		expect(names).toEqual(["Lookup Filter A", "Lookup Filter B"]);
+	});
+
+	it("endsWith", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.endsWith("BioAg"));
+		const records = await airtable.primary.get({ formula });
+		const names = records.map((r) => r.primaryKey);
+		expect(names).toEqual(["Lookup Filter A"]);
+	});
+
+	it("equals still works (= already coerces, no regression)", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.equals("Groundwork BioAg"));
+		const records = await airtable.primary.get({ formula });
+		const names = records.map((r) => r.primaryKey);
+		expect(names).toEqual(["Lookup Filter A"]);
+	});
+
+	it("notContains", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.notContains("Groundwork"));
+		const records = await airtable.primary.get({ formula });
+		const names = records.map((r) => r.primaryKey);
+		expect(names).toEqual(["Lookup Filter C"]);
+	});
+
+	afterAll(async () => {
+		const allRecords = await airtable.primary.get(newPrimaries.map((r) => r.id!));
+		await airtable.primary.delete(allRecords.map((r) => r.id!));
+		await airtable.secondary.delete([secA.id!, secB.id!, secC.id!]);
 	});
 });

@@ -2,7 +2,7 @@ from datetime import date, datetime, timezone
 
 import pytest
 
-from output import AND, NOT, OR, XOR, Airtable, PrimaryModel
+from output import AND, NOT, OR, XOR, Airtable, PrimaryModel, SecondaryModel
 
 
 @pytest.fixture(scope="module")
@@ -625,3 +625,98 @@ class TestFilterByComplexFormula:
         records = airtable.primary.get(formula=formula)
         assert len(records) == 1
         assert records[0].primary_key == "Complex Test B"
+
+
+class TestFilterByLookupFieldFormula:
+    """
+    Lookup fields (multipleLookupValues) hold arrays. Airtable does not
+    auto-coerce arrays through LOWER/TRIM/FIND, so substring filters used to
+    silently match nothing. LookupField wraps the field reference in
+    ARRAYJOIN(field, ", ") so contains/starts_with/ends_with work end-to-end.
+
+    These tests run against real Airtable: a Secondary record provides the
+    looked-up text, and a Primary record links to it so its `lookup` field
+    surfaces that text. We then filter on the lookup with each string op.
+    """
+
+    sec_a: SecondaryModel
+    sec_b: SecondaryModel
+    sec_c: SecondaryModel
+    primary_ids: list[str]
+
+    @pytest.fixture(autouse=True, scope="class")
+    def setup_and_teardown(self, airtable: Airtable):
+        # Three secondaries with distinguishable Value text. The Primary's
+        # `lookup` field looks up Secondary.Value via the Link (single) field.
+        sec_a = SecondaryModel()
+        sec_a.name = "Lookup Filter Sec A"
+        sec_a.value = "Groundwork BioAg"
+        sec_a.save()
+        sec_b = SecondaryModel()
+        sec_b.name = "Lookup Filter Sec B"
+        sec_b.value = "Groundwork Lab"
+        sec_b.save()
+        sec_c = SecondaryModel()
+        sec_c.name = "Lookup Filter Sec C"
+        sec_c.value = "Other Vendor"
+        sec_c.save()
+        self.__class__.sec_a = sec_a
+        self.__class__.sec_b = sec_b
+        self.__class__.sec_c = sec_c
+
+        primaries = []
+        for pk, sec in [
+            ("Lookup Filter A", sec_a),
+            ("Lookup Filter B", sec_b),
+            ("Lookup Filter C", sec_c),
+        ]:
+            p = PrimaryModel()
+            p.primary_key = pk
+            p.link_single = sec
+            primaries.append(p)
+        created = airtable.primary.create(primaries)
+        self.__class__.primary_ids = [r.id for r in created]
+        yield
+        airtable.primary.delete(record_ids=self.primary_ids)
+        sec_a.delete()
+        sec_b.delete()
+        sec_c.delete()
+
+    def _scoped(self, lookup_formula):
+        # Scope to our test set so we don't get pre-existing records.
+        return AND(PrimaryModel.f.primary_key.contains("Lookup Filter"), lookup_formula)
+
+    def test_contains_matches_lookup_substring(self, airtable: Airtable):
+        # The bug being fixed: this used to return zero rows because LOWER on
+        # an array doesn't coerce. With LookupField it must return the two
+        # primaries linked to "Groundwork ..." secondaries.
+        formula = self._scoped(PrimaryModel.f.lookup.contains("groundwork"))
+        records = airtable.primary.get(formula=formula)
+        assert {r.primary_key for r in records} == {"Lookup Filter A", "Lookup Filter B"}
+
+    def test_contains_no_match(self, airtable: Airtable):
+        formula = self._scoped(PrimaryModel.f.lookup.contains("nonexistent-substring-xyz"))
+        records = airtable.primary.get(formula=formula)
+        assert len(records) == 0
+
+    def test_starts_with(self, airtable: Airtable):
+        formula = self._scoped(PrimaryModel.f.lookup.starts_with("Ground"))
+        records = airtable.primary.get(formula=formula)
+        assert {r.primary_key for r in records} == {"Lookup Filter A", "Lookup Filter B"}
+
+    def test_ends_with(self, airtable: Airtable):
+        formula = self._scoped(PrimaryModel.f.lookup.ends_with("BioAg"))
+        records = airtable.primary.get(formula=formula)
+        assert {r.primary_key for r in records} == {"Lookup Filter A"}
+
+    def test_equals_still_works(self, airtable: Airtable):
+        # Equality (`=`) was never broken — Airtable coerces arrays under `=`.
+        # Verify LookupField didn't regress that path.
+        formula = self._scoped(PrimaryModel.f.lookup.equals("Groundwork BioAg"))
+        records = airtable.primary.get(formula=formula)
+        assert {r.primary_key for r in records} == {"Lookup Filter A"}
+
+    def test_not_contains(self, airtable: Airtable):
+        formula = self._scoped(PrimaryModel.f.lookup.not_contains("Groundwork"))
+        records = airtable.primary.get(formula=formula)
+        assert {r.primary_key for r in records} == {"Lookup Filter C"}

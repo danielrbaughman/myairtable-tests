@@ -2,7 +2,7 @@
 # Auto-generated file. Do not edit directly.
 # ==========================================
 
-from ...static.formula import AttachmentsField, BooleanField, DateField, NumberField, TextField, SingleSelectField, MultiSelectField, ID
+from ...static.formula import AttachmentsField, BooleanField, DateField, LookupField, NumberField, TextField, SingleSelectField, MultiSelectField, ID
 from ..types import (
     PrimaryMultipleSelectOption,
     PrimarySingleSelectOption,
@@ -317,7 +317,7 @@ class PrimaryFormulas:
     """Long Text `fld8ulc6J0W29M6La`"""
     long_text_with_rich_text: TextField = TextField('fldHJkxCMC0xo343u')
     """Long Text with Rich Text `fldHJkxCMC0xo343u`"""
-    lookup: TextField = TextField('fldbmFmrzYKBktJvE')
+    lookup: LookupField = LookupField('fldbmFmrzYKBktJvE')
     """Lookup `fldbmFmrzYKBktJvE` - `Read-Only Field`"""
     multiple_select: MultiSelectField[PrimaryMultipleSelectOption] = MultiSelectField('fld6GTabFmu1xKPvZ')
     """Multiple Select `fld6GTabFmu1xKPvZ`"""

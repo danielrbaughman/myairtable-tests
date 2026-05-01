@@ -53,7 +53,7 @@ pub struct PrimaryFormulas {
     /// `Long Text with Rich Text`
     pub long_text_with_rich_text: FormulaTextField,
     /// `Lookup`
-    pub lookup: FormulaTextField,
+    pub lookup: FormulaLookupField,
     /// `Multiple Select`
     pub multiple_select: FormulaMultiSelectField,
     /// `Number (float)`
@@ -110,7 +110,7 @@ impl PrimaryFormulas {
             link_single: FormulaTextField::new("fld7F5onkDo6mkmbN"),
             long_text: FormulaTextField::new("fld8ulc6J0W29M6La"),
             long_text_with_rich_text: FormulaTextField::new("fldHJkxCMC0xo343u"),
-            lookup: FormulaTextField::new("fldbmFmrzYKBktJvE"),
+            lookup: FormulaLookupField::new("fldbmFmrzYKBktJvE"),
             multiple_select: FormulaMultiSelectField::new("fld6GTabFmu1xKPvZ"),
             number_float: FormulaNumberField::new("fldmU0X2l4RWd21dd"),
             number_int: FormulaNumberField::new("fldOfPKGmnRPv94QH"),

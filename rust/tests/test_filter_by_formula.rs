@@ -706,3 +706,163 @@ async fn field_selection() {
 
     at.primary.dict.delete_one(&created.id).await.unwrap();
 }
+
+// =============================================================================
+// Filter by lookup field formula
+// =============================================================================
+//
+// Lookup fields (multipleLookupValues) hold arrays. Airtable does not auto-coerce
+// arrays through LOWER/TRIM/FIND, so substring filters used to silently match
+// nothing. FormulaLookupField wraps the field reference in `ARRAYJOIN(field, ", ")`
+// so contains/starts_with/ends_with work end-to-end.
+
+#[tokio::test]
+async fn filter_by_lookup_field() {
+    let at = setup();
+    let f = PrimaryModel::F;
+
+    // Three Secondary records provide the looked-up text. Primary.lookup pulls
+    // from Secondary.value through Primary.link_single.
+    let sec_a = at
+        .secondary
+        .create_one(&SecondaryModel {
+            name: Some("Lookup Filter Sec A".to_string()),
+            value: Some("Groundwork BioAg".to_string()),
+            ..Default::default()
+        })
+        .await
+        .unwrap();
+    let sec_b = at
+        .secondary
+        .create_one(&SecondaryModel {
+            name: Some("Lookup Filter Sec B".to_string()),
+            value: Some("Groundwork Lab".to_string()),
+            ..Default::default()
+        })
+        .await
+        .unwrap();
+    let sec_c = at
+        .secondary
+        .create_one(&SecondaryModel {
+            name: Some("Lookup Filter Sec C".to_string()),
+            value: Some("Other Vendor".to_string()),
+            ..Default::default()
+        })
+        .await
+        .unwrap();
+    let sec_a_id = sec_a.id.as_deref().unwrap().to_string();
+    let sec_b_id = sec_b.id.as_deref().unwrap().to_string();
+    let sec_c_id = sec_c.id.as_deref().unwrap().to_string();
+
+    let prim_a = at
+        .primary
+        .create_one(&PrimaryModel {
+            primary_key: Some("Lookup Filter A".to_string()),
+            link_single: Some(vec![sec_a_id.clone()]),
+            ..Default::default()
+        })
+        .await
+        .unwrap();
+    let prim_b = at
+        .primary
+        .create_one(&PrimaryModel {
+            primary_key: Some("Lookup Filter B".to_string()),
+            link_single: Some(vec![sec_b_id.clone()]),
+            ..Default::default()
+        })
+        .await
+        .unwrap();
+    let prim_c = at
+        .primary
+        .create_one(&PrimaryModel {
+            primary_key: Some("Lookup Filter C".to_string()),
+            link_single: Some(vec![sec_c_id.clone()]),
+            ..Default::default()
+        })
+        .await
+        .unwrap();
+    let prim_a_id = prim_a.id.as_deref().unwrap().to_string();
+    let prim_b_id = prim_b.id.as_deref().unwrap().to_string();
+    let prim_c_id = prim_c.id.as_deref().unwrap().to_string();
+    let scope = scope_to(&[&prim_a_id, &prim_b_id, &prim_c_id]);
+
+    let names_of = |records: &[Record]| -> Vec<String> {
+        let mut out: Vec<String> = records
+            .iter()
+            .map(|r| {
+                r.fields
+                    .get(PrimaryFields::PRIMARY_KEY_ID)
+                    .unwrap()
+                    .as_str()
+                    .unwrap()
+                    .to_string()
+            })
+            .collect();
+        out.sort();
+        out
+    };
+
+    // contains — the regression test for the silently-empty bug
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.lookup.contains("groundwork", false, true),
+    ]));
+    let results = at.primary.dict.get_many(&params).await.unwrap();
+    assert_eq!(
+        names_of(&results),
+        vec!["Lookup Filter A".to_string(), "Lookup Filter B".to_string()]
+    );
+
+    // contains, no match
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.lookup.contains("nonexistent-substring-xyz", false, true),
+    ]));
+    let results = at.primary.dict.get_many(&params).await.unwrap();
+    assert_eq!(results.len(), 0);
+
+    // starts_with
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.lookup.starts_with("Ground", false, true),
+    ]));
+    let results = at.primary.dict.get_many(&params).await.unwrap();
+    assert_eq!(
+        names_of(&results),
+        vec!["Lookup Filter A".to_string(), "Lookup Filter B".to_string()]
+    );
+
+    // ends_with
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.lookup.ends_with("BioAg", false, true),
+    ]));
+    let results = at.primary.dict.get_many(&params).await.unwrap();
+    assert_eq!(names_of(&results), vec!["Lookup Filter A".to_string()]);
+
+    // equals — should still work (Airtable already coerces arrays under `=`).
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.lookup.equals("Groundwork BioAg", true, false),
+    ]));
+    let results = at.primary.dict.get_many(&params).await.unwrap();
+    assert_eq!(names_of(&results), vec!["Lookup Filter A".to_string()]);
+
+    // not_contains
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.lookup.not_contains("Groundwork", false, true),
+    ]));
+    let results = at.primary.dict.get_many(&params).await.unwrap();
+    assert_eq!(names_of(&results), vec!["Lookup Filter C".to_string()]);
+
+    // Cleanup
+    at.primary
+        .delete_many(&[prim_a_id, prim_b_id, prim_c_id])
+        .await
+        .unwrap();
+    at.secondary
+        .delete_many(&[sec_a_id, sec_b_id, sec_c_id])
+        .await
+        .unwrap();
+}

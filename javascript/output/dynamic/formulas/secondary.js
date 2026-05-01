@@ -7,6 +7,7 @@ const {
     AttachmentsField,
     BooleanField,
     DateField,
+    LookupField,
     NumberField,
     TextField,
     SingleSelectField,

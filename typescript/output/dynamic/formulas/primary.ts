@@ -2,7 +2,7 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
-import { ID, AttachmentsField, BooleanField, DateField, NumberField, TextField, SingleSelectField, MultiSelectField } from "../../static/formula";
+import { ID, AttachmentsField, BooleanField, DateField, LookupField, NumberField, TextField, SingleSelectField, MultiSelectField } from "../../static/formula";
 import {
     PrimaryMultipleSelectOption,
     PrimarySingleSelectOption,
@@ -32,7 +32,7 @@ export namespace PrimaryFormulas {
     export const linkSingle: TextField = new TextField('fld7F5onkDo6mkmbN');
     export const longText: TextField = new TextField('fld8ulc6J0W29M6La');
     export const longTextWithRichText: TextField = new TextField('fldHJkxCMC0xo343u');
-    export const lookup: TextField = new TextField('fldbmFmrzYKBktJvE');
+    export const lookup: LookupField = new LookupField('fldbmFmrzYKBktJvE');
     export const multipleSelect: MultiSelectField<PrimaryMultipleSelectOption> = new MultiSelectField('fld6GTabFmu1xKPvZ');
     export const numberFloat: NumberField = new NumberField('fldmU0X2l4RWd21dd');
     export const numberInt: NumberField = new NumberField('fldOfPKGmnRPv94QH');

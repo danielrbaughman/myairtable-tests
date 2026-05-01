@@ -2,7 +2,7 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
-import { ID, AttachmentsField, BooleanField, DateField, NumberField, TextField, SingleSelectField, MultiSelectField } from "../../static/formula";
+import { ID, AttachmentsField, BooleanField, DateField, LookupField, NumberField, TextField, SingleSelectField, MultiSelectField } from "../../static/formula";
 
 export namespace FormulasFormulas {
     export const id: ID = new ID();

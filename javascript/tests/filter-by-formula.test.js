@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-const { Airtable, PrimaryModel, AND, OR, XOR, NOT } = require("../output");
+const { Airtable, PrimaryModel, SecondaryModel, AND, OR, XOR, NOT } = require("../output");
 
 const airtable = new Airtable();
 
@@ -730,5 +730,87 @@ describe("Filter by Complex Formula", async () => {
 	afterAll(async () => {
 		const allRecords = await airtable.primary.get(newRecords.map((r) => r.id));
 		await airtable.primary.delete(allRecords.map((r) => r.id));
+	});
+});
+
+/**
+ * Lookup fields (multipleLookupValues) hold arrays. Airtable does not auto-coerce
+ * arrays through LOWER/TRIM/FIND, so substring filters used to silently match
+ * nothing. LookupField wraps the field reference in ARRAYJOIN(field, ", ") so
+ * contains/startsWith/endsWith work end-to-end.
+ */
+describe("Filter by LookupField Formula", async () => {
+	let secA;
+	let secB;
+	let secC;
+	const newPrimaries = [];
+
+	beforeAll(async () => {
+		secA = (
+			await airtable.secondary.create([new SecondaryModel({ name: "Lookup Filter Sec A", value: "Groundwork BioAg" })])
+		)[0];
+		secB = (
+			await airtable.secondary.create([new SecondaryModel({ name: "Lookup Filter Sec B", value: "Groundwork Lab" })])
+		)[0];
+		secC = (
+			await airtable.secondary.create([new SecondaryModel({ name: "Lookup Filter Sec C", value: "Other Vendor" })])
+		)[0];
+
+		const toCreate = [
+			new PrimaryModel({ primaryKey: "Lookup Filter A", linkSingle: secA.id }),
+			new PrimaryModel({ primaryKey: "Lookup Filter B", linkSingle: secB.id }),
+			new PrimaryModel({ primaryKey: "Lookup Filter C", linkSingle: secC.id }),
+		];
+		const created = await airtable.primary.create(toCreate);
+		newPrimaries.push(...created);
+	});
+
+	const scoped = (lookupFormula) => AND(PrimaryModel.f.primaryKey.contains("Lookup Filter"), lookupFormula);
+
+	it("contains matches lookup substring (regression for the silently-empty bug)", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.contains("groundwork"));
+		const records = await airtable.primary.get({ formula });
+		const names = records.map((r) => r.primaryKey).sort();
+		expect(names).toEqual(["Lookup Filter A", "Lookup Filter B"]);
+	});
+
+	it("contains returns nothing when no match", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.contains("nonexistent-substring-xyz"));
+		const records = await airtable.primary.get({ formula });
+		expect(records.length).toBe(0);
+	});
+
+	it("startsWith", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.startsWith("Ground"));
+		const records = await airtable.primary.get({ formula });
+		const names = records.map((r) => r.primaryKey).sort();
+		expect(names).toEqual(["Lookup Filter A", "Lookup Filter B"]);
+	});
+
+	it("endsWith", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.endsWith("BioAg"));
+		const records = await airtable.primary.get({ formula });
+		const names = records.map((r) => r.primaryKey);
+		expect(names).toEqual(["Lookup Filter A"]);
+	});
+
+	it("equals still works (= already coerces, no regression)", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.equals("Groundwork BioAg"));
+		const records = await airtable.primary.get({ formula });
+		const names = records.map((r) => r.primaryKey);
+		expect(names).toEqual(["Lookup Filter A"]);
+	});
+
+	it("notContains", async () => {
+		const formula = scoped(PrimaryModel.f.lookup.notContains("Groundwork"));
+		const records = await airtable.primary.get({ formula });
+		const names = records.map((r) => r.primaryKey);
+		expect(names).toEqual(["Lookup Filter C"]);
+	});
+
+	afterAll(async () => {
+		const allRecords = await airtable.primary.get(newPrimaries.map((r) => r.id));
+		await airtable.primary.delete(allRecords.map((r) => r.id));
+		await airtable.secondary.delete([secA.id, secB.id, secC.id]);
 	});
 });
