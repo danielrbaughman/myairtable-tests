@@ -713,11 +713,7 @@ export class DateField extends Field {
 	 * @param endDate - The end date of the range. Can be a Date object or string.
 	 * @param inclusive - Whether to include the start and end dates in the range. Defaults to true.
 	 */
-	between(
-		startDate: Date | string | DateField,
-		endDate: Date | string | DateField,
-		inclusive: boolean = true,
-	): string {
+	between(startDate: Date | string | DateField, endDate: Date | string | DateField, inclusive: boolean = true): string {
 		const start = startDate instanceof DateField ? startDate : parseDate(startDate);
 		const end = endDate instanceof DateField ? endDate : parseDate(endDate);
 		if (inclusive) {
