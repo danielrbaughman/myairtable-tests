@@ -2,7 +2,7 @@ from datetime import date, datetime, timezone
 
 import pytest
 
-from output import AND, NOT, OR, XOR, Airtable, PrimaryModel, SecondaryModel
+from output import AND, NOT, OR, XOR, Airtable, FormulasModel, PrimaryModel, SecondaryModel
 
 
 @pytest.fixture(scope="module")
@@ -720,3 +720,84 @@ class TestFilterByLookupFieldFormula:
         formula = self._scoped(PrimaryModel.f.lookup.not_contains("Groundwork"))
         records = airtable.primary.get(formula=formula)
         assert {r.primary_key for r in records} == {"Lookup Filter C"}
+
+
+class TestFilterByDateFieldVsField:
+    """Field-to-field date comparisons, e.g. first_date.before(second_date)."""
+
+    ids: list[str]
+
+    @pytest.fixture(autouse=True, scope="class")
+    def setup_and_teardown(self, airtable: Airtable):
+        # Records are tagged with a recognizable primary_key so the assertions can
+        # filter to just this test's data (the table is shared with other tests).
+        scenarios = [
+            # name,                       first,            second,           third
+            ("VsField Equal", date(2024, 6, 15), datetime(2024, 6, 15, tzinfo=timezone.utc), datetime(2024, 6, 15, tzinfo=timezone.utc)),
+            ("VsField FirstBefore", date(2024, 1, 15), datetime(2024, 6, 15, tzinfo=timezone.utc), datetime(2024, 12, 15, tzinfo=timezone.utc)),
+            ("VsField FirstAfter", date(2024, 12, 15), datetime(2024, 6, 15, tzinfo=timezone.utc), datetime(2024, 1, 15, tzinfo=timezone.utc)),
+            ("VsField Between", date(2024, 6, 15), datetime(2024, 1, 15, tzinfo=timezone.utc), datetime(2024, 12, 15, tzinfo=timezone.utc)),
+        ]
+        models = []
+        for name, first, second, third in scenarios:
+            m = FormulasModel()
+            m.primary_key = name
+            m.first_date = first
+            m.second_date = second
+            m.third_date = third
+            models.append(m)
+        created = airtable.formulas.create(models)
+        self.__class__.ids = [r.id for r in created]
+        yield
+        airtable.formulas.delete(record_ids=self.ids)
+
+    def _scoped(self, inner):
+        return AND(FormulasModel.f.primary_key.starts_with("VsField "), inner)
+
+    def test_on(self, airtable: Airtable):
+        formula = self._scoped(FormulasModel.f.first_date.on(FormulasModel.f.second_date))
+        records = airtable.formulas.get(formula=formula)
+        assert {r.primary_key for r in records} == {"VsField Equal"}
+
+    def test_not_on(self, airtable: Airtable):
+        formula = self._scoped(FormulasModel.f.first_date.not_on(FormulasModel.f.second_date))
+        records = airtable.formulas.get(formula=formula)
+        assert {r.primary_key for r in records} == {"VsField FirstBefore", "VsField FirstAfter", "VsField Between"}
+
+    def test_before(self, airtable: Airtable):
+        formula = self._scoped(FormulasModel.f.first_date.before(FormulasModel.f.second_date))
+        records = airtable.formulas.get(formula=formula)
+        assert {r.primary_key for r in records} == {"VsField FirstBefore"}
+
+    def test_after(self, airtable: Airtable):
+        formula = self._scoped(FormulasModel.f.first_date.after(FormulasModel.f.second_date))
+        records = airtable.formulas.get(formula=formula)
+        assert {r.primary_key for r in records} == {"VsField FirstAfter", "VsField Between"}
+
+    def test_on_or_before(self, airtable: Airtable):
+        formula = self._scoped(FormulasModel.f.first_date.on_or_before(FormulasModel.f.second_date))
+        records = airtable.formulas.get(formula=formula)
+        assert {r.primary_key for r in records} == {"VsField Equal", "VsField FirstBefore"}
+
+    def test_on_or_after(self, airtable: Airtable):
+        formula = self._scoped(FormulasModel.f.first_date.on_or_after(FormulasModel.f.second_date))
+        records = airtable.formulas.get(formula=formula)
+        assert {r.primary_key for r in records} == {"VsField Equal", "VsField FirstAfter", "VsField Between"}
+
+    def test_between_inclusive(self, airtable: Airtable):
+        # first between [second, third] inclusive
+        formula = self._scoped(FormulasModel.f.first_date.between(FormulasModel.f.second_date, FormulasModel.f.third_date, True))
+        records = airtable.formulas.get(formula=formula)
+        assert {r.primary_key for r in records} == {"VsField Equal", "VsField Between"}
+
+    def test_between_exclusive(self, airtable: Airtable):
+        formula = self._scoped(FormulasModel.f.first_date.between(FormulasModel.f.second_date, FormulasModel.f.third_date, False))
+        records = airtable.formulas.get(formula=formula)
+        assert {r.primary_key for r in records} == {"VsField Between"}
+
+    def test_between_mixed_literal_and_field(self, airtable: Airtable):
+        # Mix a literal start with a field end. first ∈ ["2024-01-01", second].
+        # "Between" record fails because its second (2024-01-15) is before its first (2024-06-15).
+        formula = self._scoped(FormulasModel.f.first_date.between("2024-01-01", FormulasModel.f.second_date, True))
+        records = airtable.formulas.get(formula=formula)
+        assert {r.primary_key for r in records} == {"VsField Equal", "VsField FirstBefore"}

@@ -866,3 +866,186 @@ async fn filter_by_lookup_field() {
         .await
         .unwrap();
 }
+
+// =============================================================================
+// Filter by date field vs date field formula
+// =============================================================================
+//
+// Field-to-field date comparisons, e.g. f.first_date.before(f.second_date).
+// Uses the `Formulas` table which has First Date / Second Date / Third Date.
+
+#[tokio::test]
+async fn filter_by_date_field_vs_field() {
+    let at = setup();
+    let f = FormulasModel::F;
+
+    let mk = |name: &str, first: &str, second: &str, third: &str| FormulasModel {
+        primary_key: Some(name.to_string()),
+        first_date: Some(first.to_string()),
+        second_date: Some(second.to_string()),
+        third_date: Some(third.to_string()),
+        ..Default::default()
+    };
+
+    // (name, first, second, third)
+    let equal = mk(
+        "VsField Equal",
+        "2024-06-15",
+        "2024-06-15T00:00:00.000Z",
+        "2024-06-15T00:00:00.000Z",
+    );
+    let first_before = mk(
+        "VsField FirstBefore",
+        "2024-01-15",
+        "2024-06-15T00:00:00.000Z",
+        "2024-12-15T00:00:00.000Z",
+    );
+    let first_after = mk(
+        "VsField FirstAfter",
+        "2024-12-15",
+        "2024-06-15T00:00:00.000Z",
+        "2024-01-15T00:00:00.000Z",
+    );
+    let between = mk(
+        "VsField Between",
+        "2024-06-15",
+        "2024-01-15T00:00:00.000Z",
+        "2024-12-15T00:00:00.000Z",
+    );
+
+    let r_equal = at.formulas.create_one(&equal).await.unwrap();
+    let r_before = at.formulas.create_one(&first_before).await.unwrap();
+    let r_after = at.formulas.create_one(&first_after).await.unwrap();
+    let r_between = at.formulas.create_one(&between).await.unwrap();
+    let id_equal = r_equal.id.as_deref().unwrap().to_string();
+    let id_before = r_before.id.as_deref().unwrap().to_string();
+    let id_after = r_after.id.as_deref().unwrap().to_string();
+    let id_between = r_between.id.as_deref().unwrap().to_string();
+
+    let scope = scope_to(&[&id_equal, &id_before, &id_after, &id_between]);
+
+    let names_of = |records: &[FormulasModel]| -> std::collections::HashSet<String> {
+        records
+            .iter()
+            .map(|r| r.primary_key.clone().unwrap_or_default())
+            .collect()
+    };
+
+    // on()
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.first_date.on(f.second_date)]));
+    let results = at.formulas.get_many(&params).await.unwrap();
+    assert_eq!(
+        names_of(&results),
+        ["VsField Equal".to_string()].into_iter().collect()
+    );
+
+    // not_on()
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.first_date.not_on(f.second_date)]));
+    let results = at.formulas.get_many(&params).await.unwrap();
+    assert_eq!(
+        names_of(&results),
+        [
+            "VsField FirstBefore",
+            "VsField FirstAfter",
+            "VsField Between"
+        ]
+        .map(String::from)
+        .into_iter()
+        .collect()
+    );
+
+    // before()
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.first_date.before(f.second_date)]));
+    let results = at.formulas.get_many(&params).await.unwrap();
+    assert_eq!(
+        names_of(&results),
+        ["VsField FirstBefore".to_string()].into_iter().collect()
+    );
+
+    // after()
+    let params =
+        AirtableQuery::new().formula(formula::AND(&[&scope, &f.first_date.after(f.second_date)]));
+    let results = at.formulas.get_many(&params).await.unwrap();
+    assert_eq!(
+        names_of(&results),
+        ["VsField FirstAfter", "VsField Between"]
+            .map(String::from)
+            .into_iter()
+            .collect()
+    );
+
+    // on_or_before()
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.first_date.on_or_before(f.second_date),
+    ]));
+    let results = at.formulas.get_many(&params).await.unwrap();
+    assert_eq!(
+        names_of(&results),
+        ["VsField Equal", "VsField FirstBefore"]
+            .map(String::from)
+            .into_iter()
+            .collect()
+    );
+
+    // on_or_after()
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.first_date.on_or_after(f.second_date),
+    ]));
+    let results = at.formulas.get_many(&params).await.unwrap();
+    assert_eq!(
+        names_of(&results),
+        ["VsField Equal", "VsField FirstAfter", "VsField Between"]
+            .map(String::from)
+            .into_iter()
+            .collect()
+    );
+
+    // between() inclusive with field bounds
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.first_date.between(f.second_date, f.third_date, true),
+    ]));
+    let results = at.formulas.get_many(&params).await.unwrap();
+    assert_eq!(
+        names_of(&results),
+        ["VsField Equal", "VsField Between"]
+            .map(String::from)
+            .into_iter()
+            .collect()
+    );
+
+    // between() exclusive with field bounds
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.first_date.between(f.second_date, f.third_date, false),
+    ]));
+    let results = at.formulas.get_many(&params).await.unwrap();
+    assert_eq!(
+        names_of(&results),
+        ["VsField Between".to_string()].into_iter().collect()
+    );
+
+    // between() with mixed literal start and field end
+    let params = AirtableQuery::new().formula(formula::AND(&[
+        &scope,
+        &f.first_date.between("2024-01-01", f.second_date, true),
+    ]));
+    let results = at.formulas.get_many(&params).await.unwrap();
+    assert_eq!(
+        names_of(&results),
+        ["VsField Equal", "VsField FirstBefore"]
+            .map(String::from)
+            .into_iter()
+            .collect()
+    );
+
+    at.formulas
+        .delete_many(&[id_equal, id_before, id_after, id_between])
+        .await
+        .unwrap();
+}

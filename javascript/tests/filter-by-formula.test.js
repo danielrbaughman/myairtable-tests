@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
-const { Airtable, PrimaryModel, SecondaryModel, AND, OR, XOR, NOT } = require("../output");
+const { Airtable, FormulasModel, PrimaryModel, SecondaryModel, AND, OR, XOR, NOT } = require("../output");
 
 const airtable = new Airtable();
 
@@ -812,5 +812,114 @@ describe("Filter by LookupField Formula", async () => {
 		const allRecords = await airtable.primary.get(newPrimaries.map((r) => r.id));
 		await airtable.primary.delete(allRecords.map((r) => r.id));
 		await airtable.secondary.delete([secA.id, secB.id, secC.id]);
+	});
+});
+
+/**
+ * Field-to-field date comparisons, e.g. firstDate.before(secondDate).
+ *
+ * Uses the `Formulas` table which has three date fields: First Date, Second Date, Third Date.
+ */
+describe("Filter by DateField vs DateField Formula", async () => {
+	const newRecords = [];
+
+	beforeAll(async () => {
+		const toCreate = [
+			new FormulasModel({
+				primaryKey: "VsField Equal",
+				firstDate: "2024-06-15",
+				secondDate: "2024-06-15T00:00:00.000Z",
+				thirdDate: "2024-06-15T00:00:00.000Z",
+			}),
+			new FormulasModel({
+				primaryKey: "VsField FirstBefore",
+				firstDate: "2024-01-15",
+				secondDate: "2024-06-15T00:00:00.000Z",
+				thirdDate: "2024-12-15T00:00:00.000Z",
+			}),
+			new FormulasModel({
+				primaryKey: "VsField FirstAfter",
+				firstDate: "2024-12-15",
+				secondDate: "2024-06-15T00:00:00.000Z",
+				thirdDate: "2024-01-15T00:00:00.000Z",
+			}),
+			new FormulasModel({
+				primaryKey: "VsField Between",
+				firstDate: "2024-06-15",
+				secondDate: "2024-01-15T00:00:00.000Z",
+				thirdDate: "2024-12-15T00:00:00.000Z",
+			}),
+		];
+		const created = await airtable.formulas.create(toCreate);
+		newRecords.push(...created);
+	});
+
+	const scoped = (inner) => AND(FormulasModel.f.primaryKey.startsWith("VsField "), inner);
+
+	it("on() with a sibling field", async () => {
+		const formula = scoped(FormulasModel.f.firstDate.on(FormulasModel.f.secondDate));
+		const records = await airtable.formulas.get({ formula });
+		expect(new Set(records.map((r) => r.primaryKey))).toEqual(new Set(["VsField Equal"]));
+	});
+
+	it("notOn() with a sibling field", async () => {
+		const formula = scoped(FormulasModel.f.firstDate.notOn(FormulasModel.f.secondDate));
+		const records = await airtable.formulas.get({ formula });
+		expect(new Set(records.map((r) => r.primaryKey))).toEqual(
+			new Set(["VsField FirstBefore", "VsField FirstAfter", "VsField Between"]),
+		);
+	});
+
+	it("before() with a sibling field", async () => {
+		const formula = scoped(FormulasModel.f.firstDate.before(FormulasModel.f.secondDate));
+		const records = await airtable.formulas.get({ formula });
+		expect(new Set(records.map((r) => r.primaryKey))).toEqual(new Set(["VsField FirstBefore"]));
+	});
+
+	it("after() with a sibling field", async () => {
+		const formula = scoped(FormulasModel.f.firstDate.after(FormulasModel.f.secondDate));
+		const records = await airtable.formulas.get({ formula });
+		expect(new Set(records.map((r) => r.primaryKey))).toEqual(new Set(["VsField FirstAfter", "VsField Between"]));
+	});
+
+	it("onOrBefore() with a sibling field", async () => {
+		const formula = scoped(FormulasModel.f.firstDate.onOrBefore(FormulasModel.f.secondDate));
+		const records = await airtable.formulas.get({ formula });
+		expect(new Set(records.map((r) => r.primaryKey))).toEqual(new Set(["VsField Equal", "VsField FirstBefore"]));
+	});
+
+	it("onOrAfter() with a sibling field", async () => {
+		const formula = scoped(FormulasModel.f.firstDate.onOrAfter(FormulasModel.f.secondDate));
+		const records = await airtable.formulas.get({ formula });
+		expect(new Set(records.map((r) => r.primaryKey))).toEqual(
+			new Set(["VsField Equal", "VsField FirstAfter", "VsField Between"]),
+		);
+	});
+
+	it("between() inclusive with field bounds", async () => {
+		const formula = scoped(
+			FormulasModel.f.firstDate.between(FormulasModel.f.secondDate, FormulasModel.f.thirdDate, true),
+		);
+		const records = await airtable.formulas.get({ formula });
+		expect(new Set(records.map((r) => r.primaryKey))).toEqual(new Set(["VsField Equal", "VsField Between"]));
+	});
+
+	it("between() exclusive with field bounds", async () => {
+		const formula = scoped(
+			FormulasModel.f.firstDate.between(FormulasModel.f.secondDate, FormulasModel.f.thirdDate, false),
+		);
+		const records = await airtable.formulas.get({ formula });
+		expect(new Set(records.map((r) => r.primaryKey))).toEqual(new Set(["VsField Between"]));
+	});
+
+	it("between() with mixed literal and field bounds", async () => {
+		const formula = scoped(FormulasModel.f.firstDate.between("2024-01-01", FormulasModel.f.secondDate, true));
+		const records = await airtable.formulas.get({ formula });
+		expect(new Set(records.map((r) => r.primaryKey))).toEqual(new Set(["VsField Equal", "VsField FirstBefore"]));
+	});
+
+	afterAll(async () => {
+		const allRecords = await airtable.formulas.get(newRecords.map((r) => r.id));
+		await airtable.formulas.delete(allRecords.map((r) => r.id));
 	});
 });
