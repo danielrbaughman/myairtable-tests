@@ -3,7 +3,14 @@
 // ==========================================
 
 import * as z from "zod";
-import { recordIdSchema, AirtableAttachmentSchema, AirtableCollaboratorSchema, AirtableButtonSchema, SpecialNumberSchema, ErrorValueSchema } from "../../static/special-types";
+import {
+    recordIdSchema,
+    AirtableAttachmentSchema,
+    AirtableCollaboratorSchema,
+    AirtableButtonSchema,
+    SpecialNumberSchema,
+    ErrorValueSchema,
+} from "../../static/special-types";
 
 // #region PRIMARY
 export const PrimarySchema = z.object({

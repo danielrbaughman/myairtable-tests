@@ -13,7 +13,7 @@ import {
     FormulasFieldIdNameMapping,
     FormulasWritableFieldIds,
 } from "../types/formulas";
-import { FormulasModel } from '../models/formulas';
+import { FormulasModel } from "../models/formulas";
 import { AirtableOptions } from "airtable";
 // #endregion
 

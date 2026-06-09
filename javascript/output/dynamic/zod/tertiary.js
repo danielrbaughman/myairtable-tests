@@ -3,14 +3,7 @@
 // ==========================================
 
 const z = require("zod");
-const {
-    recordIdSchema,
-    AirtableAttachmentSchema,
-    AirtableCollaboratorSchema,
-    AirtableButtonSchema,
-    SpecialNumberSchema,
-    ErrorValueSchema,
-} = require("../../static/special-types");
+const { recordIdSchema } = require("../../static/special-types");
 
 // #region TERTIARY
 const TertiarySchema = z.object({

@@ -13,7 +13,7 @@ import {
     SecondaryFieldIdNameMapping,
     SecondaryWritableFieldIds,
 } from "../types/secondary";
-import { SecondaryModel } from '../models/secondary';
+import { SecondaryModel } from "../models/secondary";
 import { AirtableOptions } from "airtable";
 // #endregion
 

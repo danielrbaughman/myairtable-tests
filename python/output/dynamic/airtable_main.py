@@ -4,10 +4,14 @@
 
 # region IMPORTS
 from pyairtable import Api
-
 from .types import TableName
-from ..static.airtable_table import AirtableTable, TableType
-from ..static.helpers import get_api_key, get_base_id, set_airtable_config, build_url
+from ..static.airtable_table import AirtableTable
+from ..static.helpers import (
+    get_api_key,
+    get_base_id,
+    set_airtable_config,
+    build_url,
+)
 from ..static.schema_types import BaseSchema
 from .tables import (
     FormulasTable,

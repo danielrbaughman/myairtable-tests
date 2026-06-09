@@ -2,7 +2,13 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
-import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "airtable";
+import {
+    AirtableOptions,
+    FieldSet,
+    Record,
+    Attachment,
+    Collaborator,
+} from "airtable";
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
 import { RecordId, AirtableButton } from "../../static/special-types";
 import { LinkedRecord, LinkedRecords, ChainableLinkedRecord } from "../../static/linked-record";
@@ -18,13 +24,11 @@ import {
     PrimaryMultipleSelectOption,
     PrimarySingleSelectOption,
 } from "../types/primary";
-import { PrimaryFormulas } from '../formulas/primary';
-import { PrimaryOptions } from '../options/primary';
-import {
-    SecondaryModel,
-} from "../models";
-import { PrimaryTable } from '../tables/primary';
-import { PrimarySchema, IPrimary } from '../zod/primary';
+import { PrimaryFormulas } from "../formulas/primary";
+import { PrimaryOptions } from "../options/primary";
+import { SecondaryModel } from "../models";
+import { PrimaryTable } from "../tables/primary";
+import { PrimarySchema, IPrimary } from "../zod/primary";
 import { AirtableRuntime as F } from "../../static/airtable-runtime";
 
 /** Model for `Primary` (tblmb3iqgpNS1ysV2) */

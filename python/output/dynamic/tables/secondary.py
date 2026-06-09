@@ -4,7 +4,6 @@
 
 # region IMPORTS
 from pyairtable import Table
-
 from ...static.airtable_table import AirtableTable
 from ..types import (
     SecondaryField,

@@ -2,7 +2,10 @@
 # Auto-generated file. Do not edit directly.
 # ==========================================
 
-from ...static.formula import AttachmentsField, BooleanField, DateField, LookupField, NumberField, TextField, SingleSelectField, MultiSelectField, ID
+from ...static.formula import (
+    TextField,
+    ID,
+)
 
 # region PROPERTIES
 class SecondaryFormulas:

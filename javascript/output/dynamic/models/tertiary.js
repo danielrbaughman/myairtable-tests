@@ -4,16 +4,7 @@
 
 // #region REQUIRES
 const { AirtableModel } = require("../../static/airtable-model");
-const {
-    LinkedRecord,
-    LinkedRecords,
-    wrapLinkedRecordProxy,
-} = require("../../static/linked-record");
-const {
-    getOptions,
-    getBaseId,
-    buildUrl,
-} = require("../../static/helpers");
+const { buildUrl } = require("../../static/helpers");
 const {
     TertiaryFieldNameIdMapping,
     TertiaryFieldIdNameMapping,

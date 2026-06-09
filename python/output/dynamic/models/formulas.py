@@ -2,21 +2,29 @@
 # Auto-generated file. Do not edit directly.
 # ==========================================
 
-from datetime import datetime, timedelta
-from typing import Any, TYPE_CHECKING
-
+from datetime import datetime
 from pyairtable.orm import Model
-from pyairtable.orm.fields import SingleLineTextField, MultilineTextField, PhoneNumberField, EmailField, LinkField, SingleLinkField, UrlField, DateField, CreatedTimeField, LastModifiedTimeField, NumberField, SelectField, MultipleSelectField, CheckboxField, RichTextField, CurrencyField, PercentField, LookupField, AttachmentsField, CreatedByField, ButtonField, CountField, DatetimeField, DurationField, LastModifiedByField, AutoNumberField, CollaboratorField, MultipleCollaboratorsField
-
-from ...static.helpers import get_api_key, get_base_id, build_url
-from ...static.special_types import AirtableAttachment, RecordId
+from pyairtable.orm.fields import (
+    SingleLineTextField,
+    DateField,
+    NumberField,
+    DatetimeField,
+)
+from ...static.helpers import (
+    get_api_key,
+    get_base_id,
+    build_url,
+)
 from ...static.airtable_runtime import AirtableRuntime as F
+from ..dicts import FormulasRecordDict
+from ..formulas import FormulasFormulas
+from ..types import (
+    FormulasView,
+    FormulasViewNameIdMapping,
+)
 import urllib.parse
 import math
 import re
-from ..dicts import FormulasRecordDict
-from ..formulas import FormulasFormulas
-from ..types import FormulasView, FormulasViewNameIdMapping
 
 
 class FormulasModel(Model):

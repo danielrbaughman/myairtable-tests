@@ -13,10 +13,6 @@ const {
     SingleSelectField,
     MultiSelectField,
 } = require("../../static/formula");
-const {
-    PrimaryMultipleSelectOptions,
-    PrimarySingleSelectOptions,
-} = require("../types/primary");
 
 const PrimaryFormulas = {
     id: new ID(),

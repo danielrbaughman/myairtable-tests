@@ -2,11 +2,18 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
-import { ID, AttachmentsField, BooleanField, DateField, LookupField, NumberField, TextField, SingleSelectField, MultiSelectField } from "../../static/formula";
 import {
-    PrimaryMultipleSelectOption,
-    PrimarySingleSelectOption,
-} from "../types/primary";
+    ID,
+    AttachmentsField,
+    BooleanField,
+    DateField,
+    LookupField,
+    NumberField,
+    TextField,
+    SingleSelectField,
+    MultiSelectField,
+} from "../../static/formula";
+import { PrimaryMultipleSelectOption, PrimarySingleSelectOption } from "../types/primary";
 
 export namespace PrimaryFormulas {
     export const id: ID = new ID();

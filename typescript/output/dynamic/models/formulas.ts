@@ -2,10 +2,8 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
-import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "airtable";
+import { AirtableOptions, FieldSet, Record } from "airtable";
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
-import { RecordId, AirtableButton } from "../../static/special-types";
-import { LinkedRecord, LinkedRecords, ChainableLinkedRecord } from "../../static/linked-record";
 import { buildUrl } from "../../static/helpers";
 import {
     FormulasFieldSet,
@@ -16,9 +14,9 @@ import {
     FormulasFieldIdNameMapping,
     FormulasFieldNamePropertyMapping,
 } from "../types/formulas";
-import { FormulasFormulas } from '../formulas/formulas';
-import { FormulasTable } from '../tables/formulas';
-import { FormulasSchema, IFormulas } from '../zod/formulas';
+import { FormulasFormulas } from "../formulas/formulas";
+import { FormulasTable } from "../tables/formulas";
+import { FormulasSchema, IFormulas } from "../zod/formulas";
 import { AirtableRuntime as F } from "../../static/airtable-runtime";
 
 /** Model for `Formulas` (tblnuYBsMdXNDsuRc) */

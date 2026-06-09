@@ -3,8 +3,7 @@
 // ==========================================
 
 // #region IMPORTS
-import { Attachment, Collaborator, FieldSet } from "airtable";
-import { RecordId } from "../../static/special-types";
+import { FieldSet } from "airtable";
 // #endregion
 
 

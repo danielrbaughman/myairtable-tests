@@ -3,7 +3,7 @@
 // ==========================================
 
 import * as z from "zod";
-import { recordIdSchema, AirtableAttachmentSchema, AirtableCollaboratorSchema, AirtableButtonSchema, SpecialNumberSchema, ErrorValueSchema } from "../../static/special-types";
+import { recordIdSchema, ErrorValueSchema } from "../../static/special-types";
 
 // #region FORMULAS
 export const FormulasSchema = z.object({

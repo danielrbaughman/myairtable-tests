@@ -3,9 +3,11 @@
 # ==========================================
 
 from typing import Any
-
-from pyairtable.api.types import CreateRecordDict, RecordDict, UpdateRecordDict
-
+from pyairtable.api.types import (
+    CreateRecordDict,
+    RecordDict,
+    UpdateRecordDict,
+)
 from ..types import (
     TertiaryFieldsDict,
     TertiaryField,

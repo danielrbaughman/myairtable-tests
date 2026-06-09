@@ -17,6 +17,26 @@ pub enum PrimaryMultipleSelectOption {
     Unknown,
 }
 
+impl PrimaryMultipleSelectOption {
+    pub fn id(&self) -> &'static str {
+        match self {
+            Self::Option1 => "selKcXTyNnNHd3nSK",
+            Self::Option2 => "selBUFMeKPuDUvn0a",
+            Self::Option3 => "selmD0luyDWhS6AyO",
+            Self::Unknown => "",
+        }
+    }
+
+    pub fn from_id(id: &str) -> Option<Self> {
+        match id {
+            "selKcXTyNnNHd3nSK" => Some(Self::Option1),
+            "selBUFMeKPuDUvn0a" => Some(Self::Option2),
+            "selmD0luyDWhS6AyO" => Some(Self::Option3),
+            _ => None,
+        }
+    }
+}
+
 /// Options for `Single Select`
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum PrimarySingleSelectOption {
@@ -28,6 +48,26 @@ pub enum PrimarySingleSelectOption {
     Choice3,
     #[serde(other)]
     Unknown,
+}
+
+impl PrimarySingleSelectOption {
+    pub fn id(&self) -> &'static str {
+        match self {
+            Self::Choice1 => "sellmCNG85TCgc7Pu",
+            Self::Choice2 => "sel4oPckj6NHWKn2u",
+            Self::Choice3 => "selYfbfAsr7X75S2V",
+            Self::Unknown => "",
+        }
+    }
+
+    pub fn from_id(id: &str) -> Option<Self> {
+        match id {
+            "sellmCNG85TCgc7Pu" => Some(Self::Choice1),
+            "sel4oPckj6NHWKn2u" => Some(Self::Choice2),
+            "selYfbfAsr7X75S2V" => Some(Self::Choice3),
+            _ => None,
+        }
+    }
 }
 
 /// Select field options for `Primary`

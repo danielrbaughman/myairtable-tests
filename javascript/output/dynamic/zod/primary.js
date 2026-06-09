@@ -11,10 +11,6 @@ const {
     SpecialNumberSchema,
     ErrorValueSchema,
 } = require("../../static/special-types");
-const {
-    PrimaryMultipleSelectOptions,
-    PrimarySingleSelectOptions,
-} = require("../types/primary");
 
 // #region PRIMARY
 const PrimarySchema = z.object({

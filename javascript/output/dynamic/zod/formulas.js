@@ -5,10 +5,6 @@
 const z = require("zod");
 const {
     recordIdSchema,
-    AirtableAttachmentSchema,
-    AirtableCollaboratorSchema,
-    AirtableButtonSchema,
-    SpecialNumberSchema,
     ErrorValueSchema,
 } = require("../../static/special-types");
 

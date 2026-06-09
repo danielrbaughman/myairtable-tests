@@ -13,7 +13,7 @@ import {
     TertiaryFieldIdNameMapping,
     TertiaryWritableFieldIds,
 } from "../types/tertiary";
-import { TertiaryModel } from '../models/tertiary';
+import { TertiaryModel } from "../models/tertiary";
 import { AirtableOptions } from "airtable";
 // #endregion
 

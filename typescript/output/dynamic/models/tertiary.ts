@@ -2,10 +2,10 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
-import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "airtable";
+import { AirtableOptions, FieldSet, Record } from "airtable";
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
-import { RecordId, AirtableButton } from "../../static/special-types";
-import { LinkedRecord, LinkedRecords, ChainableLinkedRecord } from "../../static/linked-record";
+import { RecordId } from "../../static/special-types";
+import { LinkedRecords } from "../../static/linked-record";
 import { buildUrl } from "../../static/helpers";
 import {
     TertiaryFieldSet,
@@ -16,12 +16,10 @@ import {
     TertiaryFieldIdNameMapping,
     TertiaryFieldNamePropertyMapping,
 } from "../types/tertiary";
-import { TertiaryFormulas } from '../formulas/tertiary';
-import {
-    SecondaryModel,
-} from "../models";
-import { TertiaryTable } from '../tables/tertiary';
-import { TertiarySchema, ITertiary } from '../zod/tertiary';
+import { TertiaryFormulas } from "../formulas/tertiary";
+import { SecondaryModel } from "../models";
+import { TertiaryTable } from "../tables/tertiary";
+import { TertiarySchema, ITertiary } from "../zod/tertiary";
 
 /** Model for `Tertiary` (tblLFoLxEdWlxjmLP) */
 export class TertiaryModel extends AirtableModel<TertiaryFieldSet, ITertiary, TertiaryField> {

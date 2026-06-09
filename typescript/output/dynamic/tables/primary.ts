@@ -13,7 +13,7 @@ import {
     PrimaryFieldIdNameMapping,
     PrimaryWritableFieldIds,
 } from "../types/primary";
-import { PrimaryModel } from '../models/primary';
+import { PrimaryModel } from "../models/primary";
 import { AirtableOptions } from "airtable";
 // #endregion
 

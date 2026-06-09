@@ -2,26 +2,57 @@
 # Auto-generated file. Do not edit directly.
 # ==========================================
 
-from datetime import datetime, timedelta
-from typing import Any, TYPE_CHECKING
-
+from typing import (
+    Any,
+    TYPE_CHECKING,
+)
 from pyairtable.orm import Model
-from pyairtable.orm.fields import SingleLineTextField, MultilineTextField, PhoneNumberField, EmailField, LinkField, SingleLinkField, UrlField, DateField, CreatedTimeField, LastModifiedTimeField, NumberField, SelectField, MultipleSelectField, CheckboxField, RichTextField, CurrencyField, PercentField, LookupField, AttachmentsField, CreatedByField, ButtonField, CountField, DatetimeField, DurationField, LastModifiedByField, AutoNumberField, CollaboratorField, MultipleCollaboratorsField
-
-from ...static.helpers import get_api_key, get_base_id, build_url
-from ...static.special_types import AirtableAttachment, RecordId
+from pyairtable.orm.fields import (
+    SingleLineTextField,
+    MultilineTextField,
+    PhoneNumberField,
+    EmailField,
+    LinkField,
+    SingleLinkField,
+    UrlField,
+    DateField,
+    CreatedTimeField,
+    LastModifiedTimeField,
+    NumberField,
+    SelectField,
+    MultipleSelectField,
+    CheckboxField,
+    CurrencyField,
+    PercentField,
+    LookupField,
+    AttachmentsField,
+    CreatedByField,
+    ButtonField,
+    DatetimeField,
+    DurationField,
+    LastModifiedByField,
+    AutoNumberField,
+    CollaboratorField,
+    MultipleCollaboratorsField,
+)
+from ...static.helpers import (
+    get_api_key,
+    get_base_id,
+    build_url,
+)
 from ...static.airtable_runtime import AirtableRuntime as F
-import urllib.parse
-import math
-import re
 from ..types import (
     PrimaryMultipleSelectOption,
     PrimarySingleSelectOption,
+    PrimaryView,
+    PrimaryViewNameIdMapping,
 )
 from ..dicts import PrimaryRecordDict
 from ..formulas import PrimaryFormulas
-from ..types import PrimaryView, PrimaryViewNameIdMapping
 from ..options import PrimaryOptions
+import urllib.parse
+import math
+import re
 if TYPE_CHECKING:
     from .secondary import SecondaryModel
 

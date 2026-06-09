@@ -2,10 +2,10 @@
 // Auto-generated file. Do not edit directly.
 // ==========================================
 
-import { AirtableOptions, Attachment, Collaborator, FieldSet, Record } from "airtable";
+import { AirtableOptions, FieldSet, Record } from "airtable";
 import { AirtableModel, FieldDescriptor } from "../../static/airtable-model";
-import { RecordId, AirtableButton } from "../../static/special-types";
-import { LinkedRecord, LinkedRecords, ChainableLinkedRecord } from "../../static/linked-record";
+import { RecordId } from "../../static/special-types";
+import { LinkedRecords } from "../../static/linked-record";
 import { buildUrl } from "../../static/helpers";
 import {
     SecondaryFieldSet,
@@ -16,13 +16,10 @@ import {
     SecondaryFieldIdNameMapping,
     SecondaryFieldNamePropertyMapping,
 } from "../types/secondary";
-import { SecondaryFormulas } from '../formulas/secondary';
-import {
-    TertiaryModel,
-    PrimaryModel,
-} from "../models";
-import { SecondaryTable } from '../tables/secondary';
-import { SecondarySchema, ISecondary } from '../zod/secondary';
+import { SecondaryFormulas } from "../formulas/secondary";
+import { TertiaryModel, PrimaryModel } from "../models";
+import { SecondaryTable } from "../tables/secondary";
+import { SecondarySchema, ISecondary } from "../zod/secondary";
 
 /** Model for `Secondary` (tblPPScS3XMuFkDYN) */
 export class SecondaryModel extends AirtableModel<SecondaryFieldSet, ISecondary, SecondaryField> {

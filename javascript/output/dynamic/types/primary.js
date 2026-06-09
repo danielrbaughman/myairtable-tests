@@ -10,12 +10,36 @@ const PrimaryMultipleSelectOptions = [
     "Option 3",
 ];
 
+const PrimaryMultipleSelectOptionNameIdMapping = {
+    "Option 1": "selKcXTyNnNHd3nSK",
+    "Option 2": "selBUFMeKPuDUvn0a",
+    "Option 3": "selmD0luyDWhS6AyO",
+};
+
+const PrimaryMultipleSelectOptionIdNameMapping = {
+    "selKcXTyNnNHd3nSK": "Option 1",
+    "selBUFMeKPuDUvn0a": "Option 2",
+    "selmD0luyDWhS6AyO": "Option 3",
+};
+
 /** Select options for `Single Select` */
 const PrimarySingleSelectOptions = [
     "Choice 1",
     "Choice 2",
     "Choice 3",
 ];
+
+const PrimarySingleSelectOptionNameIdMapping = {
+    "Choice 1": "sellmCNG85TCgc7Pu",
+    "Choice 2": "sel4oPckj6NHWKn2u",
+    "Choice 3": "selYfbfAsr7X75S2V",
+};
+
+const PrimarySingleSelectOptionIdNameMapping = {
+    "sellmCNG85TCgc7Pu": "Choice 1",
+    "sel4oPckj6NHWKn2u": "Choice 2",
+    "selYfbfAsr7X75S2V": "Choice 3",
+};
 
 // #endregion
 
@@ -499,7 +523,11 @@ const PrimaryViewIdNameMapping = {
 
 module.exports = {
     PrimaryMultipleSelectOptions,
+    PrimaryMultipleSelectOptionNameIdMapping,
+    PrimaryMultipleSelectOptionIdNameMapping,
     PrimarySingleSelectOptions,
+    PrimarySingleSelectOptionNameIdMapping,
+    PrimarySingleSelectOptionIdNameMapping,
     PrimaryFields,
     PrimaryFieldIds,
     PrimaryFieldProperties,

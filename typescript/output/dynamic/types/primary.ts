@@ -21,6 +21,18 @@ export const PrimaryMultipleSelectOptions: PrimaryMultipleSelectOption[] = [
     "Option 3",
 ]
 
+export const PrimaryMultipleSelectOptionNameIdMapping: Record<PrimaryMultipleSelectOption, string> = {
+    "Option 1": "selKcXTyNnNHd3nSK",
+    "Option 2": "selBUFMeKPuDUvn0a",
+    "Option 3": "selmD0luyDWhS6AyO",
+}
+
+export const PrimaryMultipleSelectOptionIdNameMapping: Record<string, PrimaryMultipleSelectOption> = {
+    "selKcXTyNnNHd3nSK": "Option 1",
+    "selBUFMeKPuDUvn0a": "Option 2",
+    "selmD0luyDWhS6AyO": "Option 3",
+}
+
     /** Select options for `Single Select` */
 export type PrimarySingleSelectOption = 
     "Choice 1" |
@@ -32,6 +44,18 @@ export const PrimarySingleSelectOptions: PrimarySingleSelectOption[] = [
     "Choice 2",
     "Choice 3",
 ]
+
+export const PrimarySingleSelectOptionNameIdMapping: Record<PrimarySingleSelectOption, string> = {
+    "Choice 1": "sellmCNG85TCgc7Pu",
+    "Choice 2": "sel4oPckj6NHWKn2u",
+    "Choice 3": "selYfbfAsr7X75S2V",
+}
+
+export const PrimarySingleSelectOptionIdNameMapping: Record<string, PrimarySingleSelectOption> = {
+    "sellmCNG85TCgc7Pu": "Choice 1",
+    "sel4oPckj6NHWKn2u": "Choice 2",
+    "selYfbfAsr7X75S2V": "Choice 3",
+}
 
 // #endregion
 

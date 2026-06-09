@@ -4,7 +4,12 @@
 
 import { ExtendedAirtableOptions } from "../static/special-types";
 import { BaseSchema } from "../static/schema-types";
-import { getApiKey, getBaseId, setAirtableConfig, buildUrl } from "../static/helpers";
+import {
+    getApiKey,
+    getBaseId,
+    setAirtableConfig,
+    buildUrl,
+} from "../static/helpers";
 import {
     FormulasTable,
     PrimaryTable,

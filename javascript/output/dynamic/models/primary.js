@@ -4,25 +4,12 @@
 
 // #region REQUIRES
 const { AirtableModel } = require("../../static/airtable-model");
-const {
-    LinkedRecord,
-    LinkedRecords,
-    wrapLinkedRecordProxy,
-} = require("../../static/linked-record");
-const {
-    getOptions,
-    getBaseId,
-    buildUrl,
-} = require("../../static/helpers");
+const { buildUrl } = require("../../static/helpers");
 const {
     PrimaryFieldNameIdMapping,
     PrimaryFieldIdNameMapping,
     PrimaryFieldNamePropertyMapping,
     PrimaryViewNameIdMapping,
-} = require("../types/primary");
-const {
-    PrimaryMultipleSelectOptions,
-    PrimarySingleSelectOptions,
 } = require("../types/primary");
 const { PrimaryFormulas } = require("../formulas/primary");
 const { PrimaryOptions } = require("../options/primary");
