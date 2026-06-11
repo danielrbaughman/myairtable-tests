@@ -158,7 +158,7 @@ struct TestOrmCrudViaTable {
 
         let creates = (1...count).map { i in
             // Init params are alphabetical (numberInt before primaryKey).
-            PrimaryModel(numberInt: i, primaryKey: "\(suite) \(i)")
+            PrimaryModel(numberInt: Double(i), primaryKey: "\(suite) \(i)")
         }
         let created = try await airtable.primary.create(creates)
         #expect(created.count == count)
