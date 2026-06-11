@@ -694,20 +694,11 @@ struct TestFilterByFormula {
         let f = FormulasModel.f
 
         func mk(_ name: String, _ first: String, _ second: String, _ third: String) -> FormulasModel {
-            // Text + number inputs are populated so the table's formula fields
-            // compute cleanly — Airtable returns `{"error": ...}` objects for
-            // erroring formulas, which the typed decode path rejects.
             FormulasModel(
                 firstDate: AirtableDateParser.parse(first)!,
-                firstNumber: 1,
-                firstText: "a",
                 primaryKey: "\(suite) \(name)",
                 secondDate: AirtableDateParser.parse(second)!,
-                secondNumber: 2,
-                secondText: "b",
-                thirdDate: AirtableDateParser.parse(third)!,
-                thirdNumber: 3,
-                thirdText: "c"
+                thirdDate: AirtableDateParser.parse(third)!
             )
         }
 

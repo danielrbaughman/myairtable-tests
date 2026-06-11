@@ -121,16 +121,16 @@ struct TestComplexProperties {
             #expect(created.createdTime != nil)
             #expect(created.createdAtTime != nil)  // dedicated createdTime field
             // Formula(ID) reflects the record id.
-            #expect(created.formulaId == recordId)
+            #expect(created.formulaId?.value == recordId)
             // Formula(Simple) = numberInt + numberFloat = 15.
-            #expect(created.formulaSimple == 15.0)
+            #expect(created.formulaSimple?.value == 15.0)
             // Created-by is populated with the caller's user info.
             #expect(created.createdBy != nil)
 
             // Read-back round-trip.
             let fetched = try await airtable.primary.get(recordId)
-            #expect(fetched.formulaId == recordId)
-            #expect(fetched.formulaSimple == 15.0)
+            #expect(fetched.formulaId?.value == recordId)
+            #expect(fetched.formulaSimple?.value == 15.0)
             #expect(fetched.autoNumber == created.autoNumber)
 
             try await airtable.primary.delete(recordId)
@@ -158,7 +158,7 @@ struct TestComplexProperties {
             // We just assert the field decodes without throwing and exposes
             // the schema's label/url (or nil for records where the button
             // has no URL resolved yet).
-            if let btn = created.button {
+            if let btn = created.button?.value {
                 #expect((btn.label ?? "").isEmpty == false || btn.url != nil)
             }
 

@@ -42,14 +42,14 @@ struct TestRuntimeFormulas {
 
             // --- Math formula: exact match ---
             let runtimeMath = AirtableRuntime.S(model.evaluateMathFormula())
-            #expect(model.mathFormula == runtimeMath, "Math formula mismatch")
+            #expect(model.mathFormula?.value == runtimeMath, "Math formula mismatch")
 
             // --- Text formula: exact match ---
             let runtimeText = AirtableRuntime.S(model.evaluateTextFormula())
-            #expect(model.textFormula == runtimeText, "Text formula mismatch")
+            #expect(model.textFormula?.value == runtimeText, "Text formula mismatch")
 
             // --- Date formula: partial match (TODAY/TONOW/FROMNOW are time-dependent) ---
-            let apiDate = model.dateFormula ?? ""
+            let apiDate = model.dateFormula?.value ?? ""
             let runtimeDate = AirtableRuntime.S(model.evaluateDateFormula())
 
             // Check all deterministic parts.

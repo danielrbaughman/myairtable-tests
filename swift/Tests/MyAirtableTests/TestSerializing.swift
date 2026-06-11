@@ -299,12 +299,8 @@ struct TestSerializingNetwork {
         }
     }
 
-    @Test("Linked-record fields round-trip as record-ID arrays via DictTable")
+    @Test("Linked-record fields round-trip as record-ID arrays")
     func linkedRecordSerialization() async throws {
-        // Uses the dict path to sidestep a known decode-strictness issue with
-        // the generated Secondary model (its reverse-lookup fields surface
-        // nulls that fail `[RecordId]?` decoding — tracked separately, same
-        // family of issues as the date-format one in F8).
         let suite = TestSetup.primaryKey(for: "Serialize", "Links")
         let sec = try await airtable.secondary.create(
             SecondaryModel(name: "\(suite) Target")
@@ -314,27 +310,24 @@ struct TestSerializingNetwork {
             return
         }
 
-        var fields = Fields(nameToId: PrimaryFields.nameToId)
-        fields.setString(PrimaryFields.primaryKeyId, suite)
-        fields.setStrings(PrimaryFields.linkSingleId, [secId])
-        fields.setStrings(PrimaryFields.linkMultipleId, [secId])
-
-        let prim = try await airtable.primary.dict.create(fields)
+        let prim = try await airtable.primary.create(
+            PrimaryModel(linkMultiple: [secId], linkSingle: [secId], primaryKey: suite)
+        )
+        guard let primId = prim.id else {
+            Issue.record("missing id")
+            try? await airtable.secondary.delete(secId)
+            return
+        }
 
         do {
             // Both sides of the link surface as arrays of record-ID strings.
-            let single = prim.fields.getArray(PrimaryFields.linkSingleId) ?? []
-            let multi = prim.fields.getArray(PrimaryFields.linkMultipleId) ?? []
-            #expect(single.count == 1)
-            #expect(multi.count == 1)
-            if case .string(let gotId) = single.first ?? .null {
-                #expect(gotId == secId)
-            }
+            #expect(prim.linkSingle == [secId])
+            #expect(prim.linkMultiple == [secId])
 
-            try await airtable.primary.dict.delete(prim.id)
+            try await airtable.primary.delete(primId)
             try await airtable.secondary.delete(secId)
         } catch {
-            try? await airtable.primary.dict.delete(prim.id)
+            try? await airtable.primary.delete(primId)
             try? await airtable.secondary.delete(secId)
             throw error
         }
