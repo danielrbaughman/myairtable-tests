@@ -108,6 +108,51 @@ struct TestOrmCrudViaTable {
         }
     }
 
+    // MARK: - Select enums + rating (typed ORM path)
+
+    @Test("Select enums and rating round-trip via typed ORM")
+    func selectEnumsAndRatingCrud() async throws {
+        let primaryKey = TestSetup.primaryKey(for: "OrmTable", "Selects")
+        let new = PrimaryModel(
+            multipleSelect: [.option1, .option2],
+            primaryKey: primaryKey,
+            rating: .int(3),
+            singleSelect: .choice1
+        )
+
+        let created = try await airtable.primary.create(new)
+        guard let recordId = created.id else {
+            Issue.record("Missing id on created model")
+            return
+        }
+
+        do {
+            #expect(created.singleSelect == .choice1)
+            #expect(created.multipleSelect == [.option1, .option2])
+            #expect(created.rating == .int(3))
+
+            // Re-fetch and verify the typed decode path.
+            let fetched = try await airtable.primary.get(recordId)
+            #expect(fetched.singleSelect == .choice1)
+            #expect(fetched.multipleSelect == [.option1, .option2])
+            #expect(fetched.rating == .int(3))
+
+            // Update to different enum cases + rating via dirty tracking.
+            fetched.singleSelect = .choice2
+            fetched.multipleSelect = [.option3]
+            fetched.rating = .int(5)
+            let updated = try await airtable.primary.update(fetched)
+            #expect(updated.singleSelect == .choice2)
+            #expect(updated.multipleSelect == [.option3])
+            #expect(updated.rating == .int(5))
+
+            try await airtable.primary.delete(recordId)
+        } catch {
+            try? await airtable.primary.delete(recordId)
+            throw error
+        }
+    }
+
     // MARK: - List records
 
     @Test("get(query) returns a paginated record set")
