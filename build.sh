@@ -17,4 +17,5 @@ uv run main.py \
     --ts-folder "$AIRTABLE_DIR/typescript/output" \
     --js-folder "$AIRTABLE_DIR/javascript/output" \
     --py-folder "$AIRTABLE_DIR/python/output" \
-    --rs-folder "$AIRTABLE_DIR/rust/output"
+    --rs-folder "$AIRTABLE_DIR/rust/output" \
+    --swift-folder "$AIRTABLE_DIR/swift/output"

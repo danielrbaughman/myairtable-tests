@@ -20,3 +20,17 @@ yarn format
 # Rust
 cargo check
 cargo fmt
+
+# Swift
+if command -v swift &> /dev/null; then
+    (cd swift && swift build)
+    if command -v swift-format &> /dev/null; then
+        # Format the test tree; the generated output/ is regenerated on every build
+        # and swift-format would just re-format it on the next run anyway.
+        swift-format format --in-place --recursive --configuration .swift-format swift/Tests
+    else
+        echo "[warn] swift-format not installed; skipping format step. (brew install swift-format)"
+    fi
+else
+    echo "[warn] Swift not on PATH; skipping Swift checks."
+fi

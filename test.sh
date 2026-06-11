@@ -2,7 +2,7 @@
 set -e
 
 usage() {
-    echo "Usage: ./test.sh <all|ts|js|py|rs> [--all|--crud|--json|--filter|--runtime|--help]"
+    echo "Usage: ./test.sh <all|ts|js|py|rs|swift> [--all|--crud|--json|--filter|--runtime|--help]"
     echo ""
     echo "Arguments:"
     echo "  all       Run tests for all languages"
@@ -10,6 +10,7 @@ usage() {
     echo "  js        Run JavaScript tests"
     echo "  py        Run Python tests"
     echo "  rs        Run Rust tests"
+    echo "  swift     Run Swift tests"
     echo ""
     echo "Options:"
     echo "  --all     Run all test suites (default)"
@@ -26,7 +27,7 @@ LANG_ARG="$1"
 case "$LANG_ARG" in
     all)
         SUITE="${2:---all}"
-        for lang in ts js py rs; do
+        for lang in ts js py rs swift; do
             echo ""
             echo "========================================="
             echo "  Running $lang tests ($SUITE)"
@@ -50,8 +51,11 @@ case "$LANG_ARG" in
     rs)
         RUST_DIR="rust"
         ;;
+    swift)
+        SWIFT_DIR="swift"
+        ;;
     *)
-        echo "Error: first argument must be 'all', 'ts', 'js', 'py', or 'rs'"
+        echo "Error: first argument must be 'all', 'ts', 'js', 'py', 'rs', or 'swift'"
         echo ""
         usage
         exit 1
@@ -123,6 +127,39 @@ elif [ "$LANG_ARG" = "rs" ]; then
             exit 1
             ;;
     esac
+elif [ "$LANG_ARG" = "swift" ]; then
+    # Swift Testing's --filter is a regex matched against suite/test names.
+    # Swift test suites follow PascalCase "Test..." naming per the plan.
+    case "$SUITE" in
+        --help)
+            usage
+            exit 0
+            ;;
+        --all)
+            TEST_CMD="swift test --package-path swift"
+            ;;
+        --crud)
+            TEST_CMD="swift test --package-path swift --filter 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel'"
+            ;;
+        --json)
+            TEST_CMD="swift test --package-path swift --filter 'TestSerializing'"
+            ;;
+        --filter)
+            TEST_CMD="swift test --package-path swift --filter 'TestFilterByFormula'"
+            ;;
+        --runtime)
+            TEST_CMD="swift test --package-path swift --filter 'TestRuntimeFormulas'"
+            ;;
+        --cache)
+            TEST_CMD="swift test --package-path swift --filter 'TestCaching'"
+            ;;
+        *)
+            echo "Unknown option: $SUITE"
+            echo ""
+            usage
+            exit 1
+            ;;
+    esac
 else
     case "$SUITE" in
         --help)
@@ -163,6 +200,8 @@ if [ "$LANG_ARG" = "py" ]; then
     $TEST_CMD
 elif [ "$LANG_ARG" = "rs" ]; then
     $TEST_CMD
+elif [ "$LANG_ARG" = "swift" ]; then
+    eval "$TEST_CMD"
 else
     if ! command -v nvm &> /dev/null; then
         export NVM_DIR="$HOME/.nvm"
