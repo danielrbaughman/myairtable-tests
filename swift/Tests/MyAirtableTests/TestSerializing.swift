@@ -26,7 +26,7 @@ struct TestSerializing {
 
     private func decoder() -> JSONDecoder {
         let d = JSONDecoder()
-        d.dateDecodingStrategy = .iso8601
+        d.dateDecodingStrategy = .airtable
         return d
     }
 
@@ -62,6 +62,23 @@ struct TestSerializing {
         #expect(model.numberInt == 42)
         #expect(model.numberFloat == 3.14)
         #expect(model.duration == 3600)
+    }
+
+    // MARK: - Date decoding (myairtable-s9ac)
+
+    @Test("Date-only and datetime field values both decode")
+    func dateOnlyAndDatetimeDecode() throws {
+        let json = recordJSON(
+            fields: """
+                {
+                  "\(PrimaryFields.dateId)": "2024-01-15",
+                  "\(PrimaryFields.dateWithTimeId)": "2024-01-15T10:30:00.000Z"
+                }
+                """
+        )
+        let model = try decoder().decode(PrimaryModel.self, from: json)
+        #expect(model.date?.timeIntervalSince1970 == 1_705_276_800)
+        #expect(model.dateWithTime?.timeIntervalSince1970 == 1_705_314_600)
     }
 
     // MARK: - Missing fields

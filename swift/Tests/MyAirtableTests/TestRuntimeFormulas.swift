@@ -1,79 +1,115 @@
-// F8.13 — Integration / offline test: verify the transpiler-generated
-// evaluate*() methods compile and execute without errors. Parity with
-// rust/tests/test_runtime_formulas.rs's intent: exercise the full
-// transpiled-formula + runtime stack end-to-end.
-//
-// Full-fidelity comparison against Airtable's server-computed values
-// (the way the Rust test does it) is limited here by a known decoding
-// issue: date-only Airtable fields come back as "YYYY-MM-DD", but
-// JSONDecoder's .iso8601 strategy expects a full datetime. That's a
-// generator-level date-format upgrade tracked separately. For this
-// test we exercise the transpiled formulas offline using a synthetic
-// JSON envelope that avoids date-decoding.
+// F8.13 — Runtime formula parity: create a record with all input fields,
+// fetch it back with API-computed formula values, and verify the transpiled
+// evaluate*() methods reproduce them. Parity with
+// rust/tests/test_runtime_formulas.rs `runtime_formulas_match_api`.
 
 import Foundation
 import Testing
 
 @testable import MyAirtable
 
-@Suite("Runtime formulas")
+@Suite("Runtime formulas", .serialized)
 struct TestRuntimeFormulas {
-    // Synthetic Airtable record envelope sufficient to exercise math + text
-    // formulas. Date fields are omitted to dodge the date-decode mismatch
-    // noted above; date-heavy formulas return `.null` propagated through the
-    // runtime, which is acceptable for the "doesn't crash" contract.
-    private func makeModel() throws -> FormulasModel {
-        // Build the fields object dynamically to use the generator's field IDs
-        // as the source of truth — avoids ID drift if the schema changes.
-        let fieldsBody = [
-            "\"\(FormulasFields.primaryKeyId)\": \"RuntimeTest\"",
-            "\"\(FormulasFields.firstNumberId)\": 10",
-            "\"\(FormulasFields.secondNumberId)\": 20",
-            "\"\(FormulasFields.thirdNumberId)\": 30",
-            "\"\(FormulasFields.firstTextId)\": \"Hello\"",
-            "\"\(FormulasFields.secondTextId)\": \"World\"",
-            "\"\(FormulasFields.thirdTextId)\": \"!\"",
-        ].joined(separator: ", ")
+    private let airtable: Airtable
 
+    init() {
+        self.airtable = TestSetup.makeAirtable()
+    }
+
+    @Test("Runtime formulas match API-computed values")
+    func runtimeFormulasMatchApi() async throws {
+        let new = FormulasModel(
+            firstDate: AirtableDateParser.parse("2024-01-01T00:00:00.000Z")!,
+            firstNumber: 10,
+            firstText: "Hello",
+            primaryKey: "SwiftRuntimeTest",
+            secondDate: AirtableDateParser.parse("2024-02-01T00:00:00.000Z")!,
+            secondNumber: 20,
+            secondText: "World",
+            thirdDate: AirtableDateParser.parse("2024-03-01T00:00:00.000Z")!,
+            thirdNumber: 30,
+            thirdText: "!"
+        )
+        let created = try await airtable.formulas.create(new)
+        guard let recordId = created.id else {
+            Issue.record("Missing id on created model")
+            return
+        }
+
+        do {
+            // Re-fetch to get formula values computed by Airtable.
+            let model = try await airtable.formulas.get(recordId)
+
+            // --- Math formula: exact match ---
+            let runtimeMath = AirtableRuntime.S(model.evaluateMathFormula())
+            #expect(model.mathFormula == runtimeMath, "Math formula mismatch")
+
+            // --- Text formula: exact match ---
+            let runtimeText = AirtableRuntime.S(model.evaluateTextFormula())
+            #expect(model.textFormula == runtimeText, "Text formula mismatch")
+
+            // --- Date formula: partial match (TODAY/TONOW/FROMNOW are time-dependent) ---
+            let apiDate = model.dateFormula ?? ""
+            let runtimeDate = AirtableRuntime.S(model.evaluateDateFormula())
+
+            // Check all deterministic parts.
+            #expect(runtimeDate.contains("YEAR: 2024"), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("MONTH: 1"), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("DAY: 1"), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("HOUR: 0"), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("MINUTE: 0"), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("SECOND: 0"), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("WORKDAY_DIFF: "), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("DATEADD+2d: 2024-01-03"), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("IS_BEFORE: Yes"), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("IS_SAME day: No"), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("IS_AFTER: Yes"), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("DATESTR: "), "got: \(runtimeDate)")
+            #expect(runtimeDate.contains("TIMESTR: "), "got: \(runtimeDate)")
+
+            // Compare the deterministic prefix of API vs runtime (before TODAY: which varies).
+            let apiPrefix = apiDate.components(separatedBy: ", TODAY:").first ?? ""
+            let runtimePrefix = runtimeDate.components(separatedBy: ", TODAY:").first ?? ""
+            #expect(apiPrefix == runtimePrefix, "Date formula mismatch (pre-TODAY portion)")
+        } catch {
+            try await airtable.formulas.delete(recordId)
+            throw error
+        }
+
+        try await airtable.formulas.delete(recordId)
+    }
+
+    @Test("Transpiled evaluate*() methods execute on a fresh offline model")
+    func evaluateRunsOffline() throws {
+        // Offline smoke check: a model decoded from a synthetic envelope (with
+        // dates) still evaluates every generated method without trapping.
         let json = """
             {
               "id": "recRUNTIMETEST",
               "createdTime": "2024-01-01T00:00:00Z",
-              "fields": { \(fieldsBody) }
+              "fields": {
+                "\(FormulasFields.primaryKeyId)": "RuntimeTest",
+                "\(FormulasFields.firstNumberId)": 10,
+                "\(FormulasFields.secondNumberId)": 20,
+                "\(FormulasFields.thirdNumberId)": 30,
+                "\(FormulasFields.firstTextId)": "Hello",
+                "\(FormulasFields.secondTextId)": "World",
+                "\(FormulasFields.thirdTextId)": "!",
+                "\(FormulasFields.firstDateId)": "2024-01-01",
+                "\(FormulasFields.secondDateId)": "2024-02-01",
+                "\(FormulasFields.thirdDateId)": "2024-03-01"
+              }
             }
             """
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        return try decoder.decode(FormulasModel.self, from: Data(json.utf8))
-    }
+        decoder.dateDecodingStrategy = .airtable
+        let model = try decoder.decode(FormulasModel.self, from: Data(json.utf8))
 
-    @Test("Transpiled evaluate*() methods execute without crashing")
-    func evaluateRunsWithoutCrashing() throws {
-        let model = try makeModel()
-
-        // Exercise every generated evaluate method. The point is to catch
-        // transpiler bugs that would surface at first use (missing runtime
-        // functions, wrong arg shapes, etc.). Return values aren't asserted
-        // here — TestAirtableRuntime.swift already verifies runtime semantics.
-        _ = model.evaluateMathFormula()
-        _ = model.evaluateTextFormula()
-        #expect(true)  // reached without throwing
-    }
-
-    @Test("Math formula produces a non-null result when numeric inputs are set")
-    func mathFormulaIsNonNull() throws {
-        let model = try makeModel()
-        let result = model.evaluateMathFormula()
-        // Should be numeric-ish (not .null).
-        #expect(result != .null)
-    }
-
-    @Test("Text formula concatenates the three text inputs")
-    func textFormulaContainsInputs() throws {
-        let model = try makeModel()
-        let asString = AirtableRuntime.S(model.evaluateTextFormula())
-        // The text formula in the schema concatenates firstText + secondText + thirdText.
-        #expect(asString.contains("Hello"))
-        #expect(asString.contains("World"))
+        #expect(model.evaluateMathFormula() != .null)
+        let text = AirtableRuntime.S(model.evaluateTextFormula())
+        #expect(text.contains("Hello"))
+        #expect(text.contains("World"))
+        let date = AirtableRuntime.S(model.evaluateDateFormula())
+        #expect(date.contains("YEAR: 2024"))
     }
 }
