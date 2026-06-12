@@ -360,10 +360,10 @@ class TestFilterByFormula {
 
             try {
                 val notEmpty = airtable.primary.dict.get(AirtableQuery(formula = Formulas.and(scope, f.attachment.notEmpty())))
-                assertTrue(notEmpty.size >= 1)
+                assertTrue(notEmpty.isNotEmpty())
 
                 val empty = airtable.primary.dict.get(AirtableQuery(formula = Formulas.and(scope, f.attachment.empty())))
-                assertTrue(empty.size >= 1)
+                assertTrue(empty.isNotEmpty())
 
                 airtable.primary.dict.delete(ids)
             } catch (e: Throwable) {
@@ -434,11 +434,11 @@ class TestFilterByFormula {
             try {
                 // before().daysAgo(1) — both dates are in the past.
                 val past = airtable.primary.dict.get(AirtableQuery(formula = Formulas.and(scope, f.date.before().daysAgo(1))))
-                assertTrue(past.size >= 1)
+                assertTrue(past.isNotEmpty())
 
                 // after().yearsAgo(100) — both dates are within the last 100 years.
                 val recent = airtable.primary.dict.get(AirtableQuery(formula = Formulas.and(scope, f.date.after().yearsAgo(100))))
-                assertTrue(recent.size >= 1)
+                assertTrue(recent.isNotEmpty())
 
                 airtable.primary.dict.delete(ids)
             } catch (e: Throwable) {
