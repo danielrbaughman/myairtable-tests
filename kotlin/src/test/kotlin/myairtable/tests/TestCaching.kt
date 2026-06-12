@@ -7,6 +7,7 @@ import myairtable.PrimaryModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * K9.5 — TTL cache behavior end-to-end: hits, default-off, mutation
@@ -168,7 +169,7 @@ class TestCaching {
                 at.primary.get(id)
                 assertTrue(at.client.cache.count() > 0)
 
-                delay(1_500)
+                delay(1.5.seconds)
                 // Expired entry is lazily evicted on access; a fresh fetch still works.
                 val fresh = at.primary.get(id)
                 assertEquals(primaryKey, fresh.primaryKey)

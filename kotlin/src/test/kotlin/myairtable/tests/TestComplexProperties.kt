@@ -8,6 +8,7 @@ import myairtable.PrimaryModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * K5.6 — Complex field-type CRUD: attachments, collaborators (users), and
@@ -42,7 +43,7 @@ class TestComplexProperties {
                 repeat(10) {
                     val first = current.attachment?.firstOrNull()
                     if (!first?.id.isNullOrEmpty()) return@repeat
-                    delay(2_000)
+                    delay(2.seconds)
                     current = airtable.primary.get(recordId)
                 }
                 val enriched = current.attachment ?: emptyList()
