@@ -176,3 +176,71 @@ class TestSerializing {
         assertEquals(JsonPrimitive(3), model.toCreateFields()[PrimaryFields.ratingId])
     }
 }
+
+/**
+ * K10.1 — Network-bound serialization cases (split from the offline suite
+ * above, parity with the integration portion of Swift TestSerializing).
+ */
+class TestSerializingIntegration {
+    private val airtable = TestSetup.makeAirtable()
+
+    @Test
+    fun roundTripPreservesIdAndCreatedTimeAfterFetch() =
+        kotlinx.coroutines.runBlocking {
+            val primaryKey = TestSetup.primaryKey("Serializing", "IdTime")
+            val created = airtable.primary.create(PrimaryModel(primaryKey = primaryKey))
+            val recordId = created.id!!
+            try {
+                assertTrue(created.createdTime != null, "createdTime populated on create")
+                val fetched = airtable.primary.get(recordId)
+                assertEquals(recordId, fetched.id)
+                assertEquals(created.createdTime, fetched.createdTime)
+                airtable.primary.delete(recordId)
+            } catch (e: Throwable) {
+                runCatching { airtable.primary.delete(recordId) }
+                throw e
+            }
+        }
+
+    @Test
+    fun linkedRecordFieldsSerializeAsRecordIdArrays() =
+        kotlinx.coroutines.runBlocking {
+            val suite = TestSetup.primaryKey("Serializing", "Links")
+            val sec = airtable.secondary.create(myairtable.SecondaryModel(name = "$suite Target"))
+            val secId = sec.id!!
+            val prim = airtable.primary.create(PrimaryModel(primaryKey = suite, linkSingle = listOf(secId)))
+            val primId = prim.id!!
+            try {
+                val record = prim.toRecord()
+                val linkElement = record[PrimaryFields.linkSingleId]
+                assertTrue(linkElement is kotlinx.serialization.json.JsonArray, "links serialize as arrays")
+                assertEquals(secId, linkElement.first().jsonPrimitive.content)
+                airtable.primary.delete(primId)
+                airtable.secondary.delete(secId)
+            } catch (e: Throwable) {
+                runCatching { airtable.primary.delete(primId) }
+                runCatching { airtable.secondary.delete(secId) }
+                throw e
+            }
+        }
+
+    @Test
+    fun explicitNullOnAWritableFieldClearsItServerSide() =
+        kotlinx.coroutines.runBlocking {
+            val primaryKey = TestSetup.primaryKey("Serializing", "Clear")
+            val created = airtable.primary.create(PrimaryModel(primaryKey = primaryKey, singleLineText = "to be cleared"))
+            val recordId = created.id!!
+            try {
+                created.singleLineText = null
+                val saved = airtable.primary.update(created)
+                assertNull(saved.singleLineText, "JsonNull dirty entry clears the field")
+
+                val fetched = airtable.primary.get(recordId)
+                assertNull(fetched.singleLineText)
+                airtable.primary.delete(recordId)
+            } catch (e: Throwable) {
+                runCatching { airtable.primary.delete(recordId) }
+                throw e
+            }
+        }
+}
