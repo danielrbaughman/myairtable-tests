@@ -3,3 +3,9 @@ node_modules
 dist
 __pycache__
 target/
+
+# Swift
+.build/
+swift/output/
+*.xcodeproj/xcuserdata/
+Package.resolved
