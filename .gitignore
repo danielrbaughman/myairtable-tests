@@ -15,3 +15,7 @@ kotlin/output/
 .gradle/
 kotlin/build/
 .kotlin/
+
+java/output/
+java/build/
+java/.gradle/
