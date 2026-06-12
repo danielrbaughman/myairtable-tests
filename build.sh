@@ -18,4 +18,5 @@ uv run main.py \
     --js-folder "$AIRTABLE_DIR/javascript/output" \
     --py-folder "$AIRTABLE_DIR/python/output" \
     --rs-folder "$AIRTABLE_DIR/rust/output" \
-    --swift-folder "$AIRTABLE_DIR/swift/output"
+    --swift-folder "$AIRTABLE_DIR/swift/output" \
+    --kotlin-folder "$AIRTABLE_DIR/kotlin/output"

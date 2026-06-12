@@ -2,7 +2,7 @@
 set -e
 
 usage() {
-    echo "Usage: ./test.sh <all|ts|js|py|rs|swift> [--all|--crud|--json|--filter|--runtime|--help]"
+    echo "Usage: ./test.sh <all|ts|js|py|rs|swift|kotlin> [--all|--crud|--json|--filter|--runtime|--help]"
     echo ""
     echo "Arguments:"
     echo "  all       Run tests for all languages"
@@ -11,6 +11,7 @@ usage() {
     echo "  py        Run Python tests"
     echo "  rs        Run Rust tests"
     echo "  swift     Run Swift tests"
+    echo "  kotlin    Run Kotlin tests"
     echo ""
     echo "Options:"
     echo "  --all     Run all test suites (default)"
@@ -27,7 +28,7 @@ LANG_ARG="$1"
 case "$LANG_ARG" in
     all)
         SUITE="${2:---all}"
-        for lang in ts js py rs swift; do
+        for lang in ts js py rs swift kotlin; do
             echo ""
             echo "========================================="
             echo "  Running $lang tests ($SUITE)"
@@ -54,8 +55,11 @@ case "$LANG_ARG" in
     swift)
         SWIFT_DIR="swift"
         ;;
+    kotlin)
+        KOTLIN_DIR="kotlin"
+        ;;
     *)
-        echo "Error: first argument must be 'all', 'ts', 'js', 'py', 'rs', or 'swift'"
+        echo "Error: first argument must be 'all', 'ts', 'js', 'py', 'rs', 'swift', or 'kotlin'"
         echo ""
         usage
         exit 1
@@ -160,6 +164,40 @@ elif [ "$LANG_ARG" = "swift" ]; then
             exit 1
             ;;
     esac
+elif [ "$LANG_ARG" = "kotlin" ]; then
+    # Gradle's --tests filter matches fully-qualified class names; '*' wildcards
+    # match on the simple class name. Kotlin test classes follow the PascalCase
+    # "Test..." naming used by Swift.
+    case "$SUITE" in
+        --help)
+            usage
+            exit 0
+            ;;
+        --all)
+            TEST_CMD="(cd kotlin && ./gradlew test)"
+            ;;
+        --crud)
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel')"
+            ;;
+        --json)
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestSerializing')"
+            ;;
+        --filter)
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestFilterByFormula')"
+            ;;
+        --runtime)
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestRuntimeFormulas')"
+            ;;
+        --cache)
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestCaching')"
+            ;;
+        *)
+            echo "Unknown option: $SUITE"
+            echo ""
+            usage
+            exit 1
+            ;;
+    esac
 else
     case "$SUITE" in
         --help)
@@ -201,6 +239,8 @@ if [ "$LANG_ARG" = "py" ]; then
 elif [ "$LANG_ARG" = "rs" ]; then
     $TEST_CMD
 elif [ "$LANG_ARG" = "swift" ]; then
+    eval "$TEST_CMD"
+elif [ "$LANG_ARG" = "kotlin" ]; then
     eval "$TEST_CMD"
 else
     if ! command -v nvm &> /dev/null; then
