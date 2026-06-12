@@ -48,3 +48,20 @@ if [ -x kotlin/gradlew ] && command -v java &> /dev/null; then
 else
     echo "[warn] Java/gradlew not available; skipping Kotlin checks."
 fi
+
+# Java
+if [ -x java/gradlew ] && command -v java &> /dev/null; then
+    (cd java && ./gradlew compileTestJava)
+    if command -v google-java-format &> /dev/null; then
+        # Format the hand-written test tree only; the generated output/ is
+        # regenerated on every build and is exempt from formatting by design.
+        JAVA_SOURCES=$(find java/src -name '*.java')
+        if [ -n "$JAVA_SOURCES" ]; then
+            echo "$JAVA_SOURCES" | xargs google-java-format --replace
+        fi
+    else
+        echo "[warn] google-java-format not installed; skipping format step. (brew install google-java-format)"
+    fi
+else
+    echo "[warn] Java/gradlew not available; skipping Java checks."
+fi
