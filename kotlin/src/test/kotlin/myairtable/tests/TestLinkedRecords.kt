@@ -5,6 +5,7 @@ import myairtable.PrimaryModel
 import myairtable.SecondaryModel
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -78,6 +79,22 @@ class TestLinkedRecords {
             } catch (e: Throwable) {
                 runCatching { airtable.primary.delete(primId) }
                 runCatching { airtable.secondary.delete(secId) }
+                throw e
+            }
+        }
+
+    @Test
+    fun emptyLinkSingleDecodesAsNull() =
+        runBlocking {
+            val suite = TestSetup.primaryKey("Linked", "FetchNil")
+            val prim = airtable.primary.create(PrimaryModel(primaryKey = "$suite No Links"))
+            val primId = prim.id!!
+            try {
+                // Airtable omits empty link fields entirely; linkSingle decodes as null.
+                assertNull(prim.linkSingle?.firstOrNull())
+                airtable.primary.delete(primId)
+            } catch (e: Throwable) {
+                runCatching { airtable.primary.delete(primId) }
                 throw e
             }
         }
