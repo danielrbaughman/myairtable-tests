@@ -172,7 +172,8 @@ class TestFilterByFormula {
             val ids = created.map { it.id }
 
             try {
-                val results = airtable.primary.dict.get(AirtableQuery(view = PrimaryView.FILTER_BY_VIEW.id))
+                // Live coverage for the AirtableView overload (myairtable-yvb3).
+                val results = airtable.primary.dict.get(AirtableQuery().withView(PrimaryView.FILTER_BY_VIEW))
                 assertTrue(results.size >= 5)
                 for (record in results) {
                     val name = record.fields.getString(PrimaryFields.primaryKeyId) ?: ""
