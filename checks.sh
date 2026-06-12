@@ -34,3 +34,17 @@ if command -v swift &> /dev/null; then
 else
     echo "[warn] Swift not on PATH; skipping Swift checks."
 fi
+
+# Kotlin
+if [ -x kotlin/gradlew ] && command -v java &> /dev/null; then
+    (cd kotlin && ./gradlew compileTestKotlin)
+    if command -v ktlint &> /dev/null; then
+        # Format the hand-written test tree only; the generated output/ is
+        # regenerated on every build and is exempt from lint by design.
+        ktlint --format "kotlin/src/**/*.kt"
+    else
+        echo "[warn] ktlint not installed; skipping format step. (brew install ktlint)"
+    fi
+else
+    echo "[warn] Java/gradlew not available; skipping Kotlin checks."
+fi
