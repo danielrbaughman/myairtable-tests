@@ -83,7 +83,7 @@ class TestSpecialErrorDeser {
         val model = json.decodeFromString(PrimaryModel.serializer(), fieldsJson)
 
         assertEquals("ErrDeser", model.primaryKey)
-        assertTrue(model.formulaSimple?.isError == true)
+        assertEquals(true, model.formulaSimple?.isError)
         assertNull(model.formulaSimple?.valueOrNull)
         assertEquals("recERRDESER123456", model.formulaId?.valueOrNull)
         assertEquals(listOf("Lab A"), model.lookup?.values?.mapNotNull { it.valueOrNull })

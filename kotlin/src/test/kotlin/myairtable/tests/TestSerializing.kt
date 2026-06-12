@@ -12,6 +12,7 @@ import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -191,7 +192,7 @@ class TestSerializingIntegration {
             val created = airtable.primary.create(PrimaryModel(primaryKey = primaryKey))
             val recordId = created.id!!
             try {
-                assertTrue(created.createdTime != null, "createdTime populated on create")
+                assertNotNull(created.createdTime, "createdTime populated on create")
                 val fetched = airtable.primary.get(recordId)
                 assertEquals(recordId, fetched.id)
                 assertEquals(created.createdTime, fetched.createdTime)
