@@ -218,7 +218,7 @@ elif [ "$LANG_ARG" = "java" ]; then
             TEST_CMD="(cd java && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel')"
             ;;
         --json)
-            TEST_CMD="(cd java && ./gradlew test --tests '*TestSerializing')"
+            TEST_CMD="(cd java && ./gradlew test --tests '*TestSerializing*')"
             ;;
         --filter)
             TEST_CMD="(cd java && ./gradlew test --tests '*TestFilterByFormula')"
