@@ -1,11 +1,13 @@
 package myairtable.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import myairtable.Airtable;
 import myairtable.AirtableQuery;
+import myairtable.CacheStore;
 import myairtable.PrimaryModel;
 import myairtable.PrimaryTable;
 import org.junit.jupiter.api.Test;
@@ -78,17 +80,23 @@ class TestCaching {
     String primaryKey = TestSetup.primaryKey("Cache", "MutateCreate");
     PrimaryModel a = at.primary().create(PrimaryModel.builder().primaryKey(primaryKey).build());
     String idA = a.getId();
+    // Track every created id so a failing assert still cleans up all of them, not just idA.
+    String idB = null;
     try {
       at.primary().get(idA); // populate cache
       assertTrue(at.client().getCache().count() > 0);
 
       PrimaryModel b =
           at.primary().create(PrimaryModel.builder().primaryKey(primaryKey + " B").build());
+      idB = b.getId();
       assertEquals(0, at.client().getCache().count(), "create wipes this table's cache");
 
-      at.primary().deleteAll(List.of(idA, b.getId()));
+      at.primary().deleteAll(List.of(idA, idB));
     } catch (Throwable e) {
       bestEffortDelete(at, idA);
+      if (idB != null) {
+        bestEffortDelete(at, idB);
+      }
       throw e;
     }
   }
@@ -122,11 +130,22 @@ class TestCaching {
     PrimaryModel created =
         at.primary().create(PrimaryModel.builder().primaryKey(primaryKey).build());
     String id = created.getId();
-    at.primary().get(id);
-    assertTrue(at.client().getCache().count() > 0);
+    // The cache-populating read and its assert were previously outside any try, so a failing
+    // count() assert leaked the created record. Guard the whole sequence.
+    boolean deleted = false;
+    try {
+      at.primary().get(id);
+      assertTrue(at.client().getCache().count() > 0);
 
-    at.primary().delete(id);
-    assertEquals(0, at.client().getCache().count(), "delete wipes this table's cache");
+      at.primary().delete(id);
+      deleted = true;
+      assertEquals(0, at.client().getCache().count(), "delete wipes this table's cache");
+    } catch (Throwable e) {
+      if (!deleted) {
+        bestEffortDelete(at, id);
+      }
+      throw e;
+    }
   }
 
   @Test
@@ -184,7 +203,17 @@ class TestCaching {
       assertTrue(at.client().getCache().count() > 0);
 
       Thread.sleep(1_500);
-      // Expired entry is lazily evicted on access; a fresh fetch still works.
+      // Distinguish genuine TTL expiry from a stale hit: simply re-reading the same payload would
+      // pass whether or not expiry works (a stale entry returns the same record). Probe the cache
+      // directly for the single-record entry — CacheStore.get() lazily evicts an entry past its
+      // TTL and returns null, so a null here proves the pre-sleep entry actually expired rather
+      // than being served stale. (Key shape mirrors AirtableClient.getRecord: "rec:" + id.)
+      CacheStore.Key recordKey = new CacheStore.Key(PrimaryTable.TABLE_ID, "rec:" + id);
+      assertNull(
+          at.client().getCache().get(recordKey),
+          "TTL-expired entry must be evicted on access, not served stale");
+
+      // A fresh fetch still works (and re-populates the cache).
       PrimaryModel fresh = at.primary().get(id);
       assertEquals(primaryKey, fresh.getPrimaryKey());
 

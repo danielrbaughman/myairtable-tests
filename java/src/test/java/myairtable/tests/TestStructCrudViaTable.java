@@ -30,11 +30,12 @@ class TestStructCrudViaTable {
 
     // Create
     var created = airtable.primary().dict().create(fields);
-    assertFalse(created.id().isEmpty());
-    assertEquals(primaryKey, created.fields().getString(PrimaryFields.primaryKeyId));
-
     String recordId = created.id();
     try {
+      // Post-create asserts were previously outside the try, so a failure leaked the record.
+      assertFalse(created.id().isEmpty());
+      assertEquals(primaryKey, created.fields().getString(PrimaryFields.primaryKeyId));
+
       // Read
       var fetched = airtable.primary().dict().get(recordId);
       assertEquals(recordId, fetched.id());

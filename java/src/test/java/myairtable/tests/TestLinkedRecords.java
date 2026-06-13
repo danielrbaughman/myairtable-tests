@@ -20,24 +20,30 @@ class TestLinkedRecords {
   @Test
   void linkedRecordFieldsRoundTripViaRecordIds() {
     String suite = TestSetup.primaryKey("Linked", "RoundTrip");
-    SecondaryModel sec1 =
-        airtable.secondary().create(SecondaryModel.builder().name(suite + " S1").build());
-    SecondaryModel sec2 =
-        airtable.secondary().create(SecondaryModel.builder().name(suite + " S2").build());
-    String sec1Id = sec1.getId();
-    String sec2Id = sec2.getId();
-
-    PrimaryModel prim =
-        airtable
-            .primary()
-            .create(
-                PrimaryModel.builder()
-                    .primaryKey(suite)
-                    .linkSingle(List.of(sec1Id))
-                    .linkMultiple(List.of(sec1Id, sec2Id))
-                    .build());
-    String primId = prim.getId();
+    // The secondary records were previously created before the try block, so a failure in the
+    // primary create (or anything before the try) leaked them. Capture their ids up front and
+    // pull both creates inside the guarded region so cleanup always runs.
+    String sec1Id = null;
+    String sec2Id = null;
+    String primId = null;
     try {
+      SecondaryModel sec1 =
+          airtable.secondary().create(SecondaryModel.builder().name(suite + " S1").build());
+      sec1Id = sec1.getId();
+      SecondaryModel sec2 =
+          airtable.secondary().create(SecondaryModel.builder().name(suite + " S2").build());
+      sec2Id = sec2.getId();
+
+      PrimaryModel prim =
+          airtable
+              .primary()
+              .create(
+                  PrimaryModel.builder()
+                      .primaryKey(suite)
+                      .linkSingle(List.of(sec1Id))
+                      .linkMultiple(List.of(sec1Id, sec2Id))
+                      .build());
+      primId = prim.getId();
       assertEquals(List.of(sec1Id), prim.getLinkSingle());
       assertEquals(List.of(sec1Id, sec2Id), prim.getLinkMultiple());
 
@@ -54,16 +60,8 @@ class TestLinkedRecords {
       airtable.primary().delete(primId);
       airtable.secondary().deleteAll(List.of(sec1Id, sec2Id));
     } catch (Throwable e) {
-      try {
-        airtable.primary().delete(primId);
-      } catch (RuntimeException ignored) {
-        // best-effort cleanup
-      }
-      try {
-        airtable.secondary().deleteAll(List.of(sec1Id, sec2Id));
-      } catch (RuntimeException ignored) {
-        // best-effort cleanup
-      }
+      deletePrimary(primId);
+      deleteSecondaries(sec1Id, sec2Id);
       throw e;
     }
   }
@@ -71,18 +69,20 @@ class TestLinkedRecords {
   @Test
   void linkedSingleRecordResolvesViaSecondaryGet() {
     String suite = TestSetup.primaryKey("Linked", "Single");
-    SecondaryModel sec =
-        airtable
-            .secondary()
-            .create(SecondaryModel.builder().name(suite + " Target").value("sv").build());
-    String secId = sec.getId();
-
-    PrimaryModel prim =
-        airtable
-            .primary()
-            .create(PrimaryModel.builder().primaryKey(suite).linkSingle(List.of(secId)).build());
-    String primId = prim.getId();
+    String secId = null;
+    String primId = null;
     try {
+      SecondaryModel sec =
+          airtable
+              .secondary()
+              .create(SecondaryModel.builder().name(suite + " Target").value("sv").build());
+      secId = sec.getId();
+
+      PrimaryModel prim =
+          airtable
+              .primary()
+              .create(PrimaryModel.builder().primaryKey(suite).linkSingle(List.of(secId)).build());
+      primId = prim.getId();
       assertEquals(1, prim.getLinkSingle().size());
       String linkedId = prim.getLinkSingle().get(0);
       assertEquals(secId, linkedId);
@@ -94,16 +94,8 @@ class TestLinkedRecords {
       airtable.primary().delete(primId);
       airtable.secondary().delete(secId);
     } catch (Throwable e) {
-      try {
-        airtable.primary().delete(primId);
-      } catch (RuntimeException ignored) {
-        // best-effort cleanup
-      }
-      try {
-        airtable.secondary().delete(secId);
-      } catch (RuntimeException ignored) {
-        // best-effort cleanup
-      }
+      deletePrimary(primId);
+      deleteSecondaries(secId);
       throw e;
     }
   }
@@ -133,18 +125,24 @@ class TestLinkedRecords {
   @Test
   void linkedMultiRecordsResolveViaSecondaryGet() {
     String suite = TestSetup.primaryKey("Linked", "Multi");
-    SecondaryModel sec1 =
-        airtable.secondary().create(SecondaryModel.builder().name(suite + " T1").build());
-    SecondaryModel sec2 =
-        airtable.secondary().create(SecondaryModel.builder().name(suite + " T2").build());
-    List<String> secIds = List.of(sec1.getId(), sec2.getId());
-
-    PrimaryModel prim =
-        airtable
-            .primary()
-            .create(PrimaryModel.builder().primaryKey(suite).linkMultiple(secIds).build());
-    String primId = prim.getId();
+    String sec1Id = null;
+    String sec2Id = null;
+    String primId = null;
     try {
+      SecondaryModel sec1 =
+          airtable.secondary().create(SecondaryModel.builder().name(suite + " T1").build());
+      sec1Id = sec1.getId();
+      SecondaryModel sec2 =
+          airtable.secondary().create(SecondaryModel.builder().name(suite + " T2").build());
+      sec2Id = sec2.getId();
+      List<String> secIds = List.of(sec1Id, sec2Id);
+
+      PrimaryModel prim =
+          airtable
+              .primary()
+              .create(PrimaryModel.builder().primaryKey(suite).linkMultiple(secIds).build());
+      primId = prim.getId();
+
       List<SecondaryModel> linked =
           airtable
               .secondary()
@@ -157,17 +155,34 @@ class TestLinkedRecords {
       airtable.primary().delete(primId);
       airtable.secondary().deleteAll(secIds);
     } catch (Throwable e) {
-      try {
-        airtable.primary().delete(primId);
-      } catch (RuntimeException ignored) {
-        // best-effort cleanup
-      }
-      try {
-        airtable.secondary().deleteAll(secIds);
-      } catch (RuntimeException ignored) {
-        // best-effort cleanup
-      }
+      deletePrimary(primId);
+      deleteSecondaries(sec1Id, sec2Id);
       throw e;
+    }
+  }
+
+  // ---- best-effort cleanup helpers (skip null ids; swallow cleanup errors) ----
+
+  private void deletePrimary(String primId) {
+    if (primId == null) {
+      return;
+    }
+    try {
+      airtable.primary().delete(primId);
+    } catch (RuntimeException ignored) {
+      // best-effort cleanup — surface the original failure
+    }
+  }
+
+  private void deleteSecondaries(String... secIds) {
+    List<String> ids = java.util.Arrays.stream(secIds).filter(java.util.Objects::nonNull).toList();
+    if (ids.isEmpty()) {
+      return;
+    }
+    try {
+      airtable.secondary().deleteAll(ids);
+    } catch (RuntimeException ignored) {
+      // best-effort cleanup — surface the original failure
     }
   }
 }

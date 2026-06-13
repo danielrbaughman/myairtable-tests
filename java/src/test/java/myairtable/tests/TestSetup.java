@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import myairtable.Airtable;
 
 /**
@@ -55,7 +56,18 @@ public final class TestSetup {
     return new Airtable(baseId, apiKey, cacheSeconds);
   }
 
-  /** Walk from CWD up to the filesystem root looking for ".env" and parse it. */
+  /**
+   * Walk up from CWD looking for ".env", but never climb past the repository root so a stray ".env"
+   * higher up the filesystem (e.g. in a parent workspace or $HOME) can't be silently adopted.
+   *
+   * <p>".env" is inspected in each directory (including the repo-root directory itself) before the
+   * boundary is enforced — the test repo keeps its ".env" alongside the ".git" marker at the repo
+   * root, so it is still found. The Gradle build run from {@code java/} is a nested build, so a
+   * ".git" directory (the VCS root) is the authoritative boundary here; a bare nested {@code
+   * settings.gradle.kts} that has no co-located ".env" must NOT stop the walk early, or the
+   * repo-root ".env" one level up would be missed. Once the {@code .git} root is inspected without
+   * a ".env", the walk fails safe (empty map) rather than escaping the repo.
+   */
   private static Map<String, String> loadDotEnv() {
     File dir = new File(System.getProperty("user.dir")).getAbsoluteFile();
     while (dir != null) {
@@ -63,9 +75,26 @@ public final class TestSetup {
       if (candidate.isFile()) {
         return parseDotEnv(candidate);
       }
+      // Stop once we've inspected the repo-root directory: don't climb into foreign territory.
+      if (isRepoRoot(dir)) {
+        return Map.of();
+      }
       dir = dir.getParentFile();
     }
     return Map.of();
+  }
+
+  /**
+   * A directory is the repo boundary if it holds the VCS root marker ({@code .git}). A {@code
+   * settings.gradle.kts} also marks a (sub-)project root, but only counts as the boundary when it
+   * additionally carries the repo's ".env" — otherwise the nested Gradle build directory would halt
+   * the walk before reaching the repo-root ".env" that sits one level above it.
+   */
+  private static boolean isRepoRoot(File dir) {
+    if (new File(dir, ".git").exists()) {
+      return true;
+    }
+    return new File(dir, "settings.gradle.kts").isFile() && new File(dir, ".env").isFile();
   }
 
   private static Map<String, String> parseDotEnv(File file) {
@@ -100,8 +129,13 @@ public final class TestSetup {
   /**
    * Unique primary key for a given test to avoid cross-test collisions. Each test suite should pick
    * a distinct prefix so parallel test files don't create records with conflicting keys.
+   *
+   * <p>An epoch-second timestamp alone collides when two suite runs start within the same second
+   * (e.g. CI re-runs, or a local run overlapping a CI run against the shared base). A short random
+   * suffix makes the key unique across simultaneous runs.
    */
   public static String primaryKey(String suite, String label) {
-    return "Java " + suite + " " + label + " " + Instant.now().getEpochSecond();
+    String rand = Long.toString(ThreadLocalRandom.current().nextLong(0, 0x1_0000_0000L), 36);
+    return "Java " + suite + " " + label + " " + Instant.now().getEpochSecond() + "-" + rand;
   }
 }

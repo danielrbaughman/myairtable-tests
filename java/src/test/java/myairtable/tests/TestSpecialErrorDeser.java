@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.List;
-import java.util.Objects;
 import myairtable.AirtableJson;
 import myairtable.ErrorValue;
 import myairtable.MaybeSpecialOrError;
@@ -68,12 +67,7 @@ class TestSpecialErrorDeser {
         decode(
             "[\"Stukenholtz Laboratory Inc\"]",
             new TypeReference<VecOrValue<MaybeSpecialOrError<String>>>() {});
-    assertEquals(
-        List.of("Stukenholtz Laboratory Inc"),
-        multiple.values().stream()
-            .map(v -> v == null ? null : v.value())
-            .filter(Objects::nonNull)
-            .toList());
+    assertEquals(List.of("Stukenholtz Laboratory Inc"), VecOrValue.cleanValues(multiple));
 
     VecOrValue<MaybeSpecialOrError<String>> withNulls =
         decode(
@@ -135,12 +129,7 @@ class TestSpecialErrorDeser {
     assertInstanceOf(MaybeSpecialOrError.Error.class, model.getFormulaSimple());
     assertNull(model.getFormulaSimple().value());
     assertEquals("recERRDESER123456", model.getFormulaId().value());
-    assertEquals(
-        List.of("Lab A"),
-        model.getLookup().values().stream()
-            .map(v -> v == null ? null : v.value())
-            .filter(Objects::nonNull)
-            .toList());
+    assertEquals(List.of("Lab A"), VecOrValue.cleanValues(model.getLookup()));
     VecOrValue.Multiple<MaybeSpecialOrError<String>> lookupShape =
         assertInstanceOf(VecOrValue.Multiple.class, model.getLookup());
     assertEquals(2, lookupShape.values().size());

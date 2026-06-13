@@ -228,9 +228,15 @@ class TestOrmCrudViaTable {
     for (int i = 1; i <= count; i++) {
       models.add(PrimaryModel.builder().primaryKey(suite + " " + i).build());
     }
-    List<PrimaryModel> created = airtable.primary().create(models);
-    List<String> createdIds = created.stream().map(PrimaryModel::getId).toList();
+    // create() chunks into 10-record batches; a mid-batch failure throws WITHOUT returning the
+    // ids of records already created in earlier batches, so the by-id cleanup below can't see
+    // them. Pull the create inside the try and fall back to a prefix sweep on failure (the suite
+    // prefix is unique per run), so partial creates are still cleaned up.
+    List<String> createdIds = List.of();
     try {
+      List<PrimaryModel> created = airtable.primary().create(models);
+      createdIds = created.stream().map(PrimaryModel::getId).toList();
+
       assertEquals(count, created.size());
       for (int i = 0; i < created.size(); i++) {
         assertEquals(suite + " " + (i + 1), created.get(i).getPrimaryKey());
@@ -246,10 +252,30 @@ class TestOrmCrudViaTable {
       }
 
       airtable.primary().deleteAll(createdIds);
-      assertThrows(AirtableException.class, () -> airtable.primary().get(createdIds.get(0)));
+      String firstId = createdIds.get(0);
+      assertThrows(AirtableException.class, () -> airtable.primary().get(firstId));
     } catch (Throwable e) {
+      // First delete the ids we know about, then sweep by prefix to catch any partial-batch
+      // creates whose ids never came back (the original primary key carries the unique suite
+      // prefix; the " Updated" rename only happens after a fully successful create).
       try {
-        airtable.primary().deleteAll(createdIds);
+        if (!createdIds.isEmpty()) {
+          airtable.primary().deleteAll(createdIds);
+        }
+      } catch (RuntimeException ignored) {
+        // best-effort cleanup
+      }
+      try {
+        List<String> straySweep =
+            airtable
+                .primary()
+                .get(new AirtableQuery().withFormula("FIND(\"" + suite + "\", {Primary Key})"))
+                .stream()
+                .map(PrimaryModel::getId)
+                .toList();
+        if (!straySweep.isEmpty()) {
+          airtable.primary().deleteAll(straySweep);
+        }
       } catch (RuntimeException ignored) {
         // best-effort cleanup
       }
