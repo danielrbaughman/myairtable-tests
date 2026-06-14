@@ -7,6 +7,7 @@ package tests
 // model. No credentials or network are required — these must run, not skip.
 
 import (
+	"context"
 	"encoding/json"
 	"testing"
 
@@ -180,6 +181,139 @@ func TestSerializing(t *testing.T) {
 		}
 		if _, ok := out[airtable.PrimaryDurationFieldID]; ok {
 			t.Fatal("Duration present in output, want omitted for nil pointer")
+		}
+	})
+
+	t.Run("UnsavedModelHasEmptyID", func(t *testing.T) {
+		// A freshly constructed model is "unsaved": ID() is "" until create/hydrate.
+		m := &airtable.PrimaryModel{PrimaryKey: airtable.String("never saved")}
+		if m.ID() != "" {
+			t.Fatalf("ID() = %q, want \"\" for an unsaved model", m.ID())
+		}
+		if m.CreatedTime() != nil {
+			t.Fatalf("CreatedTime() = %v, want nil for an unsaved model", m.CreatedTime())
+		}
+	})
+}
+
+// TestSerializingIntegration — G10.1 network-bound serialization parity with the
+// Java TestSerializingIntegration / Kotlin TestSerializingIntegration: linked-
+// record ID arrays round-trip, createdTime is populated on create, unsaved
+// models report an empty ID, and a writable field cleared to nil is unset
+// server-side. Live; distinct primary keys; cleans up everything it creates.
+func TestSerializingIntegration(t *testing.T) {
+	at := newAirtable(t)
+	ctx := context.Background()
+
+	t.Run("CreatedTimeAndIDRoundTrip", func(t *testing.T) {
+		pk := primaryKey("Serializing", "IdTime")
+		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
+		if err != nil {
+			t.Fatalf("create: %v", err)
+		}
+		id := created.ID()
+		defer at.Primary.Delete(ctx, id) //nolint:errcheck
+
+		if id == "" {
+			t.Fatal("created model has empty ID")
+		}
+		if created.CreatedTime() == nil {
+			t.Fatal("CreatedTime() is nil on a created record, want populated")
+		}
+
+		fetched, err := at.Primary.Get(ctx, id)
+		if err != nil {
+			t.Fatalf("get: %v", err)
+		}
+		if fetched.ID() != id {
+			t.Fatalf("fetched ID = %s, want %s", fetched.ID(), id)
+		}
+		if fetched.CreatedTime() == nil {
+			t.Fatal("fetched CreatedTime() is nil, want populated")
+		}
+		if !created.CreatedTime().Time.Equal(fetched.CreatedTime().Time) {
+			t.Fatalf("createdTime mismatch: created %v vs fetched %v",
+				created.CreatedTime().Time, fetched.CreatedTime().Time)
+		}
+	})
+
+	t.Run("LinkedRecordIDArraysRoundTrip", func(t *testing.T) {
+		suite := primaryKey("Serializing", "Links")
+		sec1, err := at.Secondary.Create(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " T1")})
+		if err != nil {
+			t.Fatalf("create secondary 1: %v", err)
+		}
+		defer at.Secondary.Delete(ctx, sec1.ID()) //nolint:errcheck
+		sec2, err := at.Secondary.Create(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " T2")})
+		if err != nil {
+			t.Fatalf("create secondary 2: %v", err)
+		}
+		defer at.Secondary.Delete(ctx, sec2.ID()) //nolint:errcheck
+
+		prim, err := at.Primary.Create(ctx, &airtable.PrimaryModel{
+			PrimaryKey:   airtable.String(suite),
+			LinkSingle:   []string{sec1.ID()},
+			LinkMultiple: []string{sec1.ID(), sec2.ID()},
+		})
+		if err != nil {
+			t.Fatalf("create primary: %v", err)
+		}
+		defer at.Primary.Delete(ctx, prim.ID()) //nolint:errcheck
+
+		// Links serialize as []string of record IDs and round-trip through create.
+		if len(prim.LinkSingle) != 1 || prim.LinkSingle[0] != sec1.ID() {
+			t.Fatalf("LinkSingle = %v, want [%s]", prim.LinkSingle, sec1.ID())
+		}
+		if len(prim.LinkMultiple) != 2 {
+			t.Fatalf("LinkMultiple len = %d, want 2", len(prim.LinkMultiple))
+		}
+
+		// Re-fetch and confirm the arrays survive a server round-trip.
+		fetched, err := at.Primary.Get(ctx, prim.ID())
+		if err != nil {
+			t.Fatalf("get primary: %v", err)
+		}
+		if len(fetched.LinkSingle) != 1 || fetched.LinkSingle[0] != sec1.ID() {
+			t.Fatalf("fetched LinkSingle = %v, want [%s]", fetched.LinkSingle, sec1.ID())
+		}
+		if len(fetched.LinkMultiple) != 2 {
+			t.Fatalf("fetched LinkMultiple len = %d, want 2", len(fetched.LinkMultiple))
+		}
+	})
+
+	t.Run("NullFieldClearingUnsetsServerSide", func(t *testing.T) {
+		pk := primaryKey("Serializing", "Clear")
+		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{
+			PrimaryKey:     airtable.String(pk),
+			SingleLineText: airtable.String("to be cleared"),
+		})
+		if err != nil {
+			t.Fatalf("create: %v", err)
+		}
+		id := created.ID()
+		defer at.Primary.Delete(ctx, id) //nolint:errcheck
+
+		if created.SingleLineText == nil || *created.SingleLineText != "to be cleared" {
+			t.Fatalf("created text = %v, want 'to be cleared'", created.SingleLineText)
+		}
+
+		// Clear the field (set the pointer to nil) and update: the dirty diff sends
+		// JSON null, unsetting the field server-side.
+		created.SingleLineText = nil
+		saved, err := at.Primary.Update(ctx, created)
+		if err != nil {
+			t.Fatalf("update (clear): %v", err)
+		}
+		if saved.SingleLineText != nil {
+			t.Fatalf("text after clear = %v, want nil", saved.SingleLineText)
+		}
+
+		fetched, err := at.Primary.Get(ctx, id)
+		if err != nil {
+			t.Fatalf("get after clear: %v", err)
+		}
+		if fetched.SingleLineText != nil {
+			t.Fatalf("fetched text after clear = %v, want nil (cleared server-side)", fetched.SingleLineText)
 		}
 	})
 }
