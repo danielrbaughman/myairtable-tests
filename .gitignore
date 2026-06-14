@@ -19,3 +19,6 @@ kotlin/build/
 java/output/
 java/build/
 java/.gradle/
+
+# Go
+go/output/

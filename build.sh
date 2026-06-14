@@ -20,4 +20,5 @@ uv run main.py \
     --rs-folder "$AIRTABLE_DIR/rust/output" \
     --swift-folder "$AIRTABLE_DIR/swift/output" \
     --kotlin-folder "$AIRTABLE_DIR/kotlin/output" \
-    --java-folder "$AIRTABLE_DIR/java/output"
+    --java-folder "$AIRTABLE_DIR/java/output" \
+    --go-folder "$AIRTABLE_DIR/go/output"
