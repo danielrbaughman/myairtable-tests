@@ -16,11 +16,11 @@ func TestOrmCrudViaTable(t *testing.T) {
 
 	t.Run("PrimaryKeyOnly", func(t *testing.T) {
 		pk := primaryKey("OrmCrud", "PKOnly")
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
-		defer at.Primary.Delete(ctx, created.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, created.ID()) //nolint:errcheck
 		if created.ID() == "" {
 			t.Fatal("created has empty id")
 		}
@@ -28,7 +28,7 @@ func TestOrmCrudViaTable(t *testing.T) {
 			t.Fatalf("created pk: %v", created.PrimaryKey)
 		}
 
-		fetched, err := at.Primary.Get(ctx, created.ID())
+		fetched, err := at.Primary.GetOne(ctx, created.ID())
 		if err != nil {
 			t.Fatalf("get: %v", err)
 		}
@@ -37,7 +37,7 @@ func TestOrmCrudViaTable(t *testing.T) {
 		}
 
 		fetched.PrimaryKey = airtable.String(pk + " Updated")
-		updated, err := at.Primary.Update(ctx, fetched)
+		updated, err := at.Primary.UpdateOne(ctx, fetched)
 		if err != nil {
 			t.Fatalf("update: %v", err)
 		}
@@ -45,10 +45,10 @@ func TestOrmCrudViaTable(t *testing.T) {
 			t.Fatalf("updated pk: %v", updated.PrimaryKey)
 		}
 
-		if err := at.Primary.Delete(ctx, created.ID()); err != nil {
+		if err := at.Primary.DeleteOne(ctx, created.ID()); err != nil {
 			t.Fatalf("delete: %v", err)
 		}
-		if _, err := at.Primary.Get(ctx, created.ID()); err == nil {
+		if _, err := at.Primary.GetOne(ctx, created.ID()); err == nil {
 			t.Fatal("expected error after delete")
 		}
 	})
@@ -61,11 +61,11 @@ func TestOrmCrudViaTable(t *testing.T) {
 			NumberInt:  airtable.Float64(42.0),
 			Checkbox:   airtable.Bool(true),
 		}
-		created, err := at.Primary.Create(ctx, m)
+		created, err := at.Primary.CreateOne(ctx, m)
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
-		defer at.Primary.Delete(ctx, created.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, created.ID()) //nolint:errcheck
 		if created.Email == nil || *created.Email != "orm@example.com" {
 			t.Fatalf("email: %v", created.Email)
 		}
@@ -105,14 +105,14 @@ func TestOrmCrudViaTable(t *testing.T) {
 
 	t.Run("FieldSelectionAndMaxRecords", func(t *testing.T) {
 		pk := primaryKey("OrmCrud", "Query")
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk), Email: airtable.String("q@example.com")})
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk), Email: airtable.String("q@example.com")})
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
-		defer at.Primary.Delete(ctx, created.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, created.ID()) //nolint:errcheck
 
 		q := (&airtable.Query{}).WithFilter("{Primary Key} = \"" + pk + "\"").WithFields(airtable.PrimaryPrimaryKeyFieldID).WithMaxRecords(1)
-		rows, err := at.Primary.List(ctx, q)
+		rows, err := at.Primary.GetMany(ctx, q)
 		if err != nil {
 			t.Fatalf("list: %v", err)
 		}
@@ -129,7 +129,7 @@ func TestOrmCrudViaTable(t *testing.T) {
 	})
 
 	t.Run("InvalidIDError", func(t *testing.T) {
-		if _, err := at.Primary.Get(ctx, "recDoesNotExist0000"); err == nil {
+		if _, err := at.Primary.GetOne(ctx, "recDoesNotExist0000"); err == nil {
 			t.Fatal("expected error for invalid id")
 		}
 	})
@@ -142,7 +142,7 @@ func TestOrmCrudViaTable(t *testing.T) {
 		if err != nil {
 			t.Fatalf("upsert insert: %v", err)
 		}
-		defer at.Primary.Delete(ctx, ins.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, ins.ID()) //nolint:errcheck
 
 		// Update on match (same primary key).
 		m2 := &airtable.PrimaryModel{PrimaryKey: airtable.String(pk), Email: airtable.String("v2@example.com")}

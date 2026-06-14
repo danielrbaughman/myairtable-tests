@@ -58,7 +58,7 @@ func TestFilterByFormula(t *testing.T) {
 
 	// fbCount returns the number of Primary dict records matching formula within scope.
 	fbCount := func(scope, formula airtable.Formula) int {
-		recs, err := at.PrimaryDict.List(ctx, (&airtable.Query{}).WithFilterFormula(airtable.And(scope, formula)))
+		recs, err := at.PrimaryDict.GetMany(ctx, (&airtable.Query{}).WithFilterFormula(airtable.And(scope, formula)))
 		if err != nil {
 			t.Fatalf("list: %v", err)
 		}
@@ -67,7 +67,7 @@ func TestFilterByFormula(t *testing.T) {
 
 	// fbMatchNames returns sorted primary-key names matching formula within scope.
 	fbMatchNames := func(scope, formula airtable.Formula) []string {
-		recs, err := at.PrimaryDict.List(ctx, (&airtable.Query{}).WithFilterFormula(airtable.And(scope, formula)))
+		recs, err := at.PrimaryDict.GetMany(ctx, (&airtable.Query{}).WithFilterFormula(airtable.And(scope, formula)))
 		if err != nil {
 			t.Fatalf("list: %v", err)
 		}
@@ -78,16 +78,16 @@ func TestFilterByFormula(t *testing.T) {
 
 	t.Run("TextFieldEquals", func(t *testing.T) {
 		pk := primaryKey("Filter", "TextEq")
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey:     airtable.String(pk),
 			SingleLineText: airtable.String("UniqueFilterValue"),
 		})
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
-		defer at.Primary.Delete(ctx, created.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, created.ID()) //nolint:errcheck
 
-		rows, err := at.Primary.List(ctx, (&airtable.Query{}).WithFilterFormula(f.SingleLineText.Eq("UniqueFilterValue", true, false)))
+		rows, err := at.Primary.GetMany(ctx, (&airtable.Query{}).WithFilterFormula(f.SingleLineText.Eq("UniqueFilterValue", true, false)))
 		if err != nil {
 			t.Fatalf("list: %v", err)
 		}
@@ -98,13 +98,13 @@ func TestFilterByFormula(t *testing.T) {
 
 	t.Run("RecordIDFilter", func(t *testing.T) {
 		pk := primaryKey("Filter", "RecordID")
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
-		defer at.Primary.Delete(ctx, created.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, created.ID()) //nolint:errcheck
 
-		rows, err := at.Primary.List(ctx, (&airtable.Query{}).WithFilterFormula(f.ID.Eq(created.ID())))
+		rows, err := at.Primary.GetMany(ctx, (&airtable.Query{}).WithFilterFormula(f.ID.Eq(created.ID())))
 		if err != nil {
 			t.Fatalf("list: %v", err)
 		}
@@ -127,7 +127,7 @@ func TestFilterByFormula(t *testing.T) {
 		ids := dictIDs(created)
 		defer at.PrimaryDict.DeleteMany(ctx, ids) //nolint:errcheck
 
-		recs, err := at.PrimaryDict.List(ctx, (&airtable.Query{}).WithFilterFormula(f.ID.InList([]string{ids[0], ids[1]})))
+		recs, err := at.PrimaryDict.GetMany(ctx, (&airtable.Query{}).WithFilterFormula(f.ID.InList([]string{ids[0], ids[1]})))
 		if err != nil {
 			t.Fatalf("list multi: %v", err)
 		}
@@ -135,7 +135,7 @@ func TestFilterByFormula(t *testing.T) {
 			t.Fatalf("inList multi: expected 2, got %d", len(recs))
 		}
 
-		recs, err = at.PrimaryDict.List(ctx, (&airtable.Query{}).WithFilterFormula(f.ID.InList([]string{ids[0]})))
+		recs, err = at.PrimaryDict.GetMany(ctx, (&airtable.Query{}).WithFilterFormula(f.ID.InList([]string{ids[0]})))
 		if err != nil {
 			t.Fatalf("list single: %v", err)
 		}
@@ -143,7 +143,7 @@ func TestFilterByFormula(t *testing.T) {
 			t.Fatalf("inList single: expected 1, got %d", len(recs))
 		}
 
-		recs, err = at.PrimaryDict.List(ctx, (&airtable.Query{}).WithFilterFormula(f.ID.InList(nil)))
+		recs, err = at.PrimaryDict.GetMany(ctx, (&airtable.Query{}).WithFilterFormula(f.ID.InList(nil)))
 		if err != nil {
 			t.Fatalf("list empty: %v", err)
 		}
@@ -154,18 +154,18 @@ func TestFilterByFormula(t *testing.T) {
 
 	t.Run("NumberFieldFilter", func(t *testing.T) {
 		suite := primaryKey("Filter", "Number")
-		c1, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(suite + " 1"), NumberInt: airtable.Float64(10)})
+		c1, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(suite + " 1"), NumberInt: airtable.Float64(10)})
 		if err != nil {
 			t.Fatalf("create 1: %v", err)
 		}
-		defer at.Primary.Delete(ctx, c1.ID()) //nolint:errcheck
-		c2, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(suite + " 2"), NumberInt: airtable.Float64(20)})
+		defer at.Primary.DeleteOne(ctx, c1.ID()) //nolint:errcheck
+		c2, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(suite + " 2"), NumberInt: airtable.Float64(20)})
 		if err != nil {
 			t.Fatalf("create 2: %v", err)
 		}
-		defer at.Primary.Delete(ctx, c2.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, c2.ID()) //nolint:errcheck
 
-		rows, err := at.Primary.List(ctx, (&airtable.Query{}).WithFilterFormula(f.NumberInt.GreaterThan(15)))
+		rows, err := at.Primary.GetMany(ctx, (&airtable.Query{}).WithFilterFormula(f.NumberInt.GreaterThan(15)))
 		if err != nil {
 			t.Fatalf("list: %v", err)
 		}
@@ -426,7 +426,7 @@ func TestFilterByFormula(t *testing.T) {
 		ids := dictIDs(created)
 		defer at.PrimaryDict.DeleteMany(ctx, ids) //nolint:errcheck
 
-		recs, err := at.PrimaryDict.List(ctx, (&airtable.Query{}).WithView(airtable.PrimaryViewFilterByView))
+		recs, err := at.PrimaryDict.GetMany(ctx, (&airtable.Query{}).WithView(airtable.PrimaryViewFilterByView))
 		if err != nil {
 			t.Fatalf("list: %v", err)
 		}
@@ -444,30 +444,30 @@ func TestFilterByFormula(t *testing.T) {
 
 	t.Run("LookupFieldFilter", func(t *testing.T) {
 		suite := primaryKey("Filter", "Lookup")
-		secA, err := at.Secondary.Create(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " Sec A"), Value: airtable.String("Groundwork BioAg")})
+		secA, err := at.Secondary.CreateOne(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " Sec A"), Value: airtable.String("Groundwork BioAg")})
 		if err != nil {
 			t.Fatalf("create secA: %v", err)
 		}
-		secB, err := at.Secondary.Create(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " Sec B"), Value: airtable.String("Groundwork Lab")})
+		secB, err := at.Secondary.CreateOne(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " Sec B"), Value: airtable.String("Groundwork Lab")})
 		if err != nil {
 			t.Fatalf("create secB: %v", err)
 		}
-		secC, err := at.Secondary.Create(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " Sec C"), Value: airtable.String("Other Vendor")})
+		secC, err := at.Secondary.CreateOne(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " Sec C"), Value: airtable.String("Other Vendor")})
 		if err != nil {
 			t.Fatalf("create secC: %v", err)
 		}
 		secIDs := []string{secA.ID(), secB.ID(), secC.ID()}
 		defer at.SecondaryDict.DeleteMany(ctx, secIDs) //nolint:errcheck
 
-		primA, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(suite + " A"), LinkSingle: []string{secA.ID()}})
+		primA, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(suite + " A"), LinkSingle: []string{secA.ID()}})
 		if err != nil {
 			t.Fatalf("create primA: %v", err)
 		}
-		primB, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(suite + " B"), LinkSingle: []string{secB.ID()}})
+		primB, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(suite + " B"), LinkSingle: []string{secB.ID()}})
 		if err != nil {
 			t.Fatalf("create primB: %v", err)
 		}
-		primC, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(suite + " C"), LinkSingle: []string{secC.ID()}})
+		primC, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(suite + " C"), LinkSingle: []string{secC.ID()}})
 		if err != nil {
 			t.Fatalf("create primC: %v", err)
 		}
@@ -527,7 +527,7 @@ func TestFilterByFormula(t *testing.T) {
 		}()
 
 		matchNames := func(formula airtable.Formula) map[string]bool {
-			recs, err := at.FormulasDict.List(ctx, (&airtable.Query{}).WithFilterFormula(airtable.And(formulasScope, formula)))
+			recs, err := at.FormulasDict.GetMany(ctx, (&airtable.Query{}).WithFilterFormula(airtable.And(formulasScope, formula)))
 			if err != nil {
 				t.Fatalf("list: %v", err)
 			}

@@ -40,7 +40,7 @@ func TestRuntimeFormulas(t *testing.T) {
 			ThirdNumber:  airtable.Float64(30),
 			ThirdText:    airtable.String("!"),
 		}
-		created, err := at.Formulas.Create(ctx, fresh)
+		created, err := at.Formulas.CreateOne(ctx, fresh)
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
@@ -48,10 +48,10 @@ func TestRuntimeFormulas(t *testing.T) {
 		if recordID == "" {
 			t.Fatal("missing id on created model")
 		}
-		defer at.Formulas.Delete(ctx, recordID) //nolint:errcheck
+		defer at.Formulas.DeleteOne(ctx, recordID) //nolint:errcheck
 
 		// Re-fetch to get formula values computed by Airtable.
-		model, err := at.Formulas.Get(ctx, recordID)
+		model, err := at.Formulas.GetOne(ctx, recordID)
 		if err != nil {
 			t.Fatalf("get: %v", err)
 		}

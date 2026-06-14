@@ -21,7 +21,7 @@ func TestOrmCrudViaModel(t *testing.T) {
 		if err := m.Save(ctx); err != nil {
 			t.Fatalf("save insert: %v", err)
 		}
-		defer at.Primary.Delete(ctx, m.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, m.ID()) //nolint:errcheck
 		if m.ID() == "" {
 			t.Fatal("id not set after insert")
 		}
@@ -38,16 +38,16 @@ func TestOrmCrudViaModel(t *testing.T) {
 
 	t.Run("Fetch", func(t *testing.T) {
 		pk := primaryKey("OrmModel", "Fetch")
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
-		defer at.Primary.Delete(ctx, created.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, created.ID()) //nolint:errcheck
 
 		// Mutate server-side via a second handle, then Fetch should refresh.
-		other, _ := at.Primary.Get(ctx, created.ID())
+		other, _ := at.Primary.GetOne(ctx, created.ID())
 		other.Email = airtable.String("fetched@example.com")
-		if _, err := at.Primary.Update(ctx, other); err != nil {
+		if _, err := at.Primary.UpdateOne(ctx, other); err != nil {
 			t.Fatalf("update other: %v", err)
 		}
 
@@ -61,7 +61,7 @@ func TestOrmCrudViaModel(t *testing.T) {
 
 	t.Run("Delete", func(t *testing.T) {
 		pk := primaryKey("OrmModel", "Delete")
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}

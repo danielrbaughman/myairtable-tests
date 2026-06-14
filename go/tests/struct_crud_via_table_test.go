@@ -26,12 +26,12 @@ func TestStructCrudViaTable(t *testing.T) {
 		fields := airtable.NewFields(nil, airtable.PrimaryNameToID)
 		_ = fields.Set(airtable.PrimaryPrimaryKeyFieldID, pk)
 
-		created, err := at.PrimaryDict.Create(ctx, fields)
+		created, err := at.PrimaryDict.CreateOne(ctx, fields)
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
 		recordID := created.ID
-		defer at.PrimaryDict.Delete(ctx, recordID) //nolint:errcheck // best-effort cleanup
+		defer at.PrimaryDict.DeleteOne(ctx, recordID) //nolint:errcheck // best-effort cleanup
 
 		if recordID == "" {
 			t.Fatal("created record has empty id")
@@ -41,7 +41,7 @@ func TestStructCrudViaTable(t *testing.T) {
 		}
 
 		// Read
-		fetched, err := at.PrimaryDict.Get(ctx, recordID)
+		fetched, err := at.PrimaryDict.GetOne(ctx, recordID)
 		if err != nil {
 			t.Fatalf("get: %v", err)
 		}
@@ -56,7 +56,7 @@ func TestStructCrudViaTable(t *testing.T) {
 		update := airtable.NewFields(nil, airtable.PrimaryNameToID)
 		updatedKey := pk + " Updated"
 		_ = update.Set(airtable.PrimaryPrimaryKeyFieldID, updatedKey)
-		updated, err := at.PrimaryDict.Update(ctx, recordID, update)
+		updated, err := at.PrimaryDict.UpdateOne(ctx, recordID, update)
 		if err != nil {
 			t.Fatalf("update: %v", err)
 		}
@@ -65,13 +65,13 @@ func TestStructCrudViaTable(t *testing.T) {
 		}
 
 		// Delete + verify gone
-		if err := at.PrimaryDict.Delete(ctx, recordID); err != nil {
+		if err := at.PrimaryDict.DeleteOne(ctx, recordID); err != nil {
 			t.Fatalf("delete: %v", err)
 		}
 		// Airtable returns 404 or 403 for a deleted record depending on token
 		// scope; assert only that the record is gone (an error is returned),
 		// matching the other-language suites.
-		if _, err := at.PrimaryDict.Get(ctx, recordID); err == nil {
+		if _, err := at.PrimaryDict.GetOne(ctx, recordID); err == nil {
 			t.Fatal("expected an error after delete, got nil")
 		}
 	})
@@ -82,11 +82,11 @@ func TestStructCrudViaTable(t *testing.T) {
 		// Set by ID…
 		_ = fields.Set(airtable.PrimaryPrimaryKeyFieldID, pk)
 
-		created, err := at.PrimaryDict.Create(ctx, fields)
+		created, err := at.PrimaryDict.CreateOne(ctx, fields)
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
-		defer at.PrimaryDict.Delete(ctx, created.ID) //nolint:errcheck
+		defer at.PrimaryDict.DeleteOne(ctx, created.ID) //nolint:errcheck
 
 		// …read back by NAME.
 		if got := getString(t, created, airtable.PrimaryPrimaryKeyFieldName); got != pk {
@@ -107,11 +107,11 @@ func TestStructCrudViaTable(t *testing.T) {
 		_ = fields.Set(airtable.PrimaryCheckboxFieldID, true)
 		_ = fields.Set(airtable.PrimaryLongTextFieldID, "hello\nworld")
 
-		created, err := at.PrimaryDict.Create(ctx, fields)
+		created, err := at.PrimaryDict.CreateOne(ctx, fields)
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
-		defer at.PrimaryDict.Delete(ctx, created.ID) //nolint:errcheck
+		defer at.PrimaryDict.DeleteOne(ctx, created.ID) //nolint:errcheck
 
 		if got := getString(t, created, airtable.PrimaryEmailFieldID); got != "go@example.com" {
 			t.Fatalf("email: got %q", got)

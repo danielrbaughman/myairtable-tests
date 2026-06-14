@@ -22,14 +22,14 @@ func TestComplexProperties(t *testing.T) {
 		// Same stable public image the Java parity test uses.
 		url := "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
 
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey: airtable.String(pk),
 			Attachment: []airtable.AirtableAttachment{{URL: url}},
 		})
 		if err != nil {
 			t.Fatalf("create with attachment: %v", err)
 		}
-		defer at.Primary.Delete(ctx, created.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, created.ID()) //nolint:errcheck
 
 		if len(created.Attachment) != 1 {
 			t.Fatalf("created attachment count = %d, want 1", len(created.Attachment))
@@ -47,7 +47,7 @@ func TestComplexProperties(t *testing.T) {
 				}
 			}
 			time.Sleep(1 * time.Second)
-			refetched, err := at.Primary.Get(ctx, created.ID())
+			refetched, err := at.Primary.GetOne(ctx, created.ID())
 			if err != nil {
 				t.Fatalf("poll get: %v", err)
 			}
@@ -68,7 +68,7 @@ func TestComplexProperties(t *testing.T) {
 
 	t.Run("ComputedFields", func(t *testing.T) {
 		pk := primaryKey("Complex", "Computed")
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey:  airtable.String(pk),
 			NumberInt:   airtable.Float64(10.0),
 			NumberFloat: airtable.Float64(5.0),
@@ -76,7 +76,7 @@ func TestComplexProperties(t *testing.T) {
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
-		defer at.Primary.Delete(ctx, created.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, created.ID()) //nolint:errcheck
 
 		// Auto Number assigned by the server.
 		if created.AutoNumber == nil {
@@ -118,7 +118,7 @@ func TestComplexProperties(t *testing.T) {
 		}
 
 		// Re-fetch and re-assert the stable computed values.
-		fetched, err := at.Primary.Get(ctx, created.ID())
+		fetched, err := at.Primary.GetOne(ctx, created.ID())
 		if err != nil {
 			t.Fatalf("get: %v", err)
 		}
@@ -137,14 +137,14 @@ func TestComplexProperties(t *testing.T) {
 
 	t.Run("Button", func(t *testing.T) {
 		pk := primaryKey("Complex", "Button")
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
-		defer at.Primary.Delete(ctx, created.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, created.ID()) //nolint:errcheck
 
 		// The button field decodes (populated or absent) without error.
-		fetched, err := at.Primary.Get(ctx, created.ID())
+		fetched, err := at.Primary.GetOne(ctx, created.ID())
 		if err != nil {
 			t.Fatalf("get: %v", err)
 		}
@@ -163,14 +163,14 @@ func TestComplexProperties(t *testing.T) {
 
 	t.Run("DurationRoundTrip", func(t *testing.T) {
 		pk := primaryKey("Complex", "Duration")
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey: airtable.String(pk),
 			Duration:   airtable.Duration(90 * time.Second),
 		})
 		if err != nil {
 			t.Fatalf("create with duration: %v", err)
 		}
-		defer at.Primary.Delete(ctx, created.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, created.ID()) //nolint:errcheck
 
 		if created.Duration == nil {
 			t.Fatal("created duration nil")
@@ -179,7 +179,7 @@ func TestComplexProperties(t *testing.T) {
 			t.Fatalf("created duration = %v, want 90s", got)
 		}
 
-		fetched, err := at.Primary.Get(ctx, created.ID())
+		fetched, err := at.Primary.GetOne(ctx, created.ID())
 		if err != nil {
 			t.Fatalf("get: %v", err)
 		}

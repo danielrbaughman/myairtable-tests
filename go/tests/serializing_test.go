@@ -207,12 +207,12 @@ func TestSerializingIntegration(t *testing.T) {
 
 	t.Run("CreatedTimeAndIDRoundTrip", func(t *testing.T) {
 		pk := primaryKey("Serializing", "IdTime")
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
 		id := created.ID()
-		defer at.Primary.Delete(ctx, id) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, id) //nolint:errcheck
 
 		if id == "" {
 			t.Fatal("created model has empty ID")
@@ -221,7 +221,7 @@ func TestSerializingIntegration(t *testing.T) {
 			t.Fatal("CreatedTime() is nil on a created record, want populated")
 		}
 
-		fetched, err := at.Primary.Get(ctx, id)
+		fetched, err := at.Primary.GetOne(ctx, id)
 		if err != nil {
 			t.Fatalf("get: %v", err)
 		}
@@ -239,18 +239,18 @@ func TestSerializingIntegration(t *testing.T) {
 
 	t.Run("LinkedRecordIDArraysRoundTrip", func(t *testing.T) {
 		suite := primaryKey("Serializing", "Links")
-		sec1, err := at.Secondary.Create(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " T1")})
+		sec1, err := at.Secondary.CreateOne(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " T1")})
 		if err != nil {
 			t.Fatalf("create secondary 1: %v", err)
 		}
-		defer at.Secondary.Delete(ctx, sec1.ID()) //nolint:errcheck
-		sec2, err := at.Secondary.Create(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " T2")})
+		defer at.Secondary.DeleteOne(ctx, sec1.ID()) //nolint:errcheck
+		sec2, err := at.Secondary.CreateOne(ctx, &airtable.SecondaryModel{Name: airtable.String(suite + " T2")})
 		if err != nil {
 			t.Fatalf("create secondary 2: %v", err)
 		}
-		defer at.Secondary.Delete(ctx, sec2.ID()) //nolint:errcheck
+		defer at.Secondary.DeleteOne(ctx, sec2.ID()) //nolint:errcheck
 
-		prim, err := at.Primary.Create(ctx, &airtable.PrimaryModel{
+		prim, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey:   airtable.String(suite),
 			LinkSingle:   []string{sec1.ID()},
 			LinkMultiple: []string{sec1.ID(), sec2.ID()},
@@ -258,7 +258,7 @@ func TestSerializingIntegration(t *testing.T) {
 		if err != nil {
 			t.Fatalf("create primary: %v", err)
 		}
-		defer at.Primary.Delete(ctx, prim.ID()) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, prim.ID()) //nolint:errcheck
 
 		// Links serialize as []string of record IDs and round-trip through create.
 		if len(prim.LinkSingle) != 1 || prim.LinkSingle[0] != sec1.ID() {
@@ -269,7 +269,7 @@ func TestSerializingIntegration(t *testing.T) {
 		}
 
 		// Re-fetch and confirm the arrays survive a server round-trip.
-		fetched, err := at.Primary.Get(ctx, prim.ID())
+		fetched, err := at.Primary.GetOne(ctx, prim.ID())
 		if err != nil {
 			t.Fatalf("get primary: %v", err)
 		}
@@ -283,7 +283,7 @@ func TestSerializingIntegration(t *testing.T) {
 
 	t.Run("NullFieldClearingUnsetsServerSide", func(t *testing.T) {
 		pk := primaryKey("Serializing", "Clear")
-		created, err := at.Primary.Create(ctx, &airtable.PrimaryModel{
+		created, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey:     airtable.String(pk),
 			SingleLineText: airtable.String("to be cleared"),
 		})
@@ -291,7 +291,7 @@ func TestSerializingIntegration(t *testing.T) {
 			t.Fatalf("create: %v", err)
 		}
 		id := created.ID()
-		defer at.Primary.Delete(ctx, id) //nolint:errcheck
+		defer at.Primary.DeleteOne(ctx, id) //nolint:errcheck
 
 		if created.SingleLineText == nil || *created.SingleLineText != "to be cleared" {
 			t.Fatalf("created text = %v, want 'to be cleared'", created.SingleLineText)
@@ -300,7 +300,7 @@ func TestSerializingIntegration(t *testing.T) {
 		// Clear the field (set the pointer to nil) and update: the dirty diff sends
 		// JSON null, unsetting the field server-side.
 		created.SingleLineText = nil
-		saved, err := at.Primary.Update(ctx, created)
+		saved, err := at.Primary.UpdateOne(ctx, created)
 		if err != nil {
 			t.Fatalf("update (clear): %v", err)
 		}
@@ -308,7 +308,7 @@ func TestSerializingIntegration(t *testing.T) {
 			t.Fatalf("text after clear = %v, want nil", saved.SingleLineText)
 		}
 
-		fetched, err := at.Primary.Get(ctx, id)
+		fetched, err := at.Primary.GetOne(ctx, id)
 		if err != nil {
 			t.Fatalf("get after clear: %v", err)
 		}

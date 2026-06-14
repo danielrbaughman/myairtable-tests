@@ -31,7 +31,7 @@ func bestEffortDelete(at *airtable.Airtable, id string) {
 	if id == "" {
 		return
 	}
-	_ = at.Primary.Delete(context.Background(), id)
+	_ = at.Primary.DeleteOne(context.Background(), id)
 }
 
 func TestCaching(t *testing.T) {
@@ -43,7 +43,7 @@ func TestCaching(t *testing.T) {
 		mutator := cachedAirtable(t, 0) // out-of-band writer, no cache
 
 		pk := primaryKey("Cache", "Hit")
-		created, err := mutator.Primary.Create(ctx, &airtable.PrimaryModel{
+		created, err := mutator.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey:     airtable.String(pk),
 			SingleLineText: airtable.String("original"),
 		})
@@ -54,7 +54,7 @@ func TestCaching(t *testing.T) {
 		defer bestEffortDelete(mutator, id)
 
 		// First read through the cached client populates the cache.
-		first, err := cached.Primary.Get(ctx, id)
+		first, err := cached.Primary.GetOne(ctx, id)
 		if err != nil {
 			t.Fatalf("first get: %v", err)
 		}
@@ -64,13 +64,13 @@ func TestCaching(t *testing.T) {
 
 		// Change the record out-of-band via the uncached mutator client.
 		created.SingleLineText = airtable.String("changed externally")
-		if _, err := mutator.Primary.Update(ctx, created); err != nil {
+		if _, err := mutator.Primary.UpdateOne(ctx, created); err != nil {
 			t.Fatalf("external update: %v", err)
 		}
 
 		// Second read through the cached client is served from cache: it must NOT
 		// reflect the external change.
-		second, err := cached.Primary.Get(ctx, id)
+		second, err := cached.Primary.GetOne(ctx, id)
 		if err != nil {
 			t.Fatalf("second get: %v", err)
 		}
@@ -87,7 +87,7 @@ func TestCaching(t *testing.T) {
 		mutator := cachedAirtable(t, 0)
 
 		pk := primaryKey("Cache", "Off")
-		created, err := mutator.Primary.Create(ctx, &airtable.PrimaryModel{
+		created, err := mutator.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey:     airtable.String(pk),
 			SingleLineText: airtable.String("v1"),
 		})
@@ -97,17 +97,17 @@ func TestCaching(t *testing.T) {
 		id := created.ID()
 		defer bestEffortDelete(mutator, id)
 
-		if _, err := reader.Primary.Get(ctx, id); err != nil {
+		if _, err := reader.Primary.GetOne(ctx, id); err != nil {
 			t.Fatalf("first get: %v", err)
 		}
 
 		created.SingleLineText = airtable.String("v2")
-		if _, err := mutator.Primary.Update(ctx, created); err != nil {
+		if _, err := mutator.Primary.UpdateOne(ctx, created); err != nil {
 			t.Fatalf("external update: %v", err)
 		}
 
 		// With caching off every read hits the server, so the change IS visible.
-		again, err := reader.Primary.Get(ctx, id)
+		again, err := reader.Primary.GetOne(ctx, id)
 		if err != nil {
 			t.Fatalf("second get: %v", err)
 		}
@@ -120,7 +120,7 @@ func TestCaching(t *testing.T) {
 		cached := cachedAirtable(t, 60)
 		pk := primaryKey("Cache", "MutateCreate")
 
-		a, err := cached.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk + " A")})
+		a, err := cached.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk + " A")})
 		if err != nil {
 			t.Fatalf("create A: %v", err)
 		}
@@ -130,7 +130,7 @@ func TestCaching(t *testing.T) {
 
 		// Populate the list cache for this table.
 		filter := "{Primary Key} = \"" + pk + " A\""
-		before, err := cached.Primary.List(ctx, (&airtable.Query{}).WithFilter(filter))
+		before, err := cached.Primary.GetMany(ctx, (&airtable.Query{}).WithFilter(filter))
 		if err != nil {
 			t.Fatalf("list before: %v", err)
 		}
@@ -139,14 +139,14 @@ func TestCaching(t *testing.T) {
 		}
 
 		// A create through the SAME cached client invalidates this table's cache.
-		b, err := cached.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk + " A")})
+		b, err := cached.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk + " A")})
 		if err != nil {
 			t.Fatalf("create B: %v", err)
 		}
 		idB = b.ID()
 
 		// The same filter now re-reads from the server and sees both records.
-		after, err := cached.Primary.List(ctx, (&airtable.Query{}).WithFilter(filter))
+		after, err := cached.Primary.GetMany(ctx, (&airtable.Query{}).WithFilter(filter))
 		if err != nil {
 			t.Fatalf("list after: %v", err)
 		}
@@ -159,7 +159,7 @@ func TestCaching(t *testing.T) {
 		cached := cachedAirtable(t, 60)
 		pk := primaryKey("Cache", "MutateUpdate")
 
-		created, err := cached.Primary.Create(ctx, &airtable.PrimaryModel{
+		created, err := cached.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey:     airtable.String(pk),
 			SingleLineText: airtable.String("before"),
 		})
@@ -169,17 +169,17 @@ func TestCaching(t *testing.T) {
 		id := created.ID()
 		defer bestEffortDelete(cached, id)
 
-		if _, err := cached.Primary.Get(ctx, id); err != nil {
+		if _, err := cached.Primary.GetOne(ctx, id); err != nil {
 			t.Fatalf("populate get: %v", err)
 		}
 
 		created.SingleLineText = airtable.String("after")
-		if _, err := cached.Primary.Update(ctx, created); err != nil {
+		if _, err := cached.Primary.UpdateOne(ctx, created); err != nil {
 			t.Fatalf("update: %v", err)
 		}
 
 		// The update wiped this table's cache, so the next get reflects the change.
-		fetched, err := cached.Primary.Get(ctx, id)
+		fetched, err := cached.Primary.GetOne(ctx, id)
 		if err != nil {
 			t.Fatalf("get after update: %v", err)
 		}
@@ -192,7 +192,7 @@ func TestCaching(t *testing.T) {
 		cached := cachedAirtable(t, 60)
 		pk := primaryKey("Cache", "MutateDelete")
 
-		created, err := cached.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
+		created, err := cached.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
 		if err != nil {
 			t.Fatalf("create: %v", err)
 		}
@@ -205,7 +205,7 @@ func TestCaching(t *testing.T) {
 		}()
 
 		filter := "{Primary Key} = \"" + pk + "\""
-		before, err := cached.Primary.List(ctx, (&airtable.Query{}).WithFilter(filter))
+		before, err := cached.Primary.GetMany(ctx, (&airtable.Query{}).WithFilter(filter))
 		if err != nil {
 			t.Fatalf("list before: %v", err)
 		}
@@ -213,13 +213,13 @@ func TestCaching(t *testing.T) {
 			t.Fatalf("list before = %d, want 1", len(before))
 		}
 
-		if err := cached.Primary.Delete(ctx, id); err != nil {
+		if err := cached.Primary.DeleteOne(ctx, id); err != nil {
 			t.Fatalf("delete: %v", err)
 		}
 		deleted = true
 
 		// The delete invalidated the cache: the same filter now returns nothing.
-		after, err := cached.Primary.List(ctx, (&airtable.Query{}).WithFilter(filter))
+		after, err := cached.Primary.GetMany(ctx, (&airtable.Query{}).WithFilter(filter))
 		if err != nil {
 			t.Fatalf("list after: %v", err)
 		}
@@ -233,7 +233,7 @@ func TestCaching(t *testing.T) {
 		mutator := cachedAirtable(t, 0)
 
 		pk := primaryKey("Cache", "ManualTable")
-		created, err := mutator.Primary.Create(ctx, &airtable.PrimaryModel{
+		created, err := mutator.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey:     airtable.String(pk),
 			SingleLineText: airtable.String("orig"),
 		})
@@ -243,19 +243,19 @@ func TestCaching(t *testing.T) {
 		id := created.ID()
 		defer bestEffortDelete(mutator, id)
 
-		if _, err := cached.Primary.Get(ctx, id); err != nil {
+		if _, err := cached.Primary.GetOne(ctx, id); err != nil {
 			t.Fatalf("populate get: %v", err)
 		}
 
 		created.SingleLineText = airtable.String("manual change")
-		if _, err := mutator.Primary.Update(ctx, created); err != nil {
+		if _, err := mutator.Primary.UpdateOne(ctx, created); err != nil {
 			t.Fatalf("external update: %v", err)
 		}
 
 		// Manual per-table invalidation drops the cached entry.
 		cached.Client().InvalidateTableCache((&airtable.PrimaryModel{}).TableID())
 
-		fetched, err := cached.Primary.Get(ctx, id)
+		fetched, err := cached.Primary.GetOne(ctx, id)
 		if err != nil {
 			t.Fatalf("get after invalidate: %v", err)
 		}
@@ -269,7 +269,7 @@ func TestCaching(t *testing.T) {
 		mutator := cachedAirtable(t, 0)
 
 		pk := primaryKey("Cache", "ManualAll")
-		created, err := mutator.Primary.Create(ctx, &airtable.PrimaryModel{
+		created, err := mutator.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey:     airtable.String(pk),
 			SingleLineText: airtable.String("orig"),
 		})
@@ -279,18 +279,18 @@ func TestCaching(t *testing.T) {
 		id := created.ID()
 		defer bestEffortDelete(mutator, id)
 
-		if _, err := cached.Primary.Get(ctx, id); err != nil {
+		if _, err := cached.Primary.GetOne(ctx, id); err != nil {
 			t.Fatalf("populate get: %v", err)
 		}
 
 		created.SingleLineText = airtable.String("all change")
-		if _, err := mutator.Primary.Update(ctx, created); err != nil {
+		if _, err := mutator.Primary.UpdateOne(ctx, created); err != nil {
 			t.Fatalf("external update: %v", err)
 		}
 
 		cached.InvalidateAllCaches()
 
-		fetched, err := cached.Primary.Get(ctx, id)
+		fetched, err := cached.Primary.GetOne(ctx, id)
 		if err != nil {
 			t.Fatalf("get after invalidate all: %v", err)
 		}
@@ -304,7 +304,7 @@ func TestCaching(t *testing.T) {
 		mutator := cachedAirtable(t, 0)
 
 		pk := primaryKey("Cache", "TTL")
-		created, err := mutator.Primary.Create(ctx, &airtable.PrimaryModel{
+		created, err := mutator.Primary.CreateOne(ctx, &airtable.PrimaryModel{
 			PrimaryKey:     airtable.String(pk),
 			SingleLineText: airtable.String("ttl-orig"),
 		})
@@ -314,19 +314,19 @@ func TestCaching(t *testing.T) {
 		id := created.ID()
 		defer bestEffortDelete(mutator, id)
 
-		if _, err := cached.Primary.Get(ctx, id); err != nil {
+		if _, err := cached.Primary.GetOne(ctx, id); err != nil {
 			t.Fatalf("populate get: %v", err)
 		}
 
 		created.SingleLineText = airtable.String("ttl-changed")
-		if _, err := mutator.Primary.Update(ctx, created); err != nil {
+		if _, err := mutator.Primary.UpdateOne(ctx, created); err != nil {
 			t.Fatalf("external update: %v", err)
 		}
 
 		// Wait past the TTL so the cached entry is lazily evicted on next read.
 		time.Sleep(1500 * time.Millisecond)
 
-		fetched, err := cached.Primary.Get(ctx, id)
+		fetched, err := cached.Primary.GetOne(ctx, id)
 		if err != nil {
 			t.Fatalf("get after TTL: %v", err)
 		}
@@ -340,7 +340,7 @@ func TestCaching(t *testing.T) {
 		mutator := cachedAirtable(t, 0)
 
 		pk := primaryKey("Cache", "Keys")
-		a, err := cached.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
+		a, err := cached.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
 		if err != nil {
 			t.Fatalf("create A: %v", err)
 		}
@@ -353,11 +353,11 @@ func TestCaching(t *testing.T) {
 		q1 := (&airtable.Query{}).WithFilter(filter).WithMaxRecords(1)
 		q2 := (&airtable.Query{}).WithFilter(filter).WithMaxRecords(5)
 
-		r1, err := cached.Primary.List(ctx, q1)
+		r1, err := cached.Primary.GetMany(ctx, q1)
 		if err != nil {
 			t.Fatalf("list q1: %v", err)
 		}
-		r2, err := cached.Primary.List(ctx, q2)
+		r2, err := cached.Primary.GetMany(ctx, q2)
 		if err != nil {
 			t.Fatalf("list q2: %v", err)
 		}
@@ -371,7 +371,7 @@ func TestCaching(t *testing.T) {
 		// distinct we instead confirm that re-running each query without any
 		// mutation serves the cached payload (count stays as first observed),
 		// independent of the other query's key.
-		b, err := mutator.Primary.Create(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
+		b, err := mutator.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(pk)})
 		if err != nil {
 			t.Fatalf("create B (out-of-band): %v", err)
 		}
@@ -380,11 +380,11 @@ func TestCaching(t *testing.T) {
 		// Both queries are still served from their own cached entries (the
 		// out-of-band create went through a DIFFERENT client, so neither key was
 		// invalidated) — proving each cached independently and survives.
-		again1, err := cached.Primary.List(ctx, q1)
+		again1, err := cached.Primary.GetMany(ctx, q1)
 		if err != nil {
 			t.Fatalf("re-list q1: %v", err)
 		}
-		again2, err := cached.Primary.List(ctx, q2)
+		again2, err := cached.Primary.GetMany(ctx, q2)
 		if err != nil {
 			t.Fatalf("re-list q2: %v", err)
 		}
