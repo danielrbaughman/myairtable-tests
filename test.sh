@@ -2,7 +2,7 @@
 set -e
 
 usage() {
-    echo "Usage: ./test.sh <all|ts|js|py|rs|swift|kotlin|java> [--all|--crud|--json|--filter|--runtime|--help]"
+    echo "Usage: ./test.sh <all|ts|js|py|rs|swift|kotlin|java|go> [--all|--crud|--json|--filter|--runtime|--help]"
     echo ""
     echo "Arguments:"
     echo "  all       Run tests for all languages"
@@ -13,6 +13,7 @@ usage() {
     echo "  swift     Run Swift tests"
     echo "  kotlin    Run Kotlin tests"
     echo "  java      Run Java tests"
+    echo "  go        Run Go tests"
     echo ""
     echo "Options:"
     echo "  --all     Run all test suites (default)"
@@ -29,7 +30,7 @@ LANG_ARG="$1"
 case "$LANG_ARG" in
     all)
         SUITE="${2:---all}"
-        for lang in ts js py rs swift kotlin java; do
+        for lang in ts js py rs swift kotlin java go; do
             echo ""
             echo "========================================="
             echo "  Running $lang tests ($SUITE)"
@@ -62,8 +63,11 @@ case "$LANG_ARG" in
     java)
         JAVA_DIR="java"
         ;;
+    go)
+        GO_DIR="go"
+        ;;
     *)
-        echo "Error: first argument must be 'all', 'ts', 'js', 'py', 'rs', 'swift', 'kotlin', or 'java'"
+        echo "Error: first argument must be 'all', 'ts', 'js', 'py', 'rs', 'swift', 'kotlin', 'java', or 'go'"
         echo ""
         usage
         exit 1
@@ -236,6 +240,39 @@ elif [ "$LANG_ARG" = "java" ]; then
             exit 1
             ;;
     esac
+elif [ "$LANG_ARG" = "go" ]; then
+    # `go test -run` takes a regex matched against test function names; Go test
+    # functions follow the PascalCase "Test..." naming used by Swift/Kotlin/Java.
+    case "$SUITE" in
+        --help)
+            usage
+            exit 0
+            ;;
+        --all)
+            TEST_CMD="(cd go && go test -v ./...)"
+            ;;
+        --crud)
+            TEST_CMD="(cd go && go test -v -run 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel' ./...)"
+            ;;
+        --json)
+            TEST_CMD="(cd go && go test -v -run 'TestSerializing' ./...)"
+            ;;
+        --filter)
+            TEST_CMD="(cd go && go test -v -run 'TestFilterByFormula' ./...)"
+            ;;
+        --runtime)
+            TEST_CMD="(cd go && go test -v -run 'TestRuntimeFormulas' ./...)"
+            ;;
+        --cache)
+            TEST_CMD="(cd go && go test -v -run 'TestCaching' ./...)"
+            ;;
+        *)
+            echo "Unknown option: $SUITE"
+            echo ""
+            usage
+            exit 1
+            ;;
+    esac
 else
     case "$SUITE" in
         --help)
@@ -279,6 +316,8 @@ elif [ "$LANG_ARG" = "rs" ]; then
 elif [ "$LANG_ARG" = "swift" ]; then
     eval "$TEST_CMD"
 elif [ "$LANG_ARG" = "kotlin" ] || [ "$LANG_ARG" = "java" ]; then
+    eval "$TEST_CMD"
+elif [ "$LANG_ARG" = "go" ]; then
     eval "$TEST_CMD"
 else
     if ! command -v nvm &> /dev/null; then

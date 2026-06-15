@@ -65,3 +65,22 @@ if [ -x java/gradlew ] && command -v java &> /dev/null; then
 else
     echo "[warn] Java/gradlew not available; skipping Java checks."
 fi
+
+# Go
+if command -v go &> /dev/null; then
+    (cd go && go build ./...)
+    (cd go && go vet ./...)
+    # gofmt the hand-written test tree only; the generated output/ is regenerated
+    # on every build and is emitted gofmt-clean by construction.
+    GO_TEST_SOURCES=$(find go/tests -name '*.go' 2>/dev/null || true)
+    if [ -n "$GO_TEST_SOURCES" ]; then
+        gofmt -w go/tests
+    fi
+    if command -v golangci-lint &> /dev/null; then
+        (cd go && golangci-lint run ./...)
+    else
+        echo "[warn] golangci-lint not installed; skipping lint step. (brew install golangci-lint)"
+    fi
+else
+    echo "[warn] Go not on PATH; skipping Go checks."
+fi
