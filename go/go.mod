@@ -1,3 +1,3 @@
 module myairtabletests
 
-go 1.23
+go 1.21
