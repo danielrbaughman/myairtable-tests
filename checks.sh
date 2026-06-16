@@ -84,3 +84,20 @@ if command -v go &> /dev/null; then
 else
     echo "[warn] Go not on PATH; skipping Go checks."
 fi
+
+# C#
+# Compiles the hand-written tests against the generated output/ (the C# analog of
+# compileTestJava). Target net8.0; RollForward=Major runs on a newer installed runtime.
+if command -v dotnet &> /dev/null; then
+    (cd csharp && dotnet build --nologo)
+    # Format the hand-written test tree only; the generated output/ is regenerated on
+    # every build and is emitted csharpier-clean by construction.
+    export PATH="$PATH:$HOME/.dotnet/tools"
+    if command -v csharpier &> /dev/null; then
+        csharpier format csharp/tests
+    else
+        echo "[warn] csharpier not installed; skipping format step. (dotnet tool install -g csharpier)"
+    fi
+else
+    echo "[warn] dotnet not on PATH; skipping C# checks."
+fi
