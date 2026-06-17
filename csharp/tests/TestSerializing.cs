@@ -190,6 +190,24 @@ public class TestSerializing
         Assert.Null(dirty[PrimaryFields.NumberIntId]); // JSON null = C# null JsonNode
     }
 
+    [Fact]
+    public void ShrinkingAMultiValueFieldIsDetectedAsDirty()
+    {
+        // Regression: dirty tracking must use structural equality, not formula-style coercion
+        // (which compares arrays by their first element only and would miss [a, b] -> [a]).
+        var model = new PrimaryModel
+        {
+            Id = "rec1",
+            LinkMultiple = new List<string> { "recA", "recB" },
+        };
+        model.TakeSnapshot();
+        model.LinkMultiple = new List<string> { "recA" };
+        var dirty = model.DirtyFields();
+        Assert.True(dirty.ContainsKey(PrimaryFields.LinkMultipleId));
+        Assert.Equal("recA", dirty[PrimaryFields.LinkMultipleId]!.AsArray()[0]!.GetValue<string>());
+        Assert.Single(dirty[PrimaryFields.LinkMultipleId]!.AsArray());
+    }
+
     // ---- identity ----
 
     [Fact]
