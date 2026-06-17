@@ -20,16 +20,16 @@ public class TestLinkedRecords
         string? primId = null;
         try
         {
-            var sec1 = await _airtable.Secondary.Orm.CreateAsync(
+            var sec1 = await _airtable.Secondary.CreateAsync(
                 new SecondaryModel { Name = suite + " S1" }
             );
             sec1Id = sec1.Id;
-            var sec2 = await _airtable.Secondary.Orm.CreateAsync(
+            var sec2 = await _airtable.Secondary.CreateAsync(
                 new SecondaryModel { Name = suite + " S2" }
             );
             sec2Id = sec2.Id;
 
-            var prim = await _airtable.Primary.Orm.CreateAsync(
+            var prim = await _airtable.Primary.CreateAsync(
                 new PrimaryModel
                 {
                     PrimaryKey = suite,
@@ -41,13 +41,13 @@ public class TestLinkedRecords
             Assert.Equal(new List<string> { sec1Id! }, prim.LinkSingle);
             Assert.Equal(new List<string> { sec1Id!, sec2Id! }, prim.LinkMultiple);
 
-            var fetched = await _airtable.Primary.Orm.GetAsync(primId!);
+            var fetched = await _airtable.Primary.GetAsync(primId!);
             Assert.Equal(new List<string> { sec1Id! }, fetched.LinkSingle);
             Assert.Equal(new List<string> { sec1Id!, sec2Id! }, fetched.LinkMultiple);
 
             fetched.LinkSingle = new List<string> { sec2Id! };
             fetched.LinkMultiple = new List<string> { sec1Id! };
-            var updated = await _airtable.Primary.Orm.UpdateAsync(fetched);
+            var updated = await _airtable.Primary.UpdateAsync(fetched);
             Assert.Equal(new List<string> { sec2Id! }, updated.LinkSingle);
             Assert.Equal(new List<string> { sec1Id! }, updated.LinkMultiple);
         }
@@ -66,12 +66,12 @@ public class TestLinkedRecords
         string? primId = null;
         try
         {
-            var sec = await _airtable.Secondary.Orm.CreateAsync(
+            var sec = await _airtable.Secondary.CreateAsync(
                 new SecondaryModel { Name = suite + " Target", Value = "sv" }
             );
             secId = sec.Id;
 
-            var prim = await _airtable.Primary.Orm.CreateAsync(
+            var prim = await _airtable.Primary.CreateAsync(
                 new PrimaryModel
                 {
                     PrimaryKey = suite,
@@ -83,7 +83,7 @@ public class TestLinkedRecords
             var linkedId = prim.LinkSingle![0];
             Assert.Equal(secId, linkedId);
 
-            var linked = await _airtable.Secondary.Orm.GetAsync(linkedId);
+            var linked = await _airtable.Secondary.GetAsync(linkedId);
             Assert.Equal(suite + " Target", linked.Name);
             Assert.Equal("sv", linked.Value);
         }
@@ -98,7 +98,7 @@ public class TestLinkedRecords
     public async Task EmptyLinkSingleDecodesAsNull()
     {
         var suite = TestSetup.PrimaryKey("Linked", "FetchNil");
-        var prim = await _airtable.Primary.Orm.CreateAsync(
+        var prim = await _airtable.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = suite + " No Links" }
         );
         var primId = prim.Id;
@@ -125,16 +125,16 @@ public class TestLinkedRecords
         string? primId = null;
         try
         {
-            var sec1 = await _airtable.Secondary.Orm.CreateAsync(
+            var sec1 = await _airtable.Secondary.CreateAsync(
                 new SecondaryModel { Name = suite + " T1" }
             );
             sec1Id = sec1.Id;
-            var sec2 = await _airtable.Secondary.Orm.CreateAsync(
+            var sec2 = await _airtable.Secondary.CreateAsync(
                 new SecondaryModel { Name = suite + " T2" }
             );
             sec2Id = sec2.Id;
 
-            var prim = await _airtable.Primary.Orm.CreateAsync(
+            var prim = await _airtable.Primary.CreateAsync(
                 new PrimaryModel
                 {
                     PrimaryKey = suite,
@@ -143,7 +143,7 @@ public class TestLinkedRecords
             );
             primId = prim.Id;
 
-            var linked = await _airtable.Secondary.Orm.GetAsync(
+            var linked = await _airtable.Secondary.GetAsync(
                 prim.LinkMultiple ?? new List<string>()
             );
             Assert.Equal(2, linked.Count);
@@ -166,7 +166,7 @@ public class TestLinkedRecords
             return;
         try
         {
-            await _airtable.Primary.Orm.DeleteAsync(primId);
+            await _airtable.Primary.DeleteAsync(primId);
         }
         catch (AirtableException)
         {
@@ -181,7 +181,7 @@ public class TestLinkedRecords
             return;
         try
         {
-            await _airtable.Secondary.Orm.DeleteAsync(ids);
+            await _airtable.Secondary.DeleteAsync(ids);
         }
         catch (AirtableException)
         {

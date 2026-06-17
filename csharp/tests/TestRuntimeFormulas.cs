@@ -38,12 +38,12 @@ public class TestRuntimeFormulas
             ThirdNumber = 30.0,
             ThirdText = "!",
         };
-        var created = await _airtable.Formulas.Orm.CreateAsync(fresh);
+        var created = await _airtable.Formulas.CreateAsync(fresh);
         var recordId = created.Id!;
         try
         {
             // Re-fetch to get formula values computed by Airtable.
-            var model = await _airtable.Formulas.Orm.GetAsync(recordId);
+            var model = await _airtable.Formulas.GetAsync(recordId);
 
             // Math formula: exact match.
             var runtimeMath = AirtableRuntime.S(model.EvaluateMathFormula());
@@ -116,7 +116,7 @@ public class TestRuntimeFormulas
             return;
         try
         {
-            await _airtable.Formulas.Orm.DeleteAsync(recordId);
+            await _airtable.Formulas.DeleteAsync(recordId);
         }
         catch (AirtableException) { }
     }

@@ -20,7 +20,7 @@ public class TestComplexProperties
         const string url =
             "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png";
 
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel
             {
                 PrimaryKey = primaryKey,
@@ -43,7 +43,7 @@ public class TestComplexProperties
                 if (!string.IsNullOrEmpty(first?.Id))
                     break;
                 await Task.Delay(2000);
-                current = await _airtable.Primary.Orm.GetAsync(recordId);
+                current = await _airtable.Primary.GetAsync(recordId);
             }
             var enriched = current.Attachment ?? new List<AirtableAttachment>();
             Assert.Single(enriched);
@@ -62,7 +62,7 @@ public class TestComplexProperties
         // Matches the user ID used by the Rust/Swift/Java tests in the shared base.
         const string userId = "usrnZ4k98m0Ipji4e";
 
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel
             {
                 PrimaryKey = primaryKey,
@@ -79,7 +79,7 @@ public class TestComplexProperties
             Assert.Single(created.UserAllowMultiple!);
             Assert.Equal(userId, created.UserAllowMultiple![0].Id);
 
-            var fetched = await _airtable.Primary.Orm.GetAsync(recordId);
+            var fetched = await _airtable.Primary.GetAsync(recordId);
             Assert.NotNull(fetched.User);
             Assert.Equal(userId, fetched.User!.Id);
         }
@@ -93,7 +93,7 @@ public class TestComplexProperties
     public async Task ComputedFieldsPopulateOnCreateAndReadBack()
     {
         var primaryKey = TestSetup.PrimaryKey("Complex", "Computed");
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel
             {
                 PrimaryKey = primaryKey,
@@ -117,7 +117,7 @@ public class TestComplexProperties
             Assert.NotNull(created.CreatedBy);
             Assert.NotNull(created.CreatedBy!.ValueOrDefault);
 
-            var fetched = await _airtable.Primary.Orm.GetAsync(recordId);
+            var fetched = await _airtable.Primary.GetAsync(recordId);
             Assert.Equal(recordId, fetched.FormulaId!.ValueOrDefault);
             Assert.Equal(15.0, fetched.FormulaSimple!.ValueOrDefault);
             Assert.Equal(created.AutoNumber, fetched.AutoNumber);
@@ -135,14 +135,14 @@ public class TestComplexProperties
         // TimeSpan round-trips exactly (not truncated/scaled).
         var primaryKey = TestSetup.PrimaryKey("Complex", "Duration");
         var duration = TimeSpan.FromMinutes(90);
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = primaryKey, Duration = duration }
         );
         var recordId = created.Id!;
         try
         {
             Assert.Equal(duration, created.Duration);
-            var fetched = await _airtable.Primary.Orm.GetAsync(recordId);
+            var fetched = await _airtable.Primary.GetAsync(recordId);
             Assert.Equal(duration, fetched.Duration);
             Assert.Equal(5400.0, fetched.Duration!.Value.TotalSeconds);
         }
@@ -156,14 +156,14 @@ public class TestComplexProperties
     public async Task ButtonFieldDecodesOnRead()
     {
         var primaryKey = TestSetup.PrimaryKey("Complex", "Button");
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = primaryKey }
         );
         var recordId = created.Id!;
         try
         {
             // The button field decodes (either populated or absent) without error.
-            var fetched = await _airtable.Primary.Orm.GetAsync(recordId);
+            var fetched = await _airtable.Primary.GetAsync(recordId);
             Assert.Equal(recordId, fetched.Id);
             if (fetched.Button?.ValueOrDefault is { } button)
                 Assert.NotNull(button.Label ?? button.Url ?? "");
@@ -180,7 +180,7 @@ public class TestComplexProperties
             return;
         try
         {
-            await _airtable.Primary.Orm.DeleteAsync(recordId);
+            await _airtable.Primary.DeleteAsync(recordId);
         }
         catch (AirtableException)
         {

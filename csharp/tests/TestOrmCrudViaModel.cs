@@ -15,7 +15,7 @@ public class TestOrmCrudViaModel
     public async Task PrimaryKeyOnlyCrudViaModelMethods()
     {
         var primaryKey = TestSetup.PrimaryKey("OrmModel", "PKOnly");
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = primaryKey }
         );
         var recordId = created.Id!;
@@ -34,7 +34,7 @@ public class TestOrmCrudViaModel
             // DeleteAsync() via the model.
             await fetched.DeleteAsync();
             await Assert.ThrowsAnyAsync<AirtableException>(() =>
-                _airtable.Primary.Orm.GetAsync(recordId)
+                _airtable.Primary.GetAsync(recordId)
             );
         }
         catch
@@ -48,7 +48,7 @@ public class TestOrmCrudViaModel
     public async Task DirtyTrackingResetsAfterASuccessfulSave()
     {
         var primaryKey = TestSetup.PrimaryKey("OrmModel", "Dirty");
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = primaryKey }
         );
         var recordId = created.Id!;
@@ -89,7 +89,7 @@ public class TestOrmCrudViaModel
             return;
         try
         {
-            await _airtable.Primary.Orm.DeleteAsync(recordId);
+            await _airtable.Primary.DeleteAsync(recordId);
         }
         catch (AirtableException)
         {

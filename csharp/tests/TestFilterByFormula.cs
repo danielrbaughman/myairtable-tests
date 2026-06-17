@@ -50,16 +50,14 @@ public class TestFilterByFormula
     public async Task TextFieldEquals()
     {
         var suite = TestSetup.PrimaryKey("Filter", "TextEq");
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = suite, SingleLineText = "UniqueFilterValue" }
         );
         var recordId = created.Id!;
         try
         {
             var filter = PrimaryModel.F.SingleLineText.Eq("UniqueFilterValue");
-            var results = await _airtable.Primary.Orm.GetAsync(
-                new AirtableQuery().WithFormula(filter)
-            );
+            var results = await _airtable.Primary.GetAsync(new AirtableQuery().WithFormula(filter));
             Assert.Contains(results, r => r.Id == recordId);
         }
         finally
@@ -72,13 +70,11 @@ public class TestFilterByFormula
     public async Task RecordIdFilter()
     {
         var suite = TestSetup.PrimaryKey("Filter", "RecordID");
-        var created = await _airtable.Primary.Orm.CreateAsync(
-            new PrimaryModel { PrimaryKey = suite }
-        );
+        var created = await _airtable.Primary.CreateAsync(new PrimaryModel { PrimaryKey = suite });
         var recordId = created.Id!;
         try
         {
-            var results = await _airtable.Primary.Orm.GetAsync(
+            var results = await _airtable.Primary.GetAsync(
                 new AirtableQuery().WithFormula(PrimaryModel.F.Id.Eq(recordId))
             );
             Assert.Single(results);
@@ -94,16 +90,16 @@ public class TestFilterByFormula
     public async Task NumberFieldFilter()
     {
         var suite = TestSetup.PrimaryKey("Filter", "Number");
-        var c1 = await _airtable.Primary.Orm.CreateAsync(
+        var c1 = await _airtable.Primary.CreateAsync(
             new PrimaryModel { NumberInt = 10.0, PrimaryKey = suite + " 1" }
         );
-        var c2 = await _airtable.Primary.Orm.CreateAsync(
+        var c2 = await _airtable.Primary.CreateAsync(
             new PrimaryModel { NumberInt = 20.0, PrimaryKey = suite + " 2" }
         );
         var ids = new List<string> { c1.Id!, c2.Id! };
         try
         {
-            var results = await _airtable.Primary.Orm.GetAsync(
+            var results = await _airtable.Primary.GetAsync(
                 new AirtableQuery().WithFormula(PrimaryModel.F.NumberInt.GreaterThan(15))
             );
             Assert.Contains(results, r => r.Id == c2.Id);
@@ -119,7 +115,7 @@ public class TestFilterByFormula
     public async Task AndCombinator()
     {
         var suite = TestSetup.PrimaryKey("Filter", "AND");
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel
             {
                 Checkbox = true,
@@ -132,9 +128,7 @@ public class TestFilterByFormula
         {
             var f = PrimaryModel.F;
             var filter = Formulas.And(f.Checkbox.IsTrue(), f.NumberInt.Eq(42));
-            var results = await _airtable.Primary.Orm.GetAsync(
-                new AirtableQuery().WithFormula(filter)
-            );
+            var results = await _airtable.Primary.GetAsync(new AirtableQuery().WithFormula(filter));
             Assert.Contains(results, r => r.Id == recordId);
         }
         finally
@@ -603,32 +597,32 @@ public class TestFilterByFormula
     public async Task LookupFieldFilter()
     {
         var suite = TestSetup.PrimaryKey("Filter", "Lookup");
-        var secA = await _airtable.Secondary.Orm.CreateAsync(
+        var secA = await _airtable.Secondary.CreateAsync(
             new SecondaryModel { Name = suite + " Sec A", Value = "Groundwork BioAg" }
         );
-        var secB = await _airtable.Secondary.Orm.CreateAsync(
+        var secB = await _airtable.Secondary.CreateAsync(
             new SecondaryModel { Name = suite + " Sec B", Value = "Groundwork Lab" }
         );
-        var secC = await _airtable.Secondary.Orm.CreateAsync(
+        var secC = await _airtable.Secondary.CreateAsync(
             new SecondaryModel { Name = suite + " Sec C", Value = "Other Vendor" }
         );
         var secIds = new List<string> { secA.Id!, secB.Id!, secC.Id! };
 
-        var primA = await _airtable.Primary.Orm.CreateAsync(
+        var primA = await _airtable.Primary.CreateAsync(
             new PrimaryModel
             {
                 LinkSingle = new List<string> { secA.Id! },
                 PrimaryKey = suite + " A",
             }
         );
-        var primB = await _airtable.Primary.Orm.CreateAsync(
+        var primB = await _airtable.Primary.CreateAsync(
             new PrimaryModel
             {
                 LinkSingle = new List<string> { secB.Id! },
                 PrimaryKey = suite + " B",
             }
         );
-        var primC = await _airtable.Primary.Orm.CreateAsync(
+        var primC = await _airtable.Primary.CreateAsync(
             new PrimaryModel
             {
                 LinkSingle = new List<string> { secC.Id! },
@@ -688,7 +682,7 @@ public class TestFilterByFormula
         var suite = TestSetup.PrimaryKey("Filter", "VsField");
         var f = FormulasModel.F;
 
-        var created = await _airtable.Formulas.Orm.CreateAsync(
+        var created = await _airtable.Formulas.CreateAsync(
             new List<FormulasModel>
             {
                 MkFormulas(
@@ -811,7 +805,7 @@ public class TestFilterByFormula
         string formula
     )
     {
-        var models = await _airtable.Formulas.Orm.GetAsync(
+        var models = await _airtable.Formulas.GetAsync(
             new AirtableQuery().WithFormula(Formulas.And(scope, formula))
         );
         return models

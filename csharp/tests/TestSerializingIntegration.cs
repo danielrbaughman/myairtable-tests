@@ -16,14 +16,14 @@ public class TestSerializingIntegration
     public async Task RoundTripPreservesIdAndCreatedTimeAfterFetch()
     {
         var primaryKey = TestSetup.PrimaryKey("Serializing", "IdTime");
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = primaryKey }
         );
         var recordId = created.Id!;
         try
         {
             Assert.NotNull(created.CreatedTime); // populated on create
-            var fetched = await _airtable.Primary.Orm.GetAsync(recordId);
+            var fetched = await _airtable.Primary.GetAsync(recordId);
             Assert.Equal(recordId, fetched.Id);
             Assert.Equal(created.CreatedTime, fetched.CreatedTime);
         }
@@ -41,11 +41,11 @@ public class TestSerializingIntegration
         string? primId = null;
         try
         {
-            var sec = await _airtable.Secondary.Orm.CreateAsync(
+            var sec = await _airtable.Secondary.CreateAsync(
                 new SecondaryModel { Name = suite + " Target" }
             );
             secId = sec.Id;
-            var prim = await _airtable.Primary.Orm.CreateAsync(
+            var prim = await _airtable.Primary.CreateAsync(
                 new PrimaryModel
                 {
                     PrimaryKey = suite,
@@ -71,17 +71,17 @@ public class TestSerializingIntegration
     public async Task ExplicitNullOnAWritableFieldClearsItServerSide()
     {
         var primaryKey = TestSetup.PrimaryKey("Serializing", "Clear");
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = primaryKey, SingleLineText = "to be cleared" }
         );
         var recordId = created.Id!;
         try
         {
             created.SingleLineText = null;
-            var saved = await _airtable.Primary.Orm.UpdateAsync(created);
+            var saved = await _airtable.Primary.UpdateAsync(created);
             Assert.Null(saved.SingleLineText); // null dirty entry clears the field
 
-            var fetched = await _airtable.Primary.Orm.GetAsync(recordId);
+            var fetched = await _airtable.Primary.GetAsync(recordId);
             Assert.Null(fetched.SingleLineText);
         }
         finally
@@ -96,7 +96,7 @@ public class TestSerializingIntegration
             return;
         try
         {
-            await _airtable.Primary.Orm.DeleteAsync(id);
+            await _airtable.Primary.DeleteAsync(id);
         }
         catch (AirtableException) { }
     }
@@ -107,7 +107,7 @@ public class TestSerializingIntegration
             return;
         try
         {
-            await _airtable.Secondary.Orm.DeleteAsync(id);
+            await _airtable.Secondary.DeleteAsync(id);
         }
         catch (AirtableException) { }
     }

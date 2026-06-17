@@ -28,14 +28,14 @@ public class TestCaching
     public async Task CacheHitReturnsSameRecordOnRepeatedGet()
     {
         var at = Cached();
-        var created = await at.Primary.Orm.CreateAsync(
+        var created = await at.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = TestSetup.PrimaryKey("Cache", "Hit") }
         );
         var id = created.Id!;
         try
         {
-            var first = await at.Primary.Orm.GetAsync(id);
-            var second = await at.Primary.Orm.GetAsync(id);
+            var first = await at.Primary.GetAsync(id);
+            var second = await at.Primary.GetAsync(id);
             Assert.Equal(first.PrimaryKey, second.PrimaryKey);
             Assert.Equal(first.Id, second.Id);
             Assert.True(at.Client.Cache.Count > 0, "read populated the cache");
@@ -51,13 +51,13 @@ public class TestCaching
     {
         var at = Uncached();
         Assert.Equal(0, at.Client.Cache.Count);
-        var created = await at.Primary.Orm.CreateAsync(
+        var created = await at.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = TestSetup.PrimaryKey("Cache", "Off") }
         );
         var id = created.Id!;
         try
         {
-            await at.Primary.Orm.GetAsync(id);
+            await at.Primary.GetAsync(id);
             Assert.Equal(0, at.Client.Cache.Count); // TTL=0 is a no-op
         }
         finally
@@ -71,15 +71,15 @@ public class TestCaching
     {
         var at = Cached();
         var key = TestSetup.PrimaryKey("Cache", "MutateCreate");
-        var a = await at.Primary.Orm.CreateAsync(new PrimaryModel { PrimaryKey = key });
+        var a = await at.Primary.CreateAsync(new PrimaryModel { PrimaryKey = key });
         var idA = a.Id!;
         string? idB = null;
         try
         {
-            await at.Primary.Orm.GetAsync(idA); // populate cache
+            await at.Primary.GetAsync(idA); // populate cache
             Assert.True(at.Client.Cache.Count > 0);
 
-            var b = await at.Primary.Orm.CreateAsync(new PrimaryModel { PrimaryKey = key + " B" });
+            var b = await at.Primary.CreateAsync(new PrimaryModel { PrimaryKey = key + " B" });
             idB = b.Id;
             Assert.Equal(0, at.Client.Cache.Count); // create wipes this table's cache
         }
@@ -94,17 +94,17 @@ public class TestCaching
     public async Task UpdateInvalidatesCachedReadsForTheTable()
     {
         var at = Cached();
-        var created = await at.Primary.Orm.CreateAsync(
+        var created = await at.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = TestSetup.PrimaryKey("Cache", "MutateUpdate") }
         );
         var id = created.Id!;
         try
         {
-            await at.Primary.Orm.GetAsync(id);
+            await at.Primary.GetAsync(id);
             Assert.True(at.Client.Cache.Count > 0);
 
             created.SingleLineText = "mutated";
-            await at.Primary.Orm.UpdateAsync(created);
+            await at.Primary.UpdateAsync(created);
             Assert.Equal(0, at.Client.Cache.Count); // update wipes this table's cache
         }
         finally
@@ -117,17 +117,17 @@ public class TestCaching
     public async Task DeleteInvalidatesCachedReadsForTheTable()
     {
         var at = Cached();
-        var created = await at.Primary.Orm.CreateAsync(
+        var created = await at.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = TestSetup.PrimaryKey("Cache", "MutateDelete") }
         );
         var id = created.Id!;
         var deleted = false;
         try
         {
-            await at.Primary.Orm.GetAsync(id);
+            await at.Primary.GetAsync(id);
             Assert.True(at.Client.Cache.Count > 0);
 
-            await at.Primary.Orm.DeleteAsync(id);
+            await at.Primary.DeleteAsync(id);
             deleted = true;
             Assert.Equal(0, at.Client.Cache.Count); // delete wipes this table's cache
         }
@@ -142,13 +142,13 @@ public class TestCaching
     public async Task InvalidateCacheDropsThisTablesCache()
     {
         var at = Cached();
-        var created = await at.Primary.Orm.CreateAsync(
+        var created = await at.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = TestSetup.PrimaryKey("Cache", "ManualTable") }
         );
         var id = created.Id!;
         try
         {
-            await at.Primary.Orm.GetAsync(id);
+            await at.Primary.GetAsync(id);
             Assert.True(at.Client.Cache.Count > 0);
 
             at.Client.InvalidateCache(PrimaryTable.TableId);
@@ -164,14 +164,14 @@ public class TestCaching
     public async Task InvalidateAllCachesDropsEveryTablesCache()
     {
         var at = Cached();
-        var created = await at.Primary.Orm.CreateAsync(
+        var created = await at.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = TestSetup.PrimaryKey("Cache", "ManualAll") }
         );
         var id = created.Id!;
         try
         {
-            await at.Primary.Orm.GetAsync(id);
-            await at.Secondary.Orm.GetAsync(new AirtableQuery().WithMaxRecords(1));
+            await at.Primary.GetAsync(id);
+            await at.Secondary.GetAsync(new AirtableQuery().WithMaxRecords(1));
             Assert.True(at.Client.Cache.Count >= 2);
 
             at.InvalidateAllCaches();
@@ -188,11 +188,11 @@ public class TestCaching
     {
         var at = TestSetup.MakeAirtable(1.0);
         var key = TestSetup.PrimaryKey("Cache", "TTL");
-        var created = await at.Primary.Orm.CreateAsync(new PrimaryModel { PrimaryKey = key });
+        var created = await at.Primary.CreateAsync(new PrimaryModel { PrimaryKey = key });
         var id = created.Id!;
         try
         {
-            await at.Primary.Orm.GetAsync(id);
+            await at.Primary.GetAsync(id);
             Assert.True(at.Client.Cache.Count > 0);
 
             await Task.Delay(1500);
@@ -201,7 +201,7 @@ public class TestCaching
             // AirtableClient.GetRecordAsync: "rec:" + id.
             Assert.Null(at.Client.Cache.Get(PrimaryTable.TableId, "rec:" + id));
 
-            var fresh = await at.Primary.Orm.GetAsync(id);
+            var fresh = await at.Primary.GetAsync(id);
             Assert.Equal(key, fresh.PrimaryKey);
         }
         finally
@@ -214,14 +214,14 @@ public class TestCaching
     public async Task DifferentQueryParamsProduceDifferentCacheKeys()
     {
         var at = Cached();
-        var created = await at.Primary.Orm.CreateAsync(
+        var created = await at.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = TestSetup.PrimaryKey("Cache", "Keys") }
         );
         var id = created.Id!;
         try
         {
-            await at.Primary.Orm.GetAsync(new AirtableQuery().WithMaxRecords(1));
-            await at.Primary.Orm.GetAsync(new AirtableQuery().WithMaxRecords(2));
+            await at.Primary.GetAsync(new AirtableQuery().WithMaxRecords(1));
+            await at.Primary.GetAsync(new AirtableQuery().WithMaxRecords(2));
             Assert.True(at.Client.Cache.Count >= 2, "distinct queries cache separately");
         }
         finally

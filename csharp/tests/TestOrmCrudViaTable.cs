@@ -5,7 +5,7 @@ using Xunit;
 namespace MyAirtable.Tests;
 
 /// <summary>
-/// CS4.7 — Typed ORM CRUD via the table accessor (<c>airtable.Primary.Orm</c>). Parity with the
+/// CS4.7 — Typed ORM CRUD via the table accessor (<c>airtable.Primary</c>). Parity with the
 /// Java/Kotlin/Swift/Rust TestOrmCrudViaTable suites.
 /// </summary>
 public class TestOrmCrudViaTable
@@ -16,7 +16,7 @@ public class TestOrmCrudViaTable
     public async Task PrimaryKeyOnlyCrudRoundTrip()
     {
         var primaryKey = TestSetup.PrimaryKey("OrmTable", "PKOnly");
-        var created = await _airtable.Primary.Orm.CreateAsync(
+        var created = await _airtable.Primary.CreateAsync(
             new PrimaryModel { PrimaryKey = primaryKey }
         );
         Assert.False(string.IsNullOrEmpty(created.Id));
@@ -25,19 +25,19 @@ public class TestOrmCrudViaTable
         var recordId = created.Id!;
         try
         {
-            var fetched = await _airtable.Primary.Orm.GetAsync(recordId);
+            var fetched = await _airtable.Primary.GetAsync(recordId);
             Assert.Equal(recordId, fetched.Id);
             Assert.Equal(primaryKey, fetched.PrimaryKey);
             Assert.Empty(fetched.DirtyFields());
 
             fetched.PrimaryKey = primaryKey + " Updated";
             Assert.NotEmpty(fetched.DirtyFields());
-            var updated = await _airtable.Primary.Orm.UpdateAsync(fetched);
+            var updated = await _airtable.Primary.UpdateAsync(fetched);
             Assert.Equal(primaryKey + " Updated", updated.PrimaryKey);
 
-            await _airtable.Primary.Orm.DeleteAsync(recordId);
+            await _airtable.Primary.DeleteAsync(recordId);
             await Assert.ThrowsAnyAsync<AirtableException>(() =>
-                _airtable.Primary.Orm.GetAsync(recordId)
+                _airtable.Primary.GetAsync(recordId)
             );
         }
         catch
@@ -68,7 +68,7 @@ public class TestOrmCrudViaTable
             PercentFloat = 0.333,
             Duration = TimeSpan.FromSeconds(3600),
         };
-        var created = await _airtable.Primary.Orm.CreateAsync(model);
+        var created = await _airtable.Primary.CreateAsync(model);
         var recordId = created.Id!;
         try
         {
@@ -104,7 +104,7 @@ public class TestOrmCrudViaTable
             },
             Rating = JsonValue.Create(3),
         };
-        var created = await _airtable.Primary.Orm.CreateAsync(model);
+        var created = await _airtable.Primary.CreateAsync(model);
         var recordId = created.Id!;
         try
         {
@@ -119,7 +119,7 @@ public class TestOrmCrudViaTable
             );
             Assert.Equal(3, created.Rating!.GetValue<int>());
 
-            var fetched = await _airtable.Primary.Orm.GetAsync(recordId);
+            var fetched = await _airtable.Primary.GetAsync(recordId);
             Assert.Equal(PrimarySingleSelectOption.Choice1, fetched.SingleSelect);
 
             fetched.SingleSelect = PrimarySingleSelectOption.Choice2;
@@ -128,7 +128,7 @@ public class TestOrmCrudViaTable
                 PrimaryMultipleSelectOption.Option3,
             };
             fetched.Rating = JsonValue.Create(5);
-            var updated = await _airtable.Primary.Orm.UpdateAsync(fetched);
+            var updated = await _airtable.Primary.UpdateAsync(fetched);
             Assert.Equal(PrimarySingleSelectOption.Choice2, updated.SingleSelect);
             Assert.Equal(
                 new List<PrimaryMultipleSelectOption> { PrimaryMultipleSelectOption.Option3 },
@@ -150,12 +150,12 @@ public class TestOrmCrudViaTable
             .Range(1, 3)
             .Select(i => new PrimaryModel { PrimaryKey = $"{suite} {i}" })
             .ToList();
-        var created = await _airtable.Primary.Orm.CreateAsync(models);
+        var created = await _airtable.Primary.CreateAsync(models);
         var createdIds = created.Select(m => m.Id!).ToList();
         try
         {
             Assert.Equal(3, created.Count);
-            var results = await _airtable.Primary.Orm.GetAsync(
+            var results = await _airtable.Primary.GetAsync(
                 new AirtableQuery().WithFormula($"FIND(\"{suite}\", {{Primary Key}})")
             );
             Assert.Equal(3, results.Count);
@@ -182,11 +182,11 @@ public class TestOrmCrudViaTable
                 SingleLineText = $"text {i}",
             })
             .ToList();
-        var created = await _airtable.Primary.Orm.CreateAsync(models);
+        var created = await _airtable.Primary.CreateAsync(models);
         var createdIds = created.Select(m => m.Id!).ToList();
         try
         {
-            var results = await _airtable.Primary.Orm.GetAsync(
+            var results = await _airtable.Primary.GetAsync(
                 new AirtableQuery()
                     .WithFormula($"FIND(\"{suite}\", {{Primary Key}})")
                     .WithFields(PrimaryFields.PrimaryKeyId)
@@ -209,7 +209,7 @@ public class TestOrmCrudViaTable
     public async Task InvalidRecordIdThrows()
     {
         await Assert.ThrowsAnyAsync<AirtableException>(() =>
-            _airtable.Primary.Orm.GetAsync("recDOESNOTEXIST123")
+            _airtable.Primary.GetAsync("recDOESNOTEXIST123")
         );
     }
 
@@ -227,7 +227,7 @@ public class TestOrmCrudViaTable
         var createdIds = new List<string>();
         try
         {
-            var created = await _airtable.Primary.Orm.CreateAsync(models);
+            var created = await _airtable.Primary.CreateAsync(models);
             createdIds = created.Select(m => m.Id!).ToList();
 
             Assert.Equal(count, created.Count);
@@ -236,15 +236,15 @@ public class TestOrmCrudViaTable
 
             foreach (var model in created)
                 model.PrimaryKey += " Updated";
-            var updated = await _airtable.Primary.Orm.UpdateAsync(created);
+            var updated = await _airtable.Primary.UpdateAsync(created);
             Assert.Equal(count, updated.Count);
             for (var i = 0; i < updated.Count; i++)
                 Assert.Equal($"{suite} {i + 1} Updated", updated[i].PrimaryKey);
 
-            await _airtable.Primary.Orm.DeleteAsync(createdIds);
+            await _airtable.Primary.DeleteAsync(createdIds);
             var firstId = createdIds[0];
             await Assert.ThrowsAnyAsync<AirtableException>(() =>
-                _airtable.Primary.Orm.GetAsync(firstId)
+                _airtable.Primary.GetAsync(firstId)
             );
         }
         catch
@@ -259,7 +259,7 @@ public class TestOrmCrudViaTable
     public async Task UpsertInsertsWhenNoMatchThenUpdatesOnMatch()
     {
         var primaryKey = TestSetup.PrimaryKey("OrmTable", "Upsert");
-        var first = await _airtable.Primary.Orm.UpsertAsync(
+        var first = await _airtable.Primary.UpsertAsync(
             new PrimaryModel { PrimaryKey = primaryKey },
             new[] { PrimaryFields.PrimaryKeyId }
         );
@@ -269,7 +269,7 @@ public class TestOrmCrudViaTable
             Assert.True(first.WasCreated); // no match yet — upsert inserts
             Assert.Equal(primaryKey, first.Model.PrimaryKey);
 
-            var second = await _airtable.Primary.Orm.UpsertAsync(
+            var second = await _airtable.Primary.UpsertAsync(
                 new PrimaryModel { PrimaryKey = primaryKey, SingleLineText = "merged" },
                 new[] { PrimaryFields.PrimaryKeyId }
             );
@@ -291,7 +291,7 @@ public class TestOrmCrudViaTable
             return;
         try
         {
-            await _airtable.Primary.Orm.DeleteAsync(recordId);
+            await _airtable.Primary.DeleteAsync(recordId);
         }
         catch (AirtableException)
         {
@@ -305,7 +305,7 @@ public class TestOrmCrudViaTable
             return;
         try
         {
-            await _airtable.Primary.Orm.DeleteAsync(recordIds);
+            await _airtable.Primary.DeleteAsync(recordIds);
         }
         catch (AirtableException)
         {
@@ -317,11 +317,11 @@ public class TestOrmCrudViaTable
     {
         try
         {
-            var stray = await _airtable.Primary.Orm.GetAsync(
+            var stray = await _airtable.Primary.GetAsync(
                 new AirtableQuery().WithFormula($"FIND(\"{suite}\", {{Primary Key}})")
             );
             if (stray.Count > 0)
-                await _airtable.Primary.Orm.DeleteAsync(stray.Select(m => m.Id!).ToList());
+                await _airtable.Primary.DeleteAsync(stray.Select(m => m.Id!).ToList());
         }
         catch (AirtableException)
         {
