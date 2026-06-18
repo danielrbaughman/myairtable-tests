@@ -22,3 +22,10 @@ java/.gradle/
 
 # Go
 go/output/
+
+# C#
+csharp/output/
+csharp/bin/
+csharp/obj/
+csharp/tests/bin/
+csharp/tests/obj/

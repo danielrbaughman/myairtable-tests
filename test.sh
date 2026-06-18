@@ -2,7 +2,7 @@
 set -e
 
 usage() {
-    echo "Usage: ./test.sh <all|ts|js|py|rs|swift|kotlin|java|go> [--all|--crud|--json|--filter|--runtime|--help]"
+    echo "Usage: ./test.sh <all|ts|js|py|rs|swift|kotlin|java|go|cs> [--all|--crud|--json|--filter|--runtime|--help]"
     echo ""
     echo "Arguments:"
     echo "  all       Run tests for all languages"
@@ -14,6 +14,7 @@ usage() {
     echo "  kotlin    Run Kotlin tests"
     echo "  java      Run Java tests"
     echo "  go        Run Go tests"
+    echo "  cs        Run C# tests"
     echo ""
     echo "Options:"
     echo "  --all     Run all test suites (default)"
@@ -30,7 +31,7 @@ LANG_ARG="$1"
 case "$LANG_ARG" in
     all)
         SUITE="${2:---all}"
-        for lang in ts js py rs swift kotlin java go; do
+        for lang in ts js py rs swift kotlin java go cs; do
             echo ""
             echo "========================================="
             echo "  Running $lang tests ($SUITE)"
@@ -66,8 +67,11 @@ case "$LANG_ARG" in
     go)
         GO_DIR="go"
         ;;
+    cs)
+        CSHARP_DIR="csharp"
+        ;;
     *)
-        echo "Error: first argument must be 'all', 'ts', 'js', 'py', 'rs', 'swift', 'kotlin', 'java', or 'go'"
+        echo "Error: first argument must be 'all', 'ts', 'js', 'py', 'rs', 'swift', 'kotlin', 'java', 'go', or 'cs'"
         echo ""
         usage
         exit 1
@@ -273,6 +277,39 @@ elif [ "$LANG_ARG" = "go" ]; then
             exit 1
             ;;
     esac
+elif [ "$LANG_ARG" = "cs" ]; then
+    # `dotnet test --filter` matches on FullyQualifiedName; '~' is a substring match.
+    # C# test classes follow the PascalCase "Test..." naming used by Swift/Kotlin/Java.
+    case "$SUITE" in
+        --help)
+            usage
+            exit 0
+            ;;
+        --all)
+            TEST_CMD="(cd csharp && dotnet test --nologo)"
+            ;;
+        --crud)
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestStructCrudViaTable|FullyQualifiedName~TestOrmCrudViaTable|FullyQualifiedName~TestOrmCrudViaModel')"
+            ;;
+        --json)
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestSerializing')"
+            ;;
+        --filter)
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestFilterByFormula')"
+            ;;
+        --runtime)
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestRuntimeFormulas')"
+            ;;
+        --cache)
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestCaching')"
+            ;;
+        *)
+            echo "Unknown option: $SUITE"
+            echo ""
+            usage
+            exit 1
+            ;;
+    esac
 else
     case "$SUITE" in
         --help)
@@ -318,6 +355,9 @@ elif [ "$LANG_ARG" = "swift" ]; then
 elif [ "$LANG_ARG" = "kotlin" ] || [ "$LANG_ARG" = "java" ]; then
     eval "$TEST_CMD"
 elif [ "$LANG_ARG" = "go" ]; then
+    eval "$TEST_CMD"
+elif [ "$LANG_ARG" = "cs" ]; then
+    export PATH="$PATH:$HOME/.dotnet/tools"
     eval "$TEST_CMD"
 else
     if ! command -v nvm &> /dev/null; then
