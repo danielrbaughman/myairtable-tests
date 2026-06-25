@@ -91,7 +91,7 @@ if [ "$LANG_ARG" = "py" ]; then
             TEST_CMD="uv run pytest -x -v $TEST_DIR"
             ;;
         --crud)
-            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_dict_crud_via_table.py $TEST_DIR/test_model_crud_via_model.py $TEST_DIR/test_model_crud_via_table.py $TEST_DIR/test_pagination.py $TEST_DIR/test_error_paths.py $TEST_DIR/test_field_round_trip.py"
+            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_dict_crud_via_table.py $TEST_DIR/test_model_crud_via_model.py $TEST_DIR/test_model_crud_via_table.py $TEST_DIR/test_pagination.py $TEST_DIR/test_error_paths.py $TEST_DIR/test_field_round_trip.py $TEST_DIR/test_upsert_depth.py"
             ;;
         --json)
             TEST_CMD="uv run pytest -x -v $TEST_DIR/test_serializing.py"
@@ -155,7 +155,7 @@ elif [ "$LANG_ARG" = "swift" ]; then
             TEST_CMD="swift test --package-path swift"
             ;;
         --crud)
-            TEST_CMD="swift test --package-path swift --filter 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel|TestPagination|TestErrorPaths|TestFieldRoundTrip'"
+            TEST_CMD="swift test --package-path swift --filter 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel|TestPagination|TestErrorPaths|TestFieldRoundTrip|TestUpsertDepth'"
             ;;
         --json)
             TEST_CMD="swift test --package-path swift --filter 'TestSerializing'"
@@ -189,7 +189,7 @@ elif [ "$LANG_ARG" = "kotlin" ]; then
             TEST_CMD="(cd kotlin && ./gradlew test)"
             ;;
         --crud)
-            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel' --tests '*TestPagination' --tests '*TestErrorPaths' --tests '*TestFieldRoundTrip')"
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel' --tests '*TestPagination' --tests '*TestErrorPaths' --tests '*TestFieldRoundTrip' --tests '*TestUpsertDepth')"
             ;;
         --json)
             TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestSerializing')"
@@ -223,7 +223,7 @@ elif [ "$LANG_ARG" = "java" ]; then
             TEST_CMD="(cd java && ./gradlew test)"
             ;;
         --crud)
-            TEST_CMD="(cd java && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel' --tests '*TestPagination' --tests '*TestErrorPaths' --tests '*TestFieldRoundTrip')"
+            TEST_CMD="(cd java && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel' --tests '*TestPagination' --tests '*TestErrorPaths' --tests '*TestFieldRoundTrip' --tests '*TestUpsertDepth')"
             ;;
         --json)
             TEST_CMD="(cd java && ./gradlew test --tests '*TestSerializing*')"
@@ -256,7 +256,7 @@ elif [ "$LANG_ARG" = "go" ]; then
             TEST_CMD="(cd go && go test -v ./...)"
             ;;
         --crud)
-            TEST_CMD="(cd go && go test -v -run 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel|TestPagination|TestErrorPaths|TestFieldRoundTrip' ./...)"
+            TEST_CMD="(cd go && go test -v -run 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel|TestPagination|TestErrorPaths|TestFieldRoundTrip|TestUpsertDepth' ./...)"
             ;;
         --json)
             TEST_CMD="(cd go && go test -v -run 'TestSerializing' ./...)"
@@ -289,7 +289,7 @@ elif [ "$LANG_ARG" = "cs" ]; then
             TEST_CMD="(cd csharp && dotnet test --nologo)"
             ;;
         --crud)
-            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestStructCrudViaTable|FullyQualifiedName~TestOrmCrudViaTable|FullyQualifiedName~TestOrmCrudViaModel|FullyQualifiedName~TestPagination|FullyQualifiedName~TestErrorPaths|FullyQualifiedName~TestFieldRoundTrip')"
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestStructCrudViaTable|FullyQualifiedName~TestOrmCrudViaTable|FullyQualifiedName~TestOrmCrudViaModel|FullyQualifiedName~TestPagination|FullyQualifiedName~TestErrorPaths|FullyQualifiedName~TestFieldRoundTrip|FullyQualifiedName~TestUpsertDepth')"
             ;;
         --json)
             TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestSerializing')"
