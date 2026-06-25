@@ -69,6 +69,10 @@ path = "rust/tests/test_formula_escaping.rs"
 name = "test_error_paths"
 path = "rust/tests/test_error_paths.rs"
 
+[[test]]
+name = "test_field_round_trip"
+path = "rust/tests/test_field_round_trip.rs"
+
 [[bin]]
 name = "playground"
 path = "playground.rs"
