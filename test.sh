@@ -100,7 +100,7 @@ if [ "$LANG_ARG" = "py" ]; then
             TEST_CMD="uv run pytest -x -v $TEST_DIR/test_filter_by_formula.py $TEST_DIR/test_formula_escaping.py"
             ;;
         --runtime)
-            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_runtime_formulas.py"
+            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_runtime_formulas.py $TEST_DIR/test_runtime_formula_variety.py"
             ;;
         --cache)
             TEST_CMD="uv run pytest -x -v $TEST_DIR/test_caching.py"
@@ -131,7 +131,7 @@ elif [ "$LANG_ARG" = "rs" ]; then
             TEST_CMD="cargo test --test test_filter_by_formula --test test_formula_escaping"
             ;;
         --runtime)
-            TEST_CMD="cargo test --test test_runtime_formulas"
+            TEST_CMD="cargo test --test test_runtime_formulas --test test_runtime_formula_variety"
             ;;
         --cache)
             TEST_CMD="cargo test --test test_caching"
@@ -164,7 +164,7 @@ elif [ "$LANG_ARG" = "swift" ]; then
             TEST_CMD="swift test --package-path swift --filter 'TestFilterByFormula|TestFormulaEscaping'"
             ;;
         --runtime)
-            TEST_CMD="swift test --package-path swift --filter 'TestRuntimeFormulas'"
+            TEST_CMD="swift test --package-path swift --filter 'TestRuntimeFormulas|TestRuntimeFormulaVariety'"
             ;;
         --cache)
             TEST_CMD="swift test --package-path swift --filter 'TestCaching'"
@@ -198,7 +198,7 @@ elif [ "$LANG_ARG" = "kotlin" ]; then
             TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestFilterByFormula' --tests '*TestFormulaEscaping')"
             ;;
         --runtime)
-            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestRuntimeFormulas')"
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestRuntimeFormulas' --tests '*TestRuntimeFormulaVariety')"
             ;;
         --cache)
             TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestCaching')"
@@ -232,7 +232,7 @@ elif [ "$LANG_ARG" = "java" ]; then
             TEST_CMD="(cd java && ./gradlew test --tests '*TestFilterByFormula' --tests '*TestFormulaEscaping')"
             ;;
         --runtime)
-            TEST_CMD="(cd java && ./gradlew test --tests '*TestRuntimeFormulas')"
+            TEST_CMD="(cd java && ./gradlew test --tests '*TestRuntimeFormulas' --tests '*TestRuntimeFormulaVariety')"
             ;;
         --cache)
             TEST_CMD="(cd java && ./gradlew test --tests '*TestCaching')"
@@ -265,7 +265,7 @@ elif [ "$LANG_ARG" = "go" ]; then
             TEST_CMD="(cd go && go test -v -run 'TestFilterByFormula|TestFormulaEscaping' ./...)"
             ;;
         --runtime)
-            TEST_CMD="(cd go && go test -v -run 'TestRuntimeFormulas' ./...)"
+            TEST_CMD="(cd go && go test -v -run 'TestRuntimeFormulas|TestRuntimeFormulaVariety' ./...)"
             ;;
         --cache)
             TEST_CMD="(cd go && go test -v -run 'TestCaching' ./...)"
@@ -298,7 +298,7 @@ elif [ "$LANG_ARG" = "cs" ]; then
             TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestFilterByFormula|FullyQualifiedName~TestFormulaEscaping')"
             ;;
         --runtime)
-            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestRuntimeFormulas')"
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestRuntimeFormulas|FullyQualifiedName~TestRuntimeFormulaVariety')"
             ;;
         --cache)
             TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestCaching')"
@@ -329,7 +329,7 @@ else
             TEST_CMD="npx vitest run $TEST_DIR/filter-by-formula.test.$EXT $TEST_DIR/formula-escaping.test.$EXT"
             ;;
         --runtime)
-            TEST_CMD="npx vitest run $TEST_DIR/runtime-formulas.test.$EXT"
+            TEST_CMD="npx vitest run $TEST_DIR/runtime-formulas.test.$EXT $TEST_DIR/runtime-formula-variety.test.$EXT"
             ;;
         --cache)
             TEST_CMD="npx vitest run $TEST_DIR/caching.test.$EXT"
