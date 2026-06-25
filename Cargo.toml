@@ -46,6 +46,10 @@ name = "test_runtime_formulas"
 path = "rust/tests/test_runtime_formulas.rs"
 
 [[test]]
+name = "test_primary_formula_runtime"
+path = "rust/tests/test_primary_formula_runtime.rs"
+
+[[test]]
 name = "test_runtime_formula_variety"
 path = "rust/tests/test_runtime_formula_variety.rs"
 
