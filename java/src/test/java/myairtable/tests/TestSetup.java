@@ -57,6 +57,20 @@ public final class TestSetup {
   }
 
   /**
+   * A client pointed at the real base but with a bogus API key, for auth-failure (401) tests.
+   * Mirrors the C# {@code MakeAirtableWithBadKey} helper: the base id is real (from .env) so the
+   * failure is authentication, not a missing base.
+   */
+  public static Airtable makeAirtableWithBadKey() {
+    String baseId = env("AIRTABLE_BASE_ID");
+    if (baseId == null || baseId.isEmpty()) {
+      throw new IllegalStateException(
+          "AIRTABLE_BASE_ID not set. Ensure .env is present in the test repo root.");
+    }
+    return new Airtable(baseId, "patBOGUS00000.deadbeefdeadbeefdeadbeefdeadbeef");
+  }
+
+  /**
    * Walk up from CWD looking for ".env", but never climb past the repository root so a stray ".env"
    * higher up the filesystem (e.g. in a parent workspace or $HOME) can't be silently adopted.
    *

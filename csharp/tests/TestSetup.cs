@@ -25,6 +25,17 @@ public static class TestSetup
         return new Airtable(baseId, apiKey, cacheSeconds);
     }
 
+    /// <summary>A client pointed at the real base but with a bogus API key, for auth-failure tests.</summary>
+    public static Airtable MakeAirtableWithBadKey()
+    {
+        var baseId = Env("AIRTABLE_BASE_ID");
+        if (string.IsNullOrEmpty(baseId))
+            throw new InvalidOperationException(
+                "AIRTABLE_BASE_ID not set (need .env in the test repo root)."
+            );
+        return new Airtable(baseId, "patBOGUS00000.deadbeefdeadbeefdeadbeefdeadbeef");
+    }
+
     /// <summary>A primary-key value unique to this run (distinct per file via <paramref name="suite"/>).</summary>
     public static string PrimaryKey(string suite, string label)
     {

@@ -57,6 +57,10 @@ path = "rust/tests/test_pagination.rs"
 name = "test_formula_escaping"
 path = "rust/tests/test_formula_escaping.rs"
 
+[[test]]
+name = "test_error_paths"
+path = "rust/tests/test_error_paths.rs"
+
 [[bin]]
 name = "playground"
 path = "playground.rs"
