@@ -3,6 +3,7 @@
 # ==========================================
 
 from datetime import datetime
+from typing import cast
 from pyairtable.orm import Model
 from pyairtable.orm.fields import (
     SingleLineTextField,
@@ -45,7 +46,7 @@ class FormulasModel(Model):
         memoize = True
 
     def to_record_dict(self, only_writable: bool = False) -> FormulasRecordDict:
-        return self.to_record(only_writable)  # ty: ignore[invalid-return-type]
+        return cast("FormulasRecordDict", self.to_record(only_writable))
 
     def url(self, view: FormulasView | None = None) -> str:
         """Get the URL for this record in Airtable, with optional view."""

@@ -5,6 +5,7 @@
 from typing import (
     Any,
     TYPE_CHECKING,
+    cast,
 )
 from pyairtable.orm import Model
 from pyairtable.orm.fields import (
@@ -75,7 +76,7 @@ class PrimaryModel(Model):
         memoize = True
 
     def to_record_dict(self, only_writable: bool = False) -> PrimaryRecordDict:
-        return self.to_record(only_writable)  # ty: ignore[invalid-return-type]
+        return cast("PrimaryRecordDict", self.to_record(only_writable))
 
     def URL(self, view: PrimaryView | None = None) -> str:
         """Get the URL for this record in Airtable, with optional view."""
@@ -408,9 +409,9 @@ class PrimaryModel(Model):
     """Last Modified By `fldF8iDttqP0AgzWC` - `Read-Only Field`"""
     last_modified_time: LastModifiedTimeField = LastModifiedTimeField(field_name="fldMinKh4pa3YX86g", readonly=True)
     """Last Modified Time `fldMinKh4pa3YX86g` - `Read-Only Field`"""
-    link_multiple: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fldFyFheQWczd8oux", model="output.dynamic.models.secondary.SecondaryModel") # ty: ignore
+    link_multiple: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fldFyFheQWczd8oux", model="output.dynamic.models.secondary.SecondaryModel")  # ty: ignore[invalid-assignment]
     """Link (multiple) `fldFyFheQWczd8oux`"""
-    link_single: "SecondaryModel" = SingleLinkField["SecondaryModel"](field_name="fld7F5onkDo6mkmbN", model="output.dynamic.models.secondary.SecondaryModel") # ty: ignore
+    link_single: "SecondaryModel" = SingleLinkField["SecondaryModel"](field_name="fld7F5onkDo6mkmbN", model="output.dynamic.models.secondary.SecondaryModel")  # ty: ignore[invalid-assignment]
     """Link (single) `fld7F5onkDo6mkmbN`"""
     long_text: MultilineTextField = MultilineTextField(field_name="fld8ulc6J0W29M6La")
     """Long Text `fld8ulc6J0W29M6La`"""
@@ -418,7 +419,7 @@ class PrimaryModel(Model):
     """Long Text with Rich Text `fldHJkxCMC0xo343u`"""
     lookup: LookupField[list[str]] = LookupField(field_name="fldbmFmrzYKBktJvE", readonly=True)
     """Lookup `fldbmFmrzYKBktJvE` - `Read-Only Field`"""
-    multiple_select: list[PrimaryMultipleSelectOption] = MultipleSelectField(field_name="fld6GTabFmu1xKPvZ") # ty: ignore
+    multiple_select: list[PrimaryMultipleSelectOption] = MultipleSelectField(field_name="fld6GTabFmu1xKPvZ")  # ty: ignore[invalid-assignment]
     """Multiple Select `fld6GTabFmu1xKPvZ`"""
     number_float: NumberField = NumberField(field_name="fldmU0X2l4RWd21dd")
     """Number (float) `fldmU0X2l4RWd21dd`"""
@@ -438,7 +439,7 @@ class PrimaryModel(Model):
     """Rollup `fldGaFgBsDC3IBUdV` - `Read-Only Field`"""
     single_line_text: SingleLineTextField = SingleLineTextField(field_name="fld0BL2lFo9fqcKv3")
     """Single Line Text `fld0BL2lFo9fqcKv3`"""
-    single_select: PrimarySingleSelectOption = SelectField(field_name="fldn0GFFtMFpCXUNU")
+    single_select: PrimarySingleSelectOption = SelectField(field_name="fldn0GFFtMFpCXUNU")  # ty: ignore[invalid-assignment]
     """Single Select `fldn0GFFtMFpCXUNU`"""
     url: UrlField = UrlField(field_name="fldLYloz2oP4ymf3B")
     """URL `fldLYloz2oP4ymf3B`"""

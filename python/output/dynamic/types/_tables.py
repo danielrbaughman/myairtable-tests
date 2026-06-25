@@ -2,7 +2,8 @@
 # Auto-generated file. Do not edit directly.
 # ==========================================
 
-from typing import Literal
+from collections.abc import Mapping, Sequence
+from typing import Any, Literal
 from .formulas import FormulasField, FormulasFields, FormulasFieldNameIdMapping
 from .primary import PrimaryField, PrimaryFields, PrimaryFieldNameIdMapping
 from .secondary import SecondaryField, SecondaryFields, SecondaryFieldNameIdMapping
@@ -55,28 +56,28 @@ TableNamePropertyMapping: dict[TableName, str] = {
     "Tertiary": "tertiary",
 }
 
-TableIdToFieldNameIdMapping: dict[TableId, dict[str, str]] = {
+TableIdToFieldNameIdMapping: dict[TableId, Mapping[Any, str]] = {
     "tblnuYBsMdXNDsuRc": FormulasFieldNameIdMapping,
     "tblmb3iqgpNS1ysV2": PrimaryFieldNameIdMapping,
     "tblPPScS3XMuFkDYN": SecondaryFieldNameIdMapping,
     "tblLFoLxEdWlxjmLP": TertiaryFieldNameIdMapping,
 }
 
-TableIdToFieldNamesTypeMapping: dict[TableId, str] = {
+TableIdToFieldNamesTypeMapping: dict[TableId, Any] = {
     "tblnuYBsMdXNDsuRc": FormulasField,
     "tblmb3iqgpNS1ysV2": PrimaryField,
     "tblPPScS3XMuFkDYN": SecondaryField,
     "tblLFoLxEdWlxjmLP": TertiaryField,
 }
 
-TableIdToFieldNamesListMapping: dict[TableId, list[str]] = {
+TableIdToFieldNamesListMapping: dict[TableId, Sequence[str]] = {
     "tblnuYBsMdXNDsuRc": FormulasFields,
     "tblmb3iqgpNS1ysV2": PrimaryFields,
     "tblPPScS3XMuFkDYN": SecondaryFields,
     "tblLFoLxEdWlxjmLP": TertiaryFields,
 }
 
-TableIdToFieldNameToFieldIdMapping: dict[TableId, dict[str, str]] = {
+TableIdToFieldNameToFieldIdMapping: dict[TableId, Mapping[Any, str]] = {
     "tblnuYBsMdXNDsuRc": FormulasFieldNameIdMapping,
     "tblmb3iqgpNS1ysV2": PrimaryFieldNameIdMapping,
     "tblPPScS3XMuFkDYN": SecondaryFieldNameIdMapping,

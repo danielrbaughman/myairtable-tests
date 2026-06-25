@@ -1,6 +1,5 @@
 import { BooleanSchema, NumberSchema, StringSchema, validateRecordIds } from "./special-types";
 
-/* eslint-disable no-unused-vars */
 type Comparison = "=" | "!=" | ">" | "<" | ">=" | "<=";
 
 // region LOGIC
@@ -724,4 +723,3 @@ export class DateField extends Field {
 	}
 }
 // endregion
-

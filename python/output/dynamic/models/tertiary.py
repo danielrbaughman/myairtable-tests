@@ -2,7 +2,10 @@
 # Auto-generated file. Do not edit directly.
 # ==========================================
 
-from typing import TYPE_CHECKING
+from typing import (
+    TYPE_CHECKING,
+    cast,
+)
 from pyairtable.orm import Model
 from pyairtable.orm.fields import (
     SingleLineTextField,
@@ -41,7 +44,7 @@ class TertiaryModel(Model):
         memoize = True
 
     def to_record_dict(self, only_writable: bool = False) -> TertiaryRecordDict:
-        return self.to_record(only_writable)  # ty: ignore[invalid-return-type]
+        return cast("TertiaryRecordDict", self.to_record(only_writable))
 
     def url(self, view: TertiaryView | None = None) -> str:
         """Get the URL for this record in Airtable, with optional view."""
@@ -56,7 +59,7 @@ class TertiaryModel(Model):
 
     name: SingleLineTextField = SingleLineTextField(field_name="fldwzqKxsRnPZJ2Ll")
     """Name `fldwzqKxsRnPZJ2Ll` - `Primary Key`"""
-    secondary: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fld8lCuUXpEXkIeYv", model="output.dynamic.models.secondary.SecondaryModel") # ty: ignore
+    secondary: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fld8lCuUXpEXkIeYv", model="output.dynamic.models.secondary.SecondaryModel")  # ty: ignore[invalid-assignment]
     """Secondary `fld8lCuUXpEXkIeYv`"""
     value: SingleLineTextField = SingleLineTextField(field_name="fldjNLBh2UccM64h5")
     """Value `fldjNLBh2UccM64h5`"""

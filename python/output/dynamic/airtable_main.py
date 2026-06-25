@@ -3,6 +3,7 @@
 # ==========================================
 
 # region IMPORTS
+from typing import cast
 from pyairtable import Api
 from .types import TableName
 from ..static.airtable_table import AirtableTable
@@ -88,29 +89,29 @@ class Airtable:
     def formulas(self) -> FormulasTable:
         """`Formulas` (tblnuYBsMdXNDsuRc)"""
         if 'Formulas' not in self._tables:
-            self._tables["Formulas"] = FormulasTable.from_table(self._api.table(self.base_id, "Formulas"), cache_seconds=self._cache_seconds)
-        return self._tables["Formulas"]  # ty: ignore[invalid-return-type]
+            self._tables["Formulas"] = FormulasTable.from_table(self._api.table(self.base_id, "tblnuYBsMdXNDsuRc"), cache_seconds=self._cache_seconds)
+        return cast("FormulasTable", self._tables["Formulas"])
 
     @property
     def primary(self) -> PrimaryTable:
         """`Primary` (tblmb3iqgpNS1ysV2)"""
         if 'Primary' not in self._tables:
-            self._tables["Primary"] = PrimaryTable.from_table(self._api.table(self.base_id, "Primary"), cache_seconds=self._cache_seconds)
-        return self._tables["Primary"]  # ty: ignore[invalid-return-type]
+            self._tables["Primary"] = PrimaryTable.from_table(self._api.table(self.base_id, "tblmb3iqgpNS1ysV2"), cache_seconds=self._cache_seconds)
+        return cast("PrimaryTable", self._tables["Primary"])
 
     @property
     def secondary(self) -> SecondaryTable:
         """`Secondary` (tblPPScS3XMuFkDYN)"""
         if 'Secondary' not in self._tables:
-            self._tables["Secondary"] = SecondaryTable.from_table(self._api.table(self.base_id, "Secondary"), cache_seconds=self._cache_seconds)
-        return self._tables["Secondary"]  # ty: ignore[invalid-return-type]
+            self._tables["Secondary"] = SecondaryTable.from_table(self._api.table(self.base_id, "tblPPScS3XMuFkDYN"), cache_seconds=self._cache_seconds)
+        return cast("SecondaryTable", self._tables["Secondary"])
 
     @property
     def tertiary(self) -> TertiaryTable:
         """`Tertiary` (tblLFoLxEdWlxjmLP)"""
         if 'Tertiary' not in self._tables:
-            self._tables["Tertiary"] = TertiaryTable.from_table(self._api.table(self.base_id, "Tertiary"), cache_seconds=self._cache_seconds)
-        return self._tables["Tertiary"]  # ty: ignore[invalid-return-type]
+            self._tables["Tertiary"] = TertiaryTable.from_table(self._api.table(self.base_id, "tblLFoLxEdWlxjmLP"), cache_seconds=self._cache_seconds)
+        return cast("TertiaryTable", self._tables["Tertiary"])
 
 # endregion
 

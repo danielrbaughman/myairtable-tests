@@ -2,7 +2,10 @@
 # Auto-generated file. Do not edit directly.
 # ==========================================
 
-from typing import TYPE_CHECKING
+from typing import (
+    TYPE_CHECKING,
+    cast,
+)
 from pyairtable.orm import Model
 from pyairtable.orm.fields import (
     SingleLineTextField,
@@ -42,7 +45,7 @@ class SecondaryModel(Model):
         memoize = True
 
     def to_record_dict(self, only_writable: bool = False) -> SecondaryRecordDict:
-        return self.to_record(only_writable)  # ty: ignore[invalid-return-type]
+        return cast("SecondaryRecordDict", self.to_record(only_writable))
 
     def url(self, view: SecondaryView | None = None) -> str:
         """Get the URL for this record in Airtable, with optional view."""
@@ -55,13 +58,13 @@ class SecondaryModel(Model):
 
     evaluate_formulas_at_runtime: bool = False
 
-    link_to_tertiary: list["TertiaryModel"] = LinkField["TertiaryModel"](field_name="fldKR6tdbnOBRCtdQ", model="output.dynamic.models.tertiary.TertiaryModel") # ty: ignore
+    link_to_tertiary: list["TertiaryModel"] = LinkField["TertiaryModel"](field_name="fldKR6tdbnOBRCtdQ", model="output.dynamic.models.tertiary.TertiaryModel")  # ty: ignore[invalid-assignment]
     """Link to Tertiary `fldKR6tdbnOBRCtdQ`"""
     name: SingleLineTextField = SingleLineTextField(field_name="fld1RagdJ09mpWhzM")
     """Name `fld1RagdJ09mpWhzM` - `Primary Key`"""
-    primary: list["PrimaryModel"] = LinkField["PrimaryModel"](field_name="fldl0nB9WRFSdqlii", model="output.dynamic.models.primary.PrimaryModel") # ty: ignore
+    primary: list["PrimaryModel"] = LinkField["PrimaryModel"](field_name="fldl0nB9WRFSdqlii", model="output.dynamic.models.primary.PrimaryModel")  # ty: ignore[invalid-assignment]
     """Primary `fldl0nB9WRFSdqlii`"""
-    primary_2: list["PrimaryModel"] = LinkField["PrimaryModel"](field_name="fldgoE2oZmXmKkQca", model="output.dynamic.models.primary.PrimaryModel") # ty: ignore
+    primary_2: list["PrimaryModel"] = LinkField["PrimaryModel"](field_name="fldgoE2oZmXmKkQca", model="output.dynamic.models.primary.PrimaryModel")  # ty: ignore[invalid-assignment]
     """Primary 2 `fldgoE2oZmXmKkQca`"""
     value: SingleLineTextField = SingleLineTextField(field_name="fldi6Mxh5H1gPGxFX")
     """Value `fldi6Mxh5H1gPGxFX`"""
