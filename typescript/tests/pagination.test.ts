@@ -41,7 +41,7 @@ describe("TC1 — Multi-page pagination", () => {
 		} finally {
 			await tryDeleteMany(createdIds, suite);
 		}
-	});
+	}, 120_000);
 
 	it("record accessor: a no-maxRecords query spanning multiple pages returns every record", async () => {
 		const suite = suiteKey("Record");
@@ -65,7 +65,7 @@ describe("TC1 — Multi-page pagination", () => {
 		} finally {
 			await tryDeleteMany(createdIds, suite);
 		}
-	});
+	}, 120_000);
 });
 
 /**
