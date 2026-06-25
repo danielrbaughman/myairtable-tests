@@ -42,6 +42,10 @@ name = "test_caching"
 path = "rust/tests/test_caching.rs"
 
 [[test]]
+name = "test_cache_concurrency"
+path = "rust/tests/test_cache_concurrency.rs"
+
+[[test]]
 name = "test_runtime_formulas"
 path = "rust/tests/test_runtime_formulas.rs"
 

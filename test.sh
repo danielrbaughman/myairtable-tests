@@ -103,7 +103,7 @@ if [ "$LANG_ARG" = "py" ]; then
             TEST_CMD="uv run pytest -x -v $TEST_DIR/test_runtime_formulas.py $TEST_DIR/test_runtime_formula_variety.py $TEST_DIR/test_primary_formula_runtime.py"
             ;;
         --cache)
-            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_caching.py"
+            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_caching.py $TEST_DIR/test_cache_concurrency.py"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -134,7 +134,7 @@ elif [ "$LANG_ARG" = "rs" ]; then
             TEST_CMD="cargo test --test test_runtime_formulas --test test_runtime_formula_variety --test test_primary_formula_runtime"
             ;;
         --cache)
-            TEST_CMD="cargo test --test test_caching"
+            TEST_CMD="cargo test --test test_caching --test test_cache_concurrency"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -167,7 +167,7 @@ elif [ "$LANG_ARG" = "swift" ]; then
             TEST_CMD="swift test --package-path swift --filter 'TestRuntimeFormulas|TestRuntimeFormulaVariety|TestPrimaryFormulaRuntime'"
             ;;
         --cache)
-            TEST_CMD="swift test --package-path swift --filter 'TestCaching'"
+            TEST_CMD="swift test --package-path swift --filter 'TestCaching|TestCacheConcurrency'"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -201,7 +201,7 @@ elif [ "$LANG_ARG" = "kotlin" ]; then
             TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestRuntimeFormulas' --tests '*TestRuntimeFormulaVariety' --tests '*TestPrimaryFormulaRuntime')"
             ;;
         --cache)
-            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestCaching')"
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestCaching' --tests '*TestCacheConcurrency')"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -235,7 +235,7 @@ elif [ "$LANG_ARG" = "java" ]; then
             TEST_CMD="(cd java && ./gradlew test --tests '*TestRuntimeFormulas' --tests '*TestRuntimeFormulaVariety' --tests '*TestPrimaryFormulaRuntime')"
             ;;
         --cache)
-            TEST_CMD="(cd java && ./gradlew test --tests '*TestCaching')"
+            TEST_CMD="(cd java && ./gradlew test --tests '*TestCaching' --tests '*TestCacheConcurrency')"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -268,7 +268,7 @@ elif [ "$LANG_ARG" = "go" ]; then
             TEST_CMD="(cd go && go test -v -run 'TestRuntimeFormulas|TestRuntimeFormulaVariety|TestPrimaryFormulaRuntime' ./...)"
             ;;
         --cache)
-            TEST_CMD="(cd go && go test -v -run 'TestCaching' ./...)"
+            TEST_CMD="(cd go && go test -v -run 'TestCaching|TestCacheConcurrency' ./...)"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -301,7 +301,7 @@ elif [ "$LANG_ARG" = "cs" ]; then
             TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestRuntimeFormulas|FullyQualifiedName~TestRuntimeFormulaVariety|FullyQualifiedName~TestPrimaryFormulaRuntime')"
             ;;
         --cache)
-            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestCaching')"
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestCaching|FullyQualifiedName~TestCacheConcurrency')"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -332,7 +332,7 @@ else
             TEST_CMD="npx vitest run $TEST_DIR/runtime-formulas.test.$EXT $TEST_DIR/runtime-formula-variety.test.$EXT $TEST_DIR/primary-formula-runtime.test.$EXT"
             ;;
         --cache)
-            TEST_CMD="npx vitest run $TEST_DIR/caching.test.$EXT"
+            TEST_CMD="npx vitest run $TEST_DIR/caching.test.$EXT $TEST_DIR/cache-concurrency.test.$EXT"
             ;;
         *)
             echo "Unknown option: $SUITE"
