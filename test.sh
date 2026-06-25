@@ -97,7 +97,7 @@ if [ "$LANG_ARG" = "py" ]; then
             TEST_CMD="uv run pytest -x -v $TEST_DIR/test_serializing.py"
             ;;
         --filter)
-            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_filter_by_formula.py"
+            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_filter_by_formula.py $TEST_DIR/test_formula_escaping.py"
             ;;
         --runtime)
             TEST_CMD="uv run pytest -x -v $TEST_DIR/test_runtime_formulas.py"
@@ -128,7 +128,7 @@ elif [ "$LANG_ARG" = "rs" ]; then
             TEST_CMD="cargo test --test test_serializing"
             ;;
         --filter)
-            TEST_CMD="cargo test --test test_filter_by_formula"
+            TEST_CMD="cargo test --test test_filter_by_formula --test test_formula_escaping"
             ;;
         --runtime)
             TEST_CMD="cargo test --test test_runtime_formulas"
@@ -161,7 +161,7 @@ elif [ "$LANG_ARG" = "swift" ]; then
             TEST_CMD="swift test --package-path swift --filter 'TestSerializing'"
             ;;
         --filter)
-            TEST_CMD="swift test --package-path swift --filter 'TestFilterByFormula'"
+            TEST_CMD="swift test --package-path swift --filter 'TestFilterByFormula|TestFormulaEscaping'"
             ;;
         --runtime)
             TEST_CMD="swift test --package-path swift --filter 'TestRuntimeFormulas'"
@@ -195,7 +195,7 @@ elif [ "$LANG_ARG" = "kotlin" ]; then
             TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestSerializing')"
             ;;
         --filter)
-            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestFilterByFormula')"
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestFilterByFormula' --tests '*TestFormulaEscaping')"
             ;;
         --runtime)
             TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestRuntimeFormulas')"
@@ -229,7 +229,7 @@ elif [ "$LANG_ARG" = "java" ]; then
             TEST_CMD="(cd java && ./gradlew test --tests '*TestSerializing*')"
             ;;
         --filter)
-            TEST_CMD="(cd java && ./gradlew test --tests '*TestFilterByFormula')"
+            TEST_CMD="(cd java && ./gradlew test --tests '*TestFilterByFormula' --tests '*TestFormulaEscaping')"
             ;;
         --runtime)
             TEST_CMD="(cd java && ./gradlew test --tests '*TestRuntimeFormulas')"
@@ -262,7 +262,7 @@ elif [ "$LANG_ARG" = "go" ]; then
             TEST_CMD="(cd go && go test -v -run 'TestSerializing' ./...)"
             ;;
         --filter)
-            TEST_CMD="(cd go && go test -v -run 'TestFilterByFormula' ./...)"
+            TEST_CMD="(cd go && go test -v -run 'TestFilterByFormula|TestFormulaEscaping' ./...)"
             ;;
         --runtime)
             TEST_CMD="(cd go && go test -v -run 'TestRuntimeFormulas' ./...)"
@@ -295,7 +295,7 @@ elif [ "$LANG_ARG" = "cs" ]; then
             TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestSerializing')"
             ;;
         --filter)
-            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestFilterByFormula')"
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestFilterByFormula|FullyQualifiedName~TestFormulaEscaping')"
             ;;
         --runtime)
             TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestRuntimeFormulas')"
@@ -326,7 +326,7 @@ else
             TEST_CMD="npx vitest run $TEST_DIR/serializing.test.$EXT"
             ;;
         --filter)
-            TEST_CMD="npx vitest run $TEST_DIR/filter-by-formula.test.$EXT"
+            TEST_CMD="npx vitest run $TEST_DIR/filter-by-formula.test.$EXT $TEST_DIR/formula-escaping.test.$EXT"
             ;;
         --runtime)
             TEST_CMD="npx vitest run $TEST_DIR/runtime-formulas.test.$EXT"
