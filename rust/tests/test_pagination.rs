@@ -87,6 +87,85 @@ async fn orm_get_spanning_multiple_pages_returns_every_record() {
 }
 
 // =============================================================================
+// TC5 — explicit page size. 25 records over page_size 10 spans 3 pages (10+10+5).
+// =============================================================================
+
+const PAGE_SIZE_COUNT: usize = 25;
+
+#[tokio::test]
+async fn explicit_page_size_returns_all_records_across_pages() {
+    let at = setup();
+    let suite = primary_key("PageSize");
+
+    let models: Vec<PrimaryModel> = (1..=PAGE_SIZE_COUNT)
+        .map(|i| PrimaryModel {
+            primary_key: Some(format!("{suite} {i}")),
+            ..Default::default()
+        })
+        .collect();
+
+    let created = at.primary.create_many(&models).await.unwrap();
+    let created_ids: Vec<String> = created
+        .iter()
+        .map(|m| m.id.as_deref().unwrap().to_string())
+        .collect();
+
+    // page_size 10, NO max_records: the offset loop must walk all 3 pages and return all 25.
+    let params = AirtableQuery::new()
+        .formula(format!("FIND(\"{suite}\", {{Primary Key}})"))
+        .page_size(10);
+    let result: Result<Vec<PrimaryModel>, _> = at.primary.get_many(&params).await;
+    let results = match result {
+        Ok(r) => r,
+        Err(e) => {
+            try_delete_many(&at, &created_ids, &suite).await;
+            panic!("get_many failed: {e:?}");
+        }
+    };
+
+    try_delete_many(&at, &created_ids, &suite).await;
+
+    assert_eq!(results.len(), PAGE_SIZE_COUNT);
+}
+
+#[tokio::test]
+async fn page_size_with_max_records_caps_the_total() {
+    let at = setup();
+    let suite = primary_key("PageCap");
+
+    let models: Vec<PrimaryModel> = (1..=PAGE_SIZE_COUNT)
+        .map(|i| PrimaryModel {
+            primary_key: Some(format!("{suite} {i}")),
+            ..Default::default()
+        })
+        .collect();
+
+    let created = at.primary.create_many(&models).await.unwrap();
+    let created_ids: Vec<String> = created
+        .iter()
+        .map(|m| m.id.as_deref().unwrap().to_string())
+        .collect();
+
+    // page_size 10 + max_records 15: max_records caps the total mid-stream (not a page multiple).
+    let params = AirtableQuery::new()
+        .formula(format!("FIND(\"{suite}\", {{Primary Key}})"))
+        .page_size(10)
+        .max_records(15);
+    let result: Result<Vec<PrimaryModel>, _> = at.primary.get_many(&params).await;
+    let results = match result {
+        Ok(r) => r,
+        Err(e) => {
+            try_delete_many(&at, &created_ids, &suite).await;
+            panic!("get_many failed: {e:?}");
+        }
+    };
+
+    try_delete_many(&at, &created_ids, &suite).await;
+
+    assert_eq!(results.len(), 15);
+}
+
+// =============================================================================
 // Dict / untyped accessor
 // =============================================================================
 

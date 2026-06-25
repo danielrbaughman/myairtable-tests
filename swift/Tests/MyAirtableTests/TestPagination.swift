@@ -76,6 +76,57 @@ struct TestPagination {
         }
     }
 
+    // MARK: - TC5 — explicit page size
+
+    // 25 records over pageSize 10 spans 3 pages (10 + 10 + 5).
+    private static let pageSizeCount = 25
+
+    @Test("Explicit pageSize returns all records across pages")
+    func explicitPageSizeReturnsAllRecordsAcrossPages() async throws {
+        let suite = TestSetup.primaryKey(for: "Pagination", "PageSize")
+        let models = (1...Self.pageSizeCount).map { PrimaryModel(primaryKey: "\(suite) \($0)") }
+        var createdIds: [String] = []
+
+        do {
+            let created = try await airtable.primary.create(models)
+            createdIds = created.compactMap { $0.id }
+
+            // pageSize 10, NO maxRecords: the offset loop must walk all 3 pages and return all 25.
+            let results = try await airtable.primary.get(
+                AirtableQuery().formula(formula(suite)).pageSize(10)
+            )
+            #expect(results.count == Self.pageSizeCount)
+
+            try await tryDeleteMany(createdIds, suite: suite)
+        } catch {
+            try await tryDeleteMany(createdIds, suite: suite)
+            throw error
+        }
+    }
+
+    @Test("pageSize with maxRecords caps the total")
+    func pageSizeWithMaxRecordsCapsTheTotal() async throws {
+        let suite = TestSetup.primaryKey(for: "Pagination", "PageCap")
+        let models = (1...Self.pageSizeCount).map { PrimaryModel(primaryKey: "\(suite) \($0)") }
+        var createdIds: [String] = []
+
+        do {
+            let created = try await airtable.primary.create(models)
+            createdIds = created.compactMap { $0.id }
+
+            // pageSize 10 + maxRecords 15: maxRecords caps the total mid-stream (not a page multiple).
+            let results = try await airtable.primary.get(
+                AirtableQuery().formula(formula(suite)).pageSize(10).maxRecords(15)
+            )
+            #expect(results.count == 15)
+
+            try await tryDeleteMany(createdIds, suite: suite)
+        } catch {
+            try await tryDeleteMany(createdIds, suite: suite)
+            throw error
+        }
+    }
+
     // MARK: - Helpers
 
     /// FIND("<suite>", {Primary Key}) — scopes a list to this run's records.

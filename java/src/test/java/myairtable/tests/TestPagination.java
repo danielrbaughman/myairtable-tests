@@ -85,6 +85,66 @@ class TestPagination {
     tryDeleteMany(createdIds, suite);
   }
 
+  // TC5 — explicit page size. 25 records over pageSize 10 spans 3 pages (10+10+5).
+  private static final int PAGE_SIZE_COUNT = 25;
+
+  @Test
+  void explicitPageSizeReturnsAllRecordsAcrossPages() {
+    String suite = TestSetup.primaryKey("Pagination", "PageSize");
+    List<PrimaryModel> models = new ArrayList<>();
+    for (int i = 1; i <= PAGE_SIZE_COUNT; i++) {
+      models.add(PrimaryModel.builder().primaryKey(suite + " " + i).build());
+    }
+    List<String> createdIds = List.of();
+    try {
+      List<PrimaryModel> created = airtable.primary().create(models);
+      createdIds = created.stream().map(PrimaryModel::getId).toList();
+
+      // pageSize 10, NO maxRecords: the offset loop must walk all 3 pages and return all 25.
+      List<PrimaryModel> results =
+          airtable
+              .primary()
+              .get(
+                  new AirtableQuery()
+                      .withFormula("FIND(\"" + suite + "\", {Primary Key})")
+                      .withPageSize(10));
+      assertEquals(PAGE_SIZE_COUNT, results.size());
+    } catch (Throwable e) {
+      tryDeleteMany(createdIds, suite);
+      throw e;
+    }
+    tryDeleteMany(createdIds, suite);
+  }
+
+  @Test
+  void pageSizeWithMaxRecordsCapsTheTotal() {
+    String suite = TestSetup.primaryKey("Pagination", "PageCap");
+    List<PrimaryModel> models = new ArrayList<>();
+    for (int i = 1; i <= PAGE_SIZE_COUNT; i++) {
+      models.add(PrimaryModel.builder().primaryKey(suite + " " + i).build());
+    }
+    List<String> createdIds = List.of();
+    try {
+      List<PrimaryModel> created = airtable.primary().create(models);
+      createdIds = created.stream().map(PrimaryModel::getId).toList();
+
+      // pageSize 10 + maxRecords 15: maxRecords caps the total mid-stream (not a page multiple).
+      List<PrimaryModel> results =
+          airtable
+              .primary()
+              .get(
+                  new AirtableQuery()
+                      .withFormula("FIND(\"" + suite + "\", {Primary Key})")
+                      .withPageSize(10)
+                      .withMaxRecords(15));
+      assertEquals(15, results.size());
+    } catch (Throwable e) {
+      tryDeleteMany(createdIds, suite);
+      throw e;
+    }
+    tryDeleteMany(createdIds, suite);
+  }
+
   // ---- cleanup ----
 
   /**

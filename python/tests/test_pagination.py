@@ -77,3 +77,47 @@ def test_dict_get_spanning_multiple_pages_returns_every_record(airtable: Airtabl
         assert {r["id"] for r in results} == set(created_ids)
     finally:
         _try_delete_many(airtable, created_ids, suite)
+
+
+# TC5 - explicit page size. 25 records over page_size 10 spans 3 pages (10+10+5).
+PAGE_SIZE_COUNT = 25
+
+
+def test_explicit_page_size_returns_all_records_across_pages(airtable: Airtable):
+    suite = _suite("PageSize")
+    models = []
+    for i in range(1, PAGE_SIZE_COUNT + 1):
+        m = PrimaryModel()
+        m.primary_key = f"{suite} {i}"
+        models.append(m)
+    created_ids: list[str] = []
+    try:
+        created = airtable.primary.create(models)
+        created_ids = [r.id for r in created]
+        assert len(created) == PAGE_SIZE_COUNT
+
+        # page_size 10, NO max_records: the offset loop must walk all 3 pages and return all 25.
+        results = airtable.primary.get(formula=f'FIND("{suite}", {{Primary Key}})', page_size=10)
+        assert len(results) == PAGE_SIZE_COUNT
+    finally:
+        _try_delete_many(airtable, created_ids, suite)
+
+
+def test_page_size_with_max_records_caps_the_total(airtable: Airtable):
+    suite = _suite("PageCap")
+    models = []
+    for i in range(1, PAGE_SIZE_COUNT + 1):
+        m = PrimaryModel()
+        m.primary_key = f"{suite} {i}"
+        models.append(m)
+    created_ids: list[str] = []
+    try:
+        created = airtable.primary.create(models)
+        created_ids = [r.id for r in created]
+        assert len(created) == PAGE_SIZE_COUNT
+
+        # page_size 10 + max_records 15: max_records caps the total mid-stream (not a page multiple).
+        results = airtable.primary.get(formula=f'FIND("{suite}", {{Primary Key}})', page_size=10, max_records=15)
+        assert len(results) == 15
+    finally:
+        _try_delete_many(airtable, created_ids, suite)

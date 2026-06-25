@@ -94,3 +94,63 @@ describe("TC1 — Multi-page pagination", () => {
 		TIMEOUT_MS,
 	);
 });
+
+// TC5 — explicit page size. 25 records over pageSize 10 spans 3 pages (10+10+5).
+const PAGE_SIZE_COUNT = 25;
+
+describe("TC5 — explicit page size", () => {
+	it(
+		"pageSize 10, no maxRecords: the offset loop walks all 3 pages and returns every record",
+		async () => {
+			const suite = uniqueSuite("PageSize");
+			const models = Array.from(
+				{ length: PAGE_SIZE_COUNT },
+				(_, i) => new PrimaryModel({ primaryKey: `${suite} ${i + 1}` }),
+			);
+			let createdIds = [];
+			try {
+				const created = await airtable.primary.create(models);
+				createdIds = created.map((m) => m.id);
+				expect(created.length).toBe(PAGE_SIZE_COUNT);
+
+				// pageSize 10, NO maxRecords: the offset loop must walk all 3 pages and return all 25.
+				const results = await airtable.primary.get({
+					formula: `FIND("${suite}", {Primary Key})`,
+					pageSize: 10,
+				});
+				expect(results.length).toBe(PAGE_SIZE_COUNT);
+			} finally {
+				await tryDeleteMany(createdIds, suite);
+			}
+		},
+		TIMEOUT_MS,
+	);
+
+	it(
+		"pageSize 10 + maxRecords 15: maxRecords caps the total mid-stream",
+		async () => {
+			const suite = uniqueSuite("PageCap");
+			const models = Array.from(
+				{ length: PAGE_SIZE_COUNT },
+				(_, i) => new PrimaryModel({ primaryKey: `${suite} ${i + 1}` }),
+			);
+			let createdIds = [];
+			try {
+				const created = await airtable.primary.create(models);
+				createdIds = created.map((m) => m.id);
+				expect(created.length).toBe(PAGE_SIZE_COUNT);
+
+				// pageSize 10 + maxRecords 15: maxRecords caps the total (not a page multiple).
+				const results = await airtable.primary.get({
+					formula: `FIND("${suite}", {Primary Key})`,
+					pageSize: 10,
+					maxRecords: 15,
+				});
+				expect(results.length).toBe(15);
+			} finally {
+				await tryDeleteMany(createdIds, suite);
+			}
+		},
+		TIMEOUT_MS,
+	);
+});

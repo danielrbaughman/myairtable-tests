@@ -86,6 +86,66 @@ public class TestPagination
         }
     }
 
+    // TC5 — explicit page size. 25 records over pageSize 10 spans 3 pages (10+10+5).
+    private const int PageSizeCount = 25;
+
+    [Fact]
+    public async Task ExplicitPageSizeReturnsAllRecordsAcrossPages()
+    {
+        var suite = TestSetup.PrimaryKey("Pagination", "PageSize");
+        var models = Enumerable
+            .Range(1, PageSizeCount)
+            .Select(i => new PrimaryModel { PrimaryKey = $"{suite} {i}" })
+            .ToList();
+        var createdIds = new List<string>();
+        try
+        {
+            var created = await _airtable.Primary.CreateAsync(models);
+            createdIds = created.Select(m => m.Id!).ToList();
+
+            // pageSize 10, NO maxRecords: the offset loop must walk all 3 pages and return all 25.
+            var results = await _airtable.Primary.GetAsync(
+                new AirtableQuery()
+                    .WithFormula($"FIND(\"{suite}\", {{Primary Key}})")
+                    .WithPageSize(10)
+            );
+            Assert.Equal(PageSizeCount, results.Count);
+        }
+        finally
+        {
+            await TryDeleteManyAsync(createdIds, suite);
+        }
+    }
+
+    [Fact]
+    public async Task PageSizeWithMaxRecordsCapsTheTotal()
+    {
+        var suite = TestSetup.PrimaryKey("Pagination", "PageCap");
+        var models = Enumerable
+            .Range(1, PageSizeCount)
+            .Select(i => new PrimaryModel { PrimaryKey = $"{suite} {i}" })
+            .ToList();
+        var createdIds = new List<string>();
+        try
+        {
+            var created = await _airtable.Primary.CreateAsync(models);
+            createdIds = created.Select(m => m.Id!).ToList();
+
+            // pageSize 10 + maxRecords 15: maxRecords caps the total mid-stream (not a page multiple).
+            var results = await _airtable.Primary.GetAsync(
+                new AirtableQuery()
+                    .WithFormula($"FIND(\"{suite}\", {{Primary Key}})")
+                    .WithPageSize(10)
+                    .WithMaxRecords(15)
+            );
+            Assert.Equal(15, results.Count);
+        }
+        finally
+        {
+            await TryDeleteManyAsync(createdIds, suite);
+        }
+    }
+
     // ---- cleanup ----
 
     private async Task TryDeleteManyAsync(IReadOnlyList<string> ids, string suite)

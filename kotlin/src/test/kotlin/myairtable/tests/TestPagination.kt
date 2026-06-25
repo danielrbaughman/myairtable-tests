@@ -65,6 +65,55 @@ class TestPagination {
             }
         }
 
+    // TC5 — explicit page size. 25 records over pageSize 10 spans 3 pages (10+10+5).
+    private val pageSizeCount = 25
+
+    @Test
+    fun explicitPageSizeReturnsAllRecordsAcrossPages() =
+        runBlocking {
+            val suite = TestSetup.primaryKey("Pagination", "PageSize")
+            val models = (1..pageSizeCount).map { PrimaryModel(primaryKey = "$suite $it") }
+            var createdIds: List<String> = emptyList()
+            try {
+                val created = airtable.primary.create(models)
+                createdIds = created.mapNotNull { it.id }
+
+                // pageSize 10, NO maxRecords: the offset loop must walk all 3 pages and return all 25.
+                val results =
+                    airtable.primary.get(
+                        AirtableQuery(formula = """FIND("$suite", {Primary Key})""", pageSize = 10),
+                    )
+                assertEquals(pageSizeCount, results.size)
+            } finally {
+                tryDeleteMany(createdIds, suite)
+            }
+        }
+
+    @Test
+    fun pageSizeWithMaxRecordsCapsTheTotal() =
+        runBlocking {
+            val suite = TestSetup.primaryKey("Pagination", "PageCap")
+            val models = (1..pageSizeCount).map { PrimaryModel(primaryKey = "$suite $it") }
+            var createdIds: List<String> = emptyList()
+            try {
+                val created = airtable.primary.create(models)
+                createdIds = created.mapNotNull { it.id }
+
+                // pageSize 10 + maxRecords 15: maxRecords caps the total mid-stream (not a page multiple).
+                val results =
+                    airtable.primary.get(
+                        AirtableQuery(
+                            formula = """FIND("$suite", {Primary Key})""",
+                            pageSize = 10,
+                            maxRecords = 15,
+                        ),
+                    )
+                assertEquals(15, results.size)
+            } finally {
+                tryDeleteMany(createdIds, suite)
+            }
+        }
+
     // ---- cleanup ----
 
     private suspend fun tryDeleteMany(

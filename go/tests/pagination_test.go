@@ -16,6 +16,9 @@ import (
 // 105 > the 100-record default page size, so a no-maxRecords list spans two pages.
 const paginationCount = 105
 
+// TC5 — explicit page size. 25 records over pageSize 10 spans 3 pages (10+10+5).
+const pageSizeCount = 25
+
 func TestPagination(t *testing.T) {
 	at := newAirtable(t)
 	ctx := context.Background()
@@ -123,6 +126,68 @@ func TestPagination(t *testing.T) {
 		}
 		if !sameIDSet(createdIDs, resultIDs) {
 			t.Fatalf("returned id set does not match created id set")
+		}
+	})
+
+	// TC5 — explicit page size: WithPageSize(10) over 25 records, NO maxRecords. The
+	// offset loop must reassemble 3 pages (10+10+5) and return all 25.
+	t.Run("ExplicitPageSizeReturnsAllRecordsAcrossPages", func(t *testing.T) {
+		suite := primaryKey("Pagination", "PageSize")
+		models := make([]*airtable.PrimaryModel, pageSizeCount)
+		for i := range models {
+			models[i] = &airtable.PrimaryModel{PrimaryKey: airtable.String(fmt.Sprintf("%s %d", suite, i+1))}
+		}
+
+		var createdIDs []string
+		defer func() { tryDeleteMany(createdIDs, suite) }()
+
+		created, err := at.Primary.CreateMany(ctx, models)
+		if err != nil {
+			t.Fatalf("create: %v", err)
+		}
+		createdIDs = make([]string, 0, len(created))
+		for _, c := range created {
+			createdIDs = append(createdIDs, c.ID())
+		}
+
+		// pageSize 10, no maxRecords: the offset loop must walk all 3 pages and return all 25.
+		results, err := at.Primary.GetMany(ctx, (&airtable.Query{}).WithFilter(findFilter(suite)).WithPageSize(10))
+		if err != nil {
+			t.Fatalf("list: %v", err)
+		}
+		if len(results) != pageSizeCount {
+			t.Fatalf("expected %d results, got %d", pageSizeCount, len(results))
+		}
+	})
+
+	// TC5 — explicit page size + maxRecords: WithPageSize(10) AND WithMaxRecords(15)
+	// over 25 records. maxRecords caps the total mid-stream (not a page multiple).
+	t.Run("PageSizeWithMaxRecordsCapsTheTotal", func(t *testing.T) {
+		suite := primaryKey("Pagination", "PageCap")
+		models := make([]*airtable.PrimaryModel, pageSizeCount)
+		for i := range models {
+			models[i] = &airtable.PrimaryModel{PrimaryKey: airtable.String(fmt.Sprintf("%s %d", suite, i+1))}
+		}
+
+		var createdIDs []string
+		defer func() { tryDeleteMany(createdIDs, suite) }()
+
+		created, err := at.Primary.CreateMany(ctx, models)
+		if err != nil {
+			t.Fatalf("create: %v", err)
+		}
+		createdIDs = make([]string, 0, len(created))
+		for _, c := range created {
+			createdIDs = append(createdIDs, c.ID())
+		}
+
+		// pageSize 10 + maxRecords 15: maxRecords caps the total mid-stream.
+		results, err := at.Primary.GetMany(ctx, (&airtable.Query{}).WithFilter(findFilter(suite)).WithPageSize(10).WithMaxRecords(15))
+		if err != nil {
+			t.Fatalf("list: %v", err)
+		}
+		if len(results) != 15 {
+			t.Fatalf("expected %d results, got %d", 15, len(results))
 		}
 	})
 }
