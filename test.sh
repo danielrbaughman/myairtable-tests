@@ -91,7 +91,7 @@ if [ "$LANG_ARG" = "py" ]; then
             TEST_CMD="uv run pytest -x -v $TEST_DIR"
             ;;
         --crud)
-            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_dict_crud_via_table.py $TEST_DIR/test_model_crud_via_model.py $TEST_DIR/test_model_crud_via_table.py"
+            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_dict_crud_via_table.py $TEST_DIR/test_model_crud_via_model.py $TEST_DIR/test_model_crud_via_table.py $TEST_DIR/test_pagination.py"
             ;;
         --json)
             TEST_CMD="uv run pytest -x -v $TEST_DIR/test_serializing.py"
@@ -122,7 +122,7 @@ elif [ "$LANG_ARG" = "rs" ]; then
             TEST_CMD="cargo test --manifest-path Cargo.toml"
             ;;
         --crud)
-            TEST_CMD="cargo test --test test_struct_crud_via_table --test test_orm_crud_via_table --test test_orm_crud_via_model"
+            TEST_CMD="cargo test --test test_struct_crud_via_table --test test_orm_crud_via_table --test test_orm_crud_via_model --test test_pagination"
             ;;
         --json)
             TEST_CMD="cargo test --test test_serializing"
@@ -155,7 +155,7 @@ elif [ "$LANG_ARG" = "swift" ]; then
             TEST_CMD="swift test --package-path swift"
             ;;
         --crud)
-            TEST_CMD="swift test --package-path swift --filter 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel'"
+            TEST_CMD="swift test --package-path swift --filter 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel|TestPagination'"
             ;;
         --json)
             TEST_CMD="swift test --package-path swift --filter 'TestSerializing'"
@@ -189,7 +189,7 @@ elif [ "$LANG_ARG" = "kotlin" ]; then
             TEST_CMD="(cd kotlin && ./gradlew test)"
             ;;
         --crud)
-            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel')"
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel' --tests '*TestPagination')"
             ;;
         --json)
             TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestSerializing')"
@@ -223,7 +223,7 @@ elif [ "$LANG_ARG" = "java" ]; then
             TEST_CMD="(cd java && ./gradlew test)"
             ;;
         --crud)
-            TEST_CMD="(cd java && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel')"
+            TEST_CMD="(cd java && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel' --tests '*TestPagination')"
             ;;
         --json)
             TEST_CMD="(cd java && ./gradlew test --tests '*TestSerializing*')"
@@ -256,7 +256,7 @@ elif [ "$LANG_ARG" = "go" ]; then
             TEST_CMD="(cd go && go test -v ./...)"
             ;;
         --crud)
-            TEST_CMD="(cd go && go test -v -run 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel' ./...)"
+            TEST_CMD="(cd go && go test -v -run 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel|TestPagination' ./...)"
             ;;
         --json)
             TEST_CMD="(cd go && go test -v -run 'TestSerializing' ./...)"
@@ -289,7 +289,7 @@ elif [ "$LANG_ARG" = "cs" ]; then
             TEST_CMD="(cd csharp && dotnet test --nologo)"
             ;;
         --crud)
-            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestStructCrudViaTable|FullyQualifiedName~TestOrmCrudViaTable|FullyQualifiedName~TestOrmCrudViaModel')"
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestStructCrudViaTable|FullyQualifiedName~TestOrmCrudViaTable|FullyQualifiedName~TestOrmCrudViaModel|FullyQualifiedName~TestPagination')"
             ;;
         --json)
             TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestSerializing')"
@@ -320,7 +320,7 @@ else
             TEST_CMD="npx vitest run $TEST_DIR"
             ;;
         --crud)
-            TEST_CMD="npx vitest run $TEST_DIR/interface-crud-via-table.test.$EXT $TEST_DIR/model-crud-via-model.test.$EXT $TEST_DIR/model-crud-via-table.test.$EXT $TEST_DIR/record-crud-via-table.test.$EXT"
+            TEST_CMD="npx vitest run $TEST_DIR/interface-crud-via-table.test.$EXT $TEST_DIR/model-crud-via-model.test.$EXT $TEST_DIR/model-crud-via-table.test.$EXT $TEST_DIR/record-crud-via-table.test.$EXT $TEST_DIR/pagination.test.$EXT"
             ;;
         --json)
             TEST_CMD="npx vitest run $TEST_DIR/serializing.test.$EXT"

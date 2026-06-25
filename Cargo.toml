@@ -49,6 +49,10 @@ path = "rust/tests/test_runtime_formulas.rs"
 name = "test_special_error_deser"
 path = "rust/tests/test_special_error_deser.rs"
 
+[[test]]
+name = "test_pagination"
+path = "rust/tests/test_pagination.rs"
+
 [[bin]]
 name = "playground"
 path = "playground.rs"
