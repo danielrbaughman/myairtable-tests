@@ -6,4 +6,5 @@ export * from "./dynamic";
 export * from "./static/formula";
 export * from "./static/airtable-model";
 export * from "./static/special-types";
+export * from "./static/errors";
 
