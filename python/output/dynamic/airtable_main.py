@@ -64,7 +64,11 @@ class Airtable:
         set_airtable_config(self.base_id, api_key, endpoint_url)
         self._cache_seconds: int = cache_seconds
         # pyairtable retries 429 only by default; also retry transient 5xx (incl. 503).
-        self._api = Api(api_key=api_key, endpoint_url=endpoint_url, retry_strategy=retry_strategy(status_forcelist=(429, 500, 502, 503, 504)))
+        # allowed_methods excludes POST so create (POST) is never retried (urllib3 is method-based,
+        # so it can't distinguish idempotent from non-idempotent at the body level). Residuals:
+        # (1) PATCH upsert-without-merge is still retried (can't be told apart from update-by-id);
+        # (2) POST no longer retries even on 429 (safe: 429 means the request was rejected, nothing applied).
+        self._api = Api(api_key=api_key, endpoint_url=endpoint_url, retry_strategy=retry_strategy(status_forcelist=(429, 500, 502, 503, 504), allowed_methods=frozenset({"GET", "HEAD", "OPTIONS", "TRACE", "PUT", "DELETE", "PATCH"})))
 
     def table(self, table_name: TableName) -> AirtableTable:
         """Get a table by its Airtable name."""

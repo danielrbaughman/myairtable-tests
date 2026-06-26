@@ -22,3 +22,12 @@ def test_api_retries_transient_5xx_not_just_429() -> None:
     # pyairtable's default is {429} only; we widen it to cover transient 5xx, incl. 503.
     assert 429 in forcelist
     assert {500, 502, 503, 504}.issubset(forcelist), f"expected 5xx in retry forcelist, got {sorted(forcelist)}"
+
+    # Idempotency policy (urllib3 is method-based): POST (create) must NOT be retried so a 5xx on
+    # create is never re-applied; idempotent methods like GET still retry. None would mean "all
+    # methods" (the bug), so allowed_methods must be an explicit set excluding POST.
+    allowed = adapter.max_retries.allowed_methods
+    assert allowed is not None, "allowed_methods must be set explicitly (None retries ALL methods, incl. POST)"
+    allowed = {m.upper() for m in allowed}
+    assert "POST" not in allowed, f"POST must be excluded from retries, got {sorted(allowed)}"
+    assert "GET" in allowed, f"GET (idempotent) must still be retried, got {sorted(allowed)}"

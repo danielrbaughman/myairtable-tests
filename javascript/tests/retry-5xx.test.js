@@ -79,3 +79,35 @@ describe("transient 5xx retry", () => {
 		expect(calls).toBe(retryConfigClass(table).RETRY_MAX_ATTEMPTS + 1);
 	});
 });
+
+// Idempotency policy: create (POST) is non-idempotent. A retried 5xx after a write that may have
+// partially succeeded could insert duplicates, so create must NOT retry 5xx — it surfaces immediately
+// (exactly 1 attempt). 429 (request rejected, nothing applied) is unaffected by this and still retries
+// for create, but that is handled inside airtable.js and not exercised by these offline stubs.
+describe("create is non-idempotent: 5xx does not retry", () => {
+	it("does not retry a 503 on create (single attempt)", async () => {
+		const table = offlineTable();
+		let calls = 0;
+		table._table = {
+			create: vi.fn(async () => {
+				calls++;
+				throw err503;
+			}),
+		};
+		await expect(table.create({ fields: {} })).rejects.toThrow();
+		expect(calls).toBe(1); // no retry — 5xx on a non-idempotent op surfaces immediately
+	});
+
+	it("does not retry a 422 on create either (single attempt)", async () => {
+		const table = offlineTable();
+		let calls = 0;
+		table._table = {
+			create: vi.fn(async () => {
+				calls++;
+				throw err422;
+			}),
+		};
+		await expect(table.create({ fields: {} })).rejects.toThrow();
+		expect(calls).toBe(1);
+	});
+});
