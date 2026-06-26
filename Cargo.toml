@@ -81,6 +81,10 @@ path = "rust/tests/test_field_round_trip.rs"
 name = "test_multi_field_sort"
 path = "rust/tests/test_multi_field_sort.rs"
 
+[[test]]
+name = "test_upsert_depth"
+path = "rust/tests/test_upsert_depth.rs"
+
 [[bin]]
 name = "playground"
 path = "playground.rs"

@@ -122,7 +122,7 @@ elif [ "$LANG_ARG" = "rs" ]; then
             TEST_CMD="cargo test --manifest-path Cargo.toml"
             ;;
         --crud)
-            TEST_CMD="cargo test --test test_struct_crud_via_table --test test_orm_crud_via_table --test test_orm_crud_via_model --test test_pagination --test test_error_paths --test test_field_round_trip"
+            TEST_CMD="cargo test --test test_struct_crud_via_table --test test_orm_crud_via_table --test test_orm_crud_via_model --test test_pagination --test test_error_paths --test test_field_round_trip --test test_upsert_depth"
             ;;
         --json)
             TEST_CMD="cargo test --test test_serializing"

@@ -70,9 +70,21 @@ impl FormulasTable {
     ) -> Result<Vec<FormulasModel>, AirtableError> {
         self.orm.update_many(records).await
     }
-    /// Upsert a model. Creates if no ID, updates if ID exists.
-    pub async fn upsert(&self, model: &mut FormulasModel) -> Result<(), AirtableError> {
-        self.orm.upsert(model).await
+    /// Upsert a model, updated in place. With `fields_to_merge_on`, Airtable matches an existing record by those field values (server-side performUpsert); otherwise it creates if no ID / updates by ID.
+    pub async fn upsert(
+        &self,
+        model: &mut FormulasModel,
+        fields_to_merge_on: Option<&[&str]>,
+    ) -> Result<(), AirtableError> {
+        self.orm.upsert(model, fields_to_merge_on).await
+    }
+    /// Upsert multiple models in one batched server-side performUpsert, matching by `fields_to_merge_on`. Returns the upserted models.
+    pub async fn upsert_many(
+        &self,
+        models: &[FormulasModel],
+        fields_to_merge_on: &[&str],
+    ) -> Result<Vec<FormulasModel>, AirtableError> {
+        self.orm.upsert_many(models, fields_to_merge_on).await
     }
     /// Delete a record.
     pub async fn delete_one(&self, record_id: &RecordId) -> Result<(), AirtableError> {
@@ -153,9 +165,21 @@ impl PrimaryTable {
     ) -> Result<Vec<PrimaryModel>, AirtableError> {
         self.orm.update_many(records).await
     }
-    /// Upsert a model. Creates if no ID, updates if ID exists.
-    pub async fn upsert(&self, model: &mut PrimaryModel) -> Result<(), AirtableError> {
-        self.orm.upsert(model).await
+    /// Upsert a model, updated in place. With `fields_to_merge_on`, Airtable matches an existing record by those field values (server-side performUpsert); otherwise it creates if no ID / updates by ID.
+    pub async fn upsert(
+        &self,
+        model: &mut PrimaryModel,
+        fields_to_merge_on: Option<&[&str]>,
+    ) -> Result<(), AirtableError> {
+        self.orm.upsert(model, fields_to_merge_on).await
+    }
+    /// Upsert multiple models in one batched server-side performUpsert, matching by `fields_to_merge_on`. Returns the upserted models.
+    pub async fn upsert_many(
+        &self,
+        models: &[PrimaryModel],
+        fields_to_merge_on: &[&str],
+    ) -> Result<Vec<PrimaryModel>, AirtableError> {
+        self.orm.upsert_many(models, fields_to_merge_on).await
     }
     /// Delete a record.
     pub async fn delete_one(&self, record_id: &RecordId) -> Result<(), AirtableError> {
@@ -239,9 +263,21 @@ impl SecondaryTable {
     ) -> Result<Vec<SecondaryModel>, AirtableError> {
         self.orm.update_many(records).await
     }
-    /// Upsert a model. Creates if no ID, updates if ID exists.
-    pub async fn upsert(&self, model: &mut SecondaryModel) -> Result<(), AirtableError> {
-        self.orm.upsert(model).await
+    /// Upsert a model, updated in place. With `fields_to_merge_on`, Airtable matches an existing record by those field values (server-side performUpsert); otherwise it creates if no ID / updates by ID.
+    pub async fn upsert(
+        &self,
+        model: &mut SecondaryModel,
+        fields_to_merge_on: Option<&[&str]>,
+    ) -> Result<(), AirtableError> {
+        self.orm.upsert(model, fields_to_merge_on).await
+    }
+    /// Upsert multiple models in one batched server-side performUpsert, matching by `fields_to_merge_on`. Returns the upserted models.
+    pub async fn upsert_many(
+        &self,
+        models: &[SecondaryModel],
+        fields_to_merge_on: &[&str],
+    ) -> Result<Vec<SecondaryModel>, AirtableError> {
+        self.orm.upsert_many(models, fields_to_merge_on).await
     }
     /// Delete a record.
     pub async fn delete_one(&self, record_id: &RecordId) -> Result<(), AirtableError> {
@@ -322,9 +358,21 @@ impl TertiaryTable {
     ) -> Result<Vec<TertiaryModel>, AirtableError> {
         self.orm.update_many(records).await
     }
-    /// Upsert a model. Creates if no ID, updates if ID exists.
-    pub async fn upsert(&self, model: &mut TertiaryModel) -> Result<(), AirtableError> {
-        self.orm.upsert(model).await
+    /// Upsert a model, updated in place. With `fields_to_merge_on`, Airtable matches an existing record by those field values (server-side performUpsert); otherwise it creates if no ID / updates by ID.
+    pub async fn upsert(
+        &self,
+        model: &mut TertiaryModel,
+        fields_to_merge_on: Option<&[&str]>,
+    ) -> Result<(), AirtableError> {
+        self.orm.upsert(model, fields_to_merge_on).await
+    }
+    /// Upsert multiple models in one batched server-side performUpsert, matching by `fields_to_merge_on`. Returns the upserted models.
+    pub async fn upsert_many(
+        &self,
+        models: &[TertiaryModel],
+        fields_to_merge_on: &[&str],
+    ) -> Result<Vec<TertiaryModel>, AirtableError> {
+        self.orm.upsert_many(models, fields_to_merge_on).await
     }
     /// Delete a record.
     pub async fn delete_one(&self, record_id: &RecordId) -> Result<(), AirtableError> {

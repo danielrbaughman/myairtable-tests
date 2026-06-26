@@ -588,7 +588,7 @@ async fn upsert_as_create() {
     );
 
     // Upsert without ID → creates
-    at.primary.upsert(&mut model).await.unwrap();
+    at.primary.upsert(&mut model, None).await.unwrap();
     assert!(model.id.is_some());
     assert_eq!(model.primary_key.as_deref(), Some("Upsert Create Test"));
 
@@ -616,7 +616,7 @@ async fn upsert_as_update() {
 
     // Modify and upsert → updates
     model.primary_key = Some("Upsert Updated".to_string());
-    at.primary.upsert(&mut model).await.unwrap();
+    at.primary.upsert(&mut model, None).await.unwrap();
 
     assert_eq!(model.id.as_deref(), Some(id.as_str()));
     assert_eq!(model.primary_key.as_deref(), Some("Upsert Updated"));
