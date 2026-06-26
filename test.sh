@@ -320,7 +320,7 @@ else
             TEST_CMD="npx vitest run $TEST_DIR"
             ;;
         --crud)
-            TEST_CMD="npx vitest run $TEST_DIR/interface-crud-via-table.test.$EXT $TEST_DIR/model-crud-via-model.test.$EXT $TEST_DIR/model-crud-via-table.test.$EXT $TEST_DIR/record-crud-via-table.test.$EXT $TEST_DIR/pagination.test.$EXT $TEST_DIR/error-paths.test.$EXT $TEST_DIR/field-round-trip.test.$EXT"
+            TEST_CMD="npx vitest run $TEST_DIR/interface-crud-via-table.test.$EXT $TEST_DIR/model-crud-via-model.test.$EXT $TEST_DIR/model-crud-via-table.test.$EXT $TEST_DIR/record-crud-via-table.test.$EXT $TEST_DIR/pagination.test.$EXT $TEST_DIR/error-paths.test.$EXT $TEST_DIR/field-round-trip.test.$EXT $TEST_DIR/upsert-depth.test.$EXT"
             ;;
         --json)
             TEST_CMD="npx vitest run $TEST_DIR/serializing.test.$EXT"
