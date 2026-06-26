@@ -77,7 +77,20 @@ class TestUpsertDepth {
                             listOf(PrimaryFields.singleLineTextId),
                         )
                     }
-                assertIs<AirtableException.Api>(ex)
+                // Tighten beyond "some typed error" to the SPECIFIC rejection, matching
+                // Rust (`assert_eq!(status, 422)`) and Python (`status_code == 422`).
+                // Airtable answers this with HTTP 422 + the structured envelope
+                // {"error": {"type": "INVALID_VALUE_FOR_COLUMN",
+                //            "message": "Cannot update more than one record for fields to merge on"}}.
+                // The Kotlin runtime decodes that envelope into AirtableException.Api(code, apiMessage)
+                // and does not retain the HTTP status (only AirtableException.Http carries statusCode),
+                // so we pin the error's specific 422 type code + message rather than the numeric status.
+                val api = assertIs<AirtableException.Api>(ex)
+                assertEquals("INVALID_VALUE_FOR_COLUMN", api.code, "multiple-match upsert must surface the specific 422 error type, not a generic one")
+                assertTrue(
+                    api.apiMessage.contains("more than one record", ignoreCase = true),
+                    "expected the multiple-match rejection message, got: ${api.apiMessage}",
+                )
             } finally {
                 tryDeleteMany(ids)
             }

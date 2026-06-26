@@ -268,7 +268,7 @@ elif [ "$LANG_ARG" = "go" ]; then
             TEST_CMD="(cd go && go test -v -run 'TestRuntimeFormulas|TestRuntimeFormulaVariety|TestPrimaryFormulaRuntime' ./...)"
             ;;
         --cache)
-            TEST_CMD="(cd go && go test -v -run 'TestCaching|TestCacheConcurrency' ./...)"
+            TEST_CMD="(cd go && go test -v -race -run 'TestCaching|TestCacheConcurrency' ./...)"
             ;;
         *)
             echo "Unknown option: $SUITE"

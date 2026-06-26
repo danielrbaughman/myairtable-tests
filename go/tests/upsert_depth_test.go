@@ -102,6 +102,12 @@ func TestUpsertDepth(t *testing.T) {
 		}
 		api := asAPIError(t, err)
 		t.Logf("multiple match -> *APIError{StatusCode:%d, Type:%q}: %v", api.StatusCode, api.Type, err)
+		// A merge key matching multiple records is an unprocessable request:
+		// assert HTTP 422 (matching Rust's `assert_eq!(status, 422)` and Python's
+		// `response.status_code == 422`), not just a generic error.
+		if api.StatusCode != 422 {
+			t.Fatalf("expected 422 for a merge key matching multiple records, got %d", api.StatusCode)
+		}
 	})
 }
 
