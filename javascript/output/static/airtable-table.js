@@ -219,9 +219,7 @@ class AirtableTable {
 			} else {
 				const record = this.mapToIds([recordOrRecords])[0];
 				const isUsingFieldNames = this.isUsingFieldNames([record]);
-				const createdRecords = await this.withRetry(() =>
-					this._table.create([this.toWritableRecord(record)]),
-				);
+				const createdRecords = await this.withRetry(() => this._table.create([this.toWritableRecord(record)]));
 				if (isUsingFieldNames) this.mapToNames(createdRecords);
 				const created = createdRecords[0];
 				return inputType === "interface" ? this.toInterface(created) : created;
@@ -277,9 +275,7 @@ class AirtableTable {
 			} else {
 				const record = this.mapToIds([recordOrRecords])[0];
 				const isUsingFieldNames = this.isUsingFieldNames([record]);
-				const updatedRecords = await this.withRetry(() =>
-					this._table.update([this.toWritableRecord(record)]),
-				);
+				const updatedRecords = await this.withRetry(() => this._table.update([this.toWritableRecord(record)]));
 				if (isUsingFieldNames) this.mapToNames(updatedRecords);
 				const updated = updatedRecords[0];
 				return inputType === "interface" ? this.toInterface(updated) : updated;
