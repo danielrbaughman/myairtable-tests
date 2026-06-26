@@ -91,7 +91,7 @@ if [ "$LANG_ARG" = "py" ]; then
             TEST_CMD="uv run pytest -x -v $TEST_DIR"
             ;;
         --crud)
-            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_dict_crud_via_table.py $TEST_DIR/test_model_crud_via_model.py $TEST_DIR/test_model_crud_via_table.py $TEST_DIR/test_pagination.py $TEST_DIR/test_error_paths.py $TEST_DIR/test_field_round_trip.py $TEST_DIR/test_upsert_depth.py"
+            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_dict_crud_via_table.py $TEST_DIR/test_model_crud_via_model.py $TEST_DIR/test_model_crud_via_table.py $TEST_DIR/test_pagination.py $TEST_DIR/test_error_paths.py $TEST_DIR/test_field_round_trip.py $TEST_DIR/test_upsert_depth.py $TEST_DIR/test_retry_5xx.py"
             ;;
         --json)
             TEST_CMD="uv run pytest -x -v $TEST_DIR/test_serializing.py"
@@ -320,7 +320,7 @@ else
             TEST_CMD="npx vitest run $TEST_DIR"
             ;;
         --crud)
-            TEST_CMD="npx vitest run $TEST_DIR/interface-crud-via-table.test.$EXT $TEST_DIR/model-crud-via-model.test.$EXT $TEST_DIR/model-crud-via-table.test.$EXT $TEST_DIR/record-crud-via-table.test.$EXT $TEST_DIR/pagination.test.$EXT $TEST_DIR/error-paths.test.$EXT $TEST_DIR/field-round-trip.test.$EXT $TEST_DIR/upsert-depth.test.$EXT"
+            TEST_CMD="npx vitest run $TEST_DIR/interface-crud-via-table.test.$EXT $TEST_DIR/model-crud-via-model.test.$EXT $TEST_DIR/model-crud-via-table.test.$EXT $TEST_DIR/record-crud-via-table.test.$EXT $TEST_DIR/pagination.test.$EXT $TEST_DIR/error-paths.test.$EXT $TEST_DIR/field-round-trip.test.$EXT $TEST_DIR/upsert-depth.test.$EXT $TEST_DIR/retry-5xx.test.$EXT"
             ;;
         --json)
             TEST_CMD="npx vitest run $TEST_DIR/serializing.test.$EXT"

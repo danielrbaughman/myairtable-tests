@@ -4,7 +4,10 @@
 
 # region IMPORTS
 from typing import cast
-from pyairtable import Api
+from pyairtable import (
+    Api,
+    retry_strategy,
+)
 from .types import TableName
 from ..static.airtable_table import AirtableTable
 from ..static.helpers import (
@@ -60,7 +63,8 @@ class Airtable:
         # Register config so ORM models can look it up
         set_airtable_config(self.base_id, api_key, endpoint_url)
         self._cache_seconds: int = cache_seconds
-        self._api = Api(api_key=api_key, endpoint_url=endpoint_url)
+        # pyairtable retries 429 only by default; also retry transient 5xx (incl. 503).
+        self._api = Api(api_key=api_key, endpoint_url=endpoint_url, retry_strategy=retry_strategy(status_forcelist=(429, 500, 502, 503, 504)))
 
     def table(self, table_name: TableName) -> AirtableTable:
         """Get a table by its Airtable name."""
