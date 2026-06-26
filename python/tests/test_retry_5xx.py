@@ -12,7 +12,10 @@ from output import Airtable
 
 
 def test_api_retries_transient_5xx_not_just_429() -> None:
-    airtable = Airtable(api_key="fake_key", base_id="appFAKE1234567890")
+    # Use the real env creds (construction makes no network call). A fake base_id would register as
+    # the module-level _default_base_id (helpers.set_airtable_config) and leak into later tests' ORM
+    # models — this only inspects the retry config, so the live base is never actually hit.
+    airtable = Airtable()
     adapter = airtable._api.session.get_adapter("https://api.airtable.com/")
     forcelist = set(adapter.max_retries.status_forcelist or ())
 
