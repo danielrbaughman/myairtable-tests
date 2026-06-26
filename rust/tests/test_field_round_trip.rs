@@ -42,11 +42,14 @@ async fn date_with_time_writes_and_reads_back() {
 
     let created = at
         .primary
-        .create_one(&PrimaryModel {
-            primary_key: Some(suite),
-            date_with_time: Some(dt.to_string()),
-            ..Default::default()
-        })
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some(suite),
+                date_with_time: Some(dt.to_string()),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let id = created.id.as_deref().unwrap().to_string();
@@ -72,15 +75,18 @@ async fn rich_text_and_percent_currency_read_back() {
 
     let created = at
         .primary
-        .create_one(&PrimaryModel {
-            primary_key: Some(suite),
-            long_text_with_rich_text: Some("**bold** and _italic_ text".to_string()),
-            percent_int: Some(0.5),
-            percent_float: Some(0.333),
-            currency_int: Some(100.0),
-            currency_float: Some(19.99),
-            ..Default::default()
-        })
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some(suite),
+                long_text_with_rich_text: Some("**bold** and _italic_ text".to_string()),
+                percent_int: Some(0.5),
+                percent_float: Some(0.333),
+                currency_int: Some(100.0),
+                currency_float: Some(19.99),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let id = created.id.as_deref().unwrap().to_string();
@@ -113,15 +119,18 @@ async fn clearing_single_and_multi_select_reads_back_empty() {
 
     let mut created = at
         .primary
-        .create_one(&PrimaryModel {
-            primary_key: Some(suite),
-            single_select: Some(PrimarySingleSelectOption::Choice1),
-            multiple_select: Some(vec![
-                PrimaryMultipleSelectOption::Option1,
-                PrimaryMultipleSelectOption::Option2,
-            ]),
-            ..Default::default()
-        })
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some(suite),
+                single_select: Some(PrimarySingleSelectOption::Choice1),
+                multiple_select: Some(vec![
+                    PrimaryMultipleSelectOption::Option1,
+                    PrimaryMultipleSelectOption::Option2,
+                ]),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let id = created.id.as_deref().unwrap().to_string();
@@ -136,7 +145,7 @@ async fn clearing_single_and_multi_select_reads_back_empty() {
         // taken on create) turns these into explicit nulls/empties on the wire.
         created.single_select = None;
         created.multiple_select = Some(vec![]);
-        at.primary.update_one(&id, &created).await.unwrap();
+        at.primary.update_one(&id, &created, false).await.unwrap();
 
         let fetched = at.primary.get_one(&id).await.unwrap();
         assert!(fetched.single_select.is_none());
@@ -163,15 +172,18 @@ async fn removing_a_collaborator_reads_back_null() {
 
     let mut created = at
         .primary
-        .create_one(&PrimaryModel {
-            primary_key: Some(suite),
-            user: Some(Collaborator {
-                id: USER_ID.to_string(),
-                email: USER_EMAIL.to_string(),
-                name: None,
-            }),
-            ..Default::default()
-        })
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some(suite),
+                user: Some(Collaborator {
+                    id: USER_ID.to_string(),
+                    email: USER_EMAIL.to_string(),
+                    name: None,
+                }),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let id = created.id.as_deref().unwrap().to_string();
@@ -180,7 +192,7 @@ async fn removing_a_collaborator_reads_back_null() {
         assert_eq!(created.user.as_ref().unwrap().id, USER_ID);
 
         created.user = None;
-        at.primary.update_one(&id, &created).await.unwrap();
+        at.primary.update_one(&id, &created, false).await.unwrap();
 
         let fetched = at.primary.get_one(&id).await.unwrap();
         assert!(fetched.user.is_none());
@@ -205,14 +217,17 @@ async fn attachment_replace_and_remove_read_back() {
 
     let mut created = at
         .primary
-        .create_one(&PrimaryModel {
-            primary_key: Some(suite),
-            attachment: Some(vec![Attachment {
-                url: URL_A.to_string(),
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some(suite),
+                attachment: Some(vec![Attachment {
+                    url: URL_A.to_string(),
+                    ..Default::default()
+                }]),
                 ..Default::default()
-            }]),
-            ..Default::default()
-        })
+            },
+            false,
+        )
         .await
         .unwrap();
     let id = created.id.as_deref().unwrap().to_string();
@@ -223,7 +238,7 @@ async fn attachment_replace_and_remove_read_back() {
             url: URL_B.to_string(),
             ..Default::default()
         }]);
-        let mut replaced = at.primary.update_one(&id, &created).await.unwrap();
+        let mut replaced = at.primary.update_one(&id, &created, false).await.unwrap();
 
         // Airtable processes attachments asynchronously; retry the re-fetch until present.
         let mut fetched = at.primary.get_one(&id).await.unwrap();
@@ -240,7 +255,7 @@ async fn attachment_replace_and_remove_read_back() {
         // Remove all attachments. Use the freshly fetched model so the snapshot reflects
         // the server's processed attachment list, then clear it.
         replaced.attachment = Some(vec![]);
-        at.primary.update_one(&id, &replaced).await.unwrap();
+        at.primary.update_one(&id, &replaced, false).await.unwrap();
         let cleared = at.primary.get_one(&id).await.unwrap();
         assert!(cleared
             .attachment

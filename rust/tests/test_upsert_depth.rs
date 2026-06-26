@@ -48,7 +48,7 @@ async fn upsert_matches_on_multiple_merge_fields() {
     // Seed a record identified by the (Primary Key, Single Line Text) pair.
     let seed = at
         .primary
-        .create_one(&model(&s, "anchor", None))
+        .create_one(&model(&s, "anchor", None), false)
         .await
         .unwrap();
     let seed_id = seed.id.clone().unwrap();
@@ -59,7 +59,7 @@ async fn upsert_matches_on_multiple_merge_fields() {
     // Same pair -> UPDATE the seed (matched on BOTH fields). Inferred by the returned id.
     let mut updated = model(&s, "anchor", Some("updated"));
     at.primary
-        .upsert(&mut updated, Some(&merge_on))
+        .upsert(&mut updated, Some(&merge_on), false)
         .await
         .unwrap();
     assert_eq!(updated.id.as_deref(), Some(seed_id.as_str()));
@@ -68,7 +68,7 @@ async fn upsert_matches_on_multiple_merge_fields() {
     // Same Primary Key but a DIFFERENT Single Line Text -> no match on the pair -> INSERT.
     let mut inserted = model(&s, "different", None);
     at.primary
-        .upsert(&mut inserted, Some(&merge_on))
+        .upsert(&mut inserted, Some(&merge_on), false)
         .await
         .unwrap();
     let inserted_id = inserted.id.clone().unwrap();
@@ -88,10 +88,13 @@ async fn upsert_with_multiple_matches_errors() {
     // Two records share the same Single Line Text value.
     let created = at
         .primary
-        .create_many(&[
-            model(&format!("{s} A"), "dupe", None),
-            model(&format!("{s} B"), "dupe", None),
-        ])
+        .create_many(
+            &[
+                model(&format!("{s} A"), "dupe", None),
+                model(&format!("{s} B"), "dupe", None),
+            ],
+            false,
+        )
         .await
         .unwrap();
     let ids: Vec<String> = created.iter().map(|r| r.id.clone().unwrap()).collect();
@@ -100,7 +103,7 @@ async fn upsert_with_multiple_matches_errors() {
     let mut dup = model("ignored", "dupe", Some("x"));
     let result = at
         .primary
-        .upsert(&mut dup, Some(&[SINGLE_LINE_TEXT_ID]))
+        .upsert(&mut dup, Some(&[SINGLE_LINE_TEXT_ID]), false)
         .await;
     match result {
         Err(AirtableError::Api { status, .. }) => assert_eq!(status, 422),
@@ -121,7 +124,7 @@ async fn upsert_many_batches_inserts_and_updates() {
     // Seed one record; the batch will UPDATE it and INSERT a second.
     let seed = at
         .primary
-        .create_one(&model(&s, "keep", None))
+        .create_one(&model(&s, "keep", None), false)
         .await
         .unwrap();
     let seed_id = seed.id.clone().unwrap();
@@ -129,7 +132,11 @@ async fn upsert_many_batches_inserts_and_updates() {
 
     let merge_on = [PRIMARY_KEY_ID, SINGLE_LINE_TEXT_ID];
     let batch = [model(&s, "keep", Some("batched")), model(&s, "fresh", None)];
-    let out = at.primary.upsert_many(&batch, &merge_on).await.unwrap();
+    let out = at
+        .primary
+        .upsert_many(&batch, &merge_on, false)
+        .await
+        .unwrap();
     assert_eq!(out.len(), 2);
 
     // The "keep" row updated the seed; the "fresh" row is new.

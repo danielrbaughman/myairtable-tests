@@ -725,29 +725,38 @@ async fn filter_by_lookup_field() {
     // from Secondary.value through Primary.link_single.
     let sec_a = at
         .secondary
-        .create_one(&SecondaryModel {
-            name: Some("Lookup Filter Sec A".to_string()),
-            value: Some("Groundwork BioAg".to_string()),
-            ..Default::default()
-        })
+        .create_one(
+            &SecondaryModel {
+                name: Some("Lookup Filter Sec A".to_string()),
+                value: Some("Groundwork BioAg".to_string()),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let sec_b = at
         .secondary
-        .create_one(&SecondaryModel {
-            name: Some("Lookup Filter Sec B".to_string()),
-            value: Some("Groundwork Lab".to_string()),
-            ..Default::default()
-        })
+        .create_one(
+            &SecondaryModel {
+                name: Some("Lookup Filter Sec B".to_string()),
+                value: Some("Groundwork Lab".to_string()),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let sec_c = at
         .secondary
-        .create_one(&SecondaryModel {
-            name: Some("Lookup Filter Sec C".to_string()),
-            value: Some("Other Vendor".to_string()),
-            ..Default::default()
-        })
+        .create_one(
+            &SecondaryModel {
+                name: Some("Lookup Filter Sec C".to_string()),
+                value: Some("Other Vendor".to_string()),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let sec_a_id = sec_a.id.as_deref().unwrap().to_string();
@@ -756,29 +765,38 @@ async fn filter_by_lookup_field() {
 
     let prim_a = at
         .primary
-        .create_one(&PrimaryModel {
-            primary_key: Some("Lookup Filter A".to_string()),
-            link_single: Some(vec![sec_a_id.clone()]),
-            ..Default::default()
-        })
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some("Lookup Filter A".to_string()),
+                link_single: Some(vec![sec_a_id.clone()]),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let prim_b = at
         .primary
-        .create_one(&PrimaryModel {
-            primary_key: Some("Lookup Filter B".to_string()),
-            link_single: Some(vec![sec_b_id.clone()]),
-            ..Default::default()
-        })
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some("Lookup Filter B".to_string()),
+                link_single: Some(vec![sec_b_id.clone()]),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let prim_c = at
         .primary
-        .create_one(&PrimaryModel {
-            primary_key: Some("Lookup Filter C".to_string()),
-            link_single: Some(vec![sec_c_id.clone()]),
-            ..Default::default()
-        })
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some("Lookup Filter C".to_string()),
+                link_single: Some(vec![sec_c_id.clone()]),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let prim_a_id = prim_a.id.as_deref().unwrap().to_string();
@@ -913,10 +931,10 @@ async fn filter_by_date_field_vs_field() {
         "2024-12-15T00:00:00.000Z",
     );
 
-    let r_equal = at.formulas.create_one(&equal).await.unwrap();
-    let r_before = at.formulas.create_one(&first_before).await.unwrap();
-    let r_after = at.formulas.create_one(&first_after).await.unwrap();
-    let r_between = at.formulas.create_one(&between).await.unwrap();
+    let r_equal = at.formulas.create_one(&equal, false).await.unwrap();
+    let r_before = at.formulas.create_one(&first_before, false).await.unwrap();
+    let r_after = at.formulas.create_one(&first_after, false).await.unwrap();
+    let r_between = at.formulas.create_one(&between, false).await.unwrap();
     let id_equal = r_equal.id.as_deref().unwrap().to_string();
     let id_before = r_before.id.as_deref().unwrap().to_string();
     let id_after = r_after.id.as_deref().unwrap().to_string();

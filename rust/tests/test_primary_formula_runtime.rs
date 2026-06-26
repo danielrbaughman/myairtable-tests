@@ -103,7 +103,7 @@ async fn complex_formula_renders_deterministic_fields_like_api() {
 
     let created = at
         .primary
-        .create_one(&new_record("PrimaryFormula:Complex"))
+        .create_one(&new_record("PrimaryFormula:Complex"), false)
         .await
         .unwrap();
     let record_id = created.id.as_deref().unwrap().to_string();
@@ -150,7 +150,7 @@ async fn nested_formula_evaluates_without_panicking() {
 
     let created = at
         .primary
-        .create_one(&new_record("PrimaryFormula:Nested"))
+        .create_one(&new_record("PrimaryFormula:Nested"), false)
         .await
         .unwrap();
     let record_id = created.id.as_deref().unwrap().to_string();

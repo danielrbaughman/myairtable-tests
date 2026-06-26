@@ -56,7 +56,7 @@ async fn orm_get_spanning_multiple_pages_returns_every_record() {
         })
         .collect();
 
-    let created = at.primary.create_many(&models).await.unwrap();
+    let created = at.primary.create_many(&models, false).await.unwrap();
     let created_ids: Vec<String> = created
         .iter()
         .map(|m| m.id.as_deref().unwrap().to_string())
@@ -104,7 +104,7 @@ async fn explicit_page_size_returns_all_records_across_pages() {
         })
         .collect();
 
-    let created = at.primary.create_many(&models).await.unwrap();
+    let created = at.primary.create_many(&models, false).await.unwrap();
     let created_ids: Vec<String> = created
         .iter()
         .map(|m| m.id.as_deref().unwrap().to_string())
@@ -140,7 +140,7 @@ async fn page_size_with_max_records_caps_the_total() {
         })
         .collect();
 
-    let created = at.primary.create_many(&models).await.unwrap();
+    let created = at.primary.create_many(&models, false).await.unwrap();
     let created_ids: Vec<String> = created
         .iter()
         .map(|m| m.id.as_deref().unwrap().to_string())

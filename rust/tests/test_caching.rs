@@ -26,7 +26,7 @@ async fn cache_hit_returns_same_data() {
         primary_key: Some("Cache Hit Test".to_string()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     // First get populates cache
@@ -52,7 +52,7 @@ async fn cache_disabled_by_default() {
         primary_key: Some("No Cache Test".to_string()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     // Get should work but not cache (cache_seconds = 0)
@@ -74,7 +74,7 @@ async fn create_invalidates_cache() {
         primary_key: Some("Mutation Test 1".to_string()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     // Populate cache
@@ -85,7 +85,7 @@ async fn create_invalidates_cache() {
         primary_key: Some("Mutation Test 2".to_string()),
         ..Default::default()
     };
-    let created2 = at.primary.create_one(&fields2).await.unwrap();
+    let created2 = at.primary.create_one(&fields2, false).await.unwrap();
     let id2 = created2.id.as_deref().unwrap().to_string();
 
     // After invalidation, get should hit API (not cache)
@@ -104,7 +104,7 @@ async fn update_invalidates_cache() {
         primary_key: Some("Update Invalidation".to_string()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     // Populate cache
@@ -115,7 +115,7 @@ async fn update_invalidates_cache() {
         primary_key: Some("Updated Value".to_string()),
         ..Default::default()
     };
-    at.primary.update_one(&id, &update).await.unwrap();
+    at.primary.update_one(&id, &update, false).await.unwrap();
 
     // Next get should see updated value (cache was invalidated)
     let result = at.primary.get_one(&id).await.unwrap();
@@ -132,7 +132,7 @@ async fn delete_invalidates_cache() {
         primary_key: Some("Delete Invalidation".to_string()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     // Populate cache
@@ -157,7 +157,7 @@ async fn manual_invalidate_cache() {
         primary_key: Some("Manual Invalidation".to_string()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     // Populate cache
@@ -186,7 +186,7 @@ async fn cache_expires_after_ttl() {
         primary_key: Some("Expiry Test".to_string()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     // Populate cache
@@ -215,7 +215,7 @@ async fn cache_serves_stale_data() {
         primary_key: Some("Stale Data Test".to_string()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     // Populate cache
@@ -254,8 +254,8 @@ async fn different_queries_cached_independently() {
         primary_key: Some("Cache Key 2".to_string()),
         ..Default::default()
     };
-    let c1 = at.primary.create_one(&fields1).await.unwrap();
-    let c2 = at.primary.create_one(&fields2).await.unwrap();
+    let c1 = at.primary.create_one(&fields1, false).await.unwrap();
+    let c2 = at.primary.create_one(&fields2, false).await.unwrap();
     let id1 = c1.id.as_deref().unwrap().to_string();
     let id2 = c2.id.as_deref().unwrap().to_string();
 
@@ -285,7 +285,7 @@ async fn formula_query_cached() {
         primary_key: Some("Formula Cache Test".to_string()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     // Query with formula

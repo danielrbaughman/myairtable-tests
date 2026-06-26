@@ -60,7 +60,7 @@ async fn concurrent_gets_of_the_same_record_are_consistent() {
         primary_key: Some(key.clone()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     // 25 concurrent gets race to populate/read the shared cache.
@@ -99,7 +99,7 @@ async fn concurrent_reads_and_mutations_do_not_corrupt_the_cache() {
         primary_key: Some(key.clone()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     // Interleave reads (populate cache), per-table invalidations, and invalidate-all concurrently.

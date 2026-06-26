@@ -45,46 +45,57 @@ impl FormulasTable {
         self.orm.get_many(params).await
     }
     /// Create a new record.
-    pub async fn create_one(&self, model: &FormulasModel) -> Result<FormulasModel, AirtableError> {
-        self.orm.create_one(model).await
+    pub async fn create_one(
+        &self,
+        model: &FormulasModel,
+        typecast: bool,
+    ) -> Result<FormulasModel, AirtableError> {
+        self.orm.create_one(model, typecast).await
     }
     /// Create multiple records.
     pub async fn create_many(
         &self,
         models: &[FormulasModel],
+        typecast: bool,
     ) -> Result<Vec<FormulasModel>, AirtableError> {
-        self.orm.create_many(models).await
+        self.orm.create_many(models, typecast).await
     }
     /// Update an existing record.
     pub async fn update_one(
         &self,
         record_id: &RecordId,
         model: &FormulasModel,
+        typecast: bool,
     ) -> Result<FormulasModel, AirtableError> {
-        self.orm.update_one(record_id, model).await
+        self.orm.update_one(record_id, model, typecast).await
     }
     /// Update multiple records.
     pub async fn update_many(
         &self,
         records: &[(&RecordId, &FormulasModel)],
+        typecast: bool,
     ) -> Result<Vec<FormulasModel>, AirtableError> {
-        self.orm.update_many(records).await
+        self.orm.update_many(records, typecast).await
     }
     /// Upsert a model, updated in place. With `fields_to_merge_on`, Airtable matches an existing record by those field values (server-side performUpsert); otherwise it creates if no ID / updates by ID.
     pub async fn upsert(
         &self,
         model: &mut FormulasModel,
         fields_to_merge_on: Option<&[&str]>,
+        typecast: bool,
     ) -> Result<(), AirtableError> {
-        self.orm.upsert(model, fields_to_merge_on).await
+        self.orm.upsert(model, fields_to_merge_on, typecast).await
     }
     /// Upsert multiple models in one batched server-side performUpsert, matching by `fields_to_merge_on`. Returns the upserted models.
     pub async fn upsert_many(
         &self,
         models: &[FormulasModel],
         fields_to_merge_on: &[&str],
+        typecast: bool,
     ) -> Result<Vec<FormulasModel>, AirtableError> {
-        self.orm.upsert_many(models, fields_to_merge_on).await
+        self.orm
+            .upsert_many(models, fields_to_merge_on, typecast)
+            .await
     }
     /// Delete a record.
     pub async fn delete_one(&self, record_id: &RecordId) -> Result<(), AirtableError> {
@@ -140,46 +151,57 @@ impl PrimaryTable {
         self.orm.get_many(params).await
     }
     /// Create a new record.
-    pub async fn create_one(&self, model: &PrimaryModel) -> Result<PrimaryModel, AirtableError> {
-        self.orm.create_one(model).await
+    pub async fn create_one(
+        &self,
+        model: &PrimaryModel,
+        typecast: bool,
+    ) -> Result<PrimaryModel, AirtableError> {
+        self.orm.create_one(model, typecast).await
     }
     /// Create multiple records.
     pub async fn create_many(
         &self,
         models: &[PrimaryModel],
+        typecast: bool,
     ) -> Result<Vec<PrimaryModel>, AirtableError> {
-        self.orm.create_many(models).await
+        self.orm.create_many(models, typecast).await
     }
     /// Update an existing record.
     pub async fn update_one(
         &self,
         record_id: &RecordId,
         model: &PrimaryModel,
+        typecast: bool,
     ) -> Result<PrimaryModel, AirtableError> {
-        self.orm.update_one(record_id, model).await
+        self.orm.update_one(record_id, model, typecast).await
     }
     /// Update multiple records.
     pub async fn update_many(
         &self,
         records: &[(&RecordId, &PrimaryModel)],
+        typecast: bool,
     ) -> Result<Vec<PrimaryModel>, AirtableError> {
-        self.orm.update_many(records).await
+        self.orm.update_many(records, typecast).await
     }
     /// Upsert a model, updated in place. With `fields_to_merge_on`, Airtable matches an existing record by those field values (server-side performUpsert); otherwise it creates if no ID / updates by ID.
     pub async fn upsert(
         &self,
         model: &mut PrimaryModel,
         fields_to_merge_on: Option<&[&str]>,
+        typecast: bool,
     ) -> Result<(), AirtableError> {
-        self.orm.upsert(model, fields_to_merge_on).await
+        self.orm.upsert(model, fields_to_merge_on, typecast).await
     }
     /// Upsert multiple models in one batched server-side performUpsert, matching by `fields_to_merge_on`. Returns the upserted models.
     pub async fn upsert_many(
         &self,
         models: &[PrimaryModel],
         fields_to_merge_on: &[&str],
+        typecast: bool,
     ) -> Result<Vec<PrimaryModel>, AirtableError> {
-        self.orm.upsert_many(models, fields_to_merge_on).await
+        self.orm
+            .upsert_many(models, fields_to_merge_on, typecast)
+            .await
     }
     /// Delete a record.
     pub async fn delete_one(&self, record_id: &RecordId) -> Result<(), AirtableError> {
@@ -238,46 +260,54 @@ impl SecondaryTable {
     pub async fn create_one(
         &self,
         model: &SecondaryModel,
+        typecast: bool,
     ) -> Result<SecondaryModel, AirtableError> {
-        self.orm.create_one(model).await
+        self.orm.create_one(model, typecast).await
     }
     /// Create multiple records.
     pub async fn create_many(
         &self,
         models: &[SecondaryModel],
+        typecast: bool,
     ) -> Result<Vec<SecondaryModel>, AirtableError> {
-        self.orm.create_many(models).await
+        self.orm.create_many(models, typecast).await
     }
     /// Update an existing record.
     pub async fn update_one(
         &self,
         record_id: &RecordId,
         model: &SecondaryModel,
+        typecast: bool,
     ) -> Result<SecondaryModel, AirtableError> {
-        self.orm.update_one(record_id, model).await
+        self.orm.update_one(record_id, model, typecast).await
     }
     /// Update multiple records.
     pub async fn update_many(
         &self,
         records: &[(&RecordId, &SecondaryModel)],
+        typecast: bool,
     ) -> Result<Vec<SecondaryModel>, AirtableError> {
-        self.orm.update_many(records).await
+        self.orm.update_many(records, typecast).await
     }
     /// Upsert a model, updated in place. With `fields_to_merge_on`, Airtable matches an existing record by those field values (server-side performUpsert); otherwise it creates if no ID / updates by ID.
     pub async fn upsert(
         &self,
         model: &mut SecondaryModel,
         fields_to_merge_on: Option<&[&str]>,
+        typecast: bool,
     ) -> Result<(), AirtableError> {
-        self.orm.upsert(model, fields_to_merge_on).await
+        self.orm.upsert(model, fields_to_merge_on, typecast).await
     }
     /// Upsert multiple models in one batched server-side performUpsert, matching by `fields_to_merge_on`. Returns the upserted models.
     pub async fn upsert_many(
         &self,
         models: &[SecondaryModel],
         fields_to_merge_on: &[&str],
+        typecast: bool,
     ) -> Result<Vec<SecondaryModel>, AirtableError> {
-        self.orm.upsert_many(models, fields_to_merge_on).await
+        self.orm
+            .upsert_many(models, fields_to_merge_on, typecast)
+            .await
     }
     /// Delete a record.
     pub async fn delete_one(&self, record_id: &RecordId) -> Result<(), AirtableError> {
@@ -333,46 +363,57 @@ impl TertiaryTable {
         self.orm.get_many(params).await
     }
     /// Create a new record.
-    pub async fn create_one(&self, model: &TertiaryModel) -> Result<TertiaryModel, AirtableError> {
-        self.orm.create_one(model).await
+    pub async fn create_one(
+        &self,
+        model: &TertiaryModel,
+        typecast: bool,
+    ) -> Result<TertiaryModel, AirtableError> {
+        self.orm.create_one(model, typecast).await
     }
     /// Create multiple records.
     pub async fn create_many(
         &self,
         models: &[TertiaryModel],
+        typecast: bool,
     ) -> Result<Vec<TertiaryModel>, AirtableError> {
-        self.orm.create_many(models).await
+        self.orm.create_many(models, typecast).await
     }
     /// Update an existing record.
     pub async fn update_one(
         &self,
         record_id: &RecordId,
         model: &TertiaryModel,
+        typecast: bool,
     ) -> Result<TertiaryModel, AirtableError> {
-        self.orm.update_one(record_id, model).await
+        self.orm.update_one(record_id, model, typecast).await
     }
     /// Update multiple records.
     pub async fn update_many(
         &self,
         records: &[(&RecordId, &TertiaryModel)],
+        typecast: bool,
     ) -> Result<Vec<TertiaryModel>, AirtableError> {
-        self.orm.update_many(records).await
+        self.orm.update_many(records, typecast).await
     }
     /// Upsert a model, updated in place. With `fields_to_merge_on`, Airtable matches an existing record by those field values (server-side performUpsert); otherwise it creates if no ID / updates by ID.
     pub async fn upsert(
         &self,
         model: &mut TertiaryModel,
         fields_to_merge_on: Option<&[&str]>,
+        typecast: bool,
     ) -> Result<(), AirtableError> {
-        self.orm.upsert(model, fields_to_merge_on).await
+        self.orm.upsert(model, fields_to_merge_on, typecast).await
     }
     /// Upsert multiple models in one batched server-side performUpsert, matching by `fields_to_merge_on`. Returns the upserted models.
     pub async fn upsert_many(
         &self,
         models: &[TertiaryModel],
         fields_to_merge_on: &[&str],
+        typecast: bool,
     ) -> Result<Vec<TertiaryModel>, AirtableError> {
-        self.orm.upsert_many(models, fields_to_merge_on).await
+        self.orm
+            .upsert_many(models, fields_to_merge_on, typecast)
+            .await
     }
     /// Delete a record.
     pub async fn delete_one(&self, record_id: &RecordId) -> Result<(), AirtableError> {

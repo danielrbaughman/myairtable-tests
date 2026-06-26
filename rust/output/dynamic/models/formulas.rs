@@ -17,7 +17,7 @@ use serde_json::{json, Value};
 /// println!("{:?}", record);
 ///
 /// let new = FormulasModel { ..Default::default() };
-/// let created = airtable.formulas.create_one(&new).await?;
+/// let created = airtable.formulas.create_one(&new, false).await?;
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct FormulasModel {

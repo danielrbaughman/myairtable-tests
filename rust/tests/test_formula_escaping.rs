@@ -56,11 +56,14 @@ async fn eq_filter_matches_value_with_special_chars() {
 
         let created = at
             .primary
-            .create_one(&PrimaryModel {
-                primary_key: Some(suite.clone()),
-                single_line_text: Some(special.to_string()),
-                ..Default::default()
-            })
+            .create_one(
+                &PrimaryModel {
+                    primary_key: Some(suite.clone()),
+                    single_line_text: Some(special.to_string()),
+                    ..Default::default()
+                },
+                false,
+            )
             .await
             .unwrap();
         let record_id = created.id.as_deref().unwrap().to_string();
@@ -112,11 +115,14 @@ async fn contains_filter_matches_value_with_special_chars() {
 
         let created = at
             .primary
-            .create_one(&PrimaryModel {
-                primary_key: Some(suite.clone()),
-                single_line_text: Some(stored.clone()),
-                ..Default::default()
-            })
+            .create_one(
+                &PrimaryModel {
+                    primary_key: Some(suite.clone()),
+                    single_line_text: Some(stored.clone()),
+                    ..Default::default()
+                },
+                false,
+            )
             .await
             .unwrap();
         let record_id = created.id.as_deref().unwrap().to_string();
@@ -151,10 +157,13 @@ async fn special_characters_in_primary_key_round_trip_and_filter() {
 
     let created = at
         .primary
-        .create_one(&PrimaryModel {
-            primary_key: Some(pk.clone()),
-            ..Default::default()
-        })
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some(pk.clone()),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let record_id = created.id.as_deref().unwrap().to_string();
@@ -194,11 +203,14 @@ async fn newline_and_tab_values_round_trip_through_storage() {
 
     let created = at
         .primary
-        .create_one(&PrimaryModel {
-            primary_key: Some(suite),
-            long_text: Some(value.to_string()),
-            ..Default::default()
-        })
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some(suite),
+                long_text: Some(value.to_string()),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let record_id = created.id.as_deref().unwrap().to_string();
