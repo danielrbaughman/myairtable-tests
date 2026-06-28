@@ -120,7 +120,7 @@ async fn primary_key_only_crud() {
         primary_key: Some("ORM Primary Key Only".to_string()),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
     assert_eq!(created.primary_key.as_deref(), Some("ORM Primary Key Only"));
 
@@ -134,7 +134,7 @@ async fn primary_key_only_crud() {
         primary_key: Some("ORM Updated Primary Key".to_string()),
         ..Default::default()
     };
-    let updated = at.primary.update_one(&id, &update).await.unwrap();
+    let updated = at.primary.update_one(&id, &update, false).await.unwrap();
     assert_eq!(
         updated.primary_key.as_deref(),
         Some("ORM Updated Primary Key")
@@ -180,7 +180,7 @@ async fn all_simple_properties_crud() {
         ..Default::default()
     };
 
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     assert_eq!(created.primary_key.as_deref(), Some("ORM All Props"));
@@ -254,7 +254,7 @@ async fn all_simple_properties_crud() {
         ..Default::default()
     };
 
-    let updated = at.primary.update_one(&id, &update).await.unwrap();
+    let updated = at.primary.update_one(&id, &update, false).await.unwrap();
     assert_eq!(
         updated.primary_key.as_deref(),
         Some("ORM Updated All Props")
@@ -289,20 +289,26 @@ async fn linked_records_crud() {
     // Setup secondary records
     let sec1 = at
         .secondary
-        .create_one(&SecondaryModel {
-            name: Some("ORM Link Target 1".to_string()),
-            value: Some("val1".to_string()),
-            ..Default::default()
-        })
+        .create_one(
+            &SecondaryModel {
+                name: Some("ORM Link Target 1".to_string()),
+                value: Some("val1".to_string()),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
     let sec2 = at
         .secondary
-        .create_one(&SecondaryModel {
-            name: Some("ORM Link Target 2".to_string()),
-            value: Some("val2".to_string()),
-            ..Default::default()
-        })
+        .create_one(
+            &SecondaryModel {
+                name: Some("ORM Link Target 2".to_string()),
+                value: Some("val2".to_string()),
+                ..Default::default()
+            },
+            false,
+        )
         .await
         .unwrap();
 
@@ -316,7 +322,7 @@ async fn linked_records_crud() {
         link_multiple: Some(vec![sec1_id.clone(), sec2_id.clone()]),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
     assert_eq!(created.link_single, Some(vec![sec1_id.clone()]));
     assert_eq!(
@@ -338,7 +344,7 @@ async fn linked_records_crud() {
         link_multiple: Some(vec![sec1_id.clone()]),
         ..Default::default()
     };
-    let updated = at.primary.update_one(&id, &update).await.unwrap();
+    let updated = at.primary.update_one(&id, &update, false).await.unwrap();
     assert_eq!(updated.link_single, Some(vec![sec2_id.clone()]));
     assert_eq!(updated.link_multiple, Some(vec![sec1_id.clone()]));
 
@@ -366,7 +372,7 @@ async fn attachment_crud() {
         }]),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
     let attachments = created.attachment.unwrap();
     assert_eq!(attachments.len(), 1);
@@ -405,7 +411,7 @@ async fn user_fields_crud() {
         ]),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     assert_eq!(created.user.as_ref().unwrap().id, "usrnZ4k98m0Ipji4e");
@@ -435,7 +441,7 @@ async fn computed_fields() {
         number_float: Some(5.0),
         ..Default::default()
     };
-    let created = at.primary.create_one(&fields).await.unwrap();
+    let created = at.primary.create_one(&fields, false).await.unwrap();
     let id = created.id.as_deref().unwrap().to_string();
 
     assert!(created.auto_number.is_some());
@@ -496,7 +502,7 @@ async fn batch_create_update_delete() {
         })
         .collect();
 
-    let created = at.primary.create_many(&records).await.unwrap();
+    let created = at.primary.create_many(&records, false).await.unwrap();
     assert_eq!(created.len(), count as usize);
     for (i, record) in created.iter().enumerate() {
         assert_eq!(
@@ -518,7 +524,7 @@ async fn batch_create_update_delete() {
         .collect();
     let updates: Vec<(&RecordId, &PrimaryModel)> = ids.iter().zip(update_fields.iter()).collect();
 
-    let updated = at.primary.update_many(&updates).await.unwrap();
+    let updated = at.primary.update_many(&updates, false).await.unwrap();
     assert_eq!(updated.len(), count as usize);
     for (i, record) in updated.iter().enumerate() {
         assert_eq!(
@@ -588,7 +594,7 @@ async fn upsert_as_create() {
     );
 
     // Upsert without ID → creates
-    at.primary.upsert(&mut model).await.unwrap();
+    at.primary.upsert(&mut model, None, false).await.unwrap();
     assert!(model.id.is_some());
     assert_eq!(model.primary_key.as_deref(), Some("Upsert Create Test"));
 
@@ -611,12 +617,12 @@ async fn upsert_as_update() {
         primary_key: Some("Upsert Update Test".to_string()),
         ..Default::default()
     };
-    let mut model = at.primary.create_one(&fields).await.unwrap();
+    let mut model = at.primary.create_one(&fields, false).await.unwrap();
     let id = model.id.as_deref().unwrap().to_string();
 
     // Modify and upsert → updates
     model.primary_key = Some("Upsert Updated".to_string());
-    at.primary.upsert(&mut model).await.unwrap();
+    at.primary.upsert(&mut model, None, false).await.unwrap();
 
     assert_eq!(model.id.as_deref(), Some(id.as_str()));
     assert_eq!(model.primary_key.as_deref(), Some("Upsert Updated"));

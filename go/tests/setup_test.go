@@ -74,6 +74,10 @@ func getenv(key string) string {
 func apiKey() string { return getenv("AIRTABLE_API_KEY") }
 func baseID() string { return getenv("AIRTABLE_BASE_ID") }
 
+// bogusAPIKey is a well-formed but invalid PAT, used to exercise the 401/auth
+// path against the real base. Mirrors C# TestSetup.MakeAirtableWithBadKey.
+const bogusAPIKey = "patBOGUS00000.deadbeefdeadbeefdeadbeefdeadbeef"
+
 // requireCreds skips the test if live credentials are not configured.
 func requireCreds(t *testing.T) {
 	t.Helper()

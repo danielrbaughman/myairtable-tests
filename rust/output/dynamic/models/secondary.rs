@@ -15,7 +15,7 @@ use serde::{Deserialize, Serialize};
 /// println!("{:?}", record);
 ///
 /// let new = SecondaryModel { ..Default::default() };
-/// let created = airtable.secondary.create_one(&new).await?;
+/// let created = airtable.secondary.create_one(&new, false).await?;
 /// ```
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct SecondaryModel {

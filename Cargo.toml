@@ -15,7 +15,7 @@ regex = "1"
 reqwest = { version = "0.12", features = ["json"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time"] }
 
 [[test]]
 name = "test_serializing"
@@ -42,12 +42,48 @@ name = "test_caching"
 path = "rust/tests/test_caching.rs"
 
 [[test]]
+name = "test_cache_concurrency"
+path = "rust/tests/test_cache_concurrency.rs"
+
+[[test]]
 name = "test_runtime_formulas"
 path = "rust/tests/test_runtime_formulas.rs"
 
 [[test]]
+name = "test_primary_formula_runtime"
+path = "rust/tests/test_primary_formula_runtime.rs"
+
+[[test]]
+name = "test_runtime_formula_variety"
+path = "rust/tests/test_runtime_formula_variety.rs"
+
+[[test]]
 name = "test_special_error_deser"
 path = "rust/tests/test_special_error_deser.rs"
+
+[[test]]
+name = "test_pagination"
+path = "rust/tests/test_pagination.rs"
+
+[[test]]
+name = "test_formula_escaping"
+path = "rust/tests/test_formula_escaping.rs"
+
+[[test]]
+name = "test_error_paths"
+path = "rust/tests/test_error_paths.rs"
+
+[[test]]
+name = "test_field_round_trip"
+path = "rust/tests/test_field_round_trip.rs"
+
+[[test]]
+name = "test_multi_field_sort"
+path = "rust/tests/test_multi_field_sort.rs"
+
+[[test]]
+name = "test_upsert_depth"
+path = "rust/tests/test_upsert_depth.rs"
 
 [[bin]]
 name = "playground"

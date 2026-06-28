@@ -3,7 +3,11 @@
 # ==========================================
 
 # region IMPORTS
-from pyairtable import Api
+from typing import cast
+from pyairtable import (
+    Api,
+    retry_strategy,
+)
 from .types import TableName
 from ..static.airtable_table import AirtableTable
 from ..static.helpers import (
@@ -59,7 +63,12 @@ class Airtable:
         # Register config so ORM models can look it up
         set_airtable_config(self.base_id, api_key, endpoint_url)
         self._cache_seconds: int = cache_seconds
-        self._api = Api(api_key=api_key, endpoint_url=endpoint_url)
+        # pyairtable retries 429 only by default; also retry transient 5xx (incl. 503).
+        # allowed_methods excludes POST so create (POST) is never retried (urllib3 is method-based,
+        # so it can't distinguish idempotent from non-idempotent at the body level). Residuals:
+        # (1) PATCH upsert-without-merge is still retried (can't be told apart from update-by-id);
+        # (2) POST no longer retries even on 429 (safe: 429 means the request was rejected, nothing applied).
+        self._api = Api(api_key=api_key, endpoint_url=endpoint_url, retry_strategy=retry_strategy(status_forcelist=(429, 500, 502, 503, 504), allowed_methods=frozenset({"GET", "HEAD", "OPTIONS", "TRACE", "PUT", "DELETE", "PATCH"})))
 
     def table(self, table_name: TableName) -> AirtableTable:
         """Get a table by its Airtable name."""
@@ -88,29 +97,29 @@ class Airtable:
     def formulas(self) -> FormulasTable:
         """`Formulas` (tblnuYBsMdXNDsuRc)"""
         if 'Formulas' not in self._tables:
-            self._tables["Formulas"] = FormulasTable.from_table(self._api.table(self.base_id, "Formulas"), cache_seconds=self._cache_seconds)
-        return self._tables["Formulas"]  # ty: ignore[invalid-return-type]
+            self._tables["Formulas"] = FormulasTable.from_table(self._api.table(self.base_id, "tblnuYBsMdXNDsuRc"), cache_seconds=self._cache_seconds)
+        return cast("FormulasTable", self._tables["Formulas"])
 
     @property
     def primary(self) -> PrimaryTable:
         """`Primary` (tblmb3iqgpNS1ysV2)"""
         if 'Primary' not in self._tables:
-            self._tables["Primary"] = PrimaryTable.from_table(self._api.table(self.base_id, "Primary"), cache_seconds=self._cache_seconds)
-        return self._tables["Primary"]  # ty: ignore[invalid-return-type]
+            self._tables["Primary"] = PrimaryTable.from_table(self._api.table(self.base_id, "tblmb3iqgpNS1ysV2"), cache_seconds=self._cache_seconds)
+        return cast("PrimaryTable", self._tables["Primary"])
 
     @property
     def secondary(self) -> SecondaryTable:
         """`Secondary` (tblPPScS3XMuFkDYN)"""
         if 'Secondary' not in self._tables:
-            self._tables["Secondary"] = SecondaryTable.from_table(self._api.table(self.base_id, "Secondary"), cache_seconds=self._cache_seconds)
-        return self._tables["Secondary"]  # ty: ignore[invalid-return-type]
+            self._tables["Secondary"] = SecondaryTable.from_table(self._api.table(self.base_id, "tblPPScS3XMuFkDYN"), cache_seconds=self._cache_seconds)
+        return cast("SecondaryTable", self._tables["Secondary"])
 
     @property
     def tertiary(self) -> TertiaryTable:
         """`Tertiary` (tblLFoLxEdWlxjmLP)"""
         if 'Tertiary' not in self._tables:
-            self._tables["Tertiary"] = TertiaryTable.from_table(self._api.table(self.base_id, "Tertiary"), cache_seconds=self._cache_seconds)
-        return self._tables["Tertiary"]  # ty: ignore[invalid-return-type]
+            self._tables["Tertiary"] = TertiaryTable.from_table(self._api.table(self.base_id, "tblLFoLxEdWlxjmLP"), cache_seconds=self._cache_seconds)
+        return cast("TertiaryTable", self._tables["Tertiary"])
 
 # endregion
 

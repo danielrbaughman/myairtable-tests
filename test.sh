@@ -91,19 +91,19 @@ if [ "$LANG_ARG" = "py" ]; then
             TEST_CMD="uv run pytest -x -v $TEST_DIR"
             ;;
         --crud)
-            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_dict_crud_via_table.py $TEST_DIR/test_model_crud_via_model.py $TEST_DIR/test_model_crud_via_table.py"
+            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_dict_crud_via_table.py $TEST_DIR/test_model_crud_via_model.py $TEST_DIR/test_model_crud_via_table.py $TEST_DIR/test_pagination.py $TEST_DIR/test_error_paths.py $TEST_DIR/test_field_round_trip.py $TEST_DIR/test_upsert_depth.py $TEST_DIR/test_retry_5xx.py"
             ;;
         --json)
             TEST_CMD="uv run pytest -x -v $TEST_DIR/test_serializing.py"
             ;;
         --filter)
-            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_filter_by_formula.py"
+            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_filter_by_formula.py $TEST_DIR/test_formula_escaping.py $TEST_DIR/test_multi_field_sort.py"
             ;;
         --runtime)
-            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_runtime_formulas.py"
+            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_runtime_formulas.py $TEST_DIR/test_runtime_formula_variety.py $TEST_DIR/test_primary_formula_runtime.py"
             ;;
         --cache)
-            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_caching.py"
+            TEST_CMD="uv run pytest -x -v $TEST_DIR/test_caching.py $TEST_DIR/test_cache_concurrency.py"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -122,19 +122,19 @@ elif [ "$LANG_ARG" = "rs" ]; then
             TEST_CMD="cargo test --manifest-path Cargo.toml"
             ;;
         --crud)
-            TEST_CMD="cargo test --test test_struct_crud_via_table --test test_orm_crud_via_table --test test_orm_crud_via_model"
+            TEST_CMD="cargo test --test test_struct_crud_via_table --test test_orm_crud_via_table --test test_orm_crud_via_model --test test_pagination --test test_error_paths --test test_field_round_trip --test test_upsert_depth"
             ;;
         --json)
             TEST_CMD="cargo test --test test_serializing"
             ;;
         --filter)
-            TEST_CMD="cargo test --test test_filter_by_formula"
+            TEST_CMD="cargo test --test test_filter_by_formula --test test_formula_escaping --test test_multi_field_sort"
             ;;
         --runtime)
-            TEST_CMD="cargo test --test test_runtime_formulas"
+            TEST_CMD="cargo test --test test_runtime_formulas --test test_runtime_formula_variety --test test_primary_formula_runtime"
             ;;
         --cache)
-            TEST_CMD="cargo test --test test_caching"
+            TEST_CMD="cargo test --test test_caching --test test_cache_concurrency"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -155,19 +155,19 @@ elif [ "$LANG_ARG" = "swift" ]; then
             TEST_CMD="swift test --package-path swift"
             ;;
         --crud)
-            TEST_CMD="swift test --package-path swift --filter 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel'"
+            TEST_CMD="swift test --package-path swift --filter 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel|TestPagination|TestErrorPaths|TestFieldRoundTrip|TestUpsertDepth'"
             ;;
         --json)
             TEST_CMD="swift test --package-path swift --filter 'TestSerializing'"
             ;;
         --filter)
-            TEST_CMD="swift test --package-path swift --filter 'TestFilterByFormula'"
+            TEST_CMD="swift test --package-path swift --filter 'TestFilterByFormula|TestFormulaEscaping|TestMultiFieldSort'"
             ;;
         --runtime)
-            TEST_CMD="swift test --package-path swift --filter 'TestRuntimeFormulas'"
+            TEST_CMD="swift test --package-path swift --filter 'TestRuntimeFormulas|TestRuntimeFormulaVariety|TestPrimaryFormulaRuntime'"
             ;;
         --cache)
-            TEST_CMD="swift test --package-path swift --filter 'TestCaching'"
+            TEST_CMD="swift test --package-path swift --filter 'TestCaching|TestCacheConcurrency'"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -189,19 +189,19 @@ elif [ "$LANG_ARG" = "kotlin" ]; then
             TEST_CMD="(cd kotlin && ./gradlew test)"
             ;;
         --crud)
-            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel')"
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel' --tests '*TestPagination' --tests '*TestErrorPaths' --tests '*TestFieldRoundTrip' --tests '*TestUpsertDepth')"
             ;;
         --json)
             TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestSerializing')"
             ;;
         --filter)
-            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestFilterByFormula')"
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestFilterByFormula' --tests '*TestFormulaEscaping' --tests '*TestMultiFieldSort')"
             ;;
         --runtime)
-            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestRuntimeFormulas')"
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestRuntimeFormulas' --tests '*TestRuntimeFormulaVariety' --tests '*TestPrimaryFormulaRuntime')"
             ;;
         --cache)
-            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestCaching')"
+            TEST_CMD="(cd kotlin && ./gradlew test --tests '*TestCaching' --tests '*TestCacheConcurrency')"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -223,19 +223,19 @@ elif [ "$LANG_ARG" = "java" ]; then
             TEST_CMD="(cd java && ./gradlew test)"
             ;;
         --crud)
-            TEST_CMD="(cd java && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel')"
+            TEST_CMD="(cd java && ./gradlew test --tests '*TestStructCrudViaTable' --tests '*TestOrmCrudViaTable' --tests '*TestOrmCrudViaModel' --tests '*TestPagination' --tests '*TestErrorPaths' --tests '*TestFieldRoundTrip' --tests '*TestUpsertDepth')"
             ;;
         --json)
             TEST_CMD="(cd java && ./gradlew test --tests '*TestSerializing*')"
             ;;
         --filter)
-            TEST_CMD="(cd java && ./gradlew test --tests '*TestFilterByFormula')"
+            TEST_CMD="(cd java && ./gradlew test --tests '*TestFilterByFormula' --tests '*TestFormulaEscaping' --tests '*TestMultiFieldSort')"
             ;;
         --runtime)
-            TEST_CMD="(cd java && ./gradlew test --tests '*TestRuntimeFormulas')"
+            TEST_CMD="(cd java && ./gradlew test --tests '*TestRuntimeFormulas' --tests '*TestRuntimeFormulaVariety' --tests '*TestPrimaryFormulaRuntime')"
             ;;
         --cache)
-            TEST_CMD="(cd java && ./gradlew test --tests '*TestCaching')"
+            TEST_CMD="(cd java && ./gradlew test --tests '*TestCaching' --tests '*TestCacheConcurrency')"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -256,19 +256,19 @@ elif [ "$LANG_ARG" = "go" ]; then
             TEST_CMD="(cd go && go test -v ./...)"
             ;;
         --crud)
-            TEST_CMD="(cd go && go test -v -run 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel' ./...)"
+            TEST_CMD="(cd go && go test -v -run 'TestStructCrudViaTable|TestOrmCrudViaTable|TestOrmCrudViaModel|TestPagination|TestErrorPaths|TestFieldRoundTrip|TestUpsertDepth' ./...)"
             ;;
         --json)
             TEST_CMD="(cd go && go test -v -run 'TestSerializing' ./...)"
             ;;
         --filter)
-            TEST_CMD="(cd go && go test -v -run 'TestFilterByFormula' ./...)"
+            TEST_CMD="(cd go && go test -v -run 'TestFilterByFormula|TestFormulaEscaping|TestMultiFieldSort' ./...)"
             ;;
         --runtime)
-            TEST_CMD="(cd go && go test -v -run 'TestRuntimeFormulas' ./...)"
+            TEST_CMD="(cd go && go test -v -run 'TestRuntimeFormulas|TestRuntimeFormulaVariety|TestPrimaryFormulaRuntime' ./...)"
             ;;
         --cache)
-            TEST_CMD="(cd go && go test -v -run 'TestCaching' ./...)"
+            TEST_CMD="(cd go && go test -v -race -run 'TestCaching|TestCacheConcurrency' ./...)"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -289,19 +289,19 @@ elif [ "$LANG_ARG" = "cs" ]; then
             TEST_CMD="(cd csharp && dotnet test --nologo)"
             ;;
         --crud)
-            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestStructCrudViaTable|FullyQualifiedName~TestOrmCrudViaTable|FullyQualifiedName~TestOrmCrudViaModel')"
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestStructCrudViaTable|FullyQualifiedName~TestOrmCrudViaTable|FullyQualifiedName~TestOrmCrudViaModel|FullyQualifiedName~TestPagination|FullyQualifiedName~TestErrorPaths|FullyQualifiedName~TestFieldRoundTrip|FullyQualifiedName~TestUpsertDepth')"
             ;;
         --json)
             TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestSerializing')"
             ;;
         --filter)
-            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestFilterByFormula')"
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestFilterByFormula|FullyQualifiedName~TestFormulaEscaping|FullyQualifiedName~TestMultiFieldSort')"
             ;;
         --runtime)
-            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestRuntimeFormulas')"
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestRuntimeFormulas|FullyQualifiedName~TestRuntimeFormulaVariety|FullyQualifiedName~TestPrimaryFormulaRuntime')"
             ;;
         --cache)
-            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestCaching')"
+            TEST_CMD="(cd csharp && dotnet test --nologo --filter 'FullyQualifiedName~TestCaching|FullyQualifiedName~TestCacheConcurrency')"
             ;;
         *)
             echo "Unknown option: $SUITE"
@@ -320,19 +320,19 @@ else
             TEST_CMD="npx vitest run $TEST_DIR"
             ;;
         --crud)
-            TEST_CMD="npx vitest run $TEST_DIR/interface-crud-via-table.test.$EXT $TEST_DIR/model-crud-via-model.test.$EXT $TEST_DIR/model-crud-via-table.test.$EXT $TEST_DIR/record-crud-via-table.test.$EXT"
+            TEST_CMD="npx vitest run $TEST_DIR/interface-crud-via-table.test.$EXT $TEST_DIR/model-crud-via-model.test.$EXT $TEST_DIR/model-crud-via-table.test.$EXT $TEST_DIR/record-crud-via-table.test.$EXT $TEST_DIR/pagination.test.$EXT $TEST_DIR/error-paths.test.$EXT $TEST_DIR/field-round-trip.test.$EXT $TEST_DIR/upsert-depth.test.$EXT $TEST_DIR/retry-5xx.test.$EXT"
             ;;
         --json)
             TEST_CMD="npx vitest run $TEST_DIR/serializing.test.$EXT"
             ;;
         --filter)
-            TEST_CMD="npx vitest run $TEST_DIR/filter-by-formula.test.$EXT"
+            TEST_CMD="npx vitest run $TEST_DIR/filter-by-formula.test.$EXT $TEST_DIR/formula-escaping.test.$EXT $TEST_DIR/multi-field-sort.test.$EXT"
             ;;
         --runtime)
-            TEST_CMD="npx vitest run $TEST_DIR/runtime-formulas.test.$EXT"
+            TEST_CMD="npx vitest run $TEST_DIR/runtime-formulas.test.$EXT $TEST_DIR/runtime-formula-variety.test.$EXT $TEST_DIR/primary-formula-runtime.test.$EXT"
             ;;
         --cache)
-            TEST_CMD="npx vitest run $TEST_DIR/caching.test.$EXT"
+            TEST_CMD="npx vitest run $TEST_DIR/caching.test.$EXT $TEST_DIR/cache-concurrency.test.$EXT"
             ;;
         *)
             echo "Unknown option: $SUITE"

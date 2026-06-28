@@ -27,6 +27,13 @@ object TestSetup {
         return Airtable(baseId = baseId, apiKey = apiKey, cacheSeconds = cacheSeconds)
     }
 
+    /** A client pointed at the real base but with a bogus API key, for auth-failure (401) tests. */
+    fun makeAirtableWithBadKey(): Airtable {
+        val baseId = env("AIRTABLE_BASE_ID")
+        check(!baseId.isNullOrEmpty()) { "AIRTABLE_BASE_ID not set. Ensure .env is present in the test repo root." }
+        return Airtable(baseId = baseId, apiKey = "patBOGUS00000.deadbeefdeadbeefdeadbeefdeadbeef")
+    }
+
     /** Walk from CWD up to the filesystem root looking for ".env" and parse it. */
     private fun loadDotEnv(): Map<String, String> {
         var dir: File? = File(System.getProperty("user.dir")).absoluteFile

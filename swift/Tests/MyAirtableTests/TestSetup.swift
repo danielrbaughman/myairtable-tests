@@ -24,6 +24,18 @@ enum TestSetup {
         return Airtable(baseId: baseId, apiKey: apiKey)
     }
 
+    /// Construct an Airtable actor wrapper pointed at the real base but with a
+    /// bogus API key, so auth-failure (401) tests exercise the key rather than
+    /// the base (which would 404). Mirrors C#'s `MakeAirtableWithBadKey`.
+    static func makeAirtableWithBadKey() -> Airtable {
+        loadDotEnvIfNeeded()
+        let env = ProcessInfo.processInfo.environment
+        guard let baseId = env["AIRTABLE_BASE_ID"], !baseId.isEmpty else {
+            fatalError("AIRTABLE_BASE_ID not set. Ensure .env is present in the test repo root.")
+        }
+        return Airtable(baseId: baseId, apiKey: "patBOGUS00000.deadbeefdeadbeefdeadbeefdeadbeef")
+    }
+
     /// Load ./env (or any ancestor's .env) into the current process's
     /// environment. Idempotent.
     static func loadDotEnvIfNeeded() {

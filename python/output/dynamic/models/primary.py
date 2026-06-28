@@ -5,6 +5,7 @@
 from typing import (
     Any,
     TYPE_CHECKING,
+    cast,
 )
 from pyairtable.orm import Model
 from pyairtable.orm.fields import (
@@ -75,7 +76,7 @@ class PrimaryModel(Model):
         memoize = True
 
     def to_record_dict(self, only_writable: bool = False) -> PrimaryRecordDict:
-        return self.to_record(only_writable)  # ty: ignore[invalid-return-type]
+        return cast("PrimaryRecordDict", self.to_record(only_writable))
 
     def URL(self, view: PrimaryView | None = None) -> str:
         """Get the URL for this record in Airtable, with optional view."""
@@ -363,7 +364,7 @@ class PrimaryModel(Model):
         ```
         """
         if self.evaluate_formulas_at_runtime:
-            self._fields["fld2vnFc0Bl5IOFUQ"] = "".join(F.AS(("Primary Key: ", self.primary_key, "\n", "Single Line Text: ", self.single_line_text, "\n", "Long Text: ", self.long_text, "\n", "Long Text with Rich Text: ", self.long_text_with_rich_text, "\n", "Attachment: ", (self.attachment if self.attachment else "None"), "\n", "Checkbox: ", ("Checked" if self.checkbox else "Unchecked"), "\n", "Multiple Select: ", (self.multiple_select if self.multiple_select else "None"), "\n", "Single Select: ", (self.single_select if self.single_select else "None"), "\n", "User: ", (self.user if self.user else "None"), "\n", "User (allow multiple): ", (self.user_allow_multiple if self.user_allow_multiple else "None"), "\n", "Date: ", (F.DATETIME_FORMAT(self.date, 'YYYY-MM-DD') if self.date else "None"), "\n", "Date (with time): ", (F.DATETIME_FORMAT(self.date_with_time, 'YYYY-MM-DD HH:mm') if self.date_with_time else "None"), "\n", "Phone Number: ", (self.phone_number if self.phone_number else "None"), "\n", "Email: ", (self.email if self.email else "None"), "\n", "URL: ", (self.url if self.url else "None"), "\n", "Number (int): ", ((F.S(self.number_int) + "") if self.number_int else "None"), "\n", "Number (float): ", ((F.S(self.number_float) + "") if self.number_float else "None"), "\n", "Currency (int): ", ((F.S(self.currency_int) + "") if self.currency_int else "None"), "\n", "Currency (float): ", ((F.S(self.currency_float) + "") if self.currency_float else "None"), "\n", "Percent (int): ", ((F.S(self.percent_int) + "") if self.percent_int else "None"), "\n", "Percent (float): ", ((F.S(self.percent_float) + "") if self.percent_float else "None"), "\n", "Duration: ", ((F.S(self.duration) + "") if self.duration else "None"), "\n", "Rating: ", ((F.S(self.rating) + "") if self.rating else "None"), "\n", "Created Time: ", (F.DATETIME_FORMAT(self.created_at_time, 'YYYY-MM-DD HH:mm') if self.created_at_time else "None"), "\n", "Last Modified Time: ", (F.DATETIME_FORMAT(self.last_modified_time, 'YYYY-MM-DD HH:mm') if self.last_modified_time else "None"), "\n", "Created By: ", (self.created_by if self.created_by else "None"), "\n", "Last Modified By: ", (self.last_modified_by if self.last_modified_by else "None"), "\n", "Auto Number: ", ((F.S(self.auto_number) + "") if self.auto_number else "None"), "\n", "Button: ", (self.button if self.button else "None"), "\n", "Link (single): ", (self.link_single if self.link_single else "None"), "\n", "Link (multiple): ", (self.link_multiple if self.link_multiple else "None"), "\n", "Lookup: ", (self.lookup if self.lookup else "None"), "\n", "Rollup: ", (self.rollup if self.rollup else "None"), "\n", "Formula (ID): ", (self.formula_id if self.formula_id else "None"), "\n", "Formula (Simple): ", (self.formula_simple if self.formula_simple else "None"),)))
+            self._fields["fld2vnFc0Bl5IOFUQ"] = "".join(map(F.S, ("Primary Key: ", self.primary_key, "\n", "Single Line Text: ", self.single_line_text, "\n", "Long Text: ", self.long_text, "\n", "Long Text with Rich Text: ", self.long_text_with_rich_text, "\n", "Attachment: ", (self.attachment if self.attachment else "None"), "\n", "Checkbox: ", ("Checked" if self.checkbox else "Unchecked"), "\n", "Multiple Select: ", (self.multiple_select if self.multiple_select else "None"), "\n", "Single Select: ", (self.single_select if self.single_select else "None"), "\n", "User: ", (self.user if self.user else "None"), "\n", "User (allow multiple): ", (self.user_allow_multiple if self.user_allow_multiple else "None"), "\n", "Date: ", (F.DATETIME_FORMAT(self.date, 'YYYY-MM-DD') if self.date else "None"), "\n", "Date (with time): ", (F.DATETIME_FORMAT(self.date_with_time, 'YYYY-MM-DD HH:mm') if self.date_with_time else "None"), "\n", "Phone Number: ", (self.phone_number if self.phone_number else "None"), "\n", "Email: ", (self.email if self.email else "None"), "\n", "URL: ", (self.url if self.url else "None"), "\n", "Number (int): ", ((F.S(self.number_int) + "") if self.number_int else "None"), "\n", "Number (float): ", ((F.S(self.number_float) + "") if self.number_float else "None"), "\n", "Currency (int): ", ((F.S(self.currency_int) + "") if self.currency_int else "None"), "\n", "Currency (float): ", ((F.S(self.currency_float) + "") if self.currency_float else "None"), "\n", "Percent (int): ", ((F.S(self.percent_int) + "") if self.percent_int else "None"), "\n", "Percent (float): ", ((F.S(self.percent_float) + "") if self.percent_float else "None"), "\n", "Duration: ", ((F.S(self.duration) + "") if self.duration else "None"), "\n", "Rating: ", ((F.S(self.rating) + "") if self.rating else "None"), "\n", "Created Time: ", (F.DATETIME_FORMAT(self.created_at_time, 'YYYY-MM-DD HH:mm') if self.created_at_time else "None"), "\n", "Last Modified Time: ", (F.DATETIME_FORMAT(self.last_modified_time, 'YYYY-MM-DD HH:mm') if self.last_modified_time else "None"), "\n", "Created By: ", (self.created_by if self.created_by else "None"), "\n", "Last Modified By: ", (self.last_modified_by if self.last_modified_by else "None"), "\n", "Auto Number: ", ((F.S(self.auto_number) + "") if self.auto_number else "None"), "\n", "Button: ", (self.button if self.button else "None"), "\n", "Link (single): ", (self.link_single if self.link_single else "None"), "\n", "Link (multiple): ", (self.link_multiple if self.link_multiple else "None"), "\n", "Lookup: ", (self.lookup if self.lookup else "None"), "\n", "Rollup: ", (self.rollup if self.rollup else "None"), "\n", "Formula (ID): ", (self.formula_id if self.formula_id else "None"), "\n", "Formula (Simple): ", (self.formula_simple if self.formula_simple else "None"),)))
         return self._fields.get("fld2vnFc0Bl5IOFUQ")
     _orm_formula_id: SingleLineTextField = SingleLineTextField(field_name="fldcf62YFeIIDHElt", readonly=True)
     @property
@@ -408,9 +409,9 @@ class PrimaryModel(Model):
     """Last Modified By `fldF8iDttqP0AgzWC` - `Read-Only Field`"""
     last_modified_time: LastModifiedTimeField = LastModifiedTimeField(field_name="fldMinKh4pa3YX86g", readonly=True)
     """Last Modified Time `fldMinKh4pa3YX86g` - `Read-Only Field`"""
-    link_multiple: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fldFyFheQWczd8oux", model="output.dynamic.models.secondary.SecondaryModel") # ty: ignore
+    link_multiple: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fldFyFheQWczd8oux", model="output.dynamic.models.secondary.SecondaryModel")  # ty: ignore[invalid-assignment]
     """Link (multiple) `fldFyFheQWczd8oux`"""
-    link_single: "SecondaryModel" = SingleLinkField["SecondaryModel"](field_name="fld7F5onkDo6mkmbN", model="output.dynamic.models.secondary.SecondaryModel") # ty: ignore
+    link_single: "SecondaryModel" = SingleLinkField["SecondaryModel"](field_name="fld7F5onkDo6mkmbN", model="output.dynamic.models.secondary.SecondaryModel")  # ty: ignore[invalid-assignment]
     """Link (single) `fld7F5onkDo6mkmbN`"""
     long_text: MultilineTextField = MultilineTextField(field_name="fld8ulc6J0W29M6La")
     """Long Text `fld8ulc6J0W29M6La`"""
@@ -418,7 +419,7 @@ class PrimaryModel(Model):
     """Long Text with Rich Text `fldHJkxCMC0xo343u`"""
     lookup: LookupField[list[str]] = LookupField(field_name="fldbmFmrzYKBktJvE", readonly=True)
     """Lookup `fldbmFmrzYKBktJvE` - `Read-Only Field`"""
-    multiple_select: list[PrimaryMultipleSelectOption] = MultipleSelectField(field_name="fld6GTabFmu1xKPvZ") # ty: ignore
+    multiple_select: list[PrimaryMultipleSelectOption] = MultipleSelectField(field_name="fld6GTabFmu1xKPvZ")  # ty: ignore[invalid-assignment]
     """Multiple Select `fld6GTabFmu1xKPvZ`"""
     number_float: NumberField = NumberField(field_name="fldmU0X2l4RWd21dd")
     """Number (float) `fldmU0X2l4RWd21dd`"""
@@ -432,13 +433,13 @@ class PrimaryModel(Model):
     """Phone Number `fld38tnNpHmoks8C8`"""
     primary_key: SingleLineTextField = SingleLineTextField(field_name="fldol5Q4wmQJQvPRy")
     """Primary Key `fldol5Q4wmQJQvPRy` - `Primary Key`"""
-    rating: Any
+    rating: Any = None
     """Rating `fldRsmwFwQNZkKLp4`"""
     rollup: SingleLineTextField = SingleLineTextField(field_name="fldGaFgBsDC3IBUdV", readonly=True)
     """Rollup `fldGaFgBsDC3IBUdV` - `Read-Only Field`"""
     single_line_text: SingleLineTextField = SingleLineTextField(field_name="fld0BL2lFo9fqcKv3")
     """Single Line Text `fld0BL2lFo9fqcKv3`"""
-    single_select: PrimarySingleSelectOption = SelectField(field_name="fldn0GFFtMFpCXUNU")
+    single_select: PrimarySingleSelectOption = SelectField(field_name="fldn0GFFtMFpCXUNU")  # ty: ignore[invalid-assignment]
     """Single Select `fldn0GFFtMFpCXUNU`"""
     url: UrlField = UrlField(field_name="fldLYloz2oP4ymf3B")
     """URL `fldLYloz2oP4ymf3B`"""

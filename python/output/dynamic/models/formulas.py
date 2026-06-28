@@ -3,6 +3,7 @@
 # ==========================================
 
 from datetime import datetime
+from typing import cast
 from pyairtable.orm import Model
 from pyairtable.orm.fields import (
     SingleLineTextField,
@@ -45,7 +46,7 @@ class FormulasModel(Model):
         memoize = True
 
     def to_record_dict(self, only_writable: bool = False) -> FormulasRecordDict:
-        return self.to_record(only_writable)  # ty: ignore[invalid-return-type]
+        return cast("FormulasRecordDict", self.to_record(only_writable))
 
     def url(self, view: FormulasView | None = None) -> str:
         """Get the URL for this record in Airtable, with optional view."""
@@ -253,7 +254,7 @@ class FormulasModel(Model):
         ```
         """
         if self.evaluate_formulas_at_runtime:
-            self._fields["flddvzeqt7FJpQ9NX"] = "".join(F.AS(("LEN: ", len(F.S(self.first_text)), "; ", "MID: ", F.MID(self.first_text, 2, 3), "; ", "LEFT: ", F.LEFT(self.second_text, 2), "; ", "RIGHT: ", F.RIGHT(self.second_text, 2), "; ", "FIND: ", F.FIND("e", self.first_text), "; ", "SEARCH: ", F.SEARCH("e", self.first_text), "; ", "REPLACE: ", F.REPLACE(self.first_text, 2, 2, "XX"), "; ", "REPT: ", (F.S(self.first_text) * 2), "; ", "LOWER: ", F.S(self.second_text).lower(), "; ", "UPPER: ", F.S(self.second_text).upper(), "; ", "TRIM: ", (("   " + F.S(self.first_text)) + "   ").strip(), "; ", "SUBSTITUTE: ", F.SUBSTITUTE(self.first_text, "e", "@"), "; ", "CONCATENATE: ", "".join(F.AS((self.first_text, "-", self.second_text, "-", self.third_text,))), "; ", "T: ", F.T(self.first_number), "; ", "REGEX_EXTRACT: ", (m.group(0) if (m := re.search("[aeiou]", F.S(self.first_text))) else None), "; ", "REGEX_MATCH: ", ("1" if bool(re.search("^.e", F.S(self.first_text))) else "0"), "; ", "REGEX_REPLACE: ", re.sub("[aeiou]", "*", F.S(self.first_text)), "; ", "ENCODE_URL_COMPONENT: ", urllib.parse.quote(F.S(self.first_text), safe=""),)))
+            self._fields["flddvzeqt7FJpQ9NX"] = "".join(map(F.S, ("LEN: ", len(F.S(self.first_text)), "; ", "MID: ", F.MID(self.first_text, 2, 3), "; ", "LEFT: ", F.LEFT(self.second_text, 2), "; ", "RIGHT: ", F.RIGHT(self.second_text, 2), "; ", "FIND: ", F.FIND("e", self.first_text), "; ", "SEARCH: ", F.SEARCH("e", self.first_text), "; ", "REPLACE: ", F.REPLACE(self.first_text, 2, 2, "XX"), "; ", "REPT: ", (F.S(self.first_text) * 2), "; ", "LOWER: ", F.S(self.second_text).lower(), "; ", "UPPER: ", F.S(self.second_text).upper(), "; ", "TRIM: ", (("   " + F.S(self.first_text)) + "   ").strip(), "; ", "SUBSTITUTE: ", F.SUBSTITUTE(self.first_text, "e", "@"), "; ", "CONCATENATE: ", "".join(map(F.S, (self.first_text, "-", self.second_text, "-", self.third_text,))), "; ", "T: ", F.T(self.first_number), "; ", "REGEX_EXTRACT: ", (m.group(0) if (m := re.search("[aeiou]", F.S(self.first_text))) else None), "; ", "REGEX_MATCH: ", ("1" if bool(re.search("^.e", F.S(self.first_text))) else "0"), "; ", "REGEX_REPLACE: ", re.sub("[aeiou]", "*", F.S(self.first_text)), "; ", "ENCODE_URL_COMPONENT: ", urllib.parse.quote(F.S(self.first_text), safe="!*'()"),)))
         return self._fields.get("flddvzeqt7FJpQ9NX")
     third_date: DatetimeField = DatetimeField(field_name="fldxSQRRn8W879aiU")
     """Third Date `fldxSQRRn8W879aiU`"""

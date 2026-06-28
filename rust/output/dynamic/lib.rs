@@ -25,18 +25,15 @@ pub mod table;
 #[path = "../static/types.rs"]
 pub mod types;
 
-pub mod airtable;
+pub mod airtable_main;
 #[path = "types/mod.rs"]
 pub mod field_types;
 pub mod formulas;
 pub mod models;
 pub mod options;
+pub mod tables;
 
-pub use airtable::Airtable;
-pub use airtable::FormulasTable;
-pub use airtable::PrimaryTable;
-pub use airtable::SecondaryTable;
-pub use airtable::TertiaryTable;
+pub use airtable_main::Airtable;
 pub use airtable_model::{ModelMeta, OrmModel};
 pub use client::AirtableClient;
 pub use error::AirtableError;
@@ -57,4 +54,8 @@ pub use options::primary::*;
 pub use orm_table::OrmTable;
 pub use pagination::PaginatedResponse;
 pub use table::StructTable;
+pub use tables::FormulasTable;
+pub use tables::PrimaryTable;
+pub use tables::SecondaryTable;
+pub use tables::TertiaryTable;
 pub use types::*;

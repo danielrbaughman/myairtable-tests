@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
 import { AirtableOptions, Record as ATRecord, Attachment, FieldSet, RecordData } from "airtable";
 import * as z from "zod";
 import { CreateRecordData, IRecord, RecordId, recordIdSchema } from "./special-types";
@@ -314,6 +312,10 @@ export abstract class AirtableModel<FldSt extends FieldSet, MdlInterface, Fld> {
 					(fields as any)[key] = this._fields[desc.propertyName];
 					break;
 			}
+			// On update, an included field is dirty; a nullish value is an explicit clear and must
+			// serialize as JSON null (undefined keys are dropped by JSON.stringify, leaving the cell
+			// unchanged). On create, undefined is left to be dropped (sparse write).
+			if (!this._isNew && (fields as any)[key] == null) (fields as any)[key] = null;
 		}
 		return fields;
 	}
