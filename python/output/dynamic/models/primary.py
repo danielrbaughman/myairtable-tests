@@ -111,6 +111,10 @@ class PrimaryModel(Model):
     """Date `fldC6LfNVvVIxKyQH`"""
     date_with_time: DatetimeField = DatetimeField(field_name="fldizYmjpXABGDLTG")
     """Date (with time) `fldizYmjpXABGDLTG`"""
+    duplicate_name: SingleLineTextField = SingleLineTextField(field_name="fld99XdcwRa5WW6nw")
+    """Duplicate (Name) `fld99XdcwRa5WW6nw`"""
+    duplicate_name_v2: SingleLineTextField = SingleLineTextField(field_name="fld95OnbzAUFUTTqZ")
+    """Duplicate Name `fld95OnbzAUFUTTqZ`"""
     duration: DurationField = DurationField(field_name="fldLTyf6ljS0rhur8")
     """Duration `fldLTyf6ljS0rhur8`"""
     email: EmailField = EmailField(field_name="fldHCJoYBiFVsNvP4")

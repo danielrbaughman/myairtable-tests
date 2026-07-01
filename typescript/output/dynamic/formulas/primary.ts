@@ -27,6 +27,8 @@ export namespace PrimaryFormulas {
     export const currencyInt: NumberField = new NumberField('fldBfo74z9hD78hP8');
     export const date: DateField = new DateField('fldC6LfNVvVIxKyQH');
     export const dateWithTime: DateField = new DateField('fldizYmjpXABGDLTG');
+    export const duplicateName: TextField = new TextField('fld99XdcwRa5WW6nw');
+    export const duplicateNameV2: TextField = new TextField('fld95OnbzAUFUTTqZ');
     export const duration: NumberField = new NumberField('fldLTyf6ljS0rhur8');
     export const email: TextField = new TextField('fldHCJoYBiFVsNvP4');
     export const formulaComplex: TextField = new TextField('fld2vnFc0Bl5IOFUQ');

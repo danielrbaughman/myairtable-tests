@@ -48,6 +48,14 @@ impl PrimaryFields {
     pub const DATE_WITH_TIME: &'static str = "Date (with time)";
     /// `Date (with time)` (field ID)
     pub const DATE_WITH_TIME_ID: &'static str = "fldizYmjpXABGDLTG";
+    /// `Duplicate (Name)`
+    pub const DUPLICATE_NAME: &'static str = "Duplicate (Name)";
+    /// `Duplicate (Name)` (field ID)
+    pub const DUPLICATE_NAME_ID: &'static str = "fld99XdcwRa5WW6nw";
+    /// `Duplicate Name`
+    pub const DUPLICATE_NAME_V2: &'static str = "Duplicate Name";
+    /// `Duplicate Name` (field ID)
+    pub const DUPLICATE_NAME_V2_ID: &'static str = "fld95OnbzAUFUTTqZ";
     /// `Duration`
     pub const DURATION: &'static str = "Duration";
     /// `Duration` (field ID)
@@ -170,6 +178,8 @@ impl PrimaryFields {
             "Currency (int)" => Some("fldBfo74z9hD78hP8"),
             "Date" => Some("fldC6LfNVvVIxKyQH"),
             "Date (with time)" => Some("fldizYmjpXABGDLTG"),
+            "Duplicate (Name)" => Some("fld99XdcwRa5WW6nw"),
+            "Duplicate Name" => Some("fld95OnbzAUFUTTqZ"),
             "Duration" => Some("fldLTyf6ljS0rhur8"),
             "Email" => Some("fldHCJoYBiFVsNvP4"),
             "Formula (Complex)" => Some("fld2vnFc0Bl5IOFUQ"),
@@ -214,6 +224,8 @@ impl PrimaryFields {
             "fldBfo74z9hD78hP8" => Some("Currency (int)"),
             "fldC6LfNVvVIxKyQH" => Some("Date"),
             "fldizYmjpXABGDLTG" => Some("Date (with time)"),
+            "fld99XdcwRa5WW6nw" => Some("Duplicate (Name)"),
+            "fld95OnbzAUFUTTqZ" => Some("Duplicate Name"),
             "fldLTyf6ljS0rhur8" => Some("Duration"),
             "fldHCJoYBiFVsNvP4" => Some("Email"),
             "fld2vnFc0Bl5IOFUQ" => Some("Formula (Complex)"),
@@ -258,6 +270,8 @@ impl PrimaryFields {
             "fldBfo74z9hD78hP8" => Some("currency_int"),
             "fldC6LfNVvVIxKyQH" => Some("date"),
             "fldizYmjpXABGDLTG" => Some("date_with_time"),
+            "fld99XdcwRa5WW6nw" => Some("duplicate_name"),
+            "fld95OnbzAUFUTTqZ" => Some("duplicate_name_v2"),
             "fldLTyf6ljS0rhur8" => Some("duration"),
             "fldHCJoYBiFVsNvP4" => Some("email"),
             "fld2vnFc0Bl5IOFUQ" => Some("formula_complex"),
@@ -302,6 +316,8 @@ impl PrimaryFields {
             "currency_int" => Some("fldBfo74z9hD78hP8"),
             "date" => Some("fldC6LfNVvVIxKyQH"),
             "date_with_time" => Some("fldizYmjpXABGDLTG"),
+            "duplicate_name" => Some("fld99XdcwRa5WW6nw"),
+            "duplicate_name_v2" => Some("fld95OnbzAUFUTTqZ"),
             "duration" => Some("fldLTyf6ljS0rhur8"),
             "email" => Some("fldHCJoYBiFVsNvP4"),
             "formula_complex" => Some("fld2vnFc0Bl5IOFUQ"),
@@ -388,6 +404,14 @@ impl CreatePrimaryFields {
     pub const DATE_WITH_TIME: &'static str = "Date (with time)";
     /// `Date (with time)` (field ID)
     pub const DATE_WITH_TIME_ID: &'static str = "fldizYmjpXABGDLTG";
+    /// `Duplicate (Name)`
+    pub const DUPLICATE_NAME: &'static str = "Duplicate (Name)";
+    /// `Duplicate (Name)` (field ID)
+    pub const DUPLICATE_NAME_ID: &'static str = "fld99XdcwRa5WW6nw";
+    /// `Duplicate Name`
+    pub const DUPLICATE_NAME_V2: &'static str = "Duplicate Name";
+    /// `Duplicate Name` (field ID)
+    pub const DUPLICATE_NAME_V2_ID: &'static str = "fld95OnbzAUFUTTqZ";
     /// `Duration`
     pub const DURATION: &'static str = "Duration";
     /// `Duration` (field ID)

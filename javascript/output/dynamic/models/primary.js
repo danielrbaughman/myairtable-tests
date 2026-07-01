@@ -49,6 +49,8 @@ class PrimaryModel extends AirtableModel {
         { propertyName: "currencyInt", fieldId: "fldBfo74z9hD78hP8", fieldName: "Currency (int)", isComputed: false, fieldType: "generic" },
         { propertyName: "date", fieldId: "fldC6LfNVvVIxKyQH", fieldName: "Date", isComputed: false, fieldType: "generic" },
         { propertyName: "dateWithTime", fieldId: "fldizYmjpXABGDLTG", fieldName: "Date (with time)", isComputed: false, fieldType: "generic" },
+        { propertyName: "duplicateName", fieldId: "fld99XdcwRa5WW6nw", fieldName: "Duplicate (Name)", isComputed: false, fieldType: "generic" },
+        { propertyName: "duplicateNameV2", fieldId: "fld95OnbzAUFUTTqZ", fieldName: "Duplicate Name", isComputed: false, fieldType: "generic" },
         { propertyName: "duration", fieldId: "fldLTyf6ljS0rhur8", fieldName: "Duration", isComputed: false, fieldType: "generic" },
         { propertyName: "email", fieldId: "fldHCJoYBiFVsNvP4", fieldName: "Email", isComputed: false, fieldType: "generic" },
         { propertyName: "formulaComplex", fieldId: "fld2vnFc0Bl5IOFUQ", fieldName: "Formula (Complex)", isComputed: true, fieldType: "generic" },
@@ -104,6 +106,12 @@ class PrimaryModel extends AirtableModel {
     /** `Date (with time)` (fldizYmjpXABGDLTG) */
     get dateWithTime() { return this._fields["dateWithTime"]; }
     set dateWithTime(value) { this._fields["dateWithTime"] = value; this.markDirty('dateWithTime'); }
+    /** `Duplicate (Name)` (fld99XdcwRa5WW6nw) */
+    get duplicateName() { return this._fields["duplicateName"]; }
+    set duplicateName(value) { this._fields["duplicateName"] = value; this.markDirty('duplicateName'); }
+    /** `Duplicate Name` (fld95OnbzAUFUTTqZ) */
+    get duplicateNameV2() { return this._fields["duplicateNameV2"]; }
+    set duplicateNameV2(value) { this._fields["duplicateNameV2"] = value; this.markDirty('duplicateNameV2'); }
     /** `Duration` (fldLTyf6ljS0rhur8) */
     get duration() { return this._fields["duration"]; }
     set duration(value) { this._fields["duration"] = value; this.markDirty('duration'); }

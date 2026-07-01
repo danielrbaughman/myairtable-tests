@@ -25,6 +25,8 @@ export const PrimarySchema = z.object({
     currencyInt: z.number().optional(),
     date: z.string().optional(),
     dateWithTime: z.string().optional(),
+    duplicateName: z.string().optional(),
+    duplicateNameV2: z.string().optional(),
     duration: z.number().optional(),
     email: z.string().optional(),
     formulaComplex: z.union([z.string(), SpecialNumberSchema, ErrorValueSchema, z.array(z.union([z.string(), SpecialNumberSchema, ErrorValueSchema]).nullable())]).optional(),

@@ -259,6 +259,16 @@
                     "name": "Date (with time)"
                 },
                 {
+                    "type": "singleLineText",
+                    "id": "fld99XdcwRa5WW6nw",
+                    "name": "Duplicate (Name)"
+                },
+                {
+                    "type": "singleLineText",
+                    "id": "fld95OnbzAUFUTTqZ",
+                    "name": "Duplicate Name"
+                },
+                {
                     "type": "duration",
                     "options": {
                         "durationFormat": "h:mm"

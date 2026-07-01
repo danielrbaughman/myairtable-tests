@@ -61,6 +61,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
         { propertyName: "currencyInt", fieldId: "fldBfo74z9hD78hP8", fieldName: "Currency (int)", isComputed: false, fieldType: "generic" },
         { propertyName: "date", fieldId: "fldC6LfNVvVIxKyQH", fieldName: "Date", isComputed: false, fieldType: "generic" },
         { propertyName: "dateWithTime", fieldId: "fldizYmjpXABGDLTG", fieldName: "Date (with time)", isComputed: false, fieldType: "generic" },
+        { propertyName: "duplicateName", fieldId: "fld99XdcwRa5WW6nw", fieldName: "Duplicate (Name)", isComputed: false, fieldType: "generic" },
+        { propertyName: "duplicateNameV2", fieldId: "fld95OnbzAUFUTTqZ", fieldName: "Duplicate Name", isComputed: false, fieldType: "generic" },
         { propertyName: "duration", fieldId: "fldLTyf6ljS0rhur8", fieldName: "Duration", isComputed: false, fieldType: "generic" },
         { propertyName: "email", fieldId: "fldHCJoYBiFVsNvP4", fieldName: "Email", isComputed: false, fieldType: "generic" },
         { propertyName: "formulaComplex", fieldId: "fld2vnFc0Bl5IOFUQ", fieldName: "Formula (Complex)", isComputed: true, fieldType: "generic" },
@@ -116,6 +118,12 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     /** `Date (with time)` (fldizYmjpXABGDLTG) */
     public get dateWithTime(): string | undefined { return this._fields["dateWithTime"] as string; }
     public set dateWithTime(value: string | undefined) { this._fields["dateWithTime"] = value; this.markDirty('dateWithTime'); }
+    /** `Duplicate (Name)` (fld99XdcwRa5WW6nw) */
+    public get duplicateName(): string | undefined { return this._fields["duplicateName"] as string; }
+    public set duplicateName(value: string | undefined) { this._fields["duplicateName"] = value; this.markDirty('duplicateName'); }
+    /** `Duplicate Name` (fld95OnbzAUFUTTqZ) */
+    public get duplicateNameV2(): string | undefined { return this._fields["duplicateNameV2"] as string; }
+    public set duplicateNameV2(value: string | undefined) { this._fields["duplicateNameV2"] = value; this.markDirty('duplicateNameV2'); }
     /** `Duration` (fldLTyf6ljS0rhur8) */
     public get duration(): number | undefined { return this._fields["duration"] as number; }
     public set duration(value: number | undefined) { this._fields["duration"] = value; this.markDirty('duration'); }

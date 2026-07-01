@@ -80,6 +80,16 @@ pub struct PrimaryModel {
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub date_with_time: Option<String>,
+    /// Duplicate (Name) `fld99XdcwRa5WW6nw`
+    #[serde(rename = "fld99XdcwRa5WW6nw")]
+    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub duplicate_name: Option<String>,
+    /// Duplicate Name `fld95OnbzAUFUTTqZ`
+    #[serde(rename = "fld95OnbzAUFUTTqZ")]
+    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub duplicate_name_v2: Option<String>,
     /// Duration `fldLTyf6ljS0rhur8`
     #[serde(rename = "fldLTyf6ljS0rhur8")]
     #[serde(default)]

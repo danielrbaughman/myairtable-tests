@@ -72,6 +72,8 @@ export type PrimaryField =
     "Currency (int)" |
     "Date" |
     "Date (with time)" |
+    "Duplicate (Name)" |
+    "Duplicate Name" |
     "Duration" |
     "Email" |
     "Formula (Complex)" |
@@ -111,6 +113,8 @@ export const PrimaryFields: PrimaryField[] = [
     "Currency (int)",
     "Date",
     "Date (with time)",
+    "Duplicate (Name)",
+    "Duplicate Name",
     "Duration",
     "Email",
     "Formula (Complex)",
@@ -152,6 +156,8 @@ export type PrimaryFieldId =
     "fldBfo74z9hD78hP8" |
     "fldC6LfNVvVIxKyQH" |
     "fldizYmjpXABGDLTG" |
+    "fld99XdcwRa5WW6nw" |
+    "fld95OnbzAUFUTTqZ" |
     "fldLTyf6ljS0rhur8" |
     "fldHCJoYBiFVsNvP4" |
     "fld2vnFc0Bl5IOFUQ" |
@@ -191,6 +197,8 @@ export const PrimaryFieldIds: PrimaryFieldId[] = [
     "fldBfo74z9hD78hP8",
     "fldC6LfNVvVIxKyQH",
     "fldizYmjpXABGDLTG",
+    "fld99XdcwRa5WW6nw",
+    "fld95OnbzAUFUTTqZ",
     "fldLTyf6ljS0rhur8",
     "fldHCJoYBiFVsNvP4",
     "fld2vnFc0Bl5IOFUQ",
@@ -232,6 +240,8 @@ export type PrimaryFieldProperty =
     "currencyInt" |
     "date" |
     "dateWithTime" |
+    "duplicateName" |
+    "duplicateNameV2" |
     "duration" |
     "email" |
     "formulaComplex" |
@@ -271,6 +281,8 @@ export const PrimaryFieldPropertys: PrimaryFieldProperty[] = [
     "currencyInt",
     "date",
     "dateWithTime",
+    "duplicateName",
+    "duplicateNameV2",
     "duration",
     "email",
     "formulaComplex",
@@ -339,6 +351,8 @@ export const PrimaryWritableFields: string[] = [
     "Currency (int)",
     "Date",
     "Date (with time)",
+    "Duplicate (Name)",
+    "Duplicate Name",
     "Duration",
     "Email",
     "Link (multiple)",
@@ -367,6 +381,8 @@ export const PrimaryWritableFieldIds: string[] = [
     "fldBfo74z9hD78hP8",
     "fldC6LfNVvVIxKyQH",
     "fldizYmjpXABGDLTG",
+    "fld99XdcwRa5WW6nw",
+    "fld95OnbzAUFUTTqZ",
     "fldLTyf6ljS0rhur8",
     "fldHCJoYBiFVsNvP4",
     "fldFyFheQWczd8oux",
@@ -398,6 +414,8 @@ export const PrimaryFieldNameIdMapping: Record<PrimaryField, PrimaryFieldId> = {
     "Currency (int)": "fldBfo74z9hD78hP8",
     "Date": "fldC6LfNVvVIxKyQH",
     "Date (with time)": "fldizYmjpXABGDLTG",
+    "Duplicate (Name)": "fld99XdcwRa5WW6nw",
+    "Duplicate Name": "fld95OnbzAUFUTTqZ",
     "Duration": "fldLTyf6ljS0rhur8",
     "Email": "fldHCJoYBiFVsNvP4",
     "Formula (Complex)": "fld2vnFc0Bl5IOFUQ",
@@ -438,6 +456,8 @@ export const PrimaryFieldIdNameMapping: Record<PrimaryFieldId, PrimaryField> = {
     "fldBfo74z9hD78hP8": "Currency (int)",
     "fldC6LfNVvVIxKyQH": "Date",
     "fldizYmjpXABGDLTG": "Date (with time)",
+    "fld99XdcwRa5WW6nw": "Duplicate (Name)",
+    "fld95OnbzAUFUTTqZ": "Duplicate Name",
     "fldLTyf6ljS0rhur8": "Duration",
     "fldHCJoYBiFVsNvP4": "Email",
     "fld2vnFc0Bl5IOFUQ": "Formula (Complex)",
@@ -478,6 +498,8 @@ export const PrimaryFieldIdPropertyMapping: Record<PrimaryFieldId, PrimaryFieldP
     "fldBfo74z9hD78hP8": "currencyInt",
     "fldC6LfNVvVIxKyQH": "date",
     "fldizYmjpXABGDLTG": "dateWithTime",
+    "fld99XdcwRa5WW6nw": "duplicateName",
+    "fld95OnbzAUFUTTqZ": "duplicateNameV2",
     "fldLTyf6ljS0rhur8": "duration",
     "fldHCJoYBiFVsNvP4": "email",
     "fld2vnFc0Bl5IOFUQ": "formulaComplex",
@@ -518,6 +540,8 @@ export const PrimaryFieldPropertyIdMapping: Record<PrimaryFieldProperty, Primary
     "currencyInt": "fldBfo74z9hD78hP8",
     "date": "fldC6LfNVvVIxKyQH",
     "dateWithTime": "fldizYmjpXABGDLTG",
+    "duplicateName": "fld99XdcwRa5WW6nw",
+    "duplicateNameV2": "fld95OnbzAUFUTTqZ",
     "duration": "fldLTyf6ljS0rhur8",
     "email": "fldHCJoYBiFVsNvP4",
     "formulaComplex": "fld2vnFc0Bl5IOFUQ",
@@ -558,6 +582,8 @@ export const PrimaryFieldNamePropertyMapping: Record<PrimaryField, PrimaryFieldP
     "Currency (int)": "currencyInt",
     "Date": "date",
     "Date (with time)": "dateWithTime",
+    "Duplicate (Name)": "duplicateName",
+    "Duplicate Name": "duplicateNameV2",
     "Duration": "duration",
     "Email": "email",
     "Formula (Complex)": "formulaComplex",
@@ -598,6 +624,8 @@ export const PrimaryFieldPropertyNameMapping: Record<PrimaryFieldProperty, Prima
     "currencyInt": "Currency (int)",
     "date": "Date",
     "dateWithTime": "Date (with time)",
+    "duplicateName": "Duplicate (Name)",
+    "duplicateNameV2": "Duplicate Name",
     "duration": "Duration",
     "email": "Email",
     "formulaComplex": "Formula (Complex)",
@@ -648,6 +676,10 @@ export interface PrimaryFieldSetIds extends FieldSet {
     fldC6LfNVvVIxKyQH?: string
     //@ts-ignore
     fldizYmjpXABGDLTG?: string
+    //@ts-ignore
+    fld99XdcwRa5WW6nw?: string
+    //@ts-ignore
+    fld95OnbzAUFUTTqZ?: string
     //@ts-ignore
     fldLTyf6ljS0rhur8?: number
     //@ts-ignore
@@ -725,6 +757,10 @@ export interface PrimaryFieldSet extends FieldSet {
     "Date"?: string,
     //@ts-ignore
     "Date (with time)"?: string,
+    //@ts-ignore
+    "Duplicate (Name)"?: string,
+    //@ts-ignore
+    "Duplicate Name"?: string,
     //@ts-ignore
     "Duration"?: number,
     //@ts-ignore

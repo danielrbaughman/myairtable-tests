@@ -26,6 +26,8 @@ const PrimaryFormulas = {
     currencyInt: new NumberField('fldBfo74z9hD78hP8'),
     date: new DateField('fldC6LfNVvVIxKyQH'),
     dateWithTime: new DateField('fldizYmjpXABGDLTG'),
+    duplicateName: new TextField('fld99XdcwRa5WW6nw'),
+    duplicateNameV2: new TextField('fld95OnbzAUFUTTqZ'),
     duration: new NumberField('fldLTyf6ljS0rhur8'),
     email: new TextField('fldHCJoYBiFVsNvP4'),
     formulaComplex: new TextField('fld2vnFc0Bl5IOFUQ'),

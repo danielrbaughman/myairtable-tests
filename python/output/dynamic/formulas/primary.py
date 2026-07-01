@@ -41,6 +41,10 @@ class PrimaryFormulas:
     """Date `fldC6LfNVvVIxKyQH`"""
     date_with_time: DateField = DateField('fldizYmjpXABGDLTG')
     """Date (with time) `fldizYmjpXABGDLTG`"""
+    duplicate_name: TextField = TextField('fld99XdcwRa5WW6nw')
+    """Duplicate (Name) `fld99XdcwRa5WW6nw`"""
+    duplicate_name_v2: TextField = TextField('fld95OnbzAUFUTTqZ')
+    """Duplicate Name `fld95OnbzAUFUTTqZ`"""
     duration: NumberField = NumberField('fldLTyf6ljS0rhur8')
     """Duration `fldLTyf6ljS0rhur8`"""
     email: TextField = TextField('fldHCJoYBiFVsNvP4')

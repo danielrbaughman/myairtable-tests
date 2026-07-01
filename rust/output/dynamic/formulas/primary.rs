@@ -28,6 +28,10 @@ pub struct PrimaryFormulas {
     pub date: FormulaDateField,
     /// `Date (with time)`
     pub date_with_time: FormulaDateField,
+    /// `Duplicate (Name)`
+    pub duplicate_name: FormulaTextField,
+    /// `Duplicate Name`
+    pub duplicate_name_v2: FormulaTextField,
     /// `Duration`
     pub duration: FormulaNumberField,
     /// `Email`
@@ -98,6 +102,8 @@ impl PrimaryFormulas {
             currency_int: FormulaNumberField::new("fldBfo74z9hD78hP8"),
             date: FormulaDateField::new("fldC6LfNVvVIxKyQH"),
             date_with_time: FormulaDateField::new("fldizYmjpXABGDLTG"),
+            duplicate_name: FormulaTextField::new("fld99XdcwRa5WW6nw"),
+            duplicate_name_v2: FormulaTextField::new("fld95OnbzAUFUTTqZ"),
             duration: FormulaNumberField::new("fldLTyf6ljS0rhur8"),
             email: FormulaTextField::new("fldHCJoYBiFVsNvP4"),
             formula_complex: FormulaTextField::new("fld2vnFc0Bl5IOFUQ"),
