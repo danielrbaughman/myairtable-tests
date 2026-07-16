@@ -22,4 +22,5 @@ uv run main.py \
     --kotlin-folder "$AIRTABLE_DIR/kotlin/output" \
     --java-folder "$AIRTABLE_DIR/java/output" \
     --go-folder "$AIRTABLE_DIR/go/output" \
-    --csharp-folder "$AIRTABLE_DIR/csharp/output"
+    --csharp-folder "$AIRTABLE_DIR/csharp/output" \
+    --cpp-folder "$AIRTABLE_DIR/cpp/output"
