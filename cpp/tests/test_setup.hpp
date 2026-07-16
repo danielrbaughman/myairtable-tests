@@ -22,4 +22,4 @@ std::string require_base_id();
 /// prefix sweeps are safe.
 std::string primary_key(const std::string& suite, const std::string& label);
 
-}  // namespace myairtable_tests
+} // namespace myairtable_tests

@@ -101,3 +101,25 @@ if command -v dotnet &> /dev/null; then
 else
     echo "[warn] dotnet not on PATH; skipping C# checks."
 fi
+# C++
+# Compiles the hand-written tests against the generated output/ (the C++ analog of
+# compileTestJava). The generated code is header-only, so the compile IS the check.
+if command -v cmake &> /dev/null; then
+    if [ -d cpp/output/static ]; then
+        CPP_GEN="-G Ninja"
+        command -v ninja &> /dev/null || CPP_GEN=""
+        (cd cpp && cmake -B build $CPP_GEN > /dev/null && cmake --build build)
+    else
+        echo "[warn] cpp/output not generated; skipping C++ compile check. (run ./build.sh)"
+    fi
+    # clang-format the hand-written test tree only; the generated output/ is
+    # regenerated on every build and is emitted clang-format-clean by construction.
+    CLANG_FORMAT="$(command -v clang-format || xcrun --find clang-format 2>/dev/null || true)"
+    if [ -n "$CLANG_FORMAT" ]; then
+        find cpp/tests -name '*.hpp' -o -name '*.cpp' | xargs "$CLANG_FORMAT" -i --style=file
+    else
+        echo "[warn] clang-format not found; skipping format step. (xcode toolchain or brew install clang-format)"
+    fi
+else
+    echo "[warn] cmake not on PATH; skipping C++ checks. (brew install cmake ninja)"
+fi

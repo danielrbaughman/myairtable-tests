@@ -2,7 +2,7 @@
 set -e
 
 usage() {
-    echo "Usage: ./test.sh <all|ts|js|py|rs|swift|kotlin|java|go|cs> [--all|--crud|--json|--filter|--runtime|--help]"
+    echo "Usage: ./test.sh <all|ts|js|py|rs|swift|kotlin|java|go|cs|cpp> [--all|--crud|--json|--filter|--runtime|--help]"
     echo ""
     echo "Arguments:"
     echo "  all       Run tests for all languages"
@@ -15,6 +15,7 @@ usage() {
     echo "  java      Run Java tests"
     echo "  go        Run Go tests"
     echo "  cs        Run C# tests"
+    echo "  cpp       Run C++ tests"
     echo ""
     echo "Options:"
     echo "  --all     Run all test suites (default)"
@@ -31,7 +32,7 @@ LANG_ARG="$1"
 case "$LANG_ARG" in
     all)
         SUITE="${2:---all}"
-        for lang in ts js py rs swift kotlin java go cs; do
+        for lang in ts js py rs swift kotlin java go cs cpp; do
             echo ""
             echo "========================================="
             echo "  Running $lang tests ($SUITE)"
@@ -70,8 +71,11 @@ case "$LANG_ARG" in
     cs)
         CSHARP_DIR="csharp"
         ;;
+    cpp)
+        CPP_DIR="cpp"
+        ;;
     *)
-        echo "Error: first argument must be 'all', 'ts', 'js', 'py', 'rs', 'swift', 'kotlin', 'java', 'go', or 'cs'"
+        echo "Error: first argument must be 'all', 'ts', 'js', 'py', 'rs', 'swift', 'kotlin', 'java', 'go', 'cs', or 'cpp'"
         echo ""
         usage
         exit 1
@@ -310,6 +314,42 @@ elif [ "$LANG_ARG" = "cs" ]; then
             exit 1
             ;;
     esac
+elif [ "$LANG_ARG" = "cpp" ]; then
+    # Catch2 test specs: "[tag]" selects tagged cases, comma is OR. Every C++
+    # TEST_CASE carries its suite tag ([crud]/[json]/[filter]/[runtime]/[cache])
+    # in addition to a per-file scenario tag.
+    CPP_BUILD="cd cpp && cmake -B build > /dev/null && cmake --build build > /dev/null"
+    case "$SUITE" in
+        --help)
+            usage
+            exit 0
+            ;;
+        --all)
+            TEST_CMD="($CPP_BUILD && ./build/cpp_tests)"
+            ;;
+        --crud)
+            TEST_CMD="($CPP_BUILD && ./build/cpp_tests '[crud]')"
+            ;;
+        --json)
+            TEST_CMD="($CPP_BUILD && ./build/cpp_tests '[json]')"
+            ;;
+        --filter)
+            TEST_CMD="($CPP_BUILD && ./build/cpp_tests '[filter]')"
+            ;;
+        --runtime)
+            TEST_CMD="($CPP_BUILD && ./build/cpp_tests '[runtime]')"
+            ;;
+        --cache)
+            # ThreadSanitizer variant when the toolchain supports it (Go -race analog).
+            TEST_CMD="(cd cpp && cmake -B build -DMYAIRTABLE_TSAN=ON > /dev/null && cmake --build build > /dev/null && ./build/cpp_tests_tsan '[cache]')"
+            ;;
+        *)
+            echo "Unknown option: $SUITE"
+            echo ""
+            usage
+            exit 1
+            ;;
+    esac
 else
     case "$SUITE" in
         --help)
@@ -358,6 +398,8 @@ elif [ "$LANG_ARG" = "go" ]; then
     eval "$TEST_CMD"
 elif [ "$LANG_ARG" = "cs" ]; then
     export PATH="$PATH:$HOME/.dotnet/tools"
+    eval "$TEST_CMD"
+elif [ "$LANG_ARG" = "cpp" ]; then
     eval "$TEST_CMD"
 else
     if ! command -v nvm &> /dev/null; then

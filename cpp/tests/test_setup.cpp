@@ -40,7 +40,8 @@ std::map<std::string, std::string> parse_dotenv(const std::filesystem::path& pat
             const auto notspace = [](unsigned char c) { return !std::isspace(c); };
             s.erase(s.begin(), std::find_if(s.begin(), s.end(), notspace));
             s.erase(std::find_if(s.rbegin(), s.rend(), notspace).base(), s.end());
-            if (s.size() >= 2 && ((s.front() == '"' && s.back() == '"') || (s.front() == '\'' && s.back() == '\''))) {
+            if (s.size() >= 2 && ((s.front() == '"' && s.back() == '"') ||
+                                  (s.front() == '\'' && s.back() == '\''))) {
                 s = s.substr(1, s.size() - 2);
             }
         };
@@ -70,7 +71,7 @@ const std::map<std::string, std::string>& dotenv() {
     return values;
 }
 
-}  // namespace
+} // namespace
 
 std::string env(const std::string& key) {
     if (const char* value = std::getenv(key.c_str()); value != nullptr && *value != '\0') {
@@ -108,4 +109,4 @@ std::string primary_key(const std::string& suite, const std::string& label) {
     return out.str();
 }
 
-}  // namespace myairtable_tests
+} // namespace myairtable_tests
