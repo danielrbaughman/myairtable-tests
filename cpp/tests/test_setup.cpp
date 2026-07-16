@@ -1,3 +1,14 @@
+// The generated runtime is header-only except the vendored tz implementation,
+// which must be compiled in exactly one TU — this is that TU (stb-style).
+// The define MUST precede every myairtable include (test_setup.hpp pulls in
+// airtable.hpp -> airtable_tz.hpp, whose #pragma once would otherwise make a
+// later implementation include a no-op). Guarded so the skeleton compiles
+// before the first build.sh run.
+#if __has_include("static/airtable_tz.hpp")
+#define MYAIRTABLE_TZ_IMPLEMENTATION
+#include "static/airtable_tz.hpp"
+#endif
+
 #include "test_setup.hpp"
 
 #include <chrono>
@@ -8,14 +19,6 @@
 #include <random>
 #include <sstream>
 #include <stdexcept>
-
-// The generated runtime is header-only except the vendored tz implementation,
-// which must be compiled in exactly one TU — this is that TU (stb-style).
-// Guarded so the skeleton compiles before the first build.sh run.
-#if __has_include("static/airtable_tz.hpp")
-#define MYAIRTABLE_TZ_IMPLEMENTATION
-#include "static/airtable_tz.hpp"
-#endif
 
 namespace myairtable_tests {
 
