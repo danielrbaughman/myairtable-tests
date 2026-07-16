@@ -23,3 +23,21 @@ std::string require_base_id();
 std::string primary_key(const std::string& suite, const std::string& label);
 
 } // namespace myairtable_tests
+
+// ---- generated-client factories (available once cpp/output exists) ----------
+#include "airtable.hpp"
+
+namespace myairtable_tests {
+
+/// A client for the live test base; cache_seconds > 0 enables the read cache.
+inline myairtable::Airtable make_airtable(double cache_seconds = 0.0) {
+    return myairtable::Airtable(require_api_key(), cache_seconds);
+}
+
+/// Pointed at the real base but with a bogus API key, for auth-failure tests.
+inline myairtable::Airtable make_airtable_with_bad_key() {
+    (void)require_base_id(); // fail fast with the setup hint if .env is absent
+    return myairtable::Airtable("patBOGUS00000.deadbeefdeadbeefdeadbeefdeadbeef");
+}
+
+} // namespace myairtable_tests
