@@ -20,7 +20,7 @@ void try_delete_primary(Airtable& airtable, const std::string& id) {
         return;
     }
     try {
-        airtable.primary().remove(id);
+        airtable.primary().delete_one(id);
     } catch (const AirtableException&) {
     }
 }
@@ -30,7 +30,7 @@ void try_delete_secondary(Airtable& airtable, const std::string& id) {
         return;
     }
     try {
-        airtable.secondary().remove(id);
+        airtable.secondary().delete_one(id);
     } catch (const AirtableException&) {
     }
 }
@@ -41,11 +41,11 @@ TEST_CASE("serializing integration: round trip preserves id and created time aft
           "[json][serializing-integration]") {
     auto airtable = make_airtable();
     const auto pk = primary_key("Serializing", "IdTime");
-    auto created = airtable.primary().create(PrimaryModel{.primary_key = pk});
+    auto created = airtable.primary().create_one(PrimaryModel{.primary_key = pk});
     const auto record_id = *created.id;
     try {
         REQUIRE(created.created_time.has_value()); // populated on create
-        auto fetched = airtable.primary().get(record_id);
+        auto fetched = airtable.primary().get_one(record_id);
         REQUIRE(fetched.id == record_id);
         REQUIRE(fetched.created_time == created.created_time);
     } catch (...) {
@@ -62,9 +62,9 @@ TEST_CASE("serializing integration: linked record fields serialize as record id 
     std::string sec_id;
     std::string prim_id;
     try {
-        auto sec = airtable.secondary().create(SecondaryModel{.name = suite + " Target"});
+        auto sec = airtable.secondary().create_one(SecondaryModel{.name = suite + " Target"});
         sec_id = *sec.id;
-        auto prim = airtable.primary().create(
+        auto prim = airtable.primary().create_one(
             PrimaryModel{.link_single = std::vector<std::string>{sec_id}, .primary_key = suite});
         prim_id = *prim.id;
 
@@ -86,15 +86,15 @@ TEST_CASE("serializing integration: explicit null on a writable field clears it 
           "[json][serializing-integration]") {
     auto airtable = make_airtable();
     const auto pk = primary_key("Serializing", "Clear");
-    auto created = airtable.primary().create(
+    auto created = airtable.primary().create_one(
         PrimaryModel{.primary_key = pk, .single_line_text = "to be cleared"});
     const auto record_id = *created.id;
     try {
         created.single_line_text = std::nullopt;
-        auto saved = airtable.primary().update(created);
+        auto saved = airtable.primary().update_one(created);
         REQUIRE(saved.single_line_text == std::nullopt); // null dirty entry clears the field
 
-        auto fetched = airtable.primary().get(record_id);
+        auto fetched = airtable.primary().get_one(record_id);
         REQUIRE(fetched.single_line_text == std::nullopt);
     } catch (...) {
         try_delete_primary(airtable, record_id);

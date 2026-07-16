@@ -40,7 +40,7 @@ void try_remove(Airtable& airtable, const std::string& record_id) {
         return;
     }
     try {
-        airtable.primary().remove(record_id);
+        airtable.primary().delete_one(record_id);
     } catch (const AirtableException&) {
         // best-effort cleanup
     }
@@ -54,7 +54,7 @@ TEST_CASE("formula escaping: eq filter matches value with special chars",
     for (const auto& special : special_values()) {
         INFO("special value: " << special);
         const auto suite = primary_key("Escaping", "Eq");
-        auto created = airtable.primary().create(
+        auto created = airtable.primary().create_one(
             PrimaryModel{.primary_key = suite, .single_line_text = special});
         const auto record_id = *created.id;
         try {
@@ -65,7 +65,7 @@ TEST_CASE("formula escaping: eq filter matches value with special chars",
             //    correctly-escaped interpolation.
             const auto filter = Formulas::and_({"FIND(\"" + suite + "\", {Primary Key})",
                                                 PrimaryModel::F.single_line_text.eq(special)});
-            auto results = airtable.primary().get_all(AirtableQuery{.formula = filter});
+            auto results = airtable.primary().get_many(AirtableQuery{.formula = filter});
             REQUIRE(contains_id(results, record_id));
             for (const auto& result : results) {
                 REQUIRE(result.single_line_text == special);
@@ -87,14 +87,14 @@ TEST_CASE("formula escaping: contains filter matches value with special chars",
         // Embed the special token inside a longer value so contains (FIND>0)
         // is a real substring test.
         const auto stored = "prefix " + special + " suffix";
-        auto created = airtable.primary().create(
+        auto created = airtable.primary().create_one(
             PrimaryModel{.primary_key = suite, .single_line_text = stored});
         const auto record_id = *created.id;
         try {
             const auto filter =
                 Formulas::and_({"FIND(\"" + suite + "\", {Primary Key})",
                                 PrimaryModel::F.single_line_text.contains(special)});
-            auto results = airtable.primary().get_all(AirtableQuery{.formula = filter});
+            auto results = airtable.primary().get_many(AirtableQuery{.formula = filter});
             REQUIRE(contains_id(results, record_id));
         } catch (...) {
             try_remove(airtable, record_id);
@@ -110,11 +110,11 @@ TEST_CASE("formula escaping: special characters in primary key round trip and fi
     auto airtable = make_airtable();
     const auto suite = primary_key("Escaping", "PK");
     const auto pk = suite + " O'Brien \"quote\" back\\slash";
-    auto created = airtable.primary().create(PrimaryModel{.primary_key = pk});
+    auto created = airtable.primary().create_one(PrimaryModel{.primary_key = pk});
     const auto record_id = *created.id;
     try {
         REQUIRE(created.primary_key == pk);
-        auto results = airtable.primary().get_all(
+        auto results = airtable.primary().get_many(
             AirtableQuery{.formula = PrimaryModel::F.primary_key.eq(pk)});
         REQUIRE(contains_id(results, record_id));
         REQUIRE(results.size() == 1);
@@ -133,10 +133,10 @@ TEST_CASE("formula escaping: newline and tab values round trip through storage",
     const auto suite = primary_key("Escaping", "Newline");
     const std::string value = "line1\nline2\twith tab\r\nwindows";
     auto created =
-        airtable.primary().create(PrimaryModel{.long_text = value, .primary_key = suite});
+        airtable.primary().create_one(PrimaryModel{.long_text = value, .primary_key = suite});
     const auto record_id = *created.id;
     try {
-        auto fetched = airtable.primary().get(record_id);
+        auto fetched = airtable.primary().get_one(record_id);
         REQUIRE(fetched.long_text == value);
     } catch (...) {
         try_remove(airtable, record_id);

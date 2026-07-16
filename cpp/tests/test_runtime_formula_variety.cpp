@@ -46,7 +46,7 @@ FormulasModel base_model(const std::string& label) {
 
 void try_remove_formulas(Airtable& airtable, const std::string& id) {
     try {
-        airtable.formulas().remove(id);
+        airtable.formulas().delete_one(id);
     } catch (const AirtableException&) {
     }
 }
@@ -69,10 +69,10 @@ TEST_CASE("runtime formula variety: math formula matches api for varied numbers"
     model.first_text = "x";
     model.second_text = "y";
     model.third_text = "z";
-    auto created = airtable.formulas().create(model);
+    auto created = airtable.formulas().create_one(model);
     const auto record_id = *created.id;
     try {
-        auto fetched = airtable.formulas().get(record_id);
+        auto fetched = airtable.formulas().get_one(record_id);
         const auto runtime = runtime::s(fetched.evaluate_math_formula());
         INFO(label << ": api='"
                    << (fetched.math_formula ? fetched.math_formula->value().value_or("") : "")
@@ -96,10 +96,10 @@ TEST_CASE("runtime formula variety: math formula blank branch when numbers missi
     model.first_text = "x";
     model.second_text = "y";
     model.third_text = "z";
-    auto created = airtable.formulas().create(model);
+    auto created = airtable.formulas().create_one(model);
     const auto record_id = *created.id;
     try {
-        auto fetched = airtable.formulas().get(record_id);
+        auto fetched = airtable.formulas().get_one(record_id);
         const auto api_val = fetched.math_formula ? fetched.math_formula->value().value_or("") : "";
         const auto runtime = runtime::s(fetched.evaluate_math_formula());
         INFO("blank: api='" << api_val << "' runtime='" << runtime << "'");
@@ -128,10 +128,10 @@ TEST_CASE("runtime formula variety: text formula matches api for varied text",
     model.first_text = a;
     model.second_text = b;
     model.third_text = c;
-    auto created = airtable.formulas().create(model);
+    auto created = airtable.formulas().create_one(model);
     const auto record_id = *created.id;
     try {
-        auto fetched = airtable.formulas().get(record_id);
+        auto fetched = airtable.formulas().get_one(record_id);
         const auto runtime = runtime::s(fetched.evaluate_text_formula());
         INFO(label << ": api='"
                    << (fetched.text_formula ? fetched.text_formula->value().value_or("") : "")

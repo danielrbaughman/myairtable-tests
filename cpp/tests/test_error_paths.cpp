@@ -31,7 +31,7 @@ TEST_CASE("error paths: get nonexistent record throws api error", "[crud][error-
     auto airtable = make_airtable();
     bool threw = false;
     try {
-        airtable.primary().get("recDOESNOTEXIST0001");
+        airtable.primary().get_one("recDOESNOTEXIST0001");
     } catch (const ApiError& api) {
         threw = true;
         INFO("404 -> ApiError: " << api.what());
@@ -48,7 +48,7 @@ TEST_CASE("error paths: create with invalid select option throws api error",
     fields.set_string(PrimaryFields::kSingleSelectId, "NotARealOption_zzz");
     bool threw = false;
     try {
-        airtable.primary().dict().create(fields);
+        airtable.primary().dict().create_one(fields);
     } catch (const ApiError& api) {
         threw = true;
         INFO("bad select -> ApiError: " << api.what());
@@ -63,7 +63,7 @@ TEST_CASE("error paths: create with wrong value type throws api error", "[crud][
     fields.set(PrimaryFields::kNumberIntId, json("not a number"));
     bool threw = false;
     try {
-        airtable.primary().dict().create(fields);
+        airtable.primary().dict().create_one(fields);
     } catch (const ApiError& api) {
         threw = true;
         INFO("wrong type -> ApiError: " << api.what());
@@ -78,7 +78,7 @@ TEST_CASE("error paths: create with unknown field throws api error", "[crud][err
     fields.set("fldDOESNOTEXIST00000", json("x"));
     bool threw = false;
     try {
-        airtable.primary().dict().create(fields);
+        airtable.primary().dict().create_one(fields);
     } catch (const ApiError& api) {
         threw = true;
         INFO("unknown field -> ApiError: " << api.what());
@@ -94,7 +94,7 @@ TEST_CASE("error paths: bad api key throws auth error", "[crud][error-paths]") {
     // classifications (never the base type alone).
     bool typed = false;
     try {
-        bad.primary().get_all(AirtableQuery{.max_records = 1});
+        bad.primary().get_many(AirtableQuery{.max_records = 1});
     } catch (const ApiError& api) {
         typed = true;
         INFO("bad key -> ApiError: " << api.what());

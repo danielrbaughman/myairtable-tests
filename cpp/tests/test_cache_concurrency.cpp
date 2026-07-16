@@ -27,7 +27,7 @@ void best_effort_delete(Airtable& at, const std::string& id) {
         return;
     }
     try {
-        at.primary().remove(id);
+        at.primary().delete_one(id);
     } catch (const AirtableException&) {
     }
 }
@@ -50,7 +50,7 @@ TEST_CASE("cache concurrency: concurrent gets of the same record are consistent"
           "[cache][cache-concurrency]") {
     auto at = cached();
     const auto key = primary_key("CacheConc", "Reads");
-    auto created = at.primary().create(PrimaryModel{.primary_key = key});
+    auto created = at.primary().create_one(PrimaryModel{.primary_key = key});
     const auto id = *created.id;
     try {
         // 25 concurrent gets race to populate/read the shared cache.
@@ -62,7 +62,7 @@ TEST_CASE("cache concurrency: concurrent gets of the same record are consistent"
         for (int i = 0; i < kReaders; ++i) {
             threads.emplace_back([&, i] {
                 try {
-                    results[i] = at.primary().get(id);
+                    results[i] = at.primary().get_one(id);
                 } catch (...) {
                     errors[i] = std::current_exception();
                 }
@@ -85,7 +85,7 @@ TEST_CASE("cache concurrency: concurrent reads and mutations do not corrupt the 
           "[cache][cache-concurrency]") {
     auto at = cached();
     const auto key = primary_key("CacheConc", "Mix");
-    auto created = at.primary().create(PrimaryModel{.primary_key = key});
+    auto created = at.primary().create_one(PrimaryModel{.primary_key = key});
     const auto id = *created.id;
     try {
         // Interleave reads (populate cache), manual invalidations, and
@@ -97,7 +97,7 @@ TEST_CASE("cache concurrency: concurrent reads and mutations do not corrupt the 
         for (int i = 0; i < kIterations; ++i) {
             threads.emplace_back([&, slot = i * 3] {
                 try {
-                    at.primary().get(id);
+                    at.primary().get_one(id);
                 } catch (...) {
                     errors[slot] = std::current_exception();
                 }
@@ -120,7 +120,7 @@ TEST_CASE("cache concurrency: concurrent reads and mutations do not corrupt the 
         join_and_rethrow(threads, errors);
 
         // The client is still usable and returns the correct value afterward.
-        auto fetched = at.primary().get(id);
+        auto fetched = at.primary().get_one(id);
         REQUIRE(fetched.primary_key == key);
     } catch (...) {
         best_effort_delete(at, id);

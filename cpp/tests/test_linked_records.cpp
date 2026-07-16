@@ -16,7 +16,7 @@ void try_remove_primary(Airtable& airtable, const std::optional<std::string>& id
         return;
     }
     try {
-        airtable.primary().remove(*id);
+        airtable.primary().delete_one(*id);
     } catch (const AirtableException&) {
     }
 }
@@ -28,7 +28,7 @@ void try_remove_secondaries(Airtable& airtable,
             continue;
         }
         try {
-            airtable.secondary().remove(*id);
+            airtable.secondary().delete_one(*id);
         } catch (const AirtableException&) {
         }
     }
@@ -40,10 +40,10 @@ TEST_CASE("linked: record fields round trip via record ids", "[crud][linked]") {
     const auto suite = primary_key("Linked", "RoundTrip");
     std::optional<std::string> sec1_id, sec2_id, prim_id;
     try {
-        sec1_id = *airtable.secondary().create(SecondaryModel{.name = suite + " S1"}).id;
-        sec2_id = *airtable.secondary().create(SecondaryModel{.name = suite + " S2"}).id;
+        sec1_id = *airtable.secondary().create_one(SecondaryModel{.name = suite + " S1"}).id;
+        sec2_id = *airtable.secondary().create_one(SecondaryModel{.name = suite + " S2"}).id;
 
-        auto prim = airtable.primary().create(PrimaryModel{
+        auto prim = airtable.primary().create_one(PrimaryModel{
             .primary_key = suite,
             .link_multiple = std::vector<std::string>{*sec1_id, *sec2_id},
             .link_single = std::vector<std::string>{*sec1_id},
@@ -52,13 +52,13 @@ TEST_CASE("linked: record fields round trip via record ids", "[crud][linked]") {
         REQUIRE(prim.link_single == std::vector<std::string>{*sec1_id});
         REQUIRE(prim.link_multiple == std::vector<std::string>{*sec1_id, *sec2_id});
 
-        auto fetched = airtable.primary().get(*prim_id);
+        auto fetched = airtable.primary().get_one(*prim_id);
         REQUIRE(fetched.link_single == std::vector<std::string>{*sec1_id});
         REQUIRE(fetched.link_multiple == std::vector<std::string>{*sec1_id, *sec2_id});
 
         fetched.link_single = std::vector<std::string>{*sec2_id};
         fetched.link_multiple = std::vector<std::string>{*sec1_id};
-        auto updated = airtable.primary().update(fetched);
+        auto updated = airtable.primary().update_one(fetched);
         REQUIRE(updated.link_single == std::vector<std::string>{*sec2_id});
         REQUIRE(updated.link_multiple == std::vector<std::string>{*sec1_id});
     } catch (...) {
@@ -76,10 +76,10 @@ TEST_CASE("linked: single record resolves via secondary get", "[crud][linked]") 
     std::optional<std::string> sec_id, prim_id;
     try {
         sec_id = *airtable.secondary()
-                      .create(SecondaryModel{.name = suite + " Target", .value = "sv"})
+                      .create_one(SecondaryModel{.name = suite + " Target", .value = "sv"})
                       .id;
 
-        auto prim = airtable.primary().create(PrimaryModel{
+        auto prim = airtable.primary().create_one(PrimaryModel{
             .primary_key = suite,
             .link_single = std::vector<std::string>{*sec_id},
         });
@@ -88,7 +88,7 @@ TEST_CASE("linked: single record resolves via secondary get", "[crud][linked]") 
         const auto linked_id = prim.link_single->front();
         REQUIRE(linked_id == *sec_id);
 
-        auto linked = airtable.secondary().get(linked_id);
+        auto linked = airtable.secondary().get_one(linked_id);
         REQUIRE(linked.name == suite + " Target");
         REQUIRE(linked.value == "sv");
     } catch (...) {
@@ -103,7 +103,7 @@ TEST_CASE("linked: single record resolves via secondary get", "[crud][linked]") 
 TEST_CASE("linked: empty link-single decodes as nullopt", "[crud][linked]") {
     auto airtable = make_airtable();
     const auto suite = primary_key("Linked", "FetchNil");
-    auto prim = airtable.primary().create(PrimaryModel{.primary_key = suite + " No Links"});
+    auto prim = airtable.primary().create_one(PrimaryModel{.primary_key = suite + " No Links"});
     const auto prim_id = prim.id;
     try {
         // Airtable omits empty link fields entirely; link_single decodes as nullopt/empty.
@@ -120,17 +120,17 @@ TEST_CASE("linked: multi records resolve via secondary get", "[crud][linked]") {
     const auto suite = primary_key("Linked", "Multi");
     std::optional<std::string> sec1_id, sec2_id, prim_id;
     try {
-        sec1_id = *airtable.secondary().create(SecondaryModel{.name = suite + " T1"}).id;
-        sec2_id = *airtable.secondary().create(SecondaryModel{.name = suite + " T2"}).id;
+        sec1_id = *airtable.secondary().create_one(SecondaryModel{.name = suite + " T1"}).id;
+        sec2_id = *airtable.secondary().create_one(SecondaryModel{.name = suite + " T2"}).id;
 
-        auto prim = airtable.primary().create(PrimaryModel{
+        auto prim = airtable.primary().create_one(PrimaryModel{
             .primary_key = suite,
             .link_multiple = std::vector<std::string>{*sec1_id, *sec2_id},
         });
         prim_id = prim.id;
 
         auto linked =
-            airtable.secondary().get(prim.link_multiple.value_or(std::vector<std::string>{}));
+            airtable.secondary().get_many(prim.link_multiple.value_or(std::vector<std::string>{}));
         REQUIRE(linked.size() == 2);
         std::vector<std::string> names;
         for (const auto& model : linked) {

@@ -13,14 +13,14 @@ using myairtable_tests::primary_key;
 namespace {
 void try_remove(Airtable& airtable, const std::vector<std::string>& ids) {
     try {
-        airtable.primary().remove(ids);
+        airtable.primary().delete_many(ids);
     } catch (const AirtableException&) {
     }
 }
 
 void try_sweep_by_prefix(Airtable& airtable, const std::string& prefix) {
     try {
-        airtable.primary().remove_all(
+        airtable.primary().delete_all(
             AirtableQuery{.formula = "FIND(\"" + prefix + "\", {Primary Key})"});
     } catch (const AirtableException&) {
     }
@@ -30,24 +30,24 @@ void try_sweep_by_prefix(Airtable& airtable, const std::string& prefix) {
 TEST_CASE("orm table: primary-key-only crud round trip", "[crud][orm-table]") {
     auto airtable = make_airtable();
     const auto pk = primary_key("OrmTable", "PKOnly");
-    auto created = airtable.primary().create(PrimaryModel{.primary_key = pk});
+    auto created = airtable.primary().create_one(PrimaryModel{.primary_key = pk});
     REQUIRE(created.id.has_value());
     REQUIRE(created.primary_key == pk);
 
     const auto record_id = *created.id;
     try {
-        auto fetched = airtable.primary().get(record_id);
+        auto fetched = airtable.primary().get_one(record_id);
         REQUIRE(fetched.id == record_id);
         REQUIRE(fetched.primary_key == pk);
         REQUIRE(fetched.dirty_fields().empty());
 
         fetched.primary_key = pk + " Updated";
         REQUIRE_FALSE(fetched.dirty_fields().empty());
-        auto updated = airtable.primary().update(fetched);
+        auto updated = airtable.primary().update_one(fetched);
         REQUIRE(updated.primary_key == pk + " Updated");
 
-        airtable.primary().remove(record_id);
-        REQUIRE_THROWS_AS(airtable.primary().get(record_id), AirtableException);
+        airtable.primary().delete_one(record_id);
+        REQUIRE_THROWS_AS(airtable.primary().get_one(record_id), AirtableException);
     } catch (...) {
         try_remove(airtable, {record_id});
         throw;
@@ -73,7 +73,7 @@ TEST_CASE("orm table: all simple properties round trip", "[crud][orm-table]") {
         .percent_float = 0.333,
         .duration = Duration{3600.0},
     };
-    auto created = airtable.primary().create(model);
+    auto created = airtable.primary().create_one(model);
     const auto record_id = *created.id;
     try {
         REQUIRE(created.primary_key == pk);
@@ -104,7 +104,7 @@ TEST_CASE("orm table: select enums and rating round trip", "[crud][orm-table]") 
                                                      PrimaryMultipleSelectOption::Option2},
         .rating = json(3),
     };
-    auto created = airtable.primary().create(model);
+    auto created = airtable.primary().create_one(model);
     const auto record_id = *created.id;
     try {
         REQUIRE(created.single_select == PrimarySingleSelectOption::Choice1);
@@ -113,14 +113,14 @@ TEST_CASE("orm table: select enums and rating round trip", "[crud][orm-table]") 
                                                          PrimaryMultipleSelectOption::Option2});
         REQUIRE(created.rating->get<int>() == 3);
 
-        auto fetched = airtable.primary().get(record_id);
+        auto fetched = airtable.primary().get_one(record_id);
         REQUIRE(fetched.single_select == PrimarySingleSelectOption::Choice1);
 
         fetched.single_select = PrimarySingleSelectOption::Choice2;
         fetched.multiple_select =
             std::vector<PrimaryMultipleSelectOption>{PrimaryMultipleSelectOption::Option3};
         fetched.rating = json(5);
-        auto updated = airtable.primary().update(fetched);
+        auto updated = airtable.primary().update_one(fetched);
         REQUIRE(updated.single_select == PrimarySingleSelectOption::Choice2);
         REQUIRE(updated.multiple_select ==
                 std::vector<PrimaryMultipleSelectOption>{PrimaryMultipleSelectOption::Option3});
@@ -139,14 +139,14 @@ TEST_CASE("orm table: get with query returns filtered record set", "[crud][orm-t
     for (int i = 1; i <= 3; ++i) {
         models.push_back(PrimaryModel{.primary_key = suite + " " + std::to_string(i)});
     }
-    auto created = airtable.primary().create(models);
+    auto created = airtable.primary().create_many(models);
     std::vector<std::string> created_ids;
     for (const auto& m : created) {
         created_ids.push_back(*m.id);
     }
     try {
         REQUIRE(created.size() == 3);
-        auto results = airtable.primary().get_all(
+        auto results = airtable.primary().get_many(
             AirtableQuery{.formula = "FIND(\"" + suite + "\", {Primary Key})"});
         REQUIRE(results.size() == 3);
         std::set<std::string> expected(created_ids.begin(), created_ids.end());
@@ -170,13 +170,13 @@ TEST_CASE("orm table: field selection and max records apply", "[crud][orm-table]
         models.push_back(PrimaryModel{.primary_key = suite + " " + std::to_string(i),
                                       .single_line_text = "text " + std::to_string(i)});
     }
-    auto created = airtable.primary().create(models);
+    auto created = airtable.primary().create_many(models);
     std::vector<std::string> created_ids;
     for (const auto& m : created) {
         created_ids.push_back(*m.id);
     }
     try {
-        auto results = airtable.primary().get_all(
+        auto results = airtable.primary().get_many(
             AirtableQuery{.formula = "FIND(\"" + suite + "\", {Primary Key})",
                           .fields = {std::string(PrimaryFields::kPrimaryKeyId)},
                           .max_records = 2});
@@ -194,7 +194,7 @@ TEST_CASE("orm table: field selection and max records apply", "[crud][orm-table]
 
 TEST_CASE("orm table: invalid record id throws", "[crud][orm-table]") {
     auto airtable = make_airtable();
-    REQUIRE_THROWS_AS(airtable.primary().get("recDOESNOTEXIST123"), AirtableException);
+    REQUIRE_THROWS_AS(airtable.primary().get_one("recDOESNOTEXIST123"), AirtableException);
 }
 
 TEST_CASE("orm table: batch create/update/delete chunks above the batch limit",
@@ -208,7 +208,7 @@ TEST_CASE("orm table: batch create/update/delete chunks above the batch limit",
     }
     std::vector<std::string> created_ids;
     try {
-        auto created = airtable.primary().create(models);
+        auto created = airtable.primary().create_many(models);
         for (const auto& m : created) {
             created_ids.push_back(*m.id);
         }
@@ -220,14 +220,14 @@ TEST_CASE("orm table: batch create/update/delete chunks above the batch limit",
         for (auto& m : created) {
             m.primary_key = *m.primary_key + " Updated";
         }
-        auto updated = airtable.primary().update(created);
+        auto updated = airtable.primary().update_many(created);
         REQUIRE(updated.size() == kCount);
         for (int i = 0; i < kCount; ++i) {
             REQUIRE(updated[i].primary_key == suite + " " + std::to_string(i + 1) + " Updated");
         }
 
-        airtable.primary().remove(created_ids);
-        REQUIRE_THROWS_AS(airtable.primary().get(created_ids.front()), AirtableException);
+        airtable.primary().delete_many(created_ids);
+        REQUIRE_THROWS_AS(airtable.primary().get_one(created_ids.front()), AirtableException);
     } catch (...) {
         try_remove(airtable, created_ids);
         try_sweep_by_prefix(airtable, suite);

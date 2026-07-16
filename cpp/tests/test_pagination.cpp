@@ -31,7 +31,7 @@ void try_delete_many(Airtable& airtable, const std::vector<std::string>& ids,
                      const std::string& suite) {
     if (!ids.empty()) {
         try {
-            airtable.primary().dict().remove(ids);
+            airtable.primary().dict().delete_many(ids);
             return;
         } catch (const AirtableException&) {
             // fall through to a prefix sweep
@@ -39,14 +39,14 @@ void try_delete_many(Airtable& airtable, const std::vector<std::string>& ids,
     }
     try {
         auto stray =
-            airtable.primary().dict().get_all(AirtableQuery{.formula = find_formula(suite)});
+            airtable.primary().dict().get_many(AirtableQuery{.formula = find_formula(suite)});
         if (!stray.empty()) {
             std::vector<std::string> stray_ids;
             stray_ids.reserve(stray.size());
             for (const auto& record : stray) {
                 stray_ids.push_back(record.id);
             }
-            airtable.primary().dict().remove(stray_ids);
+            airtable.primary().dict().delete_many(stray_ids);
         }
     } catch (const AirtableException&) {
         // best-effort cleanup
@@ -65,14 +65,14 @@ TEST_CASE("pagination: orm get spanning multiple pages returns every record",
     }
     std::vector<std::string> created_ids;
     try {
-        auto created = airtable.primary().create(models);
+        auto created = airtable.primary().create_many(models);
         for (const auto& m : created) {
             created_ids.push_back(*m.id);
         }
         REQUIRE(created.size() == kCount);
 
         // No maxRecords: the offset loop must walk both pages and return all 105.
-        auto results = airtable.primary().get_all(AirtableQuery{.formula = find_formula(suite)});
+        auto results = airtable.primary().get_many(AirtableQuery{.formula = find_formula(suite)});
         REQUIRE(results.size() == kCount);
         std::set<std::string> expected(created_ids.begin(), created_ids.end());
         std::set<std::string> actual;
@@ -99,14 +99,14 @@ TEST_CASE("pagination: dict get spanning multiple pages returns every record",
     }
     std::vector<std::string> created_ids;
     try {
-        auto created = airtable.primary().dict().create(creates);
+        auto created = airtable.primary().dict().create_many(creates);
         for (const auto& record : created) {
             created_ids.push_back(record.id);
         }
         REQUIRE(created.size() == kCount);
 
         auto results =
-            airtable.primary().dict().get_all(AirtableQuery{.formula = find_formula(suite)});
+            airtable.primary().dict().get_many(AirtableQuery{.formula = find_formula(suite)});
         REQUIRE(results.size() == kCount);
         std::set<std::string> expected(created_ids.begin(), created_ids.end());
         std::set<std::string> actual;
@@ -130,14 +130,14 @@ TEST_CASE("pagination: explicit page size returns all records across pages", "[c
     }
     std::vector<std::string> created_ids;
     try {
-        auto created = airtable.primary().create(models);
+        auto created = airtable.primary().create_many(models);
         for (const auto& m : created) {
             created_ids.push_back(*m.id);
         }
 
         // pageSize 10, NO maxRecords: the offset loop must walk all 3 pages
         // and return all 25.
-        auto results = airtable.primary().get_all(
+        auto results = airtable.primary().get_many(
             AirtableQuery{.formula = find_formula(suite), .page_size = 10});
         REQUIRE(results.size() == kPageSizeCount);
     } catch (...) {
@@ -156,14 +156,14 @@ TEST_CASE("pagination: page size with max records caps the total", "[crud][pagin
     }
     std::vector<std::string> created_ids;
     try {
-        auto created = airtable.primary().create(models);
+        auto created = airtable.primary().create_many(models);
         for (const auto& m : created) {
             created_ids.push_back(*m.id);
         }
 
         // pageSize 10 + maxRecords 15: maxRecords caps the total mid-stream
         // (not a page multiple).
-        auto results = airtable.primary().get_all(
+        auto results = airtable.primary().get_many(
             AirtableQuery{.formula = find_formula(suite), .max_records = 15, .page_size = 10});
         REQUIRE(results.size() == 15);
     } catch (...) {

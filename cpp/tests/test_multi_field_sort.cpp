@@ -55,7 +55,7 @@ void try_remove(Airtable& airtable, const std::vector<std::string>& ids) {
         return;
     }
     try {
-        airtable.primary().dict().remove(ids);
+        airtable.primary().dict().delete_many(ids);
     } catch (const AirtableException&) {
     }
 }
@@ -67,11 +67,11 @@ TEST_CASE("multi field sort: two-field sort breaks ties on second key",
     auto airtable = make_airtable();
     const auto suite = primary_key("Sort", "TwoField");
     // NumberInt ties at 10 (rows "b" and "a"); the secondary SingleLineText sort orders them.
-    auto created = airtable.primary().dict().create(
+    auto created = airtable.primary().dict().create_many(
         std::vector<Fields>{row(suite, 10, "b"), row(suite, 10, "a"), row(suite, 20, "c")});
     const auto ids = ids_of(created);
     try {
-        auto results = airtable.primary().dict().get_all(
+        auto results = airtable.primary().dict().get_many(
             AirtableQuery{.formula = scope_to(ids),
                           .sorts = {{.field = std::string(PrimaryFields::kNumberIntId),
                                      .direction = SortDirection::Asc},
@@ -90,11 +90,11 @@ TEST_CASE("multi field sort: secondary descending reverses tied group",
           "[filter][multi-field-sort]") {
     auto airtable = make_airtable();
     const auto suite = primary_key("Sort", "MixedDir");
-    auto created = airtable.primary().dict().create(
+    auto created = airtable.primary().dict().create_many(
         std::vector<Fields>{row(suite, 10, "a"), row(suite, 10, "b"), row(suite, 20, "c")});
     const auto ids = ids_of(created);
     try {
-        auto results = airtable.primary().dict().get_all(
+        auto results = airtable.primary().dict().get_many(
             AirtableQuery{.formula = scope_to(ids),
                           .sorts = {{.field = std::string(PrimaryFields::kNumberIntId),
                                      .direction = SortDirection::Asc},
@@ -112,7 +112,7 @@ TEST_CASE("multi field sort: secondary descending reverses tied group",
 TEST_CASE("multi field sort: sort combined with a filter", "[filter][multi-field-sort]") {
     auto airtable = make_airtable();
     const auto suite = primary_key("Sort", "WithFilter");
-    auto created = airtable.primary().dict().create(std::vector<Fields>{
+    auto created = airtable.primary().dict().create_many(std::vector<Fields>{
         row(suite, 30, "x"),
         row(suite, 10, "y"),
         row(suite, 20, "z"),
@@ -122,7 +122,7 @@ TEST_CASE("multi field sort: sort combined with a filter", "[filter][multi-field
     try {
         const auto filter =
             Formulas::and_({scope_to(ids), PrimaryModel::F.number_int.greater_than(5)});
-        auto results = airtable.primary().dict().get_all(
+        auto results = airtable.primary().dict().get_many(
             AirtableQuery{.formula = filter,
                           .sorts = {{.field = std::string(PrimaryFields::kNumberIntId),
                                      .direction = SortDirection::Asc}}});

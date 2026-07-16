@@ -22,7 +22,7 @@ void try_remove(Airtable& airtable, const std::vector<std::string>& ids) {
         return;
     }
     try {
-        airtable.primary().remove(ids);
+        airtable.primary().delete_many(ids);
     } catch (const AirtableException&) {
     }
 }
@@ -35,7 +35,7 @@ TEST_CASE("upsert depth: upsert matches on multiple merge fields", "[crud][upser
     std::vector<std::string> ids;
     try {
         // Seed a record identified by the (PrimaryKey, SingleLineText) pair.
-        auto seed = airtable.primary().create(
+        auto seed = airtable.primary().create_one(
             PrimaryModel{.primary_key = suite, .single_line_text = "anchor"});
         ids.push_back(*seed.id);
 
@@ -70,9 +70,9 @@ TEST_CASE("upsert depth: upsert with multiple matches throws", "[crud][upsert-de
     std::vector<std::string> ids;
     try {
         // Two records share the same SingleLineText value.
-        auto a = airtable.primary().create(
+        auto a = airtable.primary().create_one(
             PrimaryModel{.primary_key = suite + " A", .single_line_text = "dupe"});
-        auto b = airtable.primary().create(
+        auto b = airtable.primary().create_one(
             PrimaryModel{.primary_key = suite + " B", .single_line_text = "dupe"});
         ids.push_back(*a.id);
         ids.push_back(*b.id);

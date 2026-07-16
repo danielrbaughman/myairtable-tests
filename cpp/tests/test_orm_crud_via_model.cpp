@@ -11,7 +11,7 @@ using myairtable_tests::primary_key;
 namespace {
 void try_remove(Airtable& airtable, const std::string& record_id) {
     try {
-        airtable.primary().remove(record_id);
+        airtable.primary().delete_one(record_id);
     } catch (const AirtableException&) {
     }
 }
@@ -20,7 +20,7 @@ void try_remove(Airtable& airtable, const std::string& record_id) {
 TEST_CASE("model crud: primary-key-only crud via model methods", "[crud][orm-model]") {
     auto airtable = make_airtable();
     const auto pk = primary_key("OrmModel", "PKOnly");
-    auto created = airtable.primary().create(PrimaryModel{.primary_key = pk});
+    auto created = airtable.primary().create_one(PrimaryModel{.primary_key = pk});
     const auto record_id = *created.id;
     try {
         // fetch() returns a fresh instance
@@ -32,11 +32,11 @@ TEST_CASE("model crud: primary-key-only crud via model methods", "[crud][orm-mod
         fetched.primary_key = pk + " ViaModel";
         auto saved = fetched.save();
         REQUIRE(saved.primary_key == pk + " ViaModel");
-        REQUIRE(airtable.primary().get(record_id).primary_key == pk + " ViaModel");
+        REQUIRE(airtable.primary().get_one(record_id).primary_key == pk + " ViaModel");
 
         // remove() deletes the record
         saved.remove();
-        REQUIRE_THROWS_AS(airtable.primary().get(record_id), AirtableException);
+        REQUIRE_THROWS_AS(airtable.primary().get_one(record_id), AirtableException);
     } catch (...) {
         try_remove(airtable, record_id);
         throw;
@@ -46,10 +46,10 @@ TEST_CASE("model crud: primary-key-only crud via model methods", "[crud][orm-mod
 TEST_CASE("model crud: dirty tracking resets after a successful save", "[crud][orm-model]") {
     auto airtable = make_airtable();
     const auto pk = primary_key("OrmModel", "DirtyReset");
-    auto created = airtable.primary().create(PrimaryModel{.primary_key = pk});
+    auto created = airtable.primary().create_one(PrimaryModel{.primary_key = pk});
     const auto record_id = *created.id;
     try {
-        auto model = airtable.primary().get(record_id);
+        auto model = airtable.primary().get_one(record_id);
         REQUIRE(model.dirty_fields().empty());
 
         model.single_line_text = "changed";

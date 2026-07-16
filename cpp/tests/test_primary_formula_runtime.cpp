@@ -79,7 +79,7 @@ std::string line_of(const std::string& formula, const std::string& label) {
 
 void try_remove(Airtable& airtable, const std::string& id) {
     try {
-        airtable.primary().remove(id);
+        airtable.primary().delete_one(id);
     } catch (const AirtableException&) {
     }
 }
@@ -90,10 +90,10 @@ TEST_CASE("primary formula runtime: complex formula renders deterministic fields
           "[runtime][primary-formula-runtime]") {
     auto airtable = make_airtable();
     const auto suite = primary_key("PrimaryFormula", "Complex");
-    auto created = airtable.primary().create(new_record(suite));
+    auto created = airtable.primary().create_one(new_record(suite));
     const auto record_id = *created.id;
     try {
-        auto fetched = airtable.primary().get(record_id);
+        auto fetched = airtable.primary().get_one(record_id);
         std::string api;
         if (fetched.formula_complex.has_value()) {
             const auto clean = fetched.formula_complex->clean_values();
@@ -128,10 +128,10 @@ TEST_CASE("primary formula runtime: nested formula evaluates without throwing",
     // myairtable-5b0n.
     auto airtable = make_airtable();
     const auto suite = primary_key("PrimaryFormula", "Nested");
-    auto created = airtable.primary().create(new_record(suite));
+    auto created = airtable.primary().create_one(new_record(suite));
     const auto record_id = *created.id;
     try {
-        auto fetched = airtable.primary().get(record_id);
+        auto fetched = airtable.primary().get_one(record_id);
         std::string runtime_text;
         REQUIRE_NOTHROW(runtime_text = runtime::s(fetched.evaluate_formula_nested()));
     } catch (...) {

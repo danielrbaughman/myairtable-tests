@@ -21,7 +21,7 @@ DateTime utc(const std::string& text) {
 
 void try_remove_formulas(Airtable& airtable, const std::string& id) {
     try {
-        airtable.formulas().remove(id);
+        airtable.formulas().delete_one(id);
     } catch (const AirtableException&) {
     }
 }
@@ -48,11 +48,11 @@ TEST_CASE("runtime formulas: match api", "[runtime][runtime-formulas]") {
         .third_number = 30.0,
         .third_text = "!",
     };
-    auto created = airtable.formulas().create(fresh);
+    auto created = airtable.formulas().create_one(fresh);
     const auto record_id = *created.id;
     try {
         // Re-fetch to get formula values computed by Airtable.
-        auto model = airtable.formulas().get(record_id);
+        auto model = airtable.formulas().get_one(record_id);
 
         // Math formula: exact match.
         const auto runtime_math = runtime::s(model.evaluate_math_formula());
