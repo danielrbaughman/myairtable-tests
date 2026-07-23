@@ -45,13 +45,13 @@ export class TertiaryModel extends AirtableModel<TertiaryFieldSet, ITertiary, Te
         { propertyName: "value", fieldId: "fldjNLBh2UccM64h5", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 
-    /** `Name` (fldwzqKxsRnPZJ2Ll) */
+    /** Name `fldwzqKxsRnPZJ2Ll` - `Primary Key` */
     public get name(): string | undefined { return this._fields["name"] as string; }
     public set name(value: string | undefined) { this._fields["name"] = value; this.markDirty('name'); }
-    /** `Secondary` (fld8lCuUXpEXkIeYv) */
+    /** Secondary `fld8lCuUXpEXkIeYv` */
     public get secondary(): LinkedRecords<SecondaryModel> { return this._fields["secondary"] as LinkedRecords<SecondaryModel>; }
     public set secondary(value: SecondaryModel[] | LinkedRecords<SecondaryModel> | RecordId[] | undefined) { this._setLinkedRecordsField('secondary', value); }
-    /** `Value` (fldjNLBh2UccM64h5) */
+    /** Value `fldjNLBh2UccM64h5` */
     public get value(): string | undefined { return this._fields["value"] as string; }
     public set value(value: string | undefined) { this._fields["value"] = value; this.markDirty('value'); }
 

@@ -47,19 +47,19 @@ export class SecondaryModel extends AirtableModel<SecondaryFieldSet, ISecondary,
         { propertyName: "value", fieldId: "fldi6Mxh5H1gPGxFX", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 
-    /** `Link to Tertiary` (fldKR6tdbnOBRCtdQ) */
+    /** Link to Tertiary `fldKR6tdbnOBRCtdQ` */
     public get linkToTertiary(): LinkedRecords<TertiaryModel> { return this._fields["linkToTertiary"] as LinkedRecords<TertiaryModel>; }
     public set linkToTertiary(value: TertiaryModel[] | LinkedRecords<TertiaryModel> | RecordId[] | undefined) { this._setLinkedRecordsField('linkToTertiary', value); }
-    /** `Name` (fld1RagdJ09mpWhzM) */
+    /** Name `fld1RagdJ09mpWhzM` - `Primary Key` */
     public get name(): string | undefined { return this._fields["name"] as string; }
     public set name(value: string | undefined) { this._fields["name"] = value; this.markDirty('name'); }
-    /** `Primary` (fldl0nB9WRFSdqlii) */
+    /** Primary `fldl0nB9WRFSdqlii` */
     public get primary(): LinkedRecords<PrimaryModel> { return this._fields["primary"] as LinkedRecords<PrimaryModel>; }
     public set primary(value: PrimaryModel[] | LinkedRecords<PrimaryModel> | RecordId[] | undefined) { this._setLinkedRecordsField('primary', value); }
-    /** `Primary 2` (fldgoE2oZmXmKkQca) */
+    /** Primary 2 `fldgoE2oZmXmKkQca` */
     public get primary2(): LinkedRecords<PrimaryModel> { return this._fields["primary2"] as LinkedRecords<PrimaryModel>; }
     public set primary2(value: PrimaryModel[] | LinkedRecords<PrimaryModel> | RecordId[] | undefined) { this._setLinkedRecordsField('primary2', value); }
-    /** `Value` (fldi6Mxh5H1gPGxFX) */
+    /** Value `fldi6Mxh5H1gPGxFX` */
     public get value(): string | undefined { return this._fields["value"] as string; }
     public set value(value: string | undefined) { this._fields["value"] = value; this.markDirty('value'); }
 

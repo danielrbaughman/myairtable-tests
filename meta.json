@@ -1,4 +1,5 @@
 {
+    "generator_version": "0.1.1",
     "tables": [
         {
             "id": "tblnuYBsMdXNDsuRc",
@@ -166,17 +167,20 @@
                         "isReversed": false
                     },
                     "id": "fldhF2AEuSC1haCZd",
-                    "name": "Attachment"
+                    "name": "Attachment",
+                    "description": "Closes early */ then more text"
                 },
                 {
                     "type": "autoNumber",
                     "id": "fldizvTkxgIn0mC3L",
-                    "name": "Auto Number"
+                    "name": "Auto Number",
+                    "description": "Opens a nested /* comment"
                 },
                 {
                     "type": "button",
                     "id": "fldY48yKPG16AajtU",
-                    "name": "Button"
+                    "name": "Button",
+                    "description": "Has a \"\"\" triple quote inside"
                 },
                 {
                     "type": "checkbox",
@@ -185,12 +189,14 @@
                         "color": "greenBright"
                     },
                     "id": "fldjQIaAZVegb1FUa",
-                    "name": "Checkbox"
+                    "name": "Checkbox",
+                    "description": "Ends with a backslash \\"
                 },
                 {
                     "type": "createdBy",
                     "id": "fldGLQhDz2UjjiHG6",
-                    "name": "Created By"
+                    "name": "Created By",
+                    "description": "Value must be < 10 & > 0"
                 },
                 {
                     "type": "createdTime",
@@ -211,7 +217,8 @@
                         }
                     },
                     "id": "fld2YgW382Kt9xltA",
-                    "name": "Created Time"
+                    "name": "Created Time",
+                    "description": "Literal </summary> tag here"
                 },
                 {
                     "type": "currency",
@@ -220,7 +227,8 @@
                         "symbol": "$"
                     },
                     "id": "fldyh8pzDXiy5abEr",
-                    "name": "Currency (float)"
+                    "name": "Currency (float)",
+                    "description": "Mixed \"double\" and 'single' quotes"
                 },
                 {
                     "type": "currency",
@@ -229,7 +237,8 @@
                         "symbol": "$"
                     },
                     "id": "fldBfo74z9hD78hP8",
-                    "name": "Currency (int)"
+                    "name": "Currency (int)",
+                    "description": " leading and trailing spaces (and one that is only whitespace) "
                 },
                 {
                     "type": "date",
@@ -240,7 +249,8 @@
                         }
                     },
                     "id": "fldC6LfNVvVIxKyQH",
-                    "name": "Date"
+                    "name": "Date",
+                    "description": "A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)"
                 },
                 {
                     "type": "dateTime",
@@ -256,17 +266,20 @@
                         "timeZone": "client"
                     },
                     "id": "fldizYmjpXABGDLTG",
-                    "name": "Date (with time)"
+                    "name": "Date (with time)",
+                    "description": "Use @param and @return in prose"
                 },
                 {
                     "type": "singleLineText",
                     "id": "fld99XdcwRa5WW6nw",
-                    "name": "Duplicate (Name)"
+                    "name": "Duplicate (Name)",
+                    "description": "Doxygen \\brief and \\code words"
                 },
                 {
                     "type": "singleLineText",
                     "id": "fld95OnbzAUFUTTqZ",
-                    "name": "Duplicate Name"
+                    "name": "Duplicate Name",
+                    "description": "Refer to the ``code`` field (backticks)"
                 },
                 {
                     "type": "duration",
@@ -274,12 +287,14 @@
                         "durationFormat": "h:mm"
                     },
                     "id": "fldLTyf6ljS0rhur8",
-                    "name": "Duration"
+                    "name": "Duration",
+                    "description": "Caf\u00e9 \u2615 \u65e5\u672c\u8a9e \u2014 em-dash (Unicode + emoji + em-dash)"
                 },
                 {
                     "type": "email",
                     "id": "fldHCJoYBiFVsNvP4",
-                    "name": "Email"
+                    "name": "Email",
+                    "description": "A plain writable field with a simple one-line description"
                 },
                 {
                     "type": "formula",
@@ -342,7 +357,8 @@
                         }
                     },
                     "id": "fldcf62YFeIIDHElt",
-                    "name": "Formula (ID)"
+                    "name": "Formula (ID)",
+                    "description": "A description on a formula field (so it has both a description and a formula block)"
                 },
                 {
                     "type": "formula",
@@ -433,7 +449,8 @@
                 {
                     "type": "multilineText",
                     "id": "fld8ulc6J0W29M6La",
-                    "name": "Long Text"
+                    "name": "Long Text",
+                    "description": "Description with special characters !@#$%^&*()<>/:\"{}[]\\|=/*-+.,.?`~"
                 },
                 {
                     "type": "multilineText",
@@ -517,7 +534,8 @@
                 {
                     "type": "singleLineText",
                     "id": "fldol5Q4wmQJQvPRy",
-                    "name": "Primary Key"
+                    "name": "Primary Key",
+                    "description": "A description on the primary field"
                 },
                 {
                     "type": "rating",
@@ -541,12 +559,14 @@
                         }
                     },
                     "id": "fldGaFgBsDC3IBUdV",
-                    "name": "Rollup"
+                    "name": "Rollup",
+                    "description": "A description on a computed/rollup field"
                 },
                 {
                     "type": "singleLineText",
                     "id": "fld0BL2lFo9fqcKv3",
-                    "name": "Single Line Text"
+                    "name": "Single Line Text",
+                    "description": "Description\nWith\nNew\nLines"
                 },
                 {
                     "type": "singleSelect",

@@ -92,47 +92,105 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
         { propertyName: "userAllowMultiple", fieldId: "fldBwCDbAVxRj9yg7", fieldName: "User (allow multiple)", isComputed: false, fieldType: "generic" },
     ];
 
-    /** `Attachment` (fldhF2AEuSC1haCZd) */
+    /**
+     * Attachment `fldhF2AEuSC1haCZd`
+     *
+     * Closes early * / then more text
+     */
     public get attachment(): Attachment[] | undefined { return this._fields["attachment"] as Attachment[]; }
     public set attachment(value: Attachment[] | undefined) { this._fields["attachment"] = value; this.markDirty('attachment'); }
-    /** `Auto Number` (fldizvTkxgIn0mC3L) */
+    /**
+     * Auto Number `fldizvTkxgIn0mC3L` - `Read-Only`
+     *
+     * Opens a nested /* comment
+     */
     public get autoNumber(): number | undefined { return this._fields["autoNumber"] as number; }
-    /** `Button` (fldY48yKPG16AajtU) */
+    /**
+     * Button `fldY48yKPG16AajtU` - `Read-Only`
+     *
+     * Has a """ triple quote inside
+     */
     public get button(): AirtableButton | undefined { return this._fields["button"] as AirtableButton; }
-    /** `Checkbox` (fldjQIaAZVegb1FUa) */
+    /**
+     * Checkbox `fldjQIaAZVegb1FUa`
+     *
+     * Ends with a backslash \
+     */
     public get checkbox(): boolean | undefined { return this._fields["checkbox"] as boolean; }
     public set checkbox(value: boolean | undefined) { this._fields["checkbox"] = value; this.markDirty('checkbox'); }
-    /** `Created By` (fldGLQhDz2UjjiHG6) */
+    /**
+     * Created By `fldGLQhDz2UjjiHG6` - `Read-Only`
+     *
+     * Value must be < 10 & > 0
+     */
     public get createdBy(): Collaborator | undefined { return this._fields["createdBy"] as Collaborator; }
-    /** `Created Time` (fld2YgW382Kt9xltA) */
+    /**
+     * Created Time `fld2YgW382Kt9xltA` - `Read-Only`
+     *
+     * Literal </summary> tag here
+     */
     public get createdAtTime(): string | undefined { return this._fields["createdAtTime"] as string; }
-    /** `Currency (float)` (fldyh8pzDXiy5abEr) */
+    /**
+     * Currency (float) `fldyh8pzDXiy5abEr`
+     *
+     * Mixed "double" and 'single' quotes
+     */
     public get currencyFloat(): number | undefined { return this._fields["currencyFloat"] as number; }
     public set currencyFloat(value: number | undefined) { this._fields["currencyFloat"] = value; this.markDirty('currencyFloat'); }
-    /** `Currency (int)` (fldBfo74z9hD78hP8) */
+    /**
+     * Currency (int) `fldBfo74z9hD78hP8`
+     *
+     * leading and trailing spaces (and one that is only whitespace)
+     */
     public get currencyInt(): number | undefined { return this._fields["currencyInt"] as number; }
     public set currencyInt(value: number | undefined) { this._fields["currencyInt"] = value; this.markDirty('currencyInt'); }
-    /** `Date` (fldC6LfNVvVIxKyQH) */
+    /**
+     * Date `fldC6LfNVvVIxKyQH`
+     *
+     * A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)
+     */
     public get date(): string | undefined { return this._fields["date"] as string; }
     public set date(value: string | undefined) { this._fields["date"] = value; this.markDirty('date'); }
-    /** `Date (with time)` (fldizYmjpXABGDLTG) */
+    /**
+     * Date (with time) `fldizYmjpXABGDLTG`
+     *
+     * Use @param and @return in prose
+     */
     public get dateWithTime(): string | undefined { return this._fields["dateWithTime"] as string; }
     public set dateWithTime(value: string | undefined) { this._fields["dateWithTime"] = value; this.markDirty('dateWithTime'); }
-    /** `Duplicate (Name)` (fld99XdcwRa5WW6nw) */
+    /**
+     * Duplicate (Name) `fld99XdcwRa5WW6nw`
+     *
+     * Doxygen \brief and \code words
+     */
     public get duplicateName(): string | undefined { return this._fields["duplicateName"] as string; }
     public set duplicateName(value: string | undefined) { this._fields["duplicateName"] = value; this.markDirty('duplicateName'); }
-    /** `Duplicate Name` (fld95OnbzAUFUTTqZ) */
+    /**
+     * Duplicate Name `fld95OnbzAUFUTTqZ`
+     *
+     * Refer to the ``code`` field (backticks)
+     */
     public get duplicateNameV2(): string | undefined { return this._fields["duplicateNameV2"] as string; }
     public set duplicateNameV2(value: string | undefined) { this._fields["duplicateNameV2"] = value; this.markDirty('duplicateNameV2'); }
-    /** `Duration` (fldLTyf6ljS0rhur8) */
+    /**
+     * Duration `fldLTyf6ljS0rhur8`
+     *
+     * Café ☕ 日本語 — em-dash (Unicode + emoji + em-dash)
+     */
     public get duration(): number | undefined { return this._fields["duration"] as number; }
     public set duration(value: number | undefined) { this._fields["duration"] = value; this.markDirty('duration'); }
-    /** `Email` (fldHCJoYBiFVsNvP4) */
+    /**
+     * Email `fldHCJoYBiFVsNvP4`
+     *
+     * A plain writable field with a simple one-line description
+     */
     public get email(): string | undefined { return this._fields["email"] as string; }
     public set email(value: string | undefined) { this._fields["email"] = value; this.markDirty('email'); }
     /**
-     * `Formula (Complex)` (fld2vnFc0Bl5IOFUQ)
-     * 
+     * Formula (Complex) `fld2vnFc0Bl5IOFUQ` - `Read-Only`
+     *
+     * Concatenates all field values into a readable summary, using correct field references.
+     *
      * ```
      * CONCATENATE(
      *   "Primary Key: ",
@@ -149,230 +207,7 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
      *   "\n",
      *   "Attachment: ",
      *   IF(
-     *     {Attachment},
-     *     {Attachment},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Checkbox: ",
-     *   IF(
-     *     {Checkbox},
-     *     "Checked",
-     *     "Unchecked"
-     *   ),
-     *   "\n",
-     *   "Multiple Select: ",
-     *   IF(
-     *     {Multiple Select},
-     *     {Multiple Select},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Single Select: ",
-     *   IF(
-     *     {Single Select},
-     *     {Single Select},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "User: ",
-     *   IF(
-     *     {User},
-     *     {User},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "User (allow multiple): ",
-     *   IF(
-     *     {User (allow multiple)},
-     *     {User (allow multiple)},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Date: ",
-     *   IF(
-     *     {Date},
-     *     DATETIME_FORMAT({Date}, 'YYYY-MM-DD'),
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Date (with time): ",
-     *   IF(
-     *     {Date (with time)},
-     *     DATETIME_FORMAT(
-     *       {Date (with time)},
-     *       'YYYY-MM-DD HH:mm'
-     *     ),
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Phone Number: ",
-     *   IF(
-     *     {Phone Number},
-     *     {Phone Number},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Email: ",
-     *   IF(
-     *     {Email},
-     *     {Email},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "URL: ",
-     *   IF(
-     *     {URL},
-     *     {URL},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Number (int): ",
-     *   IF(
-     *     {Number (int)},
-     *     {Number(int) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Number (float): ",
-     *   IF(
-     *     {Number (float)},
-     *     {Number(float) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Currency (int): ",
-     *   IF(
-     *     {Currency (int)},
-     *     {Currency(int) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Currency (float): ",
-     *   IF(
-     *     {Currency (float)},
-     *     {Currency(float) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Percent (int): ",
-     *   IF(
-     *     {Percent (int)},
-     *     {Percent(int) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Percent (float): ",
-     *   IF(
-     *     {Percent (float)},
-     *     {Percent(float) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Duration: ",
-     *   IF(
-     *     {Duration},
-     *     {Duration} & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Rating: ",
-     *   IF(
-     *     {Rating},
-     *     {Rating} & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Created Time: ",
-     *   IF(
-     *     {Created Time},
-     *     DATETIME_FORMAT(
-     *       {Created Time},
-     *       'YYYY-MM-DD HH:mm'
-     *     ),
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Last Modified Time: ",
-     *   IF(
-     *     {Last Modified Time},
-     *     DATETIME_FORMAT(
-     *       {Last Modified Time},
-     *       'YYYY-MM-DD HH:mm'
-     *     ),
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Created By: ",
-     *   IF(
-     *     {Created By},
-     *     {Created By},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Last Modified By: ",
-     *   IF(
-     *     {Last Modified By},
-     *     {Last Modified By},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Auto Number: ",
-     *   IF(
-     *     {Auto Number},
-     *     {Auto Number} & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Button: ",
-     *   IF(
-     *     {Button},
-     *     {Button},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Link (single): ",
-     *   IF(
-     *     {Link (single)},
-     *     {Link (single)},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Link (multiple): ",
-     *   IF(
-     *     {Link (multiple)},
-     *     {Link (multiple)},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Lookup: ",
-     *   IF(
-     *     {Lookup},
-     *     {Lookup},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Rollup: ",
-     *   IF(
-     *     {Rollup},
-     *     {Rollup},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Formula (ID): ",
-     *   IF(
-     *     {Formula (ID)},
-     *     {Formula (ID)},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Formula (Simple): ",
-     *   IF(
-     *     {Formula (Simple)},
-     *     {Formula (Simple)},
-     *     "None"
-     *   )
-     * )
+     * … (truncated)
      * ```
      */
     public get formulaComplex(): string | undefined {
@@ -380,8 +215,10 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
         return this._fields["formulaComplex"] as string;
     }
     /**
-     * `Formula (ID)` (fldcf62YFeIIDHElt)
-     * 
+     * Formula (ID) `fldcf62YFeIIDHElt` - `Read-Only`
+     *
+     * A description on a formula field (so it has both a description and a formula block)
+     *
      * ```
      * RECORD_ID()
      * ```
@@ -391,8 +228,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
         return this._fields["formulaId"] as string;
     }
     /**
-     * `Formula (Nested)` (fldXFeHRPBLz6AiWh)
-     * 
+     * Formula (Nested) `fldXFeHRPBLz6AiWh` - `Read-Only`
+     *
      * ```
      * {Formula (ID)} & {Formula (Simple)} & {Formula (Complex)}
      * ```
@@ -402,8 +239,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
         return this._fields["formulaNested"] as string;
     }
     /**
-     * `Formula (Simple)` (fldy1axxaoUToLVC6)
-     * 
+     * Formula (Simple) `fldy1axxaoUToLVC6` - `Read-Only`
+     *
      * ```
      * {Number (int)} + {Number (float)}
      * ```
@@ -412,63 +249,82 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
         if (this.evaluateFormulasAtRuntime) this._fields["formulaSimple"] = (F.N(this.numberInt) + F.N(this.numberFloat));
         return this._fields["formulaSimple"] as number;
     }
-    /** `Last Modified By` (fldF8iDttqP0AgzWC) */
+    /** Last Modified By `fldF8iDttqP0AgzWC` - `Read-Only` */
     public get lastModifiedBy(): Collaborator | undefined { return this._fields["lastModifiedBy"] as Collaborator; }
-    /** `Last Modified Time` (fldMinKh4pa3YX86g) */
+    /** Last Modified Time `fldMinKh4pa3YX86g` - `Read-Only` */
     public get lastModifiedTime(): string | undefined { return this._fields["lastModifiedTime"] as string; }
-    /** `Link (multiple)` (fldFyFheQWczd8oux) */
+    /** Link (multiple) `fldFyFheQWczd8oux` */
     public get linkMultiple(): LinkedRecords<SecondaryModel> { return this._fields["linkMultiple"] as LinkedRecords<SecondaryModel>; }
     public set linkMultiple(value: SecondaryModel[] | LinkedRecords<SecondaryModel> | RecordId[] | undefined) { this._setLinkedRecordsField('linkMultiple', value); }
-    /** `Link (single)` (fld7F5onkDo6mkmbN) */
+    /** Link (single) `fld7F5onkDo6mkmbN` */
     public get linkSingle(): ChainableLinkedRecord<SecondaryModel> { return this._fields["linkSingle"] as ChainableLinkedRecord<SecondaryModel>; }
     public set linkSingle(value: SecondaryModel | LinkedRecord<SecondaryModel> | RecordId | undefined) { this._setLinkedField('linkSingle', value); }
-    /** `Long Text` (fld8ulc6J0W29M6La) */
+    /**
+     * Long Text `fld8ulc6J0W29M6La`
+     *
+     * Description with special characters !@#$%^&*()<>/:"{}[]\|=/*-+.,.?`~
+     */
     public get longText(): string | undefined { return this._fields["longText"] as string; }
     public set longText(value: string | undefined) { this._fields["longText"] = value; this.markDirty('longText'); }
-    /** `Long Text with Rich Text` (fldHJkxCMC0xo343u) */
+    /** Long Text with Rich Text `fldHJkxCMC0xo343u` */
     public get longTextWithRichText(): string | undefined { return this._fields["longTextWithRichText"] as string; }
     public set longTextWithRichText(value: string | undefined) { this._fields["longTextWithRichText"] = value; this.markDirty('longTextWithRichText'); }
-    /** `Lookup` (fldbmFmrzYKBktJvE) */
+    /** Lookup `fldbmFmrzYKBktJvE` - `Read-Only` */
     public get lookup(): string[] | undefined { return this._fields["lookup"] as string[]; }
-    /** `Multiple Select` (fld6GTabFmu1xKPvZ) */
+    /** Multiple Select `fld6GTabFmu1xKPvZ` */
     public get multipleSelect(): PrimaryMultipleSelectOption[] | undefined { return this._fields["multipleSelect"] as PrimaryMultipleSelectOption[]; }
     public set multipleSelect(value: PrimaryMultipleSelectOption[] | undefined) { this._fields["multipleSelect"] = value; this.markDirty('multipleSelect'); }
-    /** `Number (float)` (fldmU0X2l4RWd21dd) */
+    /** Number (float) `fldmU0X2l4RWd21dd` */
     public get numberFloat(): number | undefined { return this._fields["numberFloat"] as number; }
     public set numberFloat(value: number | undefined) { this._fields["numberFloat"] = value; this.markDirty('numberFloat'); }
-    /** `Number (int)` (fldOfPKGmnRPv94QH) */
+    /** Number (int) `fldOfPKGmnRPv94QH` */
     public get numberInt(): number | undefined { return this._fields["numberInt"] as number; }
     public set numberInt(value: number | undefined) { this._fields["numberInt"] = value; this.markDirty('numberInt'); }
-    /** `Percent (float)` (fldiGui9ll69N7WOj) */
+    /** Percent (float) `fldiGui9ll69N7WOj` */
     public get percentFloat(): number | undefined { return this._fields["percentFloat"] as number; }
     public set percentFloat(value: number | undefined) { this._fields["percentFloat"] = value; this.markDirty('percentFloat'); }
-    /** `Percent (int)` (fldbAAyWboGulpb4s) */
+    /** Percent (int) `fldbAAyWboGulpb4s` */
     public get percentInt(): number | undefined { return this._fields["percentInt"] as number; }
     public set percentInt(value: number | undefined) { this._fields["percentInt"] = value; this.markDirty('percentInt'); }
-    /** `Phone Number` (fld38tnNpHmoks8C8) */
+    /** Phone Number `fld38tnNpHmoks8C8` */
     public get phoneNumber(): string | undefined { return this._fields["phoneNumber"] as string; }
     public set phoneNumber(value: string | undefined) { this._fields["phoneNumber"] = value; this.markDirty('phoneNumber'); }
-    /** `Primary Key` (fldol5Q4wmQJQvPRy) */
+    /**
+     * Primary Key `fldol5Q4wmQJQvPRy` - `Primary Key`
+     *
+     * A description on the primary field
+     */
     public get primaryKey(): string | undefined { return this._fields["primaryKey"] as string; }
     public set primaryKey(value: string | undefined) { this._fields["primaryKey"] = value; this.markDirty('primaryKey'); }
-    /** `Rating` (fldRsmwFwQNZkKLp4) */
+    /** Rating `fldRsmwFwQNZkKLp4` */
     public get rating(): any | undefined { return this._fields["rating"] as any; }
     public set rating(value: any | undefined) { this._fields["rating"] = value; this.markDirty('rating'); }
-    /** `Rollup` (fldGaFgBsDC3IBUdV) */
+    /**
+     * Rollup `fldGaFgBsDC3IBUdV` - `Read-Only`
+     *
+     * A description on a computed/rollup field
+     */
     public get rollup(): string[] | undefined { return this._fields["rollup"] as string[]; }
-    /** `Single Line Text` (fld0BL2lFo9fqcKv3) */
+    /**
+     * Single Line Text `fld0BL2lFo9fqcKv3`
+     *
+     * Description
+     * With
+     * New
+     * Lines
+     */
     public get singleLineText(): string | undefined { return this._fields["singleLineText"] as string; }
     public set singleLineText(value: string | undefined) { this._fields["singleLineText"] = value; this.markDirty('singleLineText'); }
-    /** `Single Select` (fldn0GFFtMFpCXUNU) */
+    /** Single Select `fldn0GFFtMFpCXUNU` */
     public get singleSelect(): PrimarySingleSelectOption | undefined { return this._fields["singleSelect"] as PrimarySingleSelectOption; }
     public set singleSelect(value: PrimarySingleSelectOption | undefined) { this._fields["singleSelect"] = value; this.markDirty('singleSelect'); }
-    /** `URL` (fldLYloz2oP4ymf3B) */
+    /** URL `fldLYloz2oP4ymf3B` */
     public get url(): string | undefined { return this._fields["url"] as string; }
     public set url(value: string | undefined) { this._fields["url"] = value; this.markDirty('url'); }
-    /** `User` (fldU6SbLp8CSkLcA4) */
+    /** User `fldU6SbLp8CSkLcA4` */
     public get user(): Collaborator | undefined { return this._fields["user"] as Collaborator; }
     public set user(value: Collaborator | undefined) { this._fields["user"] = value; this.markDirty('user'); }
-    /** `User (allow multiple)` (fldBwCDbAVxRj9yg7) */
+    /** User (allow multiple) `fldBwCDbAVxRj9yg7` */
     public get userAllowMultiple(): Collaborator[] | undefined { return this._fields["userAllowMultiple"] as Collaborator[]; }
     public set userAllowMultiple(value: Collaborator[] | undefined) { this._fields["userAllowMultiple"] = value; this.markDirty('userAllowMultiple'); }
 

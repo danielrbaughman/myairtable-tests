@@ -14,7 +14,9 @@ class FormulasFormulas:
     id: ID = ID()
     date_formula: TextField = TextField('fldY7kjaklLeoSgGd')
     """
-    Date Formula `fldY7kjaklLeoSgGd` - `Read-Only Field`
+    Date Formula `fldY7kjaklLeoSgGd` - `Read-Only`
+    
+    Demonstrates all date-related Airtable functions using First Date, Second Date, and Third Date fields.
     
     ```
     "YEAR: " & YEAR({First Date})
@@ -32,46 +34,7 @@ class FormulasFormulas:
       'YYYY-MM-DD'
     )
     & ", WORKDAY_DIFF: " & WORKDAY_DIFF({First Date}, {Second Date})
-    & ", PARSE: " & DATETIME_FORMAT(
-      DATETIME_PARSE(
-        DATESTR({First Date})
-      ),
-      'YYYY-MM-DD'
-    )
-    & ", FORMAT: " & DATETIME_FORMAT({Second Date}, 'YYYY-MM-DD HH:mm')
-    & ", LOCALE: " & DATETIME_FORMAT(
-      SET_LOCALE({Second Date}, 'en'),
-      'YYYY-MM-DD'
-    )
-    & ", TIMEZONE: " & DATETIME_FORMAT(
-      SET_TIMEZONE({Second Date}, 'America/New_York'),
-      'YYYY-MM-DD HH:mm'
-    )
-    & ", DATESTR: " & DATESTR({Second Date})
-    & ", TIMESTR: " & TIMESTR({Second Date})
-    & ", TONOW: " & TONOW({First Date})
-    & ", FROMNOW: " & FROMNOW({Second Date})
-    & ", DATEADD+2d: " & DATETIME_FORMAT(
-      DATEADD({First Date}, 2, 'days'),
-      'YYYY-MM-DD'
-    )
-    & ", WEEKNUM: " & WEEKNUM({First Date}, 'Monday')
-    & ", DIFF days: " & DATETIME_DIFF({First Date}, {Second Date}, 'days')
-    & ", IS_BEFORE: " & IF(
-      IS_BEFORE({First Date}, {Second Date}),
-      'Yes',
-      'No'
-    )
-    & ", IS_SAME day: " & IF(
-      IS_SAME({First Date}, {Second Date}, 'day'),
-      'Yes',
-      'No'
-    )
-    & ", IS_AFTER: " & IF(
-      IS_AFTER({Third Date}, {Second Date}),
-      'Yes',
-      'No'
-    )
+    … (truncated)
     ```
     """
     first_date: DateField = DateField('fldlZT521Iy0FFXFL')
@@ -82,7 +45,9 @@ class FormulasFormulas:
     """First Text `fldHJuw6pAujnHvkP`"""
     math_formula: TextField = TextField('fldlSuvoeWGokSz8Z')
     """
-    Math Formula `fldlSuvoeWGokSz8Z` - `Read-Only Field`
+    Math Formula `fldlSuvoeWGokSz8Z` - `Read-Only`
+    
+    Demonstrates all math-related functions using First Number and Second Number fields.
     
     ```
     IF(
@@ -100,18 +65,7 @@ class FormulasFormulas:
       & ", FLOOR: " & FLOOR({Second Number})
       & ", ROUND: " & ROUND({First Number}/2, 1)
       & ", ROUNDUP: " & ROUNDUP({Second Number}/2, 0)
-      & ", ROUNDDOWN: " & ROUNDDOWN({First Number}/2, 0)
-      & ", INT: " & INT({Second Number}/2)
-      & ", EVEN: " & EVEN({First Number})
-      & ", ODD: " & ODD({Second Number})
-      & ", MOD: " & MOD({First Number}, {Second Number})
-      & ", LOG: " & LOG({First Number})
-      & ", EXP: " & EXP(1)
-      & ", POWER: " & POWER({First Number}, 2)
-      & ", SQRT: " & SQRT(
-        ABS({Second Number})
-      ) & ", ABS: " & ABS({Second Number})
-    )
+    … (truncated)
     ```
     """
     primary_key: TextField = TextField('fldLZFrZKvSCS4dKb')
@@ -124,7 +78,9 @@ class FormulasFormulas:
     """Second Text `fldA2boNwwsiuvXw1`"""
     text_formula: TextField = TextField('flddvzeqt7FJpQ9NX')
     """
-    Text Formula `flddvzeqt7FJpQ9NX` - `Read-Only Field`
+    Text Formula `flddvzeqt7FJpQ9NX` - `Read-Only`
+    
+    Demonstrates all string-related Airtable functions using First Text, Second Text, and Third Text fields.
     
     ```
     CONCATENATE(
@@ -142,56 +98,7 @@ class FormulasFormulas:
       "; ",
       "FIND: ",
       FIND("e", {First Text}),
-      "; ",
-      "SEARCH: ",
-      SEARCH("e", {First Text}),
-      "; ",
-      "REPLACE: ",
-      REPLACE({First Text}, 2, 2, "XX"),
-      "; ",
-      "REPT: ",
-      REPT({First Text}, 2),
-      "; ",
-      "LOWER: ",
-      LOWER({Second Text}),
-      "; ",
-      "UPPER: ",
-      UPPER({Second Text}),
-      "; ",
-      "TRIM: ",
-      TRIM("   " & {First Text} & "   "),
-      "; ",
-      "SUBSTITUTE: ",
-      SUBSTITUTE({First Text}, "e", "@"),
-      "; ",
-      "CONCATENATE: ",
-      CONCATENATE(
-        {First Text},
-        "-",
-        {Second Text},
-        "-",
-        {Third Text}
-      ),
-      "; ",
-      "T: ",
-      T({First Number}),
-      "; ",
-      "REGEX_EXTRACT: ",
-      REGEX_EXTRACT({First Text}, "[aeiou]"),
-      "; ",
-      "REGEX_MATCH: ",
-      IF(
-        REGEX_MATCH({First Text}, "^.e"),
-        "1",
-        "0"
-      ),
-      "; ",
-      "REGEX_REPLACE: ",
-      REGEX_REPLACE({First Text}, "[aeiou]", "*"),
-      "; ",
-      "ENCODE_URL_COMPONENT: ",
-      ENCODE_URL_COMPONENT({First Text})
-    )
+    … (truncated)
     ```
     """
     third_date: DateField = DateField('fldxSQRRn8W879aiU')

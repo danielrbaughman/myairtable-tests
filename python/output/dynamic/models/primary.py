@@ -92,279 +92,114 @@ class PrimaryModel(Model):
     evaluate_formulas_at_runtime: bool = False
 
     attachment: AttachmentsField = AttachmentsField(field_name="fldhF2AEuSC1haCZd")
-    """Attachment `fldhF2AEuSC1haCZd`"""
+    """
+    Attachment `fldhF2AEuSC1haCZd`
+    
+    Closes early */ then more text
+    """
     auto_number: AutoNumberField = AutoNumberField(field_name="fldizvTkxgIn0mC3L", readonly=True)
-    """Auto Number `fldizvTkxgIn0mC3L` - `Read-Only Field`"""
+    """
+    Auto Number `fldizvTkxgIn0mC3L` - `Read-Only`
+    
+    Opens a nested /* comment
+    """
     button: ButtonField = ButtonField(field_name="fldY48yKPG16AajtU", readonly=True)
-    """Button `fldY48yKPG16AajtU` - `Read-Only Field`"""
+    """
+    Button `fldY48yKPG16AajtU` - `Read-Only`
+    
+    Has a \"\"\" triple quote inside
+    """
     checkbox: CheckboxField = CheckboxField(field_name="fldjQIaAZVegb1FUa")
-    """Checkbox `fldjQIaAZVegb1FUa`"""
+    """
+    Checkbox `fldjQIaAZVegb1FUa`
+    
+    Ends with a backslash \\
+    """
     created_by: CreatedByField = CreatedByField(field_name="fldGLQhDz2UjjiHG6", readonly=True)
-    """Created By `fldGLQhDz2UjjiHG6` - `Read-Only Field`"""
+    """
+    Created By `fldGLQhDz2UjjiHG6` - `Read-Only`
+    
+    Value must be < 10 & > 0
+    """
     created_at_time: CreatedTimeField = CreatedTimeField(field_name="fld2YgW382Kt9xltA", readonly=True)
-    """Created Time `fld2YgW382Kt9xltA` - `Read-Only Field`"""
+    """
+    Created Time `fld2YgW382Kt9xltA` - `Read-Only`
+    
+    Literal </summary> tag here
+    """
     currency_float: CurrencyField = CurrencyField(field_name="fldyh8pzDXiy5abEr")
-    """Currency (float) `fldyh8pzDXiy5abEr`"""
+    """
+    Currency (float) `fldyh8pzDXiy5abEr`
+    
+    Mixed "double" and 'single' quotes
+    """
     currency_int: CurrencyField = CurrencyField(field_name="fldBfo74z9hD78hP8")
-    """Currency (int) `fldBfo74z9hD78hP8`"""
+    """
+    Currency (int) `fldBfo74z9hD78hP8`
+    
+    leading and trailing spaces (and one that is only whitespace)
+    """
     date: DateField = DateField(field_name="fldC6LfNVvVIxKyQH")
-    """Date `fldC6LfNVvVIxKyQH`"""
+    """
+    Date `fldC6LfNVvVIxKyQH`
+    
+    A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)
+    """
     date_with_time: DatetimeField = DatetimeField(field_name="fldizYmjpXABGDLTG")
-    """Date (with time) `fldizYmjpXABGDLTG`"""
+    """
+    Date (with time) `fldizYmjpXABGDLTG`
+    
+    Use @param and @return in prose
+    """
     duplicate_name: SingleLineTextField = SingleLineTextField(field_name="fld99XdcwRa5WW6nw")
-    """Duplicate (Name) `fld99XdcwRa5WW6nw`"""
+    """
+    Duplicate (Name) `fld99XdcwRa5WW6nw`
+    
+    Doxygen \\brief and \\code words
+    """
     duplicate_name_v2: SingleLineTextField = SingleLineTextField(field_name="fld95OnbzAUFUTTqZ")
-    """Duplicate Name `fld95OnbzAUFUTTqZ`"""
+    """
+    Duplicate Name `fld95OnbzAUFUTTqZ`
+    
+    Refer to the ``code`` field (backticks)
+    """
     duration: DurationField = DurationField(field_name="fldLTyf6ljS0rhur8")
-    """Duration `fldLTyf6ljS0rhur8`"""
+    """
+    Duration `fldLTyf6ljS0rhur8`
+    
+    Café ☕ 日本語 — em-dash (Unicode + emoji + em-dash)
+    """
     email: EmailField = EmailField(field_name="fldHCJoYBiFVsNvP4")
-    """Email `fldHCJoYBiFVsNvP4`"""
+    """
+    Email `fldHCJoYBiFVsNvP4`
+    
+    A plain writable field with a simple one-line description
+    """
     _orm_formula_complex: SingleLineTextField = SingleLineTextField(field_name="fld2vnFc0Bl5IOFUQ", readonly=True)
     @property
     def formula_complex(self) -> str | None:
         """
-        Formula (Complex) `fld2vnFc0Bl5IOFUQ` - `Read-Only Field`
+        Formula (Complex) `fld2vnFc0Bl5IOFUQ` - `Read-Only`
+        
+        Concatenates all field values into a readable summary, using correct field references.
         
         ```
         CONCATENATE(
           "Primary Key: ",
           {Primary Key},
-          "\n",
+          "\\n",
           "Single Line Text: ",
           {Single Line Text},
-          "\n",
+          "\\n",
           "Long Text: ",
           {Long Text},
-          "\n",
+          "\\n",
           "Long Text with Rich Text: ",
           {Long Text with Rich Text},
-          "\n",
+          "\\n",
           "Attachment: ",
           IF(
-            {Attachment},
-            {Attachment},
-            "None"
-          ),
-          "\n",
-          "Checkbox: ",
-          IF(
-            {Checkbox},
-            "Checked",
-            "Unchecked"
-          ),
-          "\n",
-          "Multiple Select: ",
-          IF(
-            {Multiple Select},
-            {Multiple Select},
-            "None"
-          ),
-          "\n",
-          "Single Select: ",
-          IF(
-            {Single Select},
-            {Single Select},
-            "None"
-          ),
-          "\n",
-          "User: ",
-          IF(
-            {User},
-            {User},
-            "None"
-          ),
-          "\n",
-          "User (allow multiple): ",
-          IF(
-            {User (allow multiple)},
-            {User (allow multiple)},
-            "None"
-          ),
-          "\n",
-          "Date: ",
-          IF(
-            {Date},
-            DATETIME_FORMAT({Date}, 'YYYY-MM-DD'),
-            "None"
-          ),
-          "\n",
-          "Date (with time): ",
-          IF(
-            {Date (with time)},
-            DATETIME_FORMAT(
-              {Date (with time)},
-              'YYYY-MM-DD HH:mm'
-            ),
-            "None"
-          ),
-          "\n",
-          "Phone Number: ",
-          IF(
-            {Phone Number},
-            {Phone Number},
-            "None"
-          ),
-          "\n",
-          "Email: ",
-          IF(
-            {Email},
-            {Email},
-            "None"
-          ),
-          "\n",
-          "URL: ",
-          IF(
-            {URL},
-            {URL},
-            "None"
-          ),
-          "\n",
-          "Number (int): ",
-          IF(
-            {Number (int)},
-            {Number(int) } & "",
-            "None"
-          ),
-          "\n",
-          "Number (float): ",
-          IF(
-            {Number (float)},
-            {Number(float) } & "",
-            "None"
-          ),
-          "\n",
-          "Currency (int): ",
-          IF(
-            {Currency (int)},
-            {Currency(int) } & "",
-            "None"
-          ),
-          "\n",
-          "Currency (float): ",
-          IF(
-            {Currency (float)},
-            {Currency(float) } & "",
-            "None"
-          ),
-          "\n",
-          "Percent (int): ",
-          IF(
-            {Percent (int)},
-            {Percent(int) } & "",
-            "None"
-          ),
-          "\n",
-          "Percent (float): ",
-          IF(
-            {Percent (float)},
-            {Percent(float) } & "",
-            "None"
-          ),
-          "\n",
-          "Duration: ",
-          IF(
-            {Duration},
-            {Duration} & "",
-            "None"
-          ),
-          "\n",
-          "Rating: ",
-          IF(
-            {Rating},
-            {Rating} & "",
-            "None"
-          ),
-          "\n",
-          "Created Time: ",
-          IF(
-            {Created Time},
-            DATETIME_FORMAT(
-              {Created Time},
-              'YYYY-MM-DD HH:mm'
-            ),
-            "None"
-          ),
-          "\n",
-          "Last Modified Time: ",
-          IF(
-            {Last Modified Time},
-            DATETIME_FORMAT(
-              {Last Modified Time},
-              'YYYY-MM-DD HH:mm'
-            ),
-            "None"
-          ),
-          "\n",
-          "Created By: ",
-          IF(
-            {Created By},
-            {Created By},
-            "None"
-          ),
-          "\n",
-          "Last Modified By: ",
-          IF(
-            {Last Modified By},
-            {Last Modified By},
-            "None"
-          ),
-          "\n",
-          "Auto Number: ",
-          IF(
-            {Auto Number},
-            {Auto Number} & "",
-            "None"
-          ),
-          "\n",
-          "Button: ",
-          IF(
-            {Button},
-            {Button},
-            "None"
-          ),
-          "\n",
-          "Link (single): ",
-          IF(
-            {Link (single)},
-            {Link (single)},
-            "None"
-          ),
-          "\n",
-          "Link (multiple): ",
-          IF(
-            {Link (multiple)},
-            {Link (multiple)},
-            "None"
-          ),
-          "\n",
-          "Lookup: ",
-          IF(
-            {Lookup},
-            {Lookup},
-            "None"
-          ),
-          "\n",
-          "Rollup: ",
-          IF(
-            {Rollup},
-            {Rollup},
-            "None"
-          ),
-          "\n",
-          "Formula (ID): ",
-          IF(
-            {Formula (ID)},
-            {Formula (ID)},
-            "None"
-          ),
-          "\n",
-          "Formula (Simple): ",
-          IF(
-            {Formula (Simple)},
-            {Formula (Simple)},
-            "None"
-          )
-        )
+        … (truncated)
         ```
         """
         if self.evaluate_formulas_at_runtime:
@@ -374,7 +209,9 @@ class PrimaryModel(Model):
     @property
     def formula_id(self) -> str | None:
         """
-        Formula (ID) `fldcf62YFeIIDHElt` - `Read-Only Field`
+        Formula (ID) `fldcf62YFeIIDHElt` - `Read-Only`
+        
+        A description on a formula field (so it has both a description and a formula block)
         
         ```
         RECORD_ID()
@@ -387,7 +224,7 @@ class PrimaryModel(Model):
     @property
     def formula_nested(self) -> str | None:
         """
-        Formula (Nested) `fldXFeHRPBLz6AiWh` - `Read-Only Field`
+        Formula (Nested) `fldXFeHRPBLz6AiWh` - `Read-Only`
         
         ```
         {Formula (ID)} & {Formula (Simple)} & {Formula (Complex)}
@@ -400,7 +237,7 @@ class PrimaryModel(Model):
     @property
     def formula_simple(self) -> float | None:
         """
-        Formula (Simple) `fldy1axxaoUToLVC6` - `Read-Only Field`
+        Formula (Simple) `fldy1axxaoUToLVC6` - `Read-Only`
         
         ```
         {Number (int)} + {Number (float)}
@@ -410,19 +247,23 @@ class PrimaryModel(Model):
             self._fields["fldy1axxaoUToLVC6"] = (F.N(self.number_int) + F.N(self.number_float))
         return self._fields.get("fldy1axxaoUToLVC6")
     last_modified_by: LastModifiedByField = LastModifiedByField(field_name="fldF8iDttqP0AgzWC", readonly=True)
-    """Last Modified By `fldF8iDttqP0AgzWC` - `Read-Only Field`"""
+    """Last Modified By `fldF8iDttqP0AgzWC` - `Read-Only`"""
     last_modified_time: LastModifiedTimeField = LastModifiedTimeField(field_name="fldMinKh4pa3YX86g", readonly=True)
-    """Last Modified Time `fldMinKh4pa3YX86g` - `Read-Only Field`"""
+    """Last Modified Time `fldMinKh4pa3YX86g` - `Read-Only`"""
     link_multiple: list["SecondaryModel"] = LinkField["SecondaryModel"](field_name="fldFyFheQWczd8oux", model="output.dynamic.models.secondary.SecondaryModel")  # ty: ignore[invalid-assignment]
     """Link (multiple) `fldFyFheQWczd8oux`"""
     link_single: "SecondaryModel" = SingleLinkField["SecondaryModel"](field_name="fld7F5onkDo6mkmbN", model="output.dynamic.models.secondary.SecondaryModel")  # ty: ignore[invalid-assignment]
     """Link (single) `fld7F5onkDo6mkmbN`"""
     long_text: MultilineTextField = MultilineTextField(field_name="fld8ulc6J0W29M6La")
-    """Long Text `fld8ulc6J0W29M6La`"""
+    """
+    Long Text `fld8ulc6J0W29M6La`
+    
+    Description with special characters !@#$%^&*()<>/:"{}[]\\|=/*-+.,.?`~
+    """
     long_text_with_rich_text: MultilineTextField = MultilineTextField(field_name="fldHJkxCMC0xo343u")
     """Long Text with Rich Text `fldHJkxCMC0xo343u`"""
     lookup: LookupField[list[str]] = LookupField(field_name="fldbmFmrzYKBktJvE", readonly=True)
-    """Lookup `fldbmFmrzYKBktJvE` - `Read-Only Field`"""
+    """Lookup `fldbmFmrzYKBktJvE` - `Read-Only`"""
     multiple_select: list[PrimaryMultipleSelectOption] = MultipleSelectField(field_name="fld6GTabFmu1xKPvZ")  # ty: ignore[invalid-assignment]
     """Multiple Select `fld6GTabFmu1xKPvZ`"""
     number_float: NumberField = NumberField(field_name="fldmU0X2l4RWd21dd")
@@ -436,13 +277,28 @@ class PrimaryModel(Model):
     phone_number: PhoneNumberField = PhoneNumberField(field_name="fld38tnNpHmoks8C8")
     """Phone Number `fld38tnNpHmoks8C8`"""
     primary_key: SingleLineTextField = SingleLineTextField(field_name="fldol5Q4wmQJQvPRy")
-    """Primary Key `fldol5Q4wmQJQvPRy` - `Primary Key`"""
+    """
+    Primary Key `fldol5Q4wmQJQvPRy` - `Primary Key`
+    
+    A description on the primary field
+    """
     rating: Any = None
     """Rating `fldRsmwFwQNZkKLp4`"""
     rollup: SingleLineTextField = SingleLineTextField(field_name="fldGaFgBsDC3IBUdV", readonly=True)
-    """Rollup `fldGaFgBsDC3IBUdV` - `Read-Only Field`"""
+    """
+    Rollup `fldGaFgBsDC3IBUdV` - `Read-Only`
+    
+    A description on a computed/rollup field
+    """
     single_line_text: SingleLineTextField = SingleLineTextField(field_name="fld0BL2lFo9fqcKv3")
-    """Single Line Text `fld0BL2lFo9fqcKv3`"""
+    """
+    Single Line Text `fld0BL2lFo9fqcKv3`
+    
+    Description
+    With
+    New
+    Lines
+    """
     single_select: PrimarySingleSelectOption = SelectField(field_name="fldn0GFFtMFpCXUNU")  # ty: ignore[invalid-assignment]
     """Single Select `fldn0GFFtMFpCXUNU`"""
     url: UrlField = UrlField(field_name="fldLYloz2oP4ymf3B")

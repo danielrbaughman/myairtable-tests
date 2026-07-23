@@ -41,13 +41,13 @@ class TertiaryModel extends AirtableModel {
         { propertyName: "value", fieldId: "fldjNLBh2UccM64h5", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 
-    /** `Name` (fldwzqKxsRnPZJ2Ll) */
+    /** Name `fldwzqKxsRnPZJ2Ll` - `Primary Key` */
     get name() { return this._fields["name"]; }
     set name(value) { this._fields["name"] = value; this.markDirty('name'); }
-    /** `Secondary` (fld8lCuUXpEXkIeYv) */
+    /** Secondary `fld8lCuUXpEXkIeYv` */
     get secondary() { return this._fields["secondary"]; }
     set secondary(value) { this._setLinkedRecordsField('secondary', value); }
-    /** `Value` (fldjNLBh2UccM64h5) */
+    /** Value `fldjNLBh2UccM64h5` */
     get value() { return this._fields["value"]; }
     set value(value) { this._fields["value"] = value; this.markDirty('value'); }
 
