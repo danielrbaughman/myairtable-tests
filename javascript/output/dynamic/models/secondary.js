@@ -43,19 +43,19 @@ class SecondaryModel extends AirtableModel {
         { propertyName: "value", fieldId: "fldi6Mxh5H1gPGxFX", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 
-    /** `Link to Tertiary` (fldKR6tdbnOBRCtdQ) */
+    /** Link to Tertiary `fldKR6tdbnOBRCtdQ` */
     get linkToTertiary() { return this._fields["linkToTertiary"]; }
     set linkToTertiary(value) { this._setLinkedRecordsField('linkToTertiary', value); }
-    /** `Name` (fld1RagdJ09mpWhzM) */
+    /** Name `fld1RagdJ09mpWhzM` - `Primary Key` */
     get name() { return this._fields["name"]; }
     set name(value) { this._fields["name"] = value; this.markDirty('name'); }
-    /** `Primary` (fldl0nB9WRFSdqlii) */
+    /** Primary `fldl0nB9WRFSdqlii` */
     get primary() { return this._fields["primary"]; }
     set primary(value) { this._setLinkedRecordsField('primary', value); }
-    /** `Primary 2` (fldgoE2oZmXmKkQca) */
+    /** Primary 2 `fldgoE2oZmXmKkQca` */
     get primary2() { return this._fields["primary2"]; }
     set primary2(value) { this._setLinkedRecordsField('primary2', value); }
-    /** `Value` (fldi6Mxh5H1gPGxFX) */
+    /** Value `fldi6Mxh5H1gPGxFX` */
     get value() { return this._fields["value"]; }
     set value(value) { this._fields["value"] = value; this.markDirty('value'); }
 

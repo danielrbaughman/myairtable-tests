@@ -31,76 +31,106 @@ pub struct PrimaryModel {
     #[serde(skip)]
     pub _meta: ModelMeta,
     /// Attachment `fldhF2AEuSC1haCZd`
+    ///
+    /// Closes early */ then more text
     #[serde(rename = "fldhF2AEuSC1haCZd")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub attachment: Option<Vec<Attachment>>,
     /// Auto Number `fldizvTkxgIn0mC3L` - `Read-Only`
+    ///
+    /// Opens a nested /* comment
     #[serde(rename = "fldizvTkxgIn0mC3L")]
     #[serde(default)]
     #[serde(skip_serializing)]
     pub auto_number: Option<MaybeSpecialOrError<i64>>,
     /// Button `fldY48yKPG16AajtU` - `Read-Only`
+    ///
+    /// Has a """ triple quote inside
     #[serde(rename = "fldY48yKPG16AajtU")]
     #[serde(default)]
     #[serde(skip_serializing)]
     pub button: Option<MaybeSpecialOrError<AirtableButton>>,
     /// Checkbox `fldjQIaAZVegb1FUa`
+    ///
+    /// Ends with a backslash \
     #[serde(rename = "fldjQIaAZVegb1FUa")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub checkbox: Option<bool>,
     /// Created By `fldGLQhDz2UjjiHG6` - `Read-Only`
+    ///
+    /// Value must be < 10 & > 0
     #[serde(rename = "fldGLQhDz2UjjiHG6")]
     #[serde(default)]
     #[serde(skip_serializing)]
     pub created_by: Option<MaybeSpecialOrError<Collaborator>>,
     /// Created Time `fld2YgW382Kt9xltA` - `Read-Only`
+    ///
+    /// Literal </summary> tag here
     #[serde(rename = "fld2YgW382Kt9xltA")]
     #[serde(default)]
     #[serde(skip_serializing)]
     pub created_at_time: Option<MaybeSpecialOrError<String>>,
     /// Currency (float) `fldyh8pzDXiy5abEr`
+    ///
+    /// Mixed "double" and 'single' quotes
     #[serde(rename = "fldyh8pzDXiy5abEr")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_float: Option<f64>,
     /// Currency (int) `fldBfo74z9hD78hP8`
+    ///
+    /// leading and trailing spaces (and one that is only whitespace)
     #[serde(rename = "fldBfo74z9hD78hP8")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub currency_int: Option<f64>,
     /// Date `fldC6LfNVvVIxKyQH`
+    ///
+    /// A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)
     #[serde(rename = "fldC6LfNVvVIxKyQH")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub date: Option<String>,
     /// Date (with time) `fldizYmjpXABGDLTG`
+    ///
+    /// Use @param and @return in prose
     #[serde(rename = "fldizYmjpXABGDLTG")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub date_with_time: Option<String>,
     /// Duplicate (Name) `fld99XdcwRa5WW6nw`
+    ///
+    /// Doxygen \brief and \code words
     #[serde(rename = "fld99XdcwRa5WW6nw")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duplicate_name: Option<String>,
     /// Duplicate Name `fld95OnbzAUFUTTqZ`
+    ///
+    /// Refer to the ``code`` field (backticks)
     #[serde(rename = "fld95OnbzAUFUTTqZ")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duplicate_name_v2: Option<String>,
     /// Duration `fldLTyf6ljS0rhur8`
+    ///
+    /// Café ☕ 日本語 — em-dash (Unicode + emoji + em-dash)
     #[serde(rename = "fldLTyf6ljS0rhur8")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub duration: Option<i64>,
     /// Email `fldHCJoYBiFVsNvP4`
+    ///
+    /// A plain writable field with a simple one-line description
     #[serde(rename = "fldHCJoYBiFVsNvP4")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
     /// Formula (Complex) `fld2vnFc0Bl5IOFUQ` - `Read-Only`
+    ///
+    /// Concatenates all field values into a readable summary, using correct field references.
     ///
     /// ```text
     /// CONCATENATE(
@@ -118,236 +148,15 @@ pub struct PrimaryModel {
     ///   "\n",
     ///   "Attachment: ",
     ///   IF(
-    ///     {Attachment},
-    ///     {Attachment},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Checkbox: ",
-    ///   IF(
-    ///     {Checkbox},
-    ///     "Checked",
-    ///     "Unchecked"
-    ///   ),
-    ///   "\n",
-    ///   "Multiple Select: ",
-    ///   IF(
-    ///     {Multiple Select},
-    ///     {Multiple Select},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Single Select: ",
-    ///   IF(
-    ///     {Single Select},
-    ///     {Single Select},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "User: ",
-    ///   IF(
-    ///     {User},
-    ///     {User},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "User (allow multiple): ",
-    ///   IF(
-    ///     {User (allow multiple)},
-    ///     {User (allow multiple)},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Date: ",
-    ///   IF(
-    ///     {Date},
-    ///     DATETIME_FORMAT({Date}, 'YYYY-MM-DD'),
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Date (with time): ",
-    ///   IF(
-    ///     {Date (with time)},
-    ///     DATETIME_FORMAT(
-    ///       {Date (with time)},
-    ///       'YYYY-MM-DD HH:mm'
-    ///     ),
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Phone Number: ",
-    ///   IF(
-    ///     {Phone Number},
-    ///     {Phone Number},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Email: ",
-    ///   IF(
-    ///     {Email},
-    ///     {Email},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "URL: ",
-    ///   IF(
-    ///     {URL},
-    ///     {URL},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Number (int): ",
-    ///   IF(
-    ///     {Number (int)},
-    ///     {Number(int) } & "",
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Number (float): ",
-    ///   IF(
-    ///     {Number (float)},
-    ///     {Number(float) } & "",
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Currency (int): ",
-    ///   IF(
-    ///     {Currency (int)},
-    ///     {Currency(int) } & "",
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Currency (float): ",
-    ///   IF(
-    ///     {Currency (float)},
-    ///     {Currency(float) } & "",
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Percent (int): ",
-    ///   IF(
-    ///     {Percent (int)},
-    ///     {Percent(int) } & "",
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Percent (float): ",
-    ///   IF(
-    ///     {Percent (float)},
-    ///     {Percent(float) } & "",
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Duration: ",
-    ///   IF(
-    ///     {Duration},
-    ///     {Duration} & "",
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Rating: ",
-    ///   IF(
-    ///     {Rating},
-    ///     {Rating} & "",
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Created Time: ",
-    ///   IF(
-    ///     {Created Time},
-    ///     DATETIME_FORMAT(
-    ///       {Created Time},
-    ///       'YYYY-MM-DD HH:mm'
-    ///     ),
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Last Modified Time: ",
-    ///   IF(
-    ///     {Last Modified Time},
-    ///     DATETIME_FORMAT(
-    ///       {Last Modified Time},
-    ///       'YYYY-MM-DD HH:mm'
-    ///     ),
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Created By: ",
-    ///   IF(
-    ///     {Created By},
-    ///     {Created By},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Last Modified By: ",
-    ///   IF(
-    ///     {Last Modified By},
-    ///     {Last Modified By},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Auto Number: ",
-    ///   IF(
-    ///     {Auto Number},
-    ///     {Auto Number} & "",
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Button: ",
-    ///   IF(
-    ///     {Button},
-    ///     {Button},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Link (single): ",
-    ///   IF(
-    ///     {Link (single)},
-    ///     {Link (single)},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Link (multiple): ",
-    ///   IF(
-    ///     {Link (multiple)},
-    ///     {Link (multiple)},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Lookup: ",
-    ///   IF(
-    ///     {Lookup},
-    ///     {Lookup},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Rollup: ",
-    ///   IF(
-    ///     {Rollup},
-    ///     {Rollup},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Formula (ID): ",
-    ///   IF(
-    ///     {Formula (ID)},
-    ///     {Formula (ID)},
-    ///     "None"
-    ///   ),
-    ///   "\n",
-    ///   "Formula (Simple): ",
-    ///   IF(
-    ///     {Formula (Simple)},
-    ///     {Formula (Simple)},
-    ///     "None"
-    ///   )
-    /// )
+    /// … (truncated)
     /// ```
     #[serde(rename = "fld2vnFc0Bl5IOFUQ")]
     #[serde(default)]
     #[serde(skip_serializing)]
     pub formula_complex: Option<VecOrValue<MaybeSpecialOrError<String>>>,
     /// Formula (ID) `fldcf62YFeIIDHElt` - `Read-Only`
+    ///
+    /// A description on a formula field (so it has both a description and a formula block)
     ///
     /// ```text
     /// RECORD_ID()
@@ -395,6 +204,8 @@ pub struct PrimaryModel {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub link_single: Option<Vec<RecordId>>,
     /// Long Text `fld8ulc6J0W29M6La`
+    ///
+    /// Description with special characters !@#$%^&*()<>/:"{}[]\|=/*-+.,.?`~
     #[serde(rename = "fld8ulc6J0W29M6La")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -440,6 +251,8 @@ pub struct PrimaryModel {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub phone_number: Option<String>,
     /// Primary Key `fldol5Q4wmQJQvPRy` - `Primary Key`
+    ///
+    /// A description on the primary field
     #[serde(rename = "fldol5Q4wmQJQvPRy")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -450,11 +263,18 @@ pub struct PrimaryModel {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub rating: Option<serde_json::Value>,
     /// Rollup `fldGaFgBsDC3IBUdV` - `Read-Only`
+    ///
+    /// A description on a computed/rollup field
     #[serde(rename = "fldGaFgBsDC3IBUdV")]
     #[serde(default)]
     #[serde(skip_serializing)]
     pub rollup: Option<VecOrValue<MaybeSpecialOrError<String>>>,
     /// Single Line Text `fld0BL2lFo9fqcKv3`
+    ///
+    /// Description
+    /// With
+    /// New
+    /// Lines
     #[serde(rename = "fld0BL2lFo9fqcKv3")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]

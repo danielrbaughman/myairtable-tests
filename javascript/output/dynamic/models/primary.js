@@ -80,47 +80,105 @@ class PrimaryModel extends AirtableModel {
         { propertyName: "userAllowMultiple", fieldId: "fldBwCDbAVxRj9yg7", fieldName: "User (allow multiple)", isComputed: false, fieldType: "generic" },
     ];
 
-    /** `Attachment` (fldhF2AEuSC1haCZd) */
+    /**
+     * Attachment `fldhF2AEuSC1haCZd`
+     *
+     * Closes early * / then more text
+     */
     get attachment() { return this._fields["attachment"]; }
     set attachment(value) { this._fields["attachment"] = value; this.markDirty('attachment'); }
-    /** `Auto Number` (fldizvTkxgIn0mC3L) */
+    /**
+     * Auto Number `fldizvTkxgIn0mC3L` - `Read-Only`
+     *
+     * Opens a nested /* comment
+     */
     get autoNumber() { return this._fields["autoNumber"]; }
-    /** `Button` (fldY48yKPG16AajtU) */
+    /**
+     * Button `fldY48yKPG16AajtU` - `Read-Only`
+     *
+     * Has a """ triple quote inside
+     */
     get button() { return this._fields["button"]; }
-    /** `Checkbox` (fldjQIaAZVegb1FUa) */
+    /**
+     * Checkbox `fldjQIaAZVegb1FUa`
+     *
+     * Ends with a backslash \
+     */
     get checkbox() { return this._fields["checkbox"]; }
     set checkbox(value) { this._fields["checkbox"] = value; this.markDirty('checkbox'); }
-    /** `Created By` (fldGLQhDz2UjjiHG6) */
+    /**
+     * Created By `fldGLQhDz2UjjiHG6` - `Read-Only`
+     *
+     * Value must be < 10 & > 0
+     */
     get createdBy() { return this._fields["createdBy"]; }
-    /** `Created Time` (fld2YgW382Kt9xltA) */
+    /**
+     * Created Time `fld2YgW382Kt9xltA` - `Read-Only`
+     *
+     * Literal </summary> tag here
+     */
     get createdAtTime() { return this._fields["createdAtTime"]; }
-    /** `Currency (float)` (fldyh8pzDXiy5abEr) */
+    /**
+     * Currency (float) `fldyh8pzDXiy5abEr`
+     *
+     * Mixed "double" and 'single' quotes
+     */
     get currencyFloat() { return this._fields["currencyFloat"]; }
     set currencyFloat(value) { this._fields["currencyFloat"] = value; this.markDirty('currencyFloat'); }
-    /** `Currency (int)` (fldBfo74z9hD78hP8) */
+    /**
+     * Currency (int) `fldBfo74z9hD78hP8`
+     *
+     * leading and trailing spaces (and one that is only whitespace)
+     */
     get currencyInt() { return this._fields["currencyInt"]; }
     set currencyInt(value) { this._fields["currencyInt"] = value; this.markDirty('currencyInt'); }
-    /** `Date` (fldC6LfNVvVIxKyQH) */
+    /**
+     * Date `fldC6LfNVvVIxKyQH`
+     *
+     * A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)A very long single-line description (200+ chars, no newlines)
+     */
     get date() { return this._fields["date"]; }
     set date(value) { this._fields["date"] = value; this.markDirty('date'); }
-    /** `Date (with time)` (fldizYmjpXABGDLTG) */
+    /**
+     * Date (with time) `fldizYmjpXABGDLTG`
+     *
+     * Use @param and @return in prose
+     */
     get dateWithTime() { return this._fields["dateWithTime"]; }
     set dateWithTime(value) { this._fields["dateWithTime"] = value; this.markDirty('dateWithTime'); }
-    /** `Duplicate (Name)` (fld99XdcwRa5WW6nw) */
+    /**
+     * Duplicate (Name) `fld99XdcwRa5WW6nw`
+     *
+     * Doxygen \brief and \code words
+     */
     get duplicateName() { return this._fields["duplicateName"]; }
     set duplicateName(value) { this._fields["duplicateName"] = value; this.markDirty('duplicateName'); }
-    /** `Duplicate Name` (fld95OnbzAUFUTTqZ) */
+    /**
+     * Duplicate Name `fld95OnbzAUFUTTqZ`
+     *
+     * Refer to the ``code`` field (backticks)
+     */
     get duplicateNameV2() { return this._fields["duplicateNameV2"]; }
     set duplicateNameV2(value) { this._fields["duplicateNameV2"] = value; this.markDirty('duplicateNameV2'); }
-    /** `Duration` (fldLTyf6ljS0rhur8) */
+    /**
+     * Duration `fldLTyf6ljS0rhur8`
+     *
+     * Café ☕ 日本語 — em-dash (Unicode + emoji + em-dash)
+     */
     get duration() { return this._fields["duration"]; }
     set duration(value) { this._fields["duration"] = value; this.markDirty('duration'); }
-    /** `Email` (fldHCJoYBiFVsNvP4) */
+    /**
+     * Email `fldHCJoYBiFVsNvP4`
+     *
+     * A plain writable field with a simple one-line description
+     */
     get email() { return this._fields["email"]; }
     set email(value) { this._fields["email"] = value; this.markDirty('email'); }
     /**
-     * `Formula (Complex)` (fld2vnFc0Bl5IOFUQ)
-     * 
+     * Formula (Complex) `fld2vnFc0Bl5IOFUQ` - `Read-Only`
+     *
+     * Concatenates all field values into a readable summary, using correct field references.
+     *
      * ```
      * CONCATENATE(
      *   "Primary Key: ",
@@ -137,230 +195,7 @@ class PrimaryModel extends AirtableModel {
      *   "\n",
      *   "Attachment: ",
      *   IF(
-     *     {Attachment},
-     *     {Attachment},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Checkbox: ",
-     *   IF(
-     *     {Checkbox},
-     *     "Checked",
-     *     "Unchecked"
-     *   ),
-     *   "\n",
-     *   "Multiple Select: ",
-     *   IF(
-     *     {Multiple Select},
-     *     {Multiple Select},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Single Select: ",
-     *   IF(
-     *     {Single Select},
-     *     {Single Select},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "User: ",
-     *   IF(
-     *     {User},
-     *     {User},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "User (allow multiple): ",
-     *   IF(
-     *     {User (allow multiple)},
-     *     {User (allow multiple)},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Date: ",
-     *   IF(
-     *     {Date},
-     *     DATETIME_FORMAT({Date}, 'YYYY-MM-DD'),
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Date (with time): ",
-     *   IF(
-     *     {Date (with time)},
-     *     DATETIME_FORMAT(
-     *       {Date (with time)},
-     *       'YYYY-MM-DD HH:mm'
-     *     ),
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Phone Number: ",
-     *   IF(
-     *     {Phone Number},
-     *     {Phone Number},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Email: ",
-     *   IF(
-     *     {Email},
-     *     {Email},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "URL: ",
-     *   IF(
-     *     {URL},
-     *     {URL},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Number (int): ",
-     *   IF(
-     *     {Number (int)},
-     *     {Number(int) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Number (float): ",
-     *   IF(
-     *     {Number (float)},
-     *     {Number(float) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Currency (int): ",
-     *   IF(
-     *     {Currency (int)},
-     *     {Currency(int) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Currency (float): ",
-     *   IF(
-     *     {Currency (float)},
-     *     {Currency(float) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Percent (int): ",
-     *   IF(
-     *     {Percent (int)},
-     *     {Percent(int) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Percent (float): ",
-     *   IF(
-     *     {Percent (float)},
-     *     {Percent(float) } & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Duration: ",
-     *   IF(
-     *     {Duration},
-     *     {Duration} & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Rating: ",
-     *   IF(
-     *     {Rating},
-     *     {Rating} & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Created Time: ",
-     *   IF(
-     *     {Created Time},
-     *     DATETIME_FORMAT(
-     *       {Created Time},
-     *       'YYYY-MM-DD HH:mm'
-     *     ),
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Last Modified Time: ",
-     *   IF(
-     *     {Last Modified Time},
-     *     DATETIME_FORMAT(
-     *       {Last Modified Time},
-     *       'YYYY-MM-DD HH:mm'
-     *     ),
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Created By: ",
-     *   IF(
-     *     {Created By},
-     *     {Created By},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Last Modified By: ",
-     *   IF(
-     *     {Last Modified By},
-     *     {Last Modified By},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Auto Number: ",
-     *   IF(
-     *     {Auto Number},
-     *     {Auto Number} & "",
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Button: ",
-     *   IF(
-     *     {Button},
-     *     {Button},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Link (single): ",
-     *   IF(
-     *     {Link (single)},
-     *     {Link (single)},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Link (multiple): ",
-     *   IF(
-     *     {Link (multiple)},
-     *     {Link (multiple)},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Lookup: ",
-     *   IF(
-     *     {Lookup},
-     *     {Lookup},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Rollup: ",
-     *   IF(
-     *     {Rollup},
-     *     {Rollup},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Formula (ID): ",
-     *   IF(
-     *     {Formula (ID)},
-     *     {Formula (ID)},
-     *     "None"
-     *   ),
-     *   "\n",
-     *   "Formula (Simple): ",
-     *   IF(
-     *     {Formula (Simple)},
-     *     {Formula (Simple)},
-     *     "None"
-     *   )
-     * )
+     * … (truncated)
      * ```
      */
     get formulaComplex() {
@@ -368,8 +203,10 @@ class PrimaryModel extends AirtableModel {
         return this._fields["formulaComplex"];
     }
     /**
-     * `Formula (ID)` (fldcf62YFeIIDHElt)
-     * 
+     * Formula (ID) `fldcf62YFeIIDHElt` - `Read-Only`
+     *
+     * A description on a formula field (so it has both a description and a formula block)
+     *
      * ```
      * RECORD_ID()
      * ```
@@ -379,8 +216,8 @@ class PrimaryModel extends AirtableModel {
         return this._fields["formulaId"];
     }
     /**
-     * `Formula (Nested)` (fldXFeHRPBLz6AiWh)
-     * 
+     * Formula (Nested) `fldXFeHRPBLz6AiWh` - `Read-Only`
+     *
      * ```
      * {Formula (ID)} & {Formula (Simple)} & {Formula (Complex)}
      * ```
@@ -390,8 +227,8 @@ class PrimaryModel extends AirtableModel {
         return this._fields["formulaNested"];
     }
     /**
-     * `Formula (Simple)` (fldy1axxaoUToLVC6)
-     * 
+     * Formula (Simple) `fldy1axxaoUToLVC6` - `Read-Only`
+     *
      * ```
      * {Number (int)} + {Number (float)}
      * ```
@@ -400,63 +237,82 @@ class PrimaryModel extends AirtableModel {
         if (this.evaluateFormulasAtRuntime) this._fields["formulaSimple"] = (F.N(this.numberInt) + F.N(this.numberFloat));
         return this._fields["formulaSimple"];
     }
-    /** `Last Modified By` (fldF8iDttqP0AgzWC) */
+    /** Last Modified By `fldF8iDttqP0AgzWC` - `Read-Only` */
     get lastModifiedBy() { return this._fields["lastModifiedBy"]; }
-    /** `Last Modified Time` (fldMinKh4pa3YX86g) */
+    /** Last Modified Time `fldMinKh4pa3YX86g` - `Read-Only` */
     get lastModifiedTime() { return this._fields["lastModifiedTime"]; }
-    /** `Link (multiple)` (fldFyFheQWczd8oux) */
+    /** Link (multiple) `fldFyFheQWczd8oux` */
     get linkMultiple() { return this._fields["linkMultiple"]; }
     set linkMultiple(value) { this._setLinkedRecordsField('linkMultiple', value); }
-    /** `Link (single)` (fld7F5onkDo6mkmbN) */
+    /** Link (single) `fld7F5onkDo6mkmbN` */
     get linkSingle() { return this._fields["linkSingle"]; }
     set linkSingle(value) { this._setLinkedField('linkSingle', value); }
-    /** `Long Text` (fld8ulc6J0W29M6La) */
+    /**
+     * Long Text `fld8ulc6J0W29M6La`
+     *
+     * Description with special characters !@#$%^&*()<>/:"{}[]\|=/*-+.,.?`~
+     */
     get longText() { return this._fields["longText"]; }
     set longText(value) { this._fields["longText"] = value; this.markDirty('longText'); }
-    /** `Long Text with Rich Text` (fldHJkxCMC0xo343u) */
+    /** Long Text with Rich Text `fldHJkxCMC0xo343u` */
     get longTextWithRichText() { return this._fields["longTextWithRichText"]; }
     set longTextWithRichText(value) { this._fields["longTextWithRichText"] = value; this.markDirty('longTextWithRichText'); }
-    /** `Lookup` (fldbmFmrzYKBktJvE) */
+    /** Lookup `fldbmFmrzYKBktJvE` - `Read-Only` */
     get lookup() { return this._fields["lookup"]; }
-    /** `Multiple Select` (fld6GTabFmu1xKPvZ) */
+    /** Multiple Select `fld6GTabFmu1xKPvZ` */
     get multipleSelect() { return this._fields["multipleSelect"]; }
     set multipleSelect(value) { this._fields["multipleSelect"] = value; this.markDirty('multipleSelect'); }
-    /** `Number (float)` (fldmU0X2l4RWd21dd) */
+    /** Number (float) `fldmU0X2l4RWd21dd` */
     get numberFloat() { return this._fields["numberFloat"]; }
     set numberFloat(value) { this._fields["numberFloat"] = value; this.markDirty('numberFloat'); }
-    /** `Number (int)` (fldOfPKGmnRPv94QH) */
+    /** Number (int) `fldOfPKGmnRPv94QH` */
     get numberInt() { return this._fields["numberInt"]; }
     set numberInt(value) { this._fields["numberInt"] = value; this.markDirty('numberInt'); }
-    /** `Percent (float)` (fldiGui9ll69N7WOj) */
+    /** Percent (float) `fldiGui9ll69N7WOj` */
     get percentFloat() { return this._fields["percentFloat"]; }
     set percentFloat(value) { this._fields["percentFloat"] = value; this.markDirty('percentFloat'); }
-    /** `Percent (int)` (fldbAAyWboGulpb4s) */
+    /** Percent (int) `fldbAAyWboGulpb4s` */
     get percentInt() { return this._fields["percentInt"]; }
     set percentInt(value) { this._fields["percentInt"] = value; this.markDirty('percentInt'); }
-    /** `Phone Number` (fld38tnNpHmoks8C8) */
+    /** Phone Number `fld38tnNpHmoks8C8` */
     get phoneNumber() { return this._fields["phoneNumber"]; }
     set phoneNumber(value) { this._fields["phoneNumber"] = value; this.markDirty('phoneNumber'); }
-    /** `Primary Key` (fldol5Q4wmQJQvPRy) */
+    /**
+     * Primary Key `fldol5Q4wmQJQvPRy` - `Primary Key`
+     *
+     * A description on the primary field
+     */
     get primaryKey() { return this._fields["primaryKey"]; }
     set primaryKey(value) { this._fields["primaryKey"] = value; this.markDirty('primaryKey'); }
-    /** `Rating` (fldRsmwFwQNZkKLp4) */
+    /** Rating `fldRsmwFwQNZkKLp4` */
     get rating() { return this._fields["rating"]; }
     set rating(value) { this._fields["rating"] = value; this.markDirty('rating'); }
-    /** `Rollup` (fldGaFgBsDC3IBUdV) */
+    /**
+     * Rollup `fldGaFgBsDC3IBUdV` - `Read-Only`
+     *
+     * A description on a computed/rollup field
+     */
     get rollup() { return this._fields["rollup"]; }
-    /** `Single Line Text` (fld0BL2lFo9fqcKv3) */
+    /**
+     * Single Line Text `fld0BL2lFo9fqcKv3`
+     *
+     * Description
+     * With
+     * New
+     * Lines
+     */
     get singleLineText() { return this._fields["singleLineText"]; }
     set singleLineText(value) { this._fields["singleLineText"] = value; this.markDirty('singleLineText'); }
-    /** `Single Select` (fldn0GFFtMFpCXUNU) */
+    /** Single Select `fldn0GFFtMFpCXUNU` */
     get singleSelect() { return this._fields["singleSelect"]; }
     set singleSelect(value) { this._fields["singleSelect"] = value; this.markDirty('singleSelect'); }
-    /** `URL` (fldLYloz2oP4ymf3B) */
+    /** URL `fldLYloz2oP4ymf3B` */
     get url() { return this._fields["url"]; }
     set url(value) { this._fields["url"] = value; this.markDirty('url'); }
-    /** `User` (fldU6SbLp8CSkLcA4) */
+    /** User `fldU6SbLp8CSkLcA4` */
     get user() { return this._fields["user"]; }
     set user(value) { this._fields["user"] = value; this.markDirty('user'); }
-    /** `User (allow multiple)` (fldBwCDbAVxRj9yg7) */
+    /** User (allow multiple) `fldBwCDbAVxRj9yg7` */
     get userAllowMultiple() { return this._fields["userAllowMultiple"]; }
     set userAllowMultiple(value) { this._fields["userAllowMultiple"] = value; this.markDirty('userAllowMultiple'); }
 
