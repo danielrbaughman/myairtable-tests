@@ -238,3 +238,53 @@ pub(crate) fn project_attachments_for_create(fields: &mut serde_json::Value) {
         }
     }
 }
+
+#[cfg(test)]
+mod project_attachments_tests {
+    use super::project_attachments_for_create;
+    use serde_json::json;
+
+    #[test]
+    fn strips_readonly_metadata_that_create_rejects() {
+        // Verified against the live API: create accepts only {url} / {url, filename}. An `id` --
+        // alone or echoed alongside `url` -- fails with INVALID_ATTACHMENT_OBJECT.
+        let mut fields = json!({
+            "fldAtt": [{
+                "id": "attServerSide0001",
+                "url": "https://example.com/a.png",
+                "filename": "a.png",
+                "size": 1234,
+                "type": "image/png",
+                "width": 10,
+                "height": 10,
+            }]
+        });
+        project_attachments_for_create(&mut fields);
+        assert_eq!(
+            fields,
+            json!({"fldAtt": [{"url": "https://example.com/a.png", "filename": "a.png"}]})
+        );
+    }
+
+    #[test]
+    fn passes_through_caller_built_attachments() {
+        let mut fields = json!({"fldAtt": [{"url": "u"}]});
+        project_attachments_for_create(&mut fields);
+        assert_eq!(fields, json!({"fldAtt": [{"url": "u"}]}));
+    }
+
+    #[test]
+    fn leaves_other_cell_types_alone() {
+        // Linked records, collaborators and plain arrays must not be mistaken for attachments.
+        let mut fields = json!({
+            "fldLink": ["rec1", "rec2"],
+            "fldUser": {"id": "usrX", "email": "e@x.com"},
+            "fldUsers": [{"id": "usrX", "email": "e@x.com"}],
+            "fldEmpty": [],
+            "fldText": "https://example.com",
+        });
+        let before = fields.clone();
+        project_attachments_for_create(&mut fields);
+        assert_eq!(fields, before);
+    }
+}
