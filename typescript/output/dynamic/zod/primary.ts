@@ -47,7 +47,7 @@ export const PrimarySchema = z.object({
     percentInt: z.number().optional(),
     phoneNumber: z.string().optional(),
     primaryKey: z.string().optional(),
-    rating: z.any().optional(),
+    rating: z.number().optional(),
     rollup: z.union([z.string(), SpecialNumberSchema, ErrorValueSchema, z.array(z.union([z.string(), SpecialNumberSchema, ErrorValueSchema]).nullable())]).optional(),
     singleLineText: z.string().optional(),
     singleSelect: z.string().optional(),

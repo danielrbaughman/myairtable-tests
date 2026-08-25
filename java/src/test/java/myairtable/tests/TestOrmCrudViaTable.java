@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.fasterxml.jackson.databind.node.IntNode;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,7 +116,7 @@ class TestOrmCrudViaTable {
             .singleSelect(PrimarySingleSelectOption.CHOICE_1)
             .multipleSelect(
                 List.of(PrimaryMultipleSelectOption.OPTION_1, PrimaryMultipleSelectOption.OPTION_2))
-            .rating(IntNode.valueOf(3))
+            .rating(3L)
             .build();
     PrimaryModel created = airtable.primary().create(model);
     String recordId = created.getId();
@@ -126,18 +125,18 @@ class TestOrmCrudViaTable {
       assertEquals(
           List.of(PrimaryMultipleSelectOption.OPTION_1, PrimaryMultipleSelectOption.OPTION_2),
           created.getMultipleSelect());
-      assertEquals(3, created.getRating().asInt());
+      assertEquals(3L, created.getRating());
 
       PrimaryModel fetched = airtable.primary().get(recordId);
       assertEquals(PrimarySingleSelectOption.CHOICE_1, fetched.getSingleSelect());
 
       fetched.setSingleSelect(PrimarySingleSelectOption.CHOICE_2);
       fetched.setMultipleSelect(List.of(PrimaryMultipleSelectOption.OPTION_3));
-      fetched.setRating(IntNode.valueOf(5));
+      fetched.setRating(5L);
       PrimaryModel updated = airtable.primary().update(fetched);
       assertEquals(PrimarySingleSelectOption.CHOICE_2, updated.getSingleSelect());
       assertEquals(List.of(PrimaryMultipleSelectOption.OPTION_3), updated.getMultipleSelect());
-      assertEquals(5, updated.getRating().asInt());
+      assertEquals(5L, updated.getRating());
 
       airtable.primary().delete(recordId);
     } catch (Throwable e) {

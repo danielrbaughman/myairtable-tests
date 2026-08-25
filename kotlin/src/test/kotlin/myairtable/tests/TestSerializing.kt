@@ -170,10 +170,11 @@ class TestSerializing {
     }
 
     @Test
-    fun ratingIsTypeErasedJsonElement() {
-        // `rating` has no Airtable metadata type mapping → JsonElement (UNKNOWN).
-        val model = PrimaryModel(primaryKey = "r", rating = JsonPrimitive(3))
-        assertEquals(JsonPrimitive(3), model.rating)
+    fun ratingIsATypedInteger() {
+        // `rating` maps to GenericType.INTEGER, so it is a real Long rather than the
+        // type-erased JsonElement it used to be. It still serializes as a JSON number.
+        val model = PrimaryModel(primaryKey = "r", rating = 3L)
+        assertEquals(3L, model.rating)
         assertEquals(JsonPrimitive(3), model.toCreateFields()[PrimaryFields.ratingId])
     }
 }

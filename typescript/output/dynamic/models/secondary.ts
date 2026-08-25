@@ -40,10 +40,10 @@ export class SecondaryModel extends AirtableModel<SecondaryFieldSet, ISecondary,
     public get tableId(): string { return SecondaryModel.tableId; }
 
     protected static fieldDescriptors: FieldDescriptor[] = [
-        { propertyName: "linkToTertiary", fieldId: "fldKR6tdbnOBRCtdQ", fieldName: "Link to Tertiary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => TertiaryModel.fromId(id, config), linkedModelClass: TertiaryModel as any },
+        { propertyName: "linkToTertiary", fieldId: "fldKR6tdbnOBRCtdQ", fieldName: "Link to Tertiary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => TertiaryModel.fromId(id, config), get linkedModelClass(): any { return TertiaryModel; } },
         { propertyName: "name", fieldId: "fld1RagdJ09mpWhzM", fieldName: "Name", isComputed: false, fieldType: "generic" },
-        { propertyName: "primary", fieldId: "fldl0nB9WRFSdqlii", fieldName: "Primary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => PrimaryModel.fromId(id, config), linkedModelClass: PrimaryModel as any },
-        { propertyName: "primary2", fieldId: "fldgoE2oZmXmKkQca", fieldName: "Primary 2", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => PrimaryModel.fromId(id, config), linkedModelClass: PrimaryModel as any },
+        { propertyName: "primary", fieldId: "fldl0nB9WRFSdqlii", fieldName: "Primary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => PrimaryModel.fromId(id, config), get linkedModelClass(): any { return PrimaryModel; } },
+        { propertyName: "primary2", fieldId: "fldgoE2oZmXmKkQca", fieldName: "Primary 2", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => PrimaryModel.fromId(id, config), get linkedModelClass(): any { return PrimaryModel; } },
         { propertyName: "value", fieldId: "fldi6Mxh5H1gPGxFX", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 

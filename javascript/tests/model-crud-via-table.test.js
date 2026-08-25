@@ -640,3 +640,73 @@ describe("Max Records", async () => {
 		});
 	});
 });
+
+describe("Duplicate", async () => {
+	// duplicate() is the first verb that POSTs a record read back from Airtable: a server-loaded
+	// model has `_isNew === false` and no dirty fields, so the ordinary create payload for it
+	// would be empty.
+	const sec = await airtable.secondary.create(new SecondaryModel({ name: "JS Duplicate Link" }));
+	const source = await airtable.primary.create(
+		new PrimaryModel({
+			primaryKey: "JS Duplicate Source",
+			singleLineText: "copy me",
+			// numberInt stays <= 10 and != 20 on purpose: filter-by-formula asserts exact counts
+			// for `numberInt = 20` and `AND(numberInt > 10, checkbox = true)`, and vitest runs test
+			// files in parallel against the one shared base.
+			numberInt: 7,
+			rating: 3,
+			singleSelect: "Choice 1",
+		}),
+	);
+	source.linkSingle.id = sec.id;
+	await source.save();
+
+	const fetched = await airtable.primary.get(source.id);
+	const copy = await airtable.primary.duplicate(fetched);
+	const trash = [copy.id];
+
+	it("creates a new record rather than updating the source", async () => {
+		expect(copy.id).toBeTruthy();
+		expect(copy.id).not.toBe(source.id);
+	});
+
+	it("copies every writable field, including the primary field", async () => {
+		expect(copy.primaryKey).toBe("JS Duplicate Source");
+		expect(copy.singleLineText).toBe("copy me");
+		expect(copy.numberInt).toBe(7);
+		expect(copy.rating).toBe(3);
+		expect(copy.singleSelect).toBe("Choice 1");
+	});
+
+	it("recomputes computed fields instead of copying them", async () => {
+		// Formula (ID) resolves to RECORD_ID(), so on a true copy it is the COPY's id.
+		expect(copy.formulaId).toBe(copy.id);
+		expect(copy.autoNumber).not.toBe(fetched.autoNumber);
+	});
+
+	it("copies the link without moving it off the source", async () => {
+		expect(copy.linkSingle.id).toBe(sec.id);
+		const sourceAgain = await airtable.primary.get(source.id);
+		expect(sourceAgain.linkSingle.id).toBe(sec.id);
+	});
+
+	it("duplicates by record id and preserves batch order", async () => {
+		const other = await airtable.primary.create(new PrimaryModel({ primaryKey: "JS Duplicate Source B" }));
+		trash.push(other.id);
+		const copies = await airtable.primary.duplicate([other.id, source.id]);
+		trash.push(...copies.map((r) => r.id));
+		expect(copies).toHaveLength(2);
+		expect(copies[0].primaryKey).toBe("JS Duplicate Source B");
+		expect(copies[1].primaryKey).toBe("JS Duplicate Source");
+	});
+
+	it("rejects a source with no id", async () => {
+		await expect(airtable.primary.duplicate(new PrimaryModel({ primaryKey: "unsaved" }))).rejects.toThrow(/no id/);
+	});
+
+	it("cleans up", async () => {
+		await airtable.primary.delete([...new Set([...trash, source.id])]);
+		await airtable.secondary.delete(sec.id);
+		expect(true).toBe(true);
+	});
+});

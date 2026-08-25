@@ -102,25 +102,25 @@ class TestOrmCrudViaTable {
                     primaryKey = primaryKey,
                     singleSelect = PrimarySingleSelectOption.CHOICE_1,
                     multipleSelect = listOf(PrimaryMultipleSelectOption.OPTION_1, PrimaryMultipleSelectOption.OPTION_2),
-                    rating = JsonPrimitive(3),
+                    rating = 3L,
                 )
             val created = airtable.primary.create(model)
             val recordId = created.id!!
             try {
                 assertEquals(PrimarySingleSelectOption.CHOICE_1, created.singleSelect)
                 assertEquals(listOf(PrimaryMultipleSelectOption.OPTION_1, PrimaryMultipleSelectOption.OPTION_2), created.multipleSelect)
-                assertEquals(JsonPrimitive(3), created.rating)
+                assertEquals(3L, created.rating)
 
                 val fetched = airtable.primary.get(recordId)
                 assertEquals(PrimarySingleSelectOption.CHOICE_1, fetched.singleSelect)
 
                 fetched.singleSelect = PrimarySingleSelectOption.CHOICE_2
                 fetched.multipleSelect = listOf(PrimaryMultipleSelectOption.OPTION_3)
-                fetched.rating = JsonPrimitive(5)
+                fetched.rating = 5L
                 val updated = airtable.primary.update(fetched)
                 assertEquals(PrimarySingleSelectOption.CHOICE_2, updated.singleSelect)
                 assertEquals(listOf(PrimaryMultipleSelectOption.OPTION_3), updated.multipleSelect)
-                assertEquals(JsonPrimitive(5), updated.rating)
+                assertEquals(5L, updated.rating)
 
                 airtable.primary.delete(recordId)
             } catch (e: Throwable) {

@@ -3,7 +3,6 @@
 # ==========================================
 
 from typing import (
-    Any,
     TYPE_CHECKING,
     cast,
 )
@@ -33,6 +32,7 @@ from pyairtable.orm.fields import (
     DurationField,
     LastModifiedByField,
     AutoNumberField,
+    RatingField,
     CollaboratorField,
     MultipleCollaboratorsField,
 )
@@ -282,7 +282,7 @@ class PrimaryModel(Model):
     
     A description on the primary field
     """
-    rating: Any = None
+    rating: RatingField = RatingField(field_name="fldRsmwFwQNZkKLp4")
     """Rating `fldRsmwFwQNZkKLp4`"""
     rollup: SingleLineTextField = SingleLineTextField(field_name="fldGaFgBsDC3IBUdV", readonly=True)
     """

@@ -71,8 +71,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
         { propertyName: "formulaSimple", fieldId: "fldy1axxaoUToLVC6", fieldName: "Formula (Simple)", isComputed: true, fieldType: "generic" },
         { propertyName: "lastModifiedBy", fieldId: "fldF8iDttqP0AgzWC", fieldName: "Last Modified By", isComputed: true, fieldType: "generic" },
         { propertyName: "lastModifiedTime", fieldId: "fldMinKh4pa3YX86g", fieldName: "Last Modified Time", isComputed: true, fieldType: "generic" },
-        { propertyName: "linkMultiple", fieldId: "fldFyFheQWczd8oux", fieldName: "Link (multiple)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config), linkedModelClass: SecondaryModel as any },
-        { propertyName: "linkSingle", fieldId: "fld7F5onkDo6mkmbN", fieldName: "Link (single)", isComputed: false, fieldType: "linkedRecord", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config), linkedModelClass: SecondaryModel as any },
+        { propertyName: "linkMultiple", fieldId: "fldFyFheQWczd8oux", fieldName: "Link (multiple)", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config), get linkedModelClass(): any { return SecondaryModel; } },
+        { propertyName: "linkSingle", fieldId: "fld7F5onkDo6mkmbN", fieldName: "Link (single)", isComputed: false, fieldType: "linkedRecord", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config), get linkedModelClass(): any { return SecondaryModel; } },
         { propertyName: "longText", fieldId: "fld8ulc6J0W29M6La", fieldName: "Long Text", isComputed: false, fieldType: "generic" },
         { propertyName: "longTextWithRichText", fieldId: "fldHJkxCMC0xo343u", fieldName: "Long Text with Rich Text", isComputed: false, fieldType: "generic" },
         { propertyName: "lookup", fieldId: "fldbmFmrzYKBktJvE", fieldName: "Lookup", isComputed: true, fieldType: "generic" },
@@ -297,8 +297,8 @@ export class PrimaryModel extends AirtableModel<PrimaryFieldSet, IPrimary, Prima
     public get primaryKey(): string | undefined { return this._fields["primaryKey"] as string; }
     public set primaryKey(value: string | undefined) { this._fields["primaryKey"] = value; this.markDirty('primaryKey'); }
     /** Rating `fldRsmwFwQNZkKLp4` */
-    public get rating(): any | undefined { return this._fields["rating"] as any; }
-    public set rating(value: any | undefined) { this._fields["rating"] = value; this.markDirty('rating'); }
+    public get rating(): number | undefined { return this._fields["rating"] as number; }
+    public set rating(value: number | undefined) { this._fields["rating"] = value; this.markDirty('rating'); }
     /**
      * Rollup `fldGaFgBsDC3IBUdV` - `Read-Only`
      *

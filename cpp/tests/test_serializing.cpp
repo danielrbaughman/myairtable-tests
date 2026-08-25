@@ -118,10 +118,11 @@ TEST_CASE("serializing: fresh model omits null fields (sparse write)", "[json][s
     REQUIRE(encoded == json{{fid(PrimaryFields::kPrimaryKeyId), "sparse"}});
 }
 
-TEST_CASE("serializing: rating is a type-erased json node", "[json][serializing]") {
-    // `rating` has no Airtable metadata type mapping -> raw json (UNKNOWN).
-    const auto model = PrimaryModel{.primary_key = "r", .rating = json(3)};
-    REQUIRE(model.rating->get<int>() == 3);
+TEST_CASE("serializing: rating is a typed integer", "[json][serializing]") {
+    // `rating` maps to GenericType.INTEGER, so it is a real int64_t rather than the
+    // type-erased json it used to be. It still serializes as a JSON number.
+    const auto model = PrimaryModel{.primary_key = "r", .rating = 3};
+    REQUIRE(*model.rating == 3);
     REQUIRE(model.to_create_fields().at(fid(PrimaryFields::kRatingId)).get<int>() == 3);
 }
 

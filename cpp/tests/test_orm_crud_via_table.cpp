@@ -102,7 +102,7 @@ TEST_CASE("orm table: select enums and rating round trip", "[crud][orm-table]") 
         .multiple_select =
             std::vector<PrimaryMultipleSelectOption>{PrimaryMultipleSelectOption::Option1,
                                                      PrimaryMultipleSelectOption::Option2},
-        .rating = json(3),
+        .rating = 3,
     };
     auto created = airtable.primary().create_one(model);
     const auto record_id = *created.id;
@@ -111,7 +111,7 @@ TEST_CASE("orm table: select enums and rating round trip", "[crud][orm-table]") 
         REQUIRE(created.multiple_select ==
                 std::vector<PrimaryMultipleSelectOption>{PrimaryMultipleSelectOption::Option1,
                                                          PrimaryMultipleSelectOption::Option2});
-        REQUIRE(created.rating->get<int>() == 3);
+        REQUIRE(*created.rating == 3);
 
         auto fetched = airtable.primary().get_one(record_id);
         REQUIRE(fetched.single_select == PrimarySingleSelectOption::Choice1);
@@ -119,12 +119,12 @@ TEST_CASE("orm table: select enums and rating round trip", "[crud][orm-table]") 
         fetched.single_select = PrimarySingleSelectOption::Choice2;
         fetched.multiple_select =
             std::vector<PrimaryMultipleSelectOption>{PrimaryMultipleSelectOption::Option3};
-        fetched.rating = json(5);
+        fetched.rating = 5;
         auto updated = airtable.primary().update_one(fetched);
         REQUIRE(updated.single_select == PrimarySingleSelectOption::Choice2);
         REQUIRE(updated.multiple_select ==
                 std::vector<PrimaryMultipleSelectOption>{PrimaryMultipleSelectOption::Option3});
-        REQUIRE(updated.rating->get<int>() == 5);
+        REQUIRE(*updated.rating == 5);
     } catch (...) {
         try_remove(airtable, {record_id});
         throw;

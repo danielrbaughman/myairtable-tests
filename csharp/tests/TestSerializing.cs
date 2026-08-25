@@ -126,12 +126,13 @@ public class TestSerializing
     }
 
     [Fact]
-    public void RatingIsTypeErasedJsonNode()
+    public void RatingIsATypedInteger()
     {
-        // `rating` has no Airtable metadata type mapping → JsonNode (UNKNOWN).
-        var model = new PrimaryModel { PrimaryKey = "r", Rating = JsonValue.Create(3) };
-        Assert.Equal(3, model.Rating!.GetValue<int>());
-        Assert.Equal(3, model.ToCreateFields()[PrimaryFields.RatingId]!.GetValue<int>());
+        // `rating` maps to GenericType.INTEGER, so it is a real long rather than the
+        // type-erased JsonNode it used to be. It still serializes as a JSON number.
+        var model = new PrimaryModel { PrimaryKey = "r", Rating = 3L };
+        Assert.Equal(3L, model.Rating);
+        Assert.Equal(3L, model.ToCreateFields()[PrimaryFields.RatingId]!.GetValue<long>());
     }
 
     // ---- snapshot / dirty tracking ----

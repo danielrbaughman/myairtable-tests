@@ -37,7 +37,7 @@ class TertiaryModel extends AirtableModel {
 
     static fieldDescriptors = [
         { propertyName: "name", fieldId: "fldwzqKxsRnPZJ2Ll", fieldName: "Name", isComputed: false, fieldType: "generic" },
-        { propertyName: "secondary", fieldId: "fld8lCuUXpEXkIeYv", fieldName: "Secondary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./secondary").SecondaryModel.fromId(id, config), linkedModelClass: require("./secondary").SecondaryModel },
+        { propertyName: "secondary", fieldId: "fld8lCuUXpEXkIeYv", fieldName: "Secondary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./secondary").SecondaryModel.fromId(id, config), get linkedModelClass() { return require("./secondary").SecondaryModel; } },
         { propertyName: "value", fieldId: "fldjNLBh2UccM64h5", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 

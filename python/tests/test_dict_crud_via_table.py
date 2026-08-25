@@ -412,3 +412,70 @@ class TestMaxRecords:
         airtable.primary.dict.delete(record_ids=self.ids)
         remaining = airtable.primary.dict.get(self.ids)
         assert len(remaining) == 0
+
+
+class TestDuplicate:
+    """`duplicate()` on the raw dict layer.
+
+    Kept in parity with the ORM suite's TestDuplicate: the two surfaces build their create
+    payload independently, so a divergence between them (a field one layer drops and the
+    other keeps) only shows up if both are exercised.
+    """
+
+    source_id: str
+    trash: list[str] = []
+
+    def test_create_source(self, airtable):
+        created = airtable.primary.dict.create(
+            new_primary_dict(
+                {
+                    "Primary Key": "Dict Duplicate Source",
+                    "Single Line Text": "copy me",
+                    "Number (int)": 42,
+                    "Rating": 3,
+                    "Checkbox": True,
+                    "Single Select": "Choice 1",
+                }
+            )
+        )
+        self.__class__.source_id = created["id"]
+        assert created["id"]
+
+    def test_duplicate_by_id_copies_writable_fields(self, airtable):
+        source = airtable.primary.dict.get(self.source_id)
+        copy = airtable.primary.dict.duplicate(self.source_id)
+        self.__class__.trash.append(copy["id"])
+
+        assert copy["id"] != self.source_id
+        for field in ("Primary Key", "Single Line Text", "Number (int)", "Rating", "Checkbox", "Single Select"):
+            assert copy["fields"].get(field) == source["fields"].get(field), field
+
+    def test_duplicate_recomputes_computed_fields(self, airtable):
+        source = airtable.primary.dict.get(self.source_id)
+        copy = airtable.primary.dict.duplicate(self.source_id)
+        self.__class__.trash.append(copy["id"])
+
+        assert copy["fields"].get("Formula (ID)") == copy["id"]
+        assert copy["fields"].get("Auto Number") != source["fields"].get("Auto Number")
+
+    def test_duplicate_does_not_mutate_the_callers_dict(self, airtable):
+        # create()/update() rewrite record["fields"] in place; duplicate() must not, because
+        # the caller still holds the source record it passed in.
+        source = airtable.primary.dict.get(self.source_id)
+        before = dict(source["fields"])
+        copy = airtable.primary.dict.duplicate(source)
+        self.__class__.trash.append(copy["id"])
+        assert source["fields"] == before
+
+    def test_duplicate_batch_preserves_input_order(self, airtable):
+        other = airtable.primary.dict.create(new_primary_dict({"Primary Key": "Dict Duplicate Source B"}))
+        self.__class__.trash.append(other["id"])
+
+        copies = airtable.primary.dict.duplicate([other["id"], self.source_id])
+        self.__class__.trash.extend(r["id"] for r in copies)
+        assert len(copies) == 2
+        assert copies[0]["fields"].get("Primary Key") == "Dict Duplicate Source B"
+        assert copies[1]["fields"].get("Primary Key") == "Dict Duplicate Source"
+
+    def test_delete(self, airtable):
+        airtable.primary.dict.delete(record_ids=list({*self.trash, self.source_id}))

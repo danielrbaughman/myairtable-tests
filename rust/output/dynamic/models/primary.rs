@@ -261,7 +261,7 @@ pub struct PrimaryModel {
     #[serde(rename = "fldRsmwFwQNZkKLp4")]
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub rating: Option<serde_json::Value>,
+    pub rating: Option<i64>,
     /// Rollup `fldGaFgBsDC3IBUdV` - `Read-Only`
     ///
     /// A description on a computed/rollup field

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.LongNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.Instant;
@@ -174,11 +174,12 @@ class TestSerializing {
   }
 
   @Test
-  void ratingIsTypeErasedJsonNode() {
-    // `rating` has no Airtable metadata type mapping → JsonNode (UNKNOWN).
-    PrimaryModel model = PrimaryModel.builder().primaryKey("r").rating(IntNode.valueOf(3)).build();
-    assertEquals(IntNode.valueOf(3), model.getRating());
-    assertEquals(IntNode.valueOf(3), model.toCreateFields().get(PrimaryFields.ratingId));
+  void ratingIsATypedInteger() {
+    // `rating` maps to GenericType.INTEGER, so it is a real Long rather than the type-erased
+    // JsonNode it used to be. It still serializes as a JSON number.
+    PrimaryModel model = PrimaryModel.builder().primaryKey("r").rating(3L).build();
+    assertEquals(3L, model.getRating());
+    assertEquals(LongNode.valueOf(3L), model.toCreateFields().get(PrimaryFields.ratingId));
   }
 }
 

@@ -102,7 +102,7 @@ public class TestOrmCrudViaTable
                 PrimaryMultipleSelectOption.Option1,
                 PrimaryMultipleSelectOption.Option2,
             },
-            Rating = JsonValue.Create(3),
+            Rating = 3L,
         };
         var created = await _airtable.Primary.CreateAsync(model);
         var recordId = created.Id!;
@@ -117,7 +117,7 @@ public class TestOrmCrudViaTable
                 },
                 created.MultipleSelect
             );
-            Assert.Equal(3, created.Rating!.GetValue<int>());
+            Assert.Equal(3L, created.Rating);
 
             var fetched = await _airtable.Primary.GetAsync(recordId);
             Assert.Equal(PrimarySingleSelectOption.Choice1, fetched.SingleSelect);
@@ -127,14 +127,14 @@ public class TestOrmCrudViaTable
             {
                 PrimaryMultipleSelectOption.Option3,
             };
-            fetched.Rating = JsonValue.Create(5);
+            fetched.Rating = 5L;
             var updated = await _airtable.Primary.UpdateAsync(fetched);
             Assert.Equal(PrimarySingleSelectOption.Choice2, updated.SingleSelect);
             Assert.Equal(
                 new List<PrimaryMultipleSelectOption> { PrimaryMultipleSelectOption.Option3 },
                 updated.MultipleSelect
             );
-            Assert.Equal(5, updated.Rating!.GetValue<int>());
+            Assert.Equal(5L, updated.Rating);
         }
         finally
         {

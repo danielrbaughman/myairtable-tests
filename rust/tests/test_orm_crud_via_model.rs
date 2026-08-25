@@ -78,7 +78,7 @@ async fn all_simple_properties_via_model() {
         percent_int: Some(0.5),
         percent_float: Some(0.333),
         duration: Some(3600),
-        rating: Some(serde_json::json!(3)),
+        rating: Some(3),
         date: Some("2025-01-15".to_string()),
         date_with_time: Some("2025-01-15T10:00:00.000Z".to_string()),
         single_select: Some(PrimarySingleSelectOption::Choice1),
@@ -155,7 +155,7 @@ async fn all_simple_properties_via_model() {
     read.percent_int = Some(0.75);
     read.percent_float = Some(0.667);
     read.duration = Some(7200);
-    read.rating = Some(serde_json::json!(5));
+    read.rating = Some(5);
     read.date = Some("2025-06-15".to_string());
     read.date_with_time = Some("2025-06-15T14:00:00.000Z".to_string());
     read.single_select = Some(PrimarySingleSelectOption::Choice2);

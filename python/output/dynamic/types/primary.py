@@ -8,7 +8,6 @@ from datetime import (
     timedelta,
 )
 from typing import (
-    Any,
     Literal,
     TypedDict,
 )
@@ -646,7 +645,7 @@ class PrimaryFieldsDict(TypedDict, total=False):
     fldbAAyWboGulpb4s: float
     fld38tnNpHmoks8C8: str
     fldol5Q4wmQJQvPRy: str
-    fldRsmwFwQNZkKLp4: Any
+    fldRsmwFwQNZkKLp4: int
     fldGaFgBsDC3IBUdV: list[str]
     fld0BL2lFo9fqcKv3: str
     fldn0GFFtMFpCXUNU: PrimarySingleSelectOption

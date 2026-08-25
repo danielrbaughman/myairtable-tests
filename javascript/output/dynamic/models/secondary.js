@@ -36,10 +36,10 @@ class SecondaryModel extends AirtableModel {
     get tableId() { return SecondaryModel.tableId; }
 
     static fieldDescriptors = [
-        { propertyName: "linkToTertiary", fieldId: "fldKR6tdbnOBRCtdQ", fieldName: "Link to Tertiary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./tertiary").TertiaryModel.fromId(id, config), linkedModelClass: require("./tertiary").TertiaryModel },
+        { propertyName: "linkToTertiary", fieldId: "fldKR6tdbnOBRCtdQ", fieldName: "Link to Tertiary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./tertiary").TertiaryModel.fromId(id, config), get linkedModelClass() { return require("./tertiary").TertiaryModel; } },
         { propertyName: "name", fieldId: "fld1RagdJ09mpWhzM", fieldName: "Name", isComputed: false, fieldType: "generic" },
-        { propertyName: "primary", fieldId: "fldl0nB9WRFSdqlii", fieldName: "Primary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./primary").PrimaryModel.fromId(id, config), linkedModelClass: require("./primary").PrimaryModel },
-        { propertyName: "primary2", fieldId: "fldgoE2oZmXmKkQca", fieldName: "Primary 2", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./primary").PrimaryModel.fromId(id, config), linkedModelClass: require("./primary").PrimaryModel },
+        { propertyName: "primary", fieldId: "fldl0nB9WRFSdqlii", fieldName: "Primary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./primary").PrimaryModel.fromId(id, config), get linkedModelClass() { return require("./primary").PrimaryModel; } },
+        { propertyName: "primary2", fieldId: "fldgoE2oZmXmKkQca", fieldName: "Primary 2", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => require("./primary").PrimaryModel.fromId(id, config), get linkedModelClass() { return require("./primary").PrimaryModel; } },
         { propertyName: "value", fieldId: "fldi6Mxh5H1gPGxFX", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 
