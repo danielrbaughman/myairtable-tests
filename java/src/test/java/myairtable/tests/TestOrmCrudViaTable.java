@@ -2,6 +2,7 @@ package myairtable.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -316,6 +317,58 @@ class TestOrmCrudViaTable {
         // best-effort cleanup
       }
       throw e;
+    }
+  }
+
+  // Duplicate — parity with the other language duplicate suites.
+  @Test
+  void duplicateCopiesWritableFieldsAndRecomputesTheRest() {
+    String primaryKey = TestSetup.primaryKey("Duplicate", "Source");
+    PrimaryModel source =
+        airtable
+            .primary()
+            .create(
+                PrimaryModel.builder()
+                    .primaryKey(primaryKey)
+                    .singleLineText("copy me")
+                    // Stays <= 10 and != 20 on purpose: filter-by-formula asserts exact counts
+                    // for `numberInt = 20` and `AND(numberInt > 10, checkbox = true)`.
+                    .numberInt(7.0)
+                    .rating(3L)
+                    .build());
+    String sourceId = source.getId();
+    PrimaryModel copy = airtable.primary().duplicate(source);
+    String copyId = copy.getId();
+    try {
+      assertNotEquals(sourceId, copyId);
+      assertEquals(primaryKey, copy.getPrimaryKey());
+      assertEquals("copy me", copy.getSingleLineText());
+      assertEquals(7.0, copy.getNumberInt());
+      assertEquals(3L, copy.getRating());
+      // Formula (ID) resolves to RECORD_ID(), so on a true copy it is the COPY's id --
+      // proof the computed fields were recalculated rather than copied.
+      assertEquals(copyId, copy.getFormulaId().value());
+      assertNotEquals(source.getAutoNumber().value(), copy.getAutoNumber().value());
+    } finally {
+      airtable.primary().deleteAll(List.of(sourceId, copyId));
+    }
+  }
+
+  @Test
+  void duplicateAllPreservesInputOrder() {
+    String aKey = TestSetup.primaryKey("Duplicate", "OrderA");
+    String bKey = TestSetup.primaryKey("Duplicate", "OrderB");
+    PrimaryModel a = airtable.primary().create(PrimaryModel.builder().primaryKey(aKey).build());
+    PrimaryModel b = airtable.primary().create(PrimaryModel.builder().primaryKey(bKey).build());
+    List<PrimaryModel> copies = airtable.primary().duplicateAll(List.of(b.getId(), a.getId()));
+    try {
+      assertEquals(2, copies.size());
+      assertEquals(bKey, copies.get(0).getPrimaryKey());
+      assertEquals(aKey, copies.get(1).getPrimaryKey());
+    } finally {
+      List<String> cleanup = new ArrayList<>(List.of(a.getId(), b.getId()));
+      copies.forEach(c -> cleanup.add(c.getId()));
+      airtable.primary().deleteAll(cleanup);
     }
   }
 }
