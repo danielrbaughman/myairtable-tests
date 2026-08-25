@@ -12,6 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
@@ -235,6 +236,57 @@ class TestOrmCrudViaTable {
             } catch (e: Throwable) {
                 runCatching { airtable.primary.delete(recordId) }
                 throw e
+            }
+        }
+
+    // Duplicate — parity with the other language duplicate suites.
+    @Test
+    fun duplicateCopiesWritableFieldsAndRecomputesTheRest() =
+        runBlocking {
+            val primaryKey = TestSetup.primaryKey("Duplicate", "Source")
+            val source =
+                airtable.primary.create(
+                    PrimaryModel(
+                        primaryKey = primaryKey,
+                        singleLineText = "copy me",
+                        // Stays <= 10 and != 20 on purpose: filter-by-formula asserts exact counts
+                        // for `numberInt = 20` and `AND(numberInt > 10, checkbox = true)`.
+                        numberInt = 7.0,
+                        rating = 3L,
+                    ),
+                )
+            val sourceId = source.id!!
+            val copy = airtable.primary.duplicate(source)
+            val copyId = copy.id!!
+            try {
+                assertNotEquals(sourceId, copyId)
+                assertEquals(primaryKey, copy.primaryKey)
+                assertEquals("copy me", copy.singleLineText)
+                assertEquals(7.0, copy.numberInt)
+                assertEquals(3L, copy.rating)
+                // Formula (ID) resolves to RECORD_ID(), so on a true copy it is the COPY's id --
+                // proof the computed fields were recalculated rather than copied.
+                assertEquals(copyId, copy.formulaId?.valueOrNull)
+                assertNotEquals(source.autoNumber?.valueOrNull, copy.autoNumber?.valueOrNull)
+            } finally {
+                airtable.primary.delete(listOf(sourceId, copyId))
+            }
+        }
+
+    @Test
+    fun duplicateByIdsPreservesInputOrder() =
+        runBlocking {
+            val aKey = TestSetup.primaryKey("Duplicate", "OrderA")
+            val bKey = TestSetup.primaryKey("Duplicate", "OrderB")
+            val a = airtable.primary.create(PrimaryModel(primaryKey = aKey))
+            val b = airtable.primary.create(PrimaryModel(primaryKey = bKey))
+            val copies = airtable.primary.duplicate(listOf(b.id!!, a.id!!))
+            try {
+                assertEquals(2, copies.size)
+                assertEquals(bKey, copies[0].primaryKey)
+                assertEquals(aKey, copies[1].primaryKey)
+            } finally {
+                airtable.primary.delete(listOf(a.id!!, b.id!!) + copies.map { it.id!! })
             }
         }
 }
