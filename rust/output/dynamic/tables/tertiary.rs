@@ -64,6 +64,38 @@ impl TertiaryTable {
     ) -> Result<Vec<TertiaryModel>, AirtableError> {
         self.orm.create_many(models, typecast).await
     }
+    /// Copy a record into a brand-new record. Writable fields are copied verbatim, computed fields are recalculated by Airtable, and the source is left untouched.
+    pub async fn duplicate_one(
+        &self,
+        model: &TertiaryModel,
+        typecast: bool,
+    ) -> Result<TertiaryModel, AirtableError> {
+        self.orm.duplicate_one(model, typecast).await
+    }
+    /// Copy multiple records into brand-new records.
+    pub async fn duplicate_many(
+        &self,
+        models: &[TertiaryModel],
+        typecast: bool,
+    ) -> Result<Vec<TertiaryModel>, AirtableError> {
+        self.orm.duplicate_many(models, typecast).await
+    }
+    /// Read the record with this ID and copy it (one extra GET).
+    pub async fn duplicate_one_by_id(
+        &self,
+        record_id: &RecordId,
+        typecast: bool,
+    ) -> Result<TertiaryModel, AirtableError> {
+        self.orm.duplicate_one_by_id(record_id, typecast).await
+    }
+    /// Read the records with these IDs and copy them, preserving order.
+    pub async fn duplicate_many_by_ids(
+        &self,
+        record_ids: &[RecordId],
+        typecast: bool,
+    ) -> Result<Vec<TertiaryModel>, AirtableError> {
+        self.orm.duplicate_many_by_ids(record_ids, typecast).await
+    }
     /// Update an existing record.
     pub async fn update_one(
         &self,

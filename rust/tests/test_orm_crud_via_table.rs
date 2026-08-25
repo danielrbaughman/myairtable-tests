@@ -634,3 +634,117 @@ async fn upsert_as_update() {
     // Cleanup
     at.primary.delete_one(&id).await.unwrap();
 }
+
+// =============================================================================
+// Duplicate
+// =============================================================================
+
+#[tokio::test]
+async fn duplicate_copies_writable_fields_and_recomputes_the_rest() {
+    let at = setup();
+    let source = at
+        .primary
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some("Rust Duplicate Source".to_string()),
+                single_line_text: Some("copy me".to_string()),
+                // Stays <= 10 and != 20 on purpose: filter-by-formula asserts exact counts for
+                // `numberInt = 20` and `AND(numberInt > 10, checkbox = true)` on the shared base.
+                number_int: Some(7.0),
+                rating: Some(3),
+                checkbox: Some(true),
+                ..Default::default()
+            },
+            false,
+        )
+        .await
+        .unwrap();
+    let source_id = source.id.as_deref().unwrap().to_string();
+
+    // Re-read so the model carries a snapshot -- this is the case that matters. `create_one`
+    // serializes with `to_save_json()`, which returns a DIFF once a snapshot exists, so a clean
+    // fetched model diffs to `{}`. Duplicating via create_one would insert an empty record;
+    // duplicate_one uses the full writable payload instead.
+    let fetched = at.primary.get_one(&source_id).await.unwrap();
+    let copy = at.primary.duplicate_one(&fetched, false).await.unwrap();
+    let copy_id = copy.id.as_deref().unwrap().to_string();
+
+    assert_ne!(copy_id, source_id);
+    assert_eq!(copy.primary_key.as_deref(), Some("Rust Duplicate Source"));
+    assert_eq!(copy.single_line_text.as_deref(), Some("copy me"));
+    assert_eq!(copy.number_int, Some(7.0));
+    assert_eq!(copy.rating, Some(3));
+    assert_eq!(copy.checkbox, Some(true));
+
+    // Formula (ID) resolves to RECORD_ID(), so on a true copy it is the COPY's id -- the
+    // sharpest available proof that computed fields were recalculated, not copied.
+    let formula_id = copy.formula_id.as_ref().and_then(|v| v.value());
+    assert_eq!(formula_id.map(|s| s.as_str()), Some(copy_id.as_str()));
+    assert_ne!(copy.auto_number, fetched.auto_number);
+
+    // The source is untouched.
+    let source_again = at.primary.get_one(&source_id).await.unwrap();
+    assert_eq!(source_again.auto_number, fetched.auto_number);
+
+    at.primary.delete_many(&[copy_id, source_id]).await.unwrap();
+}
+
+#[tokio::test]
+async fn duplicate_by_ids_preserves_input_order() {
+    let at = setup();
+    let a = at
+        .primary
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some("Rust Duplicate A".to_string()),
+                ..Default::default()
+            },
+            false,
+        )
+        .await
+        .unwrap();
+    let b = at
+        .primary
+        .create_one(
+            &PrimaryModel {
+                primary_key: Some("Rust Duplicate B".to_string()),
+                ..Default::default()
+            },
+            false,
+        )
+        .await
+        .unwrap();
+    let a_id = a.id.as_deref().unwrap().to_string();
+    let b_id = b.id.as_deref().unwrap().to_string();
+
+    // The batched read is a RECORD_ID() OR-list, which comes back in table order -- this pins
+    // the re-keying back to the caller's order.
+    let copies = at
+        .primary
+        .duplicate_many_by_ids(&[b_id.clone(), a_id.clone()], false)
+        .await
+        .unwrap();
+
+    assert_eq!(copies.len(), 2);
+    assert_eq!(copies[0].primary_key.as_deref(), Some("Rust Duplicate B"));
+    assert_eq!(copies[1].primary_key.as_deref(), Some("Rust Duplicate A"));
+
+    let mut cleanup: Vec<String> = copies
+        .iter()
+        .map(|c| c.id.as_deref().unwrap().to_string())
+        .collect();
+    cleanup.push(a_id);
+    cleanup.push(b_id);
+    at.primary.delete_many(&cleanup).await.unwrap();
+}
+
+#[tokio::test]
+async fn duplicate_by_id_reports_a_missing_source() {
+    let at = setup();
+    let err = at
+        .primary
+        .duplicate_many_by_ids(&["recDoesNotExist9".to_string()], false)
+        .await
+        .unwrap_err();
+    assert!(format!("{err}").contains("not found"), "got: {err}");
+}

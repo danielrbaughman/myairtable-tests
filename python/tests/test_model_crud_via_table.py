@@ -529,7 +529,7 @@ class TestDuplicateAttachment:
         for _ in range(10):
             time.sleep(5)
             record = airtable.primary.get(record_id)
-            if record.attachment and record.attachment[0].get("id"):  # ty: ignore[invalid-key]
+            if record.attachment and record.attachment[0].get("id"):
                 return record
         return airtable.primary.get(record_id)
 
@@ -540,7 +540,7 @@ class TestDuplicateAttachment:
         created = airtable.primary.create(model)
         self.__class__.source_id = created.id
         source = self._poll_for_attachment(airtable, created.id)
-        assert source.attachment and source.attachment[0].get("id")  # ty: ignore[invalid-key]
+        assert source.attachment and source.attachment[0].get("id")
 
     def test_duplicate_reingests_the_attachment_independently(self, airtable: Airtable):
         source = airtable.primary.get(self.source_id)
