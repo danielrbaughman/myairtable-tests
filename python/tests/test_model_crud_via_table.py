@@ -398,3 +398,161 @@ class TestMaxRecords:
         airtable.primary.delete(record_ids=self.ids)
         remaining = airtable.primary.get(self.ids)
         assert len(remaining) == 0
+
+
+class TestDuplicate:
+    """`duplicate()` copies a record into a brand-new one.
+
+    Worth its own class because duplicate is the first verb that POSTs a record read back
+    from Airtable, which is where the interesting failure modes live: pyairtable's
+    `Model.save()` PATCHes when the model has an id (so a naive copy would update the
+    source), and Airtable rejects server-returned attachment objects on create.
+    """
+
+    source_id: str
+    secondary_id: str
+    trash: list[str] = []
+
+    def test_create_source(self, airtable: Airtable):
+        sec = SecondaryModel()
+        sec.name = "Duplicate Source Link"
+        sec = airtable.secondary.create(sec)
+        self.__class__.secondary_id = sec.id
+
+        model = PrimaryModel()
+        model.primary_key = "Duplicate Source"
+        model.single_line_text = "copy me"
+        # Stays <= 10 and != 20 on purpose, matching the TS/JS duplicate suites: the
+        # filter-by-formula tests assert exact counts for `numberInt = 20` and for
+        # `AND(numberInt > 10, checkbox = true)` against the one shared live base.
+        model.number_int = 7
+        model.rating = 3
+        model.checkbox = True
+        model.single_select = "Choice 1"
+        model.multiple_select = ["Option 1", "Option 2"]
+        model.date = date(2025, 1, 15)
+        model.duration = timedelta(seconds=3600)
+        model.link_single = sec
+        created = airtable.primary.create(model)
+        self.__class__.source_id = created.id
+        assert created.id
+
+    def test_duplicate_from_model_copies_writable_fields(self, airtable: Airtable):
+        source = airtable.primary.get(self.source_id)
+        copy = airtable.primary.duplicate(source)
+        self.__class__.trash.append(copy.id)
+
+        assert copy.id != source.id
+        assert copy.primary_key == "Duplicate Source"  # primary field copied verbatim
+        assert copy.single_line_text == "copy me"
+        assert copy.number_int == 7
+        assert copy.rating == 3
+        assert copy.checkbox is True
+        assert copy.single_select == "Choice 1"
+        assert sorted(copy.multiple_select or []) == ["Option 1", "Option 2"]
+        assert copy.date == source.date
+        assert copy.duration == source.duration
+
+    def test_duplicate_recomputes_rather_than_copies_computed_fields(self, airtable: Airtable):
+        source = airtable.primary.get(self.source_id)
+        copy = airtable.primary.duplicate(source)
+        self.__class__.trash.append(copy.id)
+
+        # The sharpest available proof that computed fields were never written: Formula (ID)
+        # resolves to RECORD_ID(), so on a true copy it equals the COPY's id, not the source's.
+        assert copy.formula_id == copy.id
+        assert copy.auto_number != source.auto_number
+        assert copy.created_at_time is not None
+
+    def test_duplicate_copies_links_without_moving_them(self, airtable: Airtable):
+        source = airtable.primary.get(self.source_id)
+        copy = airtable.primary.duplicate(source)
+        self.__class__.trash.append(copy.id)
+
+        assert copy.link_single is not None
+        assert copy.link_single.id == self.secondary_id
+        # Airtable link fields are many-to-many underneath, so the copy is added alongside the
+        # original rather than displacing it. The source must keep its link.
+        source_again = airtable.primary.get(self.source_id)
+        assert source_again.link_single is not None
+        assert source_again.link_single.id == self.secondary_id
+
+    def test_duplicate_by_record_id(self, airtable: Airtable):
+        copy = airtable.primary.duplicate(self.source_id)
+        self.__class__.trash.append(copy.id)
+        assert copy.id != self.source_id
+        assert copy.single_line_text == "copy me"
+
+    def test_duplicate_batch_preserves_input_order(self, airtable: Airtable):
+        other = PrimaryModel()
+        other.primary_key = "Duplicate Source B"
+        other = airtable.primary.create(other)
+        self.__class__.trash.append(other.id)
+
+        # get(record_ids=...) returns Airtable's table order, so this pins the re-keying.
+        copies = airtable.primary.duplicate([other.id, self.source_id])
+        self.__class__.trash.extend(r.id for r in copies)
+        assert len(copies) == 2
+        assert copies[0].primary_key == "Duplicate Source B"
+        assert copies[1].primary_key == "Duplicate Source"
+
+    def test_duplicate_leaves_the_source_untouched(self, airtable: Airtable):
+        before = airtable.primary.get(self.source_id)
+        copy = airtable.primary.duplicate(before)
+        self.__class__.trash.append(copy.id)
+
+        after = airtable.primary.get(self.source_id)
+        assert after.id == before.id
+        assert after.primary_key == before.primary_key
+        assert after.auto_number == before.auto_number
+
+    def test_duplicate_rejects_an_unsaved_model(self, airtable: Airtable):
+        with pytest.raises(ValueError, match="no id"):
+            airtable.primary.duplicate(PrimaryModel())
+
+    def test_delete(self, airtable: Airtable):
+        for record_id in {*self.trash, self.source_id}:
+            airtable.primary.delete(record_id=record_id)
+        airtable.secondary.delete(record_id=self.secondary_id)
+
+
+class TestDuplicateAttachment:
+    """Attachments are the one field type Airtable will not let you echo back on create."""
+
+    source_id: str
+    copy_id: str
+    ATTACHMENT_URL = "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+
+    @staticmethod
+    def _poll_for_attachment(airtable: Airtable, record_id: str):
+        """Airtable ingests attachments asynchronously; the create response has no id yet."""
+        for _ in range(10):
+            time.sleep(5)
+            record = airtable.primary.get(record_id)
+            if record.attachment and record.attachment[0].get("id"):
+                return record
+        return airtable.primary.get(record_id)
+
+    def test_create_source(self, airtable: Airtable):
+        model = PrimaryModel()
+        model.primary_key = "Duplicate Attachment Source"
+        model.attachment = [{"url": self.ATTACHMENT_URL}]  # ty: ignore[invalid-assignment]
+        created = airtable.primary.create(model)
+        self.__class__.source_id = created.id
+        source = self._poll_for_attachment(airtable, created.id)
+        assert source.attachment and source.attachment[0].get("id")
+
+    def test_duplicate_reingests_the_attachment_independently(self, airtable: Airtable):
+        source = airtable.primary.get(self.source_id)
+        copy = airtable.primary.duplicate(source)
+        self.__class__.copy_id = copy.id
+
+        copied = self._poll_for_attachment(airtable, copy.id)
+        assert copied.attachment and len(copied.attachment) == 1
+        # Copying by URL makes Airtable re-ingest the file and mint a fresh attachment id, so
+        # the copy owns its attachment rather than aliasing the source's. Echoing the server's
+        # attachment object back (or its id) would have failed with INVALID_ATTACHMENT_OBJECT.
+        assert copied.attachment[0]["id"] != source.attachment[0]["id"]  # ty: ignore[invalid-key]
+
+    def test_delete(self, airtable: Airtable):
+        airtable.primary.delete(record_ids=[self.source_id, self.copy_id])

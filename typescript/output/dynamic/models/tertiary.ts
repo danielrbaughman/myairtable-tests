@@ -41,7 +41,7 @@ export class TertiaryModel extends AirtableModel<TertiaryFieldSet, ITertiary, Te
 
     protected static fieldDescriptors: FieldDescriptor[] = [
         { propertyName: "name", fieldId: "fldwzqKxsRnPZJ2Ll", fieldName: "Name", isComputed: false, fieldType: "generic" },
-        { propertyName: "secondary", fieldId: "fld8lCuUXpEXkIeYv", fieldName: "Secondary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config), linkedModelClass: SecondaryModel as any },
+        { propertyName: "secondary", fieldId: "fld8lCuUXpEXkIeYv", fieldName: "Secondary", isComputed: false, fieldType: "linkedRecords", linkedModelFromId: (id, config) => SecondaryModel.fromId(id, config), get linkedModelClass(): any { return SecondaryModel; } },
         { propertyName: "value", fieldId: "fldjNLBh2UccM64h5", fieldName: "Value", isComputed: false, fieldType: "generic" },
     ];
 

@@ -102,7 +102,7 @@ TEST_CASE("orm table: select enums and rating round trip", "[crud][orm-table]") 
         .multiple_select =
             std::vector<PrimaryMultipleSelectOption>{PrimaryMultipleSelectOption::Option1,
                                                      PrimaryMultipleSelectOption::Option2},
-        .rating = json(3),
+        .rating = 3,
     };
     auto created = airtable.primary().create_one(model);
     const auto record_id = *created.id;
@@ -111,7 +111,7 @@ TEST_CASE("orm table: select enums and rating round trip", "[crud][orm-table]") 
         REQUIRE(created.multiple_select ==
                 std::vector<PrimaryMultipleSelectOption>{PrimaryMultipleSelectOption::Option1,
                                                          PrimaryMultipleSelectOption::Option2});
-        REQUIRE(created.rating->get<int>() == 3);
+        REQUIRE(*created.rating == 3);
 
         auto fetched = airtable.primary().get_one(record_id);
         REQUIRE(fetched.single_select == PrimarySingleSelectOption::Choice1);
@@ -119,12 +119,12 @@ TEST_CASE("orm table: select enums and rating round trip", "[crud][orm-table]") 
         fetched.single_select = PrimarySingleSelectOption::Choice2;
         fetched.multiple_select =
             std::vector<PrimaryMultipleSelectOption>{PrimaryMultipleSelectOption::Option3};
-        fetched.rating = json(5);
+        fetched.rating = 5;
         auto updated = airtable.primary().update_one(fetched);
         REQUIRE(updated.single_select == PrimarySingleSelectOption::Choice2);
         REQUIRE(updated.multiple_select ==
                 std::vector<PrimaryMultipleSelectOption>{PrimaryMultipleSelectOption::Option3});
-        REQUIRE(updated.rating->get<int>() == 5);
+        REQUIRE(*updated.rating == 5);
     } catch (...) {
         try_remove(airtable, {record_id});
         throw;
@@ -257,4 +257,63 @@ TEST_CASE("orm table: upsert inserts when no match then updates on match", "[cru
         throw;
     }
     try_remove(airtable, created_ids);
+}
+
+// Duplicate — parity with the rust/go/csharp/python/typescript duplicate suites.
+TEST_CASE("orm table: duplicate copies writable fields and recomputes the rest",
+          "[crud][orm-table][duplicate]") {
+    auto airtable = make_airtable();
+    const auto pk = primary_key("Duplicate", "Source");
+    auto source = airtable.primary().create_one(PrimaryModel{
+        .primary_key = pk,
+        .single_line_text = "copy me",
+        // Stays <= 10 and != 20 on purpose: filter-by-formula asserts exact counts for
+        // `numberInt = 20` and `AND(numberInt > 10, checkbox = true)` on the shared base.
+        .number_int = 7.0,
+        .rating = 3,
+    });
+    const auto source_id = *source.id;
+    std::string copy_id;
+    try {
+        auto copy = airtable.primary().duplicate_one(source);
+        copy_id = *copy.id;
+
+        REQUIRE(copy_id != source_id);
+        REQUIRE(*copy.primary_key == pk);
+        REQUIRE(*copy.single_line_text == "copy me");
+        REQUIRE(*copy.number_int == 7.0);
+        REQUIRE(*copy.rating == 3);
+        // Formula (ID) resolves to RECORD_ID(), so on a true copy it is the COPY's id --
+        // proof the computed fields were recalculated rather than copied.
+        REQUIRE(copy.formula_id->value() == copy_id);
+        REQUIRE(copy.auto_number->value() != source.auto_number->value());
+        // The source model is untouched.
+        REQUIRE(*source.id == source_id);
+    } catch (...) {
+        try_remove(airtable, {source_id, copy_id});
+        throw;
+    }
+    try_remove(airtable, {source_id, copy_id});
+}
+
+TEST_CASE("orm table: duplicate by ids preserves input order", "[crud][orm-table][duplicate]") {
+    auto airtable = make_airtable();
+    const auto a_pk = primary_key("Duplicate", "OrderA");
+    const auto b_pk = primary_key("Duplicate", "OrderB");
+    auto a = airtable.primary().create_one(PrimaryModel{.primary_key = a_pk});
+    auto b = airtable.primary().create_one(PrimaryModel{.primary_key = b_pk});
+    std::vector<std::string> cleanup{*a.id, *b.id};
+    try {
+        auto copies = airtable.primary().duplicate_many_by_ids({*b.id, *a.id});
+        for (const auto& copy : copies) {
+            cleanup.push_back(*copy.id);
+        }
+        REQUIRE(copies.size() == 2);
+        REQUIRE(*copies[0].primary_key == b_pk);
+        REQUIRE(*copies[1].primary_key == a_pk);
+    } catch (...) {
+        try_remove(airtable, cleanup);
+        throw;
+    }
+    try_remove(airtable, cleanup);
 }

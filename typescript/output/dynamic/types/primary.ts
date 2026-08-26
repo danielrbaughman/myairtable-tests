@@ -721,7 +721,7 @@ export interface PrimaryFieldSetIds extends FieldSet {
     //@ts-ignore
     fldol5Q4wmQJQvPRy?: string
     //@ts-ignore
-    fldRsmwFwQNZkKLp4?: any
+    fldRsmwFwQNZkKLp4?: number
     //@ts-ignore
     fldGaFgBsDC3IBUdV?: string[]
     //@ts-ignore
@@ -802,7 +802,7 @@ export interface PrimaryFieldSet extends FieldSet {
     //@ts-ignore
     "Primary Key"?: string,
     //@ts-ignore
-    "Rating"?: any,
+    "Rating"?: number,
     //@ts-ignore
     "Rollup"?: string[],
     //@ts-ignore

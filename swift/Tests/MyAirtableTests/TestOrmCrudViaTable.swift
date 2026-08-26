@@ -116,7 +116,7 @@ struct TestOrmCrudViaTable {
         let new = PrimaryModel(
             multipleSelect: [.option1, .option2],
             primaryKey: primaryKey,
-            rating: .int(3),
+            rating: 3,
             singleSelect: .choice1
         )
 
@@ -129,22 +129,22 @@ struct TestOrmCrudViaTable {
         do {
             #expect(created.singleSelect == .choice1)
             #expect(created.multipleSelect == [.option1, .option2])
-            #expect(created.rating == .int(3))
+            #expect(created.rating == 3)
 
             // Re-fetch and verify the typed decode path.
             let fetched = try await airtable.primary.get(recordId)
             #expect(fetched.singleSelect == .choice1)
             #expect(fetched.multipleSelect == [.option1, .option2])
-            #expect(fetched.rating == .int(3))
+            #expect(fetched.rating == 3)
 
             // Update to different enum cases + rating via dirty tracking.
             fetched.singleSelect = .choice2
             fetched.multipleSelect = [.option3]
-            fetched.rating = .int(5)
+            fetched.rating = 5
             let updated = try await airtable.primary.update(fetched)
             #expect(updated.singleSelect == .choice2)
             #expect(updated.multipleSelect == [.option3])
-            #expect(updated.rating == .int(5))
+            #expect(updated.rating == 5)
 
             try await airtable.primary.delete(recordId)
         } catch {
@@ -287,4 +287,71 @@ struct TestOrmCrudViaTable {
             throw error
         }
     }
+    // MARK: - Duplicate
+
+    @Test("Duplicate copies writable fields and recomputes the rest")
+    func duplicateCopiesWritableFields() async throws {
+        let primaryKey = TestSetup.primaryKey(for: "Duplicate", "Source")
+        let source = try await airtable.primary.create(
+            PrimaryModel(
+                // numberInt stays <= 10 and != 20 on purpose: filter-by-formula asserts exact
+                // counts for `numberInt = 20` and `AND(numberInt > 10, checkbox = true)`.
+                numberInt: 7,
+                primaryKey: primaryKey,
+                rating: 3,
+                singleLineText: "copy me"
+            )
+        )
+        guard let sourceId = source.id else {
+            Issue.record("Missing id on created model")
+            return
+        }
+
+        let copy = try await airtable.primary.duplicate(source)
+        guard let copyId = copy.id else {
+            Issue.record("Missing id on copy")
+            return
+        }
+        do {
+            #expect(copyId != sourceId)
+            #expect(copy.primaryKey == primaryKey)
+            #expect(copy.singleLineText == "copy me")
+            #expect(copy.numberInt == 7)
+            #expect(copy.rating == 3)
+            // Formula (ID) resolves to RECORD_ID(), so on a true copy it is the COPY's id --
+            // proof the computed fields were recalculated rather than copied.
+            #expect(copy.formulaId?.value == copyId)
+            #expect(copy.autoNumber?.value != source.autoNumber?.value)
+            try await airtable.primary.delete([sourceId, copyId])
+        } catch {
+            try? await airtable.primary.delete([sourceId, copyId])
+            throw error
+        }
+    }
+
+    @Test("Duplicate by ids preserves input order")
+    func duplicateByIdsPreservesOrder() async throws {
+        let aKey = TestSetup.primaryKey(for: "Duplicate", "OrderA")
+        let bKey = TestSetup.primaryKey(for: "Duplicate", "OrderB")
+        let a = try await airtable.primary.create(PrimaryModel(primaryKey: aKey))
+        let b = try await airtable.primary.create(PrimaryModel(primaryKey: bKey))
+        guard let aId = a.id, let bId = b.id else {
+            Issue.record("Missing id on created models")
+            return
+        }
+
+        let copies = try await airtable.primary.duplicate([bId, aId])
+        var cleanup = [aId, bId]
+        cleanup.append(contentsOf: copies.compactMap(\.id))
+        do {
+            #expect(copies.count == 2)
+            #expect(copies.first?.primaryKey == bKey)
+            #expect(copies.last?.primaryKey == aKey)
+            try await airtable.primary.delete(cleanup)
+        } catch {
+            try? await airtable.primary.delete(cleanup)
+            throw error
+        }
+    }
+
 }

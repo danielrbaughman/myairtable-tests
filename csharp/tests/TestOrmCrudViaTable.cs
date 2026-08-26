@@ -102,7 +102,7 @@ public class TestOrmCrudViaTable
                 PrimaryMultipleSelectOption.Option1,
                 PrimaryMultipleSelectOption.Option2,
             },
-            Rating = JsonValue.Create(3),
+            Rating = 3L,
         };
         var created = await _airtable.Primary.CreateAsync(model);
         var recordId = created.Id!;
@@ -117,7 +117,7 @@ public class TestOrmCrudViaTable
                 },
                 created.MultipleSelect
             );
-            Assert.Equal(3, created.Rating!.GetValue<int>());
+            Assert.Equal(3L, created.Rating);
 
             var fetched = await _airtable.Primary.GetAsync(recordId);
             Assert.Equal(PrimarySingleSelectOption.Choice1, fetched.SingleSelect);
@@ -127,14 +127,14 @@ public class TestOrmCrudViaTable
             {
                 PrimaryMultipleSelectOption.Option3,
             };
-            fetched.Rating = JsonValue.Create(5);
+            fetched.Rating = 5L;
             var updated = await _airtable.Primary.UpdateAsync(fetched);
             Assert.Equal(PrimarySingleSelectOption.Choice2, updated.SingleSelect);
             Assert.Equal(
                 new List<PrimaryMultipleSelectOption> { PrimaryMultipleSelectOption.Option3 },
                 updated.MultipleSelect
             );
-            Assert.Equal(5, updated.Rating!.GetValue<int>());
+            Assert.Equal(5L, updated.Rating);
         }
         finally
         {
@@ -326,6 +326,66 @@ public class TestOrmCrudViaTable
         catch (AirtableException)
         {
             // best-effort cleanup
+        }
+    }
+
+    // Duplicate — parity with the rust/go/python/typescript duplicate suites.
+    [Fact]
+    public async Task DuplicateCopiesWritableFieldsAndRecomputesTheRest()
+    {
+        var primaryKey = TestSetup.PrimaryKey("Duplicate", "Source");
+        var source = await _airtable.Primary.CreateAsync(
+            new PrimaryModel
+            {
+                PrimaryKey = primaryKey,
+                SingleLineText = "copy me",
+                // Stays <= 10 and != 20 on purpose: filter-by-formula asserts exact counts for
+                // `numberInt = 20` and `AND(numberInt > 10, checkbox = true)` on the shared base.
+                NumberInt = 7,
+                Rating = 3L,
+                Checkbox = true,
+            }
+        );
+        var copy = await _airtable.Primary.DuplicateAsync(source);
+        try
+        {
+            Assert.NotEqual(source.Id, copy.Id);
+            Assert.Equal(primaryKey, copy.PrimaryKey);
+            Assert.Equal("copy me", copy.SingleLineText);
+            Assert.Equal(7, copy.NumberInt);
+            Assert.Equal(3L, copy.Rating);
+            Assert.True(copy.Checkbox);
+
+            // Formula (ID) resolves to RECORD_ID(), so on a true copy it is the COPY's id --
+            // proof the computed fields were recalculated rather than copied.
+            Assert.Equal(copy.Id, copy.FormulaId!.ValueOrDefault);
+            Assert.NotEqual(source.AutoNumber!.ValueOrDefault, copy.AutoNumber!.ValueOrDefault);
+        }
+        finally
+        {
+            await _airtable.Primary.DeleteAsync(new[] { copy.Id!, source.Id! });
+        }
+    }
+
+    [Fact]
+    public async Task DuplicateByIdsPreservesInputOrder()
+    {
+        var aKey = TestSetup.PrimaryKey("Duplicate", "OrderA");
+        var bKey = TestSetup.PrimaryKey("Duplicate", "OrderB");
+        var a = await _airtable.Primary.CreateAsync(new PrimaryModel { PrimaryKey = aKey });
+        var b = await _airtable.Primary.CreateAsync(new PrimaryModel { PrimaryKey = bKey });
+        var copies = await _airtable.Primary.DuplicateAsync(new[] { b.Id!, a.Id! });
+        try
+        {
+            Assert.Equal(2, copies.Count);
+            Assert.Equal(bKey, copies[0].PrimaryKey);
+            Assert.Equal(aKey, copies[1].PrimaryKey);
+        }
+        finally
+        {
+            var ids = new List<string> { a.Id!, b.Id! };
+            ids.AddRange(copies.ConvertAll(c => c.Id!));
+            await _airtable.Primary.DeleteAsync(ids);
         }
     }
 }

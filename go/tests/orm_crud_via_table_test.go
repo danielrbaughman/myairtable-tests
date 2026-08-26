@@ -158,3 +158,98 @@ func TestOrmCrudViaTable(t *testing.T) {
 		}
 	})
 }
+
+// Duplicate — parity with the rust/python/typescript duplicate suites.
+func TestDuplicateViaTable(t *testing.T) {
+	at := newAirtable(t)
+	ctx := context.Background()
+
+	t.Run("CopiesWritableFieldsAndRecomputesTheRest", func(t *testing.T) {
+		pk := primaryKey("Duplicate", "Source")
+		source, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{
+			PrimaryKey:     airtable.String(pk),
+			SingleLineText: airtable.String("copy me"),
+			// Stays <= 10 and != 20 on purpose: filter-by-formula asserts exact counts for
+			// `numberInt = 20` and `AND(numberInt > 10, checkbox = true)` on the shared base.
+			NumberInt: airtable.Float64(7),
+			Rating:    airtable.Int64(3),
+			Checkbox:  airtable.Bool(true),
+		})
+		if err != nil {
+			t.Fatalf("create source: %v", err)
+		}
+		sourceID := source.ID()
+
+		copied, err := at.Primary.DuplicateOne(ctx, source)
+		if err != nil {
+			t.Fatalf("duplicate: %v", err)
+		}
+		defer func() { _ = at.Primary.DeleteOne(ctx, copied.ID()) }()
+		defer func() { _ = at.Primary.DeleteOne(ctx, sourceID) }()
+
+		if copied.ID() == sourceID {
+			t.Fatal("duplicate returned the source record")
+		}
+		// CreateOne hydrates the model it is given, so duplicating through it would have
+		// overwritten the source's ID with the copy's. DuplicateOne must not.
+		if source.ID() != sourceID {
+			t.Errorf("source model was mutated: %s -> %s", sourceID, source.ID())
+		}
+		if got := *copied.PrimaryKey; got != pk {
+			t.Errorf("primary key: want %q, got %q", pk, got)
+		}
+		if got := *copied.SingleLineText; got != "copy me" {
+			t.Errorf("single line text: got %q", got)
+		}
+		if got := *copied.Rating; got != 3 {
+			t.Errorf("rating: got %d", got)
+		}
+		// Formula (ID) resolves to RECORD_ID(), so on a true copy it is the COPY's id --
+		// proof the computed fields were recalculated rather than copied.
+		if v, ok := copied.FormulaId.Value(); !ok || v != copied.ID() {
+			t.Errorf("formula id: want %q, got %q (ok=%v)", copied.ID(), v, ok)
+		}
+		copiedNum, copiedOK := copied.AutoNumber.Value()
+		sourceNum, sourceOK := source.AutoNumber.Value()
+		if copiedOK && sourceOK && copiedNum == sourceNum {
+			t.Error("auto number was copied instead of recomputed")
+		}
+	})
+
+	t.Run("ByIDsPreservesInputOrder", func(t *testing.T) {
+		aPK := primaryKey("Duplicate", "OrderA")
+		bPK := primaryKey("Duplicate", "OrderB")
+		a, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(aPK)})
+		if err != nil {
+			t.Fatalf("create a: %v", err)
+		}
+		b, err := at.Primary.CreateOne(ctx, &airtable.PrimaryModel{PrimaryKey: airtable.String(bPK)})
+		if err != nil {
+			t.Fatalf("create b: %v", err)
+		}
+		defer func() { _ = at.Primary.DeleteOne(ctx, a.ID()) }()
+		defer func() { _ = at.Primary.DeleteOne(ctx, b.ID()) }()
+
+		// The batched read is a RECORD_ID() OR-list, which comes back in table order.
+		copies, err := at.Primary.DuplicateManyByIDs(ctx, []string{b.ID(), a.ID()})
+		if err != nil {
+			t.Fatalf("duplicate many: %v", err)
+		}
+		for _, c := range copies {
+			defer func(id string) { _ = at.Primary.DeleteOne(ctx, id) }(c.ID())
+		}
+		if len(copies) != 2 {
+			t.Fatalf("want 2 copies, got %d", len(copies))
+		}
+		if *copies[0].PrimaryKey != bPK || *copies[1].PrimaryKey != aPK {
+			t.Errorf("input order not preserved: %q, %q", *copies[0].PrimaryKey, *copies[1].PrimaryKey)
+		}
+	})
+
+	t.Run("MissingSourceIsReported", func(t *testing.T) {
+		_, err := at.Primary.DuplicateManyByIDs(ctx, []string{"recDoesNotExist9"})
+		if err == nil {
+			t.Fatal("want an error for a missing source id")
+		}
+	})
+}
